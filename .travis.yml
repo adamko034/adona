@@ -1,9 +1,16 @@
 language: node_js
 node_js:
-  - "7"
+  - "11"
+branches:
+  only:
+    - master
+before_script:
+  - npm install -g @angular/cli
 script:
-  - echo "Deploy!!"
-install:
-  - npm install -g firebase-tools
-after_success:
-  - firebase deploy --project adona-73208 --token $FIREBASE_TOKEN
+  - npm install
+  - npm run build
+deploy:
+  skip_cleanup: true
+  provider: firebase
+  token:
+    secure: $FIREBASE_TOKEN
