@@ -5,7 +5,9 @@ const routes: Routes = [
   {
     path: 'calendar',
     loadChildren: () =>
-      import('./calendar/calendar.module').then(mod => mod.AdonaCalendarModule)
+      import('./modules/calendar/calendar.module').then(
+        mod => mod.AdonaCalendarModule
+      )
   },
   {
     path: '',

@@ -1,0 +1,11 @@
+<div class="row text-center">
+  <div class="col-md-4">
+    <app-calendar-view-switch (viewChanged)="onViewChanged($event)"></app-calendar-view-switch>
+  </div>
+
+  <div class="col-md-4">
+    <app-celendar-title [view]="view" [viewDate]="viewDate"></app-celendar-title>
+  </div>
+</div>
+
+<app-calendar-view [view]="view" [viewDate]="viewDate"></app-calendar-view>
