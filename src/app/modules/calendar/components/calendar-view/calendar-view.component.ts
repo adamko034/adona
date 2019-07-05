@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
-import { CalendarHourFormatter } from '../../../../calendar/shared/calendar-hour-formatter';
+import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
 
 @Component({
   selector: 'app-calendar-view',
