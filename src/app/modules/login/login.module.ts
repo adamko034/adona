@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { CalendarRoutingModule } from './calendar-routing.module';
+import { LoginRoutingModule } from './login-routing.module';
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
-    CalendarRoutingModule
+    LoginRoutingModule
   ]
 })
-export class CalendarModule { }
+export class LoginModule { }
