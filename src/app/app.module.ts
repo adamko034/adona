@@ -10,18 +10,26 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
 import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { AngularMaterialModule } from './angular-material.module';
 
 @NgModule({
-  declarations: [AppComponent, NavbarComponent, ContentLayoutComponent, AuthLayoutComponent],
+  declarations: [
+    AppComponent,
+    NavbarComponent,
+    ContentLayoutComponent,
+    AuthLayoutComponent
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    AngularMaterialModule
   ],
   providers: [],
+  exports: [AngularMaterialModule],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

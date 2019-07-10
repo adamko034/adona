@@ -7,11 +7,11 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/auth/login',
+    redirectTo: '/login',
     pathMatch: 'full'
   },
   {
-    path: '',
+    path: 'home',
     component: ContentLayoutComponent,
     canActivate: [AuthGuard],
     children: [
@@ -25,7 +25,7 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'auth',
+    path: 'login',
     component: AuthLayoutComponent,
     loadChildren: () =>
       import('./modules/auth/auth.module').then(mod => mod.AuthModule)
