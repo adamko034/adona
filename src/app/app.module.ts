@@ -10,7 +10,6 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
 import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
-import { AngularMaterialModule } from './angular-material.module';
 
 @NgModule({
   declarations: [
@@ -25,11 +24,9 @@ import { AngularMaterialModule } from './angular-material.module';
     AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
-    AngularFireAuthModule,
-    AngularMaterialModule
+    AngularFireAuthModule
   ],
   providers: [],
-  exports: [AngularMaterialModule],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

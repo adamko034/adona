@@ -1,0 +1,14 @@
+.auth-container {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  top: 35%;
+  left: 50%;
+
+  border: 15px solid rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+
+  .auth-tabs {
+    border-radius: 0px;
+    box-shadow: none;
+  }
+}

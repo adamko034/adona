@@ -3,10 +3,22 @@ import { CommonModule } from '@angular/common';
 import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './components/login/login.component';
 import { AuthFormComponent } from './components/auth-form/auth-form.component';
-import { AngularMaterialModule } from 'src/app/angular-material.module';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [LoginComponent, AuthFormComponent],
-  imports: [CommonModule, AuthRoutingModule, AngularMaterialModule]
+  imports: [
+    CommonModule,
+    AuthRoutingModule,
+    MatTabsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
+  ]
 })
 export class AuthModule {}
