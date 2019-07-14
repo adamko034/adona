@@ -3,9 +3,15 @@
     <mat-card-content>
       <mat-tab-group [backgroundColor]="grey">
         <mat-tab label="Login">
-          <app-login></app-login>
+          <div class="auth-tab">
+            <app-login></app-login>
+          </div>
         </mat-tab>
-        <mat-tab label="Register"></mat-tab>
+        <mat-tab label="Register">
+          <div class="auth-tab">
+            <app-register></app-register>
+          </div>
+        </mat-tab>
       </mat-tab-group>
     </mat-card-content>
   </mat-card>

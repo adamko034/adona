@@ -10,5 +10,9 @@
   .auth-tabs {
     border-radius: 0px;
     box-shadow: none;
+
+    .auth-tab {
+      padding: 20px 40px;
+    }
   }
 }
