@@ -10,6 +10,9 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
 import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { AuthService } from './shared/services/auth/auth.service';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NavigationService } from './shared/services/navigation/navigation.service';
 
 @NgModule({
   declarations: [
@@ -26,7 +29,7 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
     AngularFirestoreModule,
     AngularFireAuthModule
   ],
-  providers: [],
+  providers: [AuthService, NavigationService],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

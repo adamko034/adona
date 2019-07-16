@@ -7,7 +7,7 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/login',
+    redirectTo: '/home/calendar',
     pathMatch: 'full'
   },
   {
@@ -15,6 +15,11 @@ const routes: Routes = [
     component: ContentLayoutComponent,
     canActivate: [AuthGuard],
     children: [
+      {
+        path: '',
+        redirectTo: 'calendar',
+        pathMatch: 'full'
+      },
       {
         path: 'calendar',
         loadChildren: () =>
@@ -36,4 +41,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
