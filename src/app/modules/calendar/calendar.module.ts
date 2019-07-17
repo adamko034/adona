@@ -7,13 +7,19 @@ import { CalendarTitleComponent } from './components/calendar-title/calendar-tit
 import { CalendarViewSwitchComponent } from './components/calendar-view-switch/calendar-view-switch.component';
 import { CalendarViewComponent } from './components/calendar-view/calendar-view.component';
 import { CalendarComponent } from './pages/calendar/calendar.component';
+import { NewEventDialogComponent } from './components/new-event-dialog/new-event-dialog.component';
+import { MatDialogModule } from '@angular/material';
 
 @NgModule({
   declarations: [
     CalendarComponent,
     CalendarViewComponent,
     CalendarViewSwitchComponent,
-    CalendarTitleComponent
+    CalendarTitleComponent,
+    NewEventDialogComponent
+  ],
+  entryComponents: [
+    NewEventDialogComponent
   ],
   imports: [
     CommonModule,
@@ -21,7 +27,8 @@ import { CalendarComponent } from './pages/calendar/calendar.component';
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory
-    })
+    }),
+    MatDialogModule
   ]
 })
-export class AdonaCalendarModule {}
+export class AdonaCalendarModule { }
