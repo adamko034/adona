@@ -16,6 +16,7 @@ import { NavbarComponent } from './layouts/navbar/navbar.component';
 import { AuthService } from './shared/services/auth/auth.service';
 import { NavigationService } from './shared/services/navigation/navigation.service';
 import { metaReducers, reducers } from './store/reducers';
+import { AuthEffects } from './modules/auth/store/effects/auth.effects';
 
 @NgModule({
   declarations: [
@@ -38,10 +39,10 @@ import { metaReducers, reducers } from './store/reducers';
         strictActionImmutability: true
       }
     }),
-    EffectsModule.forRoot([]),
+    EffectsModule.forRoot([AuthEffects]),
     !environment.production ? StoreDevtoolsModule.instrument() : []
   ],
   providers: [AuthService, NavigationService],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

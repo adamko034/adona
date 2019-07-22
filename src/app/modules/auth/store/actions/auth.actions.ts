@@ -13,7 +13,7 @@ export enum AuthActionTypes {
 export class LoginAction implements Action {
   readonly type = AuthActionTypes.LoginAction;
 
-  constructor(public payload: CredentialsLogin) {}
+  constructor(public payload: CredentialsLogin) { }
 }
 
 export class LogoutAction implements Action {
@@ -22,14 +22,12 @@ export class LogoutAction implements Action {
 
 export class GetAuthAction implements Action {
   readonly type = AuthActionTypes.GetAuthAction;
-
-  constructor() {}
 }
 
 export class AuthenticatedAction implements Action {
   readonly type = AuthActionTypes.AuthenticatedAction;
 
-  constructor(public payload: User) {}
+  constructor(public payload: User) { }
 }
 
 export class NotAuthenitcatedAction implements Action {

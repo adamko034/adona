@@ -16,19 +16,13 @@ export class NavbarComponent implements OnInit {
   isLoggedIn$: Observable<boolean>;
 
   constructor(
-    private authService: AuthService,
-    private navigationService: NavigationService,
     private store: Store<AppState>
-  ) {}
+  ) { }
 
   ngOnInit() {
-    this.isLoggedIn$ = this.store.pipe(select(isLoggedIn));
   }
 
   public logout() {
-    this.authService.logout().then(() => {
-      this.store.dispatch(new LogoutAction());
-      this.navigationService.toLogin();
-    });
+    this.store.dispatch(new LogoutAction());
   }
 }

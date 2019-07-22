@@ -7,7 +7,7 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/home/calendar',
+    redirectTo: '/home',
     pathMatch: 'full'
   },
   {

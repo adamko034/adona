@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { AppState } from '../../store/reducers';
+import { Store } from '@ngrx/store';
+import { GetAuthAction } from '../../modules/auth/store/actions/auth.actions';
 
 @Component({
   selector: 'app-content-layout',
@@ -7,9 +10,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContentLayoutComponent implements OnInit {
 
-  constructor() { }
+  constructor(private store: Store<AppState>) { }
 
   ngOnInit() {
+    this.store.dispatch(new GetAuthAction());
   }
 
 }

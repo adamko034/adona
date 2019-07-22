@@ -26,8 +26,7 @@ import * as fromAuth from './store/reducers/auth.reducer';
     MatInputModule,
     MatButtonModule,
     FormsModule,
-    StoreModule.forFeature('auth', fromAuth.authReducer),
-    EffectsModule.forFeature([AuthEffects])
+    StoreModule.forFeature('auth', fromAuth.authReducer)
   ]
 })
-export class AuthModule {}
+export class AuthModule { }
