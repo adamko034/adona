@@ -4,17 +4,18 @@ import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { NavbarComponent } from './layouts/navbar/navbar.component';
-import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
-import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
-import { AuthService } from './shared/services/auth/auth.service';
-import { NavigationService } from './shared/services/navigation/navigation.service';
+import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
-import { reducers, metaReducers } from './reducers';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
+import { NavbarComponent } from './layouts/navbar/navbar.component';
+import { AuthService } from './shared/services/auth/auth.service';
+import { NavigationService } from './shared/services/navigation/navigation.service';
+import { metaReducers, reducers } from './store/reducers';
 
 @NgModule({
   declarations: [
@@ -34,12 +35,13 @@ import { reducers, metaReducers } from './reducers';
       metaReducers,
       runtimeChecks: {
         strictStateImmutability: true,
-        strictActionImmutability: true,
+        strictActionImmutability: true
       }
     }),
+    EffectsModule.forRoot([]),
     !environment.production ? StoreDevtoolsModule.instrument() : []
   ],
   providers: [AuthService, NavigationService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,10 +1,10 @@
 import { User } from '../../../../shared/models/auth/user-model';
-import { AuthActionTypes, AuthActions } from '../actions/auth.actions';
-
+import { AuthActions } from '../actions/auth.actions';
+import { AuthActionTypes } from './../actions/auth.actions';
 
 export interface AuthState {
-  loggedIn: boolean,
-  user: User
+  loggedIn: boolean;
+  user: User;
 }
 
 export const initialAuthState: AuthState = {
@@ -12,18 +12,21 @@ export const initialAuthState: AuthState = {
   user: undefined
 };
 
-export function authReducer(state = initialAuthState, action: AuthActions): AuthState {
+export function authReducer(
+  state = initialAuthState,
+  action: AuthActions
+): AuthState {
   switch (action.type) {
-    case AuthActionTypes.LoginAction:
+    case AuthActionTypes.AuthenticatedAction:
       return {
         loggedIn: true,
-        user: action.payload.user
-      }
-    case AuthActionTypes.LogoutAction:
+        user: action.payload
+      };
+    case AuthActionTypes.NotAuthenticatedAction:
       return {
         loggedIn: false,
         user: undefined
-      }
+      };
     default:
       return state;
   }

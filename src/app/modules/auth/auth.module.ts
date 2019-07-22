@@ -1,16 +1,18 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthRoutingModule } from './auth-routing.module';
-import { LoginComponent } from './components/login/login.component';
-import { AuthFormComponent } from './components/auth-form/auth-form.component';
-import { MatTabsModule } from '@angular/material/tabs';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { RegisterComponent } from './components/register/register.component';
-import { FormsModule } from '@angular/forms';
+import { MatTabsModule } from '@angular/material/tabs';
+import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
+import { AuthRoutingModule } from './auth-routing.module';
+import { AuthFormComponent } from './components/auth-form/auth-form.component';
+import { LoginComponent } from './components/login/login.component';
+import { RegisterComponent } from './components/register/register.component';
+import { AuthEffects } from './store/effects/auth.effects';
 import * as fromAuth from './store/reducers/auth.reducer';
 
 @NgModule({
@@ -24,7 +26,8 @@ import * as fromAuth from './store/reducers/auth.reducer';
     MatInputModule,
     MatButtonModule,
     FormsModule,
-    StoreModule.forFeature('auth', fromAuth.authReducer)
+    StoreModule.forFeature('auth', fromAuth.authReducer),
+    EffectsModule.forFeature([AuthEffects])
   ]
 })
-export class AuthModule { }
+export class AuthModule {}

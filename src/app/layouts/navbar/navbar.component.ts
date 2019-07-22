@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { Router } from '@angular/router';
-import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
-import { AppState } from '../../reducers';
-import { Store, select } from '@ngrx/store';
-import { Logout } from '../../modules/auth/store/actions/auth.actions';
+import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { AuthService } from 'src/app/shared/services/auth/auth.service';
+import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
+import { LogoutAction } from '../../modules/auth/store/actions/auth.actions';
 import { isLoggedIn } from '../../modules/auth/store/selectors/auth.selectors';
+import { AppState } from '../../store/reducers';
 
 @Component({
   selector: 'app-navbar',
@@ -14,25 +13,22 @@ import { isLoggedIn } from '../../modules/auth/store/selectors/auth.selectors';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
-
   isLoggedIn$: Observable<boolean>;
 
-  constructor(private authService: AuthService,
+  constructor(
+    private authService: AuthService,
     private navigationService: NavigationService,
-    private store: Store<AppState>) { }
+    private store: Store<AppState>
+  ) {}
 
   ngOnInit() {
-    this.isLoggedIn$ = this.store
-      .pipe(
-        select(isLoggedIn)
-      );
+    this.isLoggedIn$ = this.store.pipe(select(isLoggedIn));
   }
 
   public logout() {
-    this.authService.logout()
-      .then(() => {
-        this.store.dispatch(new Logout());
-        this.navigationService.toLogin();
-      });
+    this.authService.logout().then(() => {
+      this.store.dispatch(new LogoutAction());
+      this.navigationService.toLogin();
+    });
   }
 }
