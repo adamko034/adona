@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { from, Observable, of } from 'rxjs';
-import { map, switchMap, tap, mergeMap, mapTo, catchError } from 'rxjs/operators';
+import { Action } from '@ngrx/store';
+import { from, Observable } from 'rxjs';
+import { map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { CredentialsLogin } from './../../../../shared/models/auth/credentials-login.model';
 import { NavigationService } from './../../../../shared/services/navigation/navigation.service';
@@ -13,7 +14,6 @@ import {
   LoginAction,
   NotAuthenitcatedAction
 } from './../actions/auth.actions';
-import { Action } from '@ngrx/store';
 
 @Injectable()
 export class AuthEffects {
@@ -21,7 +21,7 @@ export class AuthEffects {
     private actions$: Actions,
     private authService: AuthService,
     private navigationService: NavigationService
-  ) { }
+  ) {}
 
   @Effect()
   logIn$: Observable<Action> = this.actions$.pipe(
@@ -37,18 +37,15 @@ export class AuthEffects {
   @Effect()
   getAuth$: Observable<any> = this.actions$.pipe(
     ofType(AuthActionTypes.GetAuthAction),
-    tap(() => console.log('tap')),
     switchMap(() => this.authService.authState$),
     map(authData => {
-      console.log(authData);
       if (authData) {
         const user = FirebaseToAdonaLoginConverter.convert(authData);
         return new AuthenticatedAction(user);
       }
 
-      return new NotAuthenitcatedAction()
-    }),
-    catchError((err) => of(console.log(err)))
+      return new NotAuthenitcatedAction();
+    })
   );
 
   @Effect()

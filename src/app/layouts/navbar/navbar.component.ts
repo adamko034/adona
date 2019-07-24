@@ -1,11 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { select, Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
-import { LogoutAction } from '../../modules/auth/store/actions/auth.actions';
-import { isLoggedIn } from '../../modules/auth/store/selectors/auth.selectors';
-import { AppState } from '../../store/reducers';
+import { AuthFacade } from './../../modules/auth/auth.facade';
 
 @Component({
   selector: 'app-navbar',
@@ -13,16 +7,11 @@ import { AppState } from '../../store/reducers';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
-  isLoggedIn$: Observable<boolean>;
+  constructor(private authFacade: AuthFacade) {}
 
-  constructor(
-    private store: Store<AppState>
-  ) { }
-
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   public logout() {
-    this.store.dispatch(new LogoutAction());
+    this.authFacade.logout();
   }
 }

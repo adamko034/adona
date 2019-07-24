@@ -13,10 +13,11 @@ import { AppComponent } from './app.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
+import { AuthFacade } from './modules/auth/auth.facade';
+import { AuthEffects } from './modules/auth/store/effects/auth.effects';
 import { AuthService } from './shared/services/auth/auth.service';
 import { NavigationService } from './shared/services/navigation/navigation.service';
 import { metaReducers, reducers } from './store/reducers';
-import { AuthEffects } from './modules/auth/store/effects/auth.effects';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import { AuthEffects } from './modules/auth/store/effects/auth.effects';
     EffectsModule.forRoot([AuthEffects]),
     !environment.production ? StoreDevtoolsModule.instrument() : []
   ],
-  providers: [AuthService, NavigationService],
+  providers: [AuthService, NavigationService, AuthFacade],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

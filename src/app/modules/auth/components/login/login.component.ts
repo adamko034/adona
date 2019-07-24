@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { AppState } from '../../../../store/reducers';
-import { LoginAction } from '../../store/actions/auth.actions';
+import { AuthFacade } from '../../auth.facade';
 
 @Component({
   selector: 'app-login',
@@ -14,11 +12,11 @@ export class LoginComponent implements OnInit {
     password: ''
   };
 
-  constructor(private store: Store<AppState>) {}
+  constructor(private authFacade: AuthFacade) {}
 
   ngOnInit() {}
 
   public login() {
-    this.store.dispatch(new LoginAction(this.credentials));
+    this.authFacade.login(this.credentials);
   }
 }
