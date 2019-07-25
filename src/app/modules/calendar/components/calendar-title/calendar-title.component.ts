@@ -7,8 +7,8 @@ import { CalendarView } from 'angular-calendar';
   styleUrls: ['./calendar-title.component.scss']
 })
 export class CalendarTitleComponent implements OnInit {
-  @Input() viewDate: Date;
-  @Input() view: CalendarView;
+  @Input() viewDate: Date = new Date();
+  @Input() view: CalendarView = CalendarView.Month;
 
   constructor() {}
 

@@ -1,18 +1,17 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { NavbarComponent } from './navbar.component';
 import { AuthFacade } from '../../modules/auth/auth.facade';
+import { NavbarComponent } from './navbar.component';
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
   let fixture: ComponentFixture<NavbarComponent>;
-  let authFacadeSpy = jasmine.createSpyObj('AuthFacade', ['logout']);
+  const authFacadeSpy = jasmine.createSpyObj('AuthFacade', ['logout']);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [NavbarComponent], providers: [{ provide: AuthFacade, useValue: authFacadeSpy }]
-    })
-      .compileComponents();
+      declarations: [NavbarComponent],
+      providers: [{ provide: AuthFacade, useValue: authFacadeSpy }]
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -23,7 +22,7 @@ describe('NavbarComponent', () => {
 
   it('should call facade on logout', () => {
     // given
-    const facade = TestBed.get('AuthFacade');
+    const facade = TestBed.get(AuthFacade);
 
     // when
     component.logout();

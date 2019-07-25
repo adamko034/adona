@@ -1,7 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { Router } from '@angular/router';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-auth-form',
@@ -9,12 +6,7 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./auth-form.component.scss']
 })
 export class AuthFormComponent implements OnInit {
+  constructor() {}
 
-  constructor() {
-  }
-
-  ngOnInit() {
-
-  }
-
+  ngOnInit() {}
 }

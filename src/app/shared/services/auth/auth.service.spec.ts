@@ -1,21 +1,24 @@
 import { TestBed } from '@angular/core/testing';
-import { AuthService } from './auth.service';
 import { AngularFireAuth } from '@angular/fire/auth';
-
-
+import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let authService: AuthService;
   let fireAuthServiceMock: any;
-  let fireAuthSpy: any = {
+  const fireAuthSpy: any = {
     auth: jasmine.createSpyObj('auth', {
-      'signInWithEmailAndPassword': Promise.resolve({}),
-      'signOut': Promise.resolve()
+      signInWithEmailAndPassword: Promise.resolve({}),
+      signOut: Promise.resolve()
     })
-  }
+  };
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [AuthService, { provide: AngularFireAuth, useValue: fireAuthSpy }] })
+    TestBed.configureTestingModule({
+      providers: [
+        AuthService,
+        { provide: AngularFireAuth, useValue: fireAuthSpy }
+      ]
+    });
 
     authService = TestBed.get(AuthService);
     fireAuthServiceMock = TestBed.get(AngularFireAuth);
@@ -29,7 +32,9 @@ describe('AuthService', () => {
     authService.login(credentials);
 
     // then
-    expect(fireAuthServiceMock.auth.signInWithEmailAndPassword).toHaveBeenCalledWith(credentials.email, credentials.password);
+    expect(
+      fireAuthServiceMock.auth.signInWithEmailAndPassword
+    ).toHaveBeenCalledWith(credentials.email, credentials.password);
   });
 
   it('should call fire auth service log out method', () => {
@@ -38,5 +43,5 @@ describe('AuthService', () => {
 
     // then
     expect(fireAuthServiceMock.auth.signOut).toHaveBeenCalledTimes(1);
-  })
+  });
 });
