@@ -11,15 +11,9 @@ import { CredentialsLogin } from '../../models/auth/credentials-login.model';
 export class AuthService {
   readonly authState$: Observable<User | null> = this.fireAuth.authState;
 
-  constructor(private fireAuth: AngularFireAuth) {}
+  constructor(private fireAuth: AngularFireAuth) { }
 
-  public get user(): User | null {
-    return this.fireAuth.auth.currentUser;
-  }
-
-  public login(
-    credentials: CredentialsLogin
-  ): Promise<firebase.auth.UserCredential> {
+  public login(credentials: CredentialsLogin): Promise<firebase.auth.UserCredential> {
     return this.fireAuth.auth.signInWithEmailAndPassword(
       credentials.email,
       credentials.password

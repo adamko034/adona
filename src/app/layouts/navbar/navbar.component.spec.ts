@@ -1,16 +1,18 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NavbarComponent } from './navbar.component';
+import { AuthFacade } from '../../modules/auth/auth.facade';
 
 describe('NavbarComponent', () => {
   let component: NavbarComponent;
   let fixture: ComponentFixture<NavbarComponent>;
+  let authFacadeSpy = jasmine.createSpyObj('AuthFacade', ['logout']);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NavbarComponent ]
+      declarations: [NavbarComponent], providers: [{ provide: AuthFacade, useValue: authFacadeSpy }]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +21,14 @@ describe('NavbarComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should call facade on logout', () => {
+    // given
+    const facade = TestBed.get('AuthFacade');
+
+    // when
+    component.logout();
+
+    // then
+    expect(facade.logout).toHaveBeenCalledTimes(1);
   });
 });

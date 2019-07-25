@@ -10,10 +10,8 @@ import { GetAuthAction } from '../../modules/auth/store/actions/auth.actions';
 })
 export class ContentLayoutComponent implements OnInit {
 
-  constructor(private store: Store<AppState>) { }
+  constructor() { }
 
   ngOnInit() {
-    this.store.dispatch(new GetAuthAction());
   }
-
 }
