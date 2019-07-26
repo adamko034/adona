@@ -14,14 +14,10 @@ export class AuthGuard implements CanActivate {
     private navigationService: NavigationService
   ) {}
 
-  canActivate():
-    | Observable<boolean | UrlTree>
-    | Promise<boolean | UrlTree>
-    | boolean
-    | UrlTree {
+  canActivate(): Observable<boolean> {
     return this.authService.authState$.pipe(
       map(authState => {
-        if (authState !== null) {
+        if (authState) {
           return true;
         }
 
