@@ -52,10 +52,10 @@ describe('CelendarTitleComponent', () => {
     // then
     const startOfWeek = moment()
       .startOf('week')
-      .format('MMM DD');
+      .format('MMM D');
     const endOfWeek = moment()
       .endOf('week')
-      .format('MMM DD');
+      .format('MMM D');
     const year = moment().format('YYYY');
 
     const expectedContent = `${startOfWeek} - ${endOfWeek}, ${year}`;

@@ -28,7 +28,7 @@ export class AuthEffects {
     ofType(AuthActionTypes.LoginAction),
     map((action: LoginAction) => action.payload),
     switchMap((credentials: CredentialsLogin) => {
-      return from(this.authService.login(credentials));
+      return this.authService.login(credentials);
     }),
     tap(() => this.navigationService.toHome()),
     mapTo(new GetAuthAction())

@@ -2,10 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
-import { Observable } from 'rxjs';
+import { Observable, noop, of } from 'rxjs';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
-import { LoginAction } from '../actions/auth.actions';
+import { LoginAction, GetAuthAction } from '../actions/auth.actions';
 import { AuthEffects } from './auth.effects';
 
 describe('Auth Effects', () => {
@@ -35,13 +35,17 @@ describe('Auth Effects', () => {
     authService = TestBed.get<AuthService>(AuthService);
   });
 
-  it('should work', () => {
-    authService.login = () => Promise.resolve();
+  it('should ', () => {
+    authService.login = () => of(noop);
+    navigationService.toHome = () => noop;
 
     const action = new LoginAction({ email: 'test', password: 'testPwd' });
-    authService.login = actions$ = hot('--a-', { a: action });
-    const expected = cold('--b', { b: action });
+    const completion = new GetAuthAction();
+    actions$ = hot('--a', { a: action });
+    const expected = cold('--b', { b: completion });
 
     expect(effects.logIn$).toBeObservable(expected);
+    expect(authService.login).toHaveBeenCalledTimes(1);
+    expect(navigationService.toHome).toHaveBeenCalledTimes(1);
   });
 });
