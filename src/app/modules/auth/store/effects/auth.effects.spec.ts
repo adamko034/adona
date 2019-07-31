@@ -5,14 +5,9 @@ import { cold, hot } from 'jasmine-marbles';
 import { noop, Observable, of } from 'rxjs';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
+import { UserTestBuilder } from 'src/app/shared/testUtils/builders/UserTestBuilder';
 import { FirebaseToAdonaLoginConverter } from 'src/app/shared/utils/converters/firebase-to-adona-login.converter';
-import {
-  AuthenticatedAction,
-  GetAuthAction,
-  LoginAction,
-  LogoutAction,
-  NotAuthenitcatedAction
-} from '../actions/auth.actions';
+import { AuthenticatedAction, GetAuthAction, LoginAction, LogoutAction, NotAuthenitcatedAction } from '../actions/auth.actions';
 import { AuthEffects } from './auth.effects';
 
 describe('Auth Effects', () => {
@@ -21,15 +16,8 @@ describe('Auth Effects', () => {
   let navigationService;
   let authService;
 
-  const navigationServiceSpy = jasmine.createSpyObj('NavigationService', [
-    'toHome',
-    'toLogin'
-  ]);
-  const authServiceSpy = jasmine.createSpyObj('AuthService', [
-    'login',
-    'logout',
-    'authState$'
-  ]);
+  const navigationServiceSpy = jasmine.createSpyObj('NavigationService', ['toHome', 'toLogin']);
+  const authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'logout', 'authState$']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -68,19 +56,11 @@ describe('Auth Effects', () => {
   describe('get auth effect', () => {
     it('should result in Authenticated action if user is logged in', () => {
       // given
-      const firebaseLogin = {
-        uid: '1',
-        displayName: 'test',
-        email: 'test@test.com',
-        phoneNumber: '123',
-        photoUrl: 'url.com'
-      };
+      const firebaseLogin = new UserTestBuilder().withDefaultData().buildFirebaseUser();
       authService.authState$ = of(firebaseLogin);
 
       const action = new GetAuthAction();
-      const completion = new AuthenticatedAction(
-        FirebaseToAdonaLoginConverter.convert(firebaseLogin)
-      );
+      const completion = new AuthenticatedAction(FirebaseToAdonaLoginConverter.convert(firebaseLogin));
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
 

@@ -1,13 +1,6 @@
-import {
-  LoginAction,
-  AuthActionTypes,
-  LogoutAction,
-  GetAuthAction,
-  AuthenticatedAction,
-  NotAuthenitcatedAction
-} from './auth.actions';
+import { UserTestBuilder } from 'src/app/shared/testUtils/builders/UserTestBuilder';
 import { CredentialsLogin } from '../../../../shared/models/auth/credentials-login.model';
-import { User } from '../../../../shared/models/auth/user-model';
+import { AuthActionTypes, AuthenticatedAction, GetAuthAction, LoginAction, LogoutAction, NotAuthenitcatedAction } from './auth.actions';
 
 describe('Auth NGRX Actions', () => {
   const credentials: CredentialsLogin = {
@@ -44,12 +37,7 @@ describe('Auth NGRX Actions', () => {
 
   it('should create authenicated action', () => {
     // given
-    const user: User = {
-      displayName: 'test',
-      email: 'test@test.com',
-      id: '1',
-      phoneNumber: '123'
-    };
+    const user = new UserTestBuilder().withDefaultData().build();
 
     // when
     const action = new AuthenticatedAction(user);
