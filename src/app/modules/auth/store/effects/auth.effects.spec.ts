@@ -2,10 +2,17 @@ import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
-import { Observable, noop, of } from 'rxjs';
+import { noop, Observable, of } from 'rxjs';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
-import { LoginAction, GetAuthAction } from '../actions/auth.actions';
+import { FirebaseToAdonaLoginConverter } from 'src/app/shared/utils/converters/firebase-to-adona-login.converter';
+import {
+  AuthenticatedAction,
+  GetAuthAction,
+  LoginAction,
+  LogoutAction,
+  NotAuthenitcatedAction
+} from '../actions/auth.actions';
 import { AuthEffects } from './auth.effects';
 
 describe('Auth Effects', () => {
@@ -15,9 +22,14 @@ describe('Auth Effects', () => {
   let authService;
 
   const navigationServiceSpy = jasmine.createSpyObj('NavigationService', [
-    'toHome'
+    'toHome',
+    'toLogin'
   ]);
-  const authServiceSpy = jasmine.createSpyObj('AuthService', ['login']);
+  const authServiceSpy = jasmine.createSpyObj('AuthService', [
+    'login',
+    'logout',
+    'authState$'
+  ]);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -35,17 +47,76 @@ describe('Auth Effects', () => {
     authService = TestBed.get<AuthService>(AuthService);
   });
 
-  it('should ', () => {
-    authService.login = () => of(noop);
-    navigationService.toHome = () => noop;
+  describe('log in effect', () => {
+    it('should call auth service login method, navigate to home page and result GetAuth action ', () => {
+      // given
+      authService.login.and.callFake(() => of(noop));
+      navigationService.toHome.and.callFake(() => of(noop));
 
-    const action = new LoginAction({ email: 'test', password: 'testPwd' });
-    const completion = new GetAuthAction();
-    actions$ = hot('--a', { a: action });
-    const expected = cold('--b', { b: completion });
+      const action = new LoginAction({ email: 'test', password: 'testPwd' });
+      const completion = new GetAuthAction();
+      actions$ = hot('--a', { a: action });
+      const expected = cold('--b', { b: completion });
 
-    expect(effects.logIn$).toBeObservable(expected);
-    expect(authService.login).toHaveBeenCalledTimes(1);
-    expect(navigationService.toHome).toHaveBeenCalledTimes(1);
+      // when & then
+      expect(effects.logIn$).toBeObservable(expected);
+      expect(authService.login).toHaveBeenCalledTimes(1);
+      expect(navigationService.toHome).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('get auth effect', () => {
+    it('should result in Authenticated action if user is logged in', () => {
+      // given
+      const firebaseLogin = {
+        uid: '1',
+        displayName: 'test',
+        email: 'test@test.com',
+        phoneNumber: '123',
+        photoUrl: 'url.com'
+      };
+      authService.authState$ = of(firebaseLogin);
+
+      const action = new GetAuthAction();
+      const completion = new AuthenticatedAction(
+        FirebaseToAdonaLoginConverter.convert(firebaseLogin)
+      );
+      actions$ = hot('--a', { a: action });
+      const expected = cold('--b', { b: completion });
+
+      // when & then
+      expect(effects.getAuth$).toBeObservable(expected);
+    });
+
+    it('should result in Not Authenticated action if user is not logged in', () => {
+      // given
+      authService.authState$ = of(null);
+      const action = new GetAuthAction();
+      const completion = new NotAuthenitcatedAction();
+
+      actions$ = hot('--a', { a: action });
+      const expected = cold('--b', { b: completion });
+
+      expect(effects.getAuth$).toBeObservable(expected);
+    });
+  });
+
+  describe('log out effect', () => {
+    it('should call auth service logout method, navigate to login page and result in not authenticated action', () => {
+      // given
+      authService.logout.and.callFake(() => of(noop));
+      navigationService.toLogin.and.callFake(() => of(noop));
+
+      const action = new LogoutAction();
+      const completion = new NotAuthenitcatedAction();
+
+      actions$ = hot('--a', { a: action });
+      const expected = cold('--b', { b: completion });
+
+      // when & then
+      expect(effects.logOut$).toBeObservable(expected);
+      expect(navigationService.toLogin).toHaveBeenCalledTimes(1);
+      expect(authService.logout).toHaveBeenCalledTimes(1);
+    });
   });
 });
