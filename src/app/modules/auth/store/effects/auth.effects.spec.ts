@@ -6,9 +6,9 @@ import { noop, Observable, of } from 'rxjs';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
 import { UserTestBuilder } from 'src/app/shared/testUtils/builders/UserTestBuilder';
-import { FirebaseToAdonaLoginConverter } from 'src/app/shared/utils/converters/firebase-to-adona-login.converter';
 import { AuthenticatedAction, GetAuthAction, LoginAction, LogoutAction, NotAuthenitcatedAction } from '../actions/auth.actions';
 import { AuthEffects } from './auth.effects';
+import { MapperService } from '../../../../shared/services/mapper/mapper.service';
 
 describe('Auth Effects', () => {
   let effects: AuthEffects;
@@ -60,7 +60,7 @@ describe('Auth Effects', () => {
       authService.authState$ = of(firebaseLogin);
 
       const action = new GetAuthAction();
-      const completion = new AuthenticatedAction(FirebaseToAdonaLoginConverter.convert(firebaseLogin));
+      const completion = new AuthenticatedAction(new MapperService().Users.toUser(firebaseLogin));
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
 

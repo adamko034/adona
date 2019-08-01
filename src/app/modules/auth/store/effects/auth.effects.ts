@@ -6,21 +6,16 @@ import { map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/shared/services/auth/auth.service';
 import { CredentialsLogin } from './../../../../shared/models/auth/credentials-login.model';
 import { NavigationService } from './../../../../shared/services/navigation/navigation.service';
-import { FirebaseToAdonaLoginConverter } from './../../../../shared/utils/converters/firebase-to-adona-login.converter';
-import {
-  AuthActionTypes,
-  AuthenticatedAction,
-  GetAuthAction,
-  LoginAction,
-  NotAuthenitcatedAction
-} from './../actions/auth.actions';
+import { AuthActionTypes, AuthenticatedAction, GetAuthAction, LoginAction, NotAuthenitcatedAction } from './../actions/auth.actions';
+import { MapperService } from '../../../../shared/services/mapper/mapper.service';
 
 @Injectable()
 export class AuthEffects {
   constructor(
     private actions$: Actions,
     private authService: AuthService,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    private mapperService: MapperService
   ) {}
 
   @Effect()
@@ -40,7 +35,7 @@ export class AuthEffects {
     switchMap(() => this.authService.authState$),
     map(authData => {
       if (authData) {
-        const user = FirebaseToAdonaLoginConverter.convert(authData);
+        const user = this.mapperService.Users.toUser(authData);
         return new AuthenticatedAction(user);
       }
 

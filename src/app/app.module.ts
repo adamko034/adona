@@ -18,14 +18,10 @@ import { AuthEffects } from './modules/auth/store/effects/auth.effects';
 import { AuthService } from './shared/services/auth/auth.service';
 import { NavigationService } from './shared/services/navigation/navigation.service';
 import { metaReducers, reducers } from './store/reducers';
+import { MapperService } from './shared/services/mapper/mapper.service';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NavbarComponent,
-    ContentLayoutComponent,
-    AuthLayoutComponent
-  ],
+  declarations: [AppComponent, NavbarComponent, ContentLayoutComponent, AuthLayoutComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -43,7 +39,7 @@ import { metaReducers, reducers } from './store/reducers';
     EffectsModule.forRoot([AuthEffects]),
     !environment.production ? StoreDevtoolsModule.instrument() : []
   ],
-  providers: [AuthService, NavigationService, AuthFacade],
+  providers: [AuthService, NavigationService, AuthFacade, MapperService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

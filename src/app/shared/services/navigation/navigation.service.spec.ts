@@ -4,7 +4,7 @@ import { NavigationService } from './navigation.service';
 import { Router } from '@angular/router';
 
 describe('NavigationService', () => {
-  let routerSpyObj = jasmine.createSpyObj('Router', ['navigate']);
+  const routerSpyObj = jasmine.createSpyObj('Router', ['navigate']);
   let navigationService: NavigationService;
   let routerMock;
 
@@ -33,6 +33,6 @@ describe('NavigationService', () => {
     navigationService.toHome();
 
     // then
-    expect(routerMock.navigate).toHaveBeenCalledWith([homeRoute])
-  })
+    expect(routerMock.navigate).toHaveBeenCalledWith([homeRoute]);
+  });
 });
