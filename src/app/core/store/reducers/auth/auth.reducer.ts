@@ -1,6 +1,5 @@
-import { User } from '../../../../shared/models/auth/user-model';
-import { AuthActions } from '../actions/auth.actions';
-import { AuthActionTypes } from './../actions/auth.actions';
+import { User } from 'src/app/core/auth/model/user-model';
+import { AuthActions, AuthActionTypes } from '../../actions/auth.actions';
 
 export interface AuthState {
   loggedIn: boolean;

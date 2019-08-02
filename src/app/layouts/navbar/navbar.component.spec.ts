@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { AuthFacade } from '../../modules/auth/auth.facade';
+import { AuthFacade } from '../../core/auth/auth.facade';
 import { NavbarComponent } from './navbar.component';
 
 describe('NavbarComponent', () => {

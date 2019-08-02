@@ -1,4 +1,4 @@
-import { AppState } from 'src/app/store/reducers';
+import { AppState } from 'src/app/core/store/reducers';
 
 const getAuth = (state: AppState) => state.auth;
 

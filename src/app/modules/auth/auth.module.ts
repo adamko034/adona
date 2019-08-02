@@ -6,12 +6,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
-import { StoreModule } from '@ngrx/store';
 import { AuthRoutingModule } from './auth-routing.module';
 import { AuthFormComponent } from './components/auth-form/auth-form.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-import * as fromAuth from './store/reducers/auth.reducer';
 
 @NgModule({
   declarations: [LoginComponent, AuthFormComponent, RegisterComponent],
@@ -23,8 +21,7 @@ import * as fromAuth from './store/reducers/auth.reducer';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    FormsModule,
-    StoreModule.forFeature('auth', fromAuth.authReducer)
+    FormsModule
   ]
 })
 export class AuthModule {}

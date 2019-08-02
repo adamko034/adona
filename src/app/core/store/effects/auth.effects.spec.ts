@@ -3,12 +3,18 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { noop, Observable, of } from 'rxjs';
-import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
-import { UserTestBuilder } from 'src/app/shared/testUtils/builders/UserTestBuilder';
-import { AuthenticatedAction, GetAuthAction, LoginAction, LogoutAction, NotAuthenitcatedAction } from '../actions/auth.actions';
+import { AuthService } from 'src/app/core/auth/services/auth.service';
+import { MapperService } from 'src/app/core/services/mapper/mapper.service';
+import { NavigationService } from 'src/app/core/services/navigation/navigation.service';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/UserTestBuilder';
+import {
+  AuthenticatedAction,
+  GetAuthAction,
+  LoginAction,
+  LogoutAction,
+  NotAuthenitcatedAction
+} from '../actions/auth.actions';
 import { AuthEffects } from './auth.effects';
-import { MapperService } from '../../../../shared/services/mapper/mapper.service';
 
 describe('Auth Effects', () => {
   let effects: AuthEffects;

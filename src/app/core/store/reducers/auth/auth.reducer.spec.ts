@@ -1,6 +1,6 @@
-import { User } from 'src/app/shared/models/auth/user-model';
-import { UserTestBuilder } from 'src/app/shared/testUtils/builders/UserTestBuilder';
-import { AuthenticatedAction, NotAuthenitcatedAction } from '../actions/auth.actions';
+import { User } from 'src/app/core/auth/model/user-model';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/UserTestBuilder';
+import { AuthenticatedAction, NotAuthenitcatedAction } from '../../actions/auth.actions';
 import { authReducer, initialAuthState } from './auth.reducer';
 
 describe('Auth Reducer', () => {

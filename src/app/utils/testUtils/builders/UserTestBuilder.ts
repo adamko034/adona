@@ -1,4 +1,4 @@
-import { User } from '../../models/auth/user-model';
+import { User } from 'src/app/core/auth/model/user-model';
 
 export class UserTestBuilder {
   private user: User;

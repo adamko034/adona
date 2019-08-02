@@ -3,11 +3,17 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { from, Observable } from 'rxjs';
 import { map, mapTo, switchMap, tap } from 'rxjs/operators';
-import { AuthService } from 'src/app/shared/services/auth/auth.service';
-import { CredentialsLogin } from './../../../../shared/models/auth/credentials-login.model';
-import { NavigationService } from './../../../../shared/services/navigation/navigation.service';
-import { AuthActionTypes, AuthenticatedAction, GetAuthAction, LoginAction, NotAuthenitcatedAction } from './../actions/auth.actions';
-import { MapperService } from '../../../../shared/services/mapper/mapper.service';
+import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
+import { AuthService } from 'src/app/core/auth/services/auth.service';
+import { MapperService } from 'src/app/core/services/mapper/mapper.service';
+import { NavigationService } from 'src/app/core/services/navigation/navigation.service';
+import {
+  AuthActionTypes,
+  AuthenticatedAction,
+  GetAuthAction,
+  LoginAction,
+  NotAuthenitcatedAction
+} from '../actions/auth.actions';
 
 @Injectable()
 export class AuthEffects {

@@ -1,14 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { of, Observable } from 'rxjs';
-import { AuthService } from './../../../shared/services/auth/auth.service';
+import { Observable, of } from 'rxjs';
+import { NavigationService } from '../../services/navigation/navigation.service';
+import { AuthService } from '../services/auth.service';
 import { AuthGuard } from './auth.guard';
-import { NavigationService } from '../../../shared/services/navigation/navigation.service';
 
 describe('AuthGuard', () => {
   const authServiceSpy = jasmine.createSpyObj('AuthService', ['authState$']);
-  const navigationServiceSpy = jasmine.createSpyObj('NavigationService', [
-    'toLogin'
-  ]);
+  const navigationServiceSpy = jasmine.createSpyObj('NavigationService', ['toLogin']);
 
   let navigationServiceMock;
   let authServiceMock;

@@ -1,5 +1,5 @@
-import { User } from '../../models/auth/user-model';
 import { Injectable } from '@angular/core';
+import { User } from 'src/app/core/auth/model/user-model';
 
 class UsersMapper {
   toUser(firebaseUser: firebase.User): User {

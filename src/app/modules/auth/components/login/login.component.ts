@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthFacade } from '../../auth.facade';
+import { AuthFacade } from '../../../../core/auth/auth.facade';
 
 @Component({
   selector: 'app-login',

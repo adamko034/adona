@@ -1,6 +1,13 @@
-import { UserTestBuilder } from 'src/app/shared/testUtils/builders/UserTestBuilder';
-import { CredentialsLogin } from '../../../../shared/models/auth/credentials-login.model';
-import { AuthActionTypes, AuthenticatedAction, GetAuthAction, LoginAction, LogoutAction, NotAuthenitcatedAction } from './auth.actions';
+import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/UserTestBuilder';
+import {
+  AuthActionTypes,
+  AuthenticatedAction,
+  GetAuthAction,
+  LoginAction,
+  LogoutAction,
+  NotAuthenitcatedAction
+} from './auth.actions';
 
 describe('Auth NGRX Actions', () => {
   const credentials: CredentialsLogin = {

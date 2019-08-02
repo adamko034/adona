@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
-import { CredentialsLogin } from 'src/app/shared/models/auth/credentials-login.model';
-import { User } from 'src/app/shared/models/auth/user-model';
+import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
+import { User } from 'src/app/core/auth/model/user-model';
 
 export enum AuthActionTypes {
   GetAuthAction = '[GetAuth] Action',
@@ -13,7 +13,7 @@ export enum AuthActionTypes {
 export class LoginAction implements Action {
   readonly type = AuthActionTypes.LoginAction;
 
-  constructor(public payload: CredentialsLogin) { }
+  constructor(public payload: CredentialsLogin) {}
 }
 
 export class LogoutAction implements Action {
@@ -27,7 +27,7 @@ export class GetAuthAction implements Action {
 export class AuthenticatedAction implements Action {
   readonly type = AuthActionTypes.AuthenticatedAction;
 
-  constructor(public payload: User) { }
+  constructor(public payload: User) {}
 }
 
 export class NotAuthenitcatedAction implements Action {

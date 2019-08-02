@@ -1,16 +1,9 @@
 import { Store } from '@ngrx/store';
-import { CredentialsLogin } from 'src/app/shared/models/auth/credentials-login.model';
-import { AppState } from 'src/app/store/reducers';
-import {
-  GetAuthAction,
-  LoginAction,
-  LogoutAction
-} from './store/actions/auth.actions';
-import { authQuery } from './store/selectors/auth.selectors';
+import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
+import { AppState } from 'src/app/core/store/reducers';
+import { GetAuthAction, LoginAction, LogoutAction } from '../store/actions/auth.actions';
 
 export class AuthFacade {
-  public auth$ = this.store.select(authQuery.getAuth);
-
   constructor(private store: Store<AppState>) {}
 
   public getAuth() {

@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule, MatInputModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AuthFacade } from '../../auth.facade';
+import { AuthFacade } from '../../../../core/auth/auth.facade';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
@@ -14,12 +14,7 @@ describe('LoginComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [LoginComponent],
-      imports: [
-        MatFormFieldModule,
-        MatInputModule,
-        FormsModule,
-        BrowserAnimationsModule
-      ],
+      imports: [MatFormFieldModule, MatInputModule, FormsModule, BrowserAnimationsModule],
       providers: [{ provide: AuthFacade, useValue: authFacadeSpy }]
     }).compileComponents();
   }));
