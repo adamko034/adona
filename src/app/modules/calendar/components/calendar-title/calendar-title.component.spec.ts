@@ -73,7 +73,7 @@ describe('CelendarTitleComponent', () => {
     fixture.detectChanges();
 
     // then
-    expect(h3.textContent).toBe(moment().format('dddd, MMMM DD, YYYY'));
+    expect(h3.textContent).toBe(moment().format('dddd, MMMM D, YYYY'));
   });
 
   it('should show month view if not passed', () => {
