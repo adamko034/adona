@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
-import { from, Observable, of } from 'rxjs';
-import { map, mapTo, switchMap, tap, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, mapTo, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { MapperService } from 'src/app/core/services/mapper/mapper.service';
@@ -12,8 +12,8 @@ import {
   AuthenticatedAction,
   GetAuthAction,
   LoginAction,
-  NotAuthenitcatedAction,
-  LoginFailedAction
+  LoginFailedAction,
+  NotAuthenitcatedAction
 } from '../actions/auth.actions';
 
 @Injectable()
@@ -30,20 +30,21 @@ export class AuthEffects {
     ofType(AuthActionTypes.LoginAction),
     map((action: LoginAction) => action.payload),
     switchMap((credentials: CredentialsLogin) => {
-      return this.authService.login(credentials);
-    }),
-    tap(() => this.navigationService.toHome()),
-    mapTo(new GetAuthAction()),
-    catchError(() => of(new LoginFailedAction()))
+      return this.authService.login(credentials).pipe(
+        mapTo(new GetAuthAction()),
+        tap(() => this.navigationService.toHome()),
+        catchError(() => of(new LoginFailedAction()))
+      );
+    })
   );
 
   @Effect()
   getAuth$: Observable<any> = this.actions$.pipe(
     ofType(AuthActionTypes.GetAuthAction),
-    switchMap(() => this.authService.authState$),
-    map(authData => {
-      if (authData) {
-        const user = this.mapperService.Users.toUser(authData);
+    mergeMap(() => this.authService.authState$),
+    map((firebaseUser: firebase.User) => {
+      if (firebaseUser) {
+        const user = this.mapperService.Users.toUser(firebaseUser);
         return new AuthenticatedAction(user);
       }
 
@@ -54,7 +55,7 @@ export class AuthEffects {
   @Effect()
   logOut$: Observable<Action> = this.actions$.pipe(
     ofType(AuthActionTypes.LogoutAction),
-    switchMap(() => from(this.authService.logout())),
+    switchMap(() => this.authService.logout()),
     mapTo(new NotAuthenitcatedAction()),
     tap(() => this.navigationService.toLogin())
   );

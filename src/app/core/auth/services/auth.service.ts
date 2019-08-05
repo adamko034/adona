@@ -14,9 +14,7 @@ export class AuthService {
   constructor(private fireAuth: AngularFireAuth) {}
 
   public login(credentials: CredentialsLogin): Observable<firebase.auth.UserCredential> {
-    return from(
-      this.fireAuth.auth.signInWithEmailAndPassword(credentials.email, credentials.password)
-    );
+    return from(this.fireAuth.auth.signInWithEmailAndPassword(credentials.email, credentials.password));
   }
 
   public logout(): Observable<void> {

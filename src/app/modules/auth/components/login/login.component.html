@@ -1,33 +1,26 @@
 <div class="login-container">
-  <form class="login-form" (ngSubmit)="login()">
+  <form class="login-form" [formGroup]="loginForm" (ngSubmit)="login()">
     <mat-form-field class="login-form-field">
-      <input matInput placeholder="Email" [(ngModel)]="credentials.email" name="email" />
-      <mat-error *ngIf="isFieldEmpty('email')">Email is <strong>required</strong></mat-error>
+      <input matInput placeholder="Email" formControlName="email" name="email" />
+      <mat-error id="login-form-email-error-required" *ngIf="emailNotValid()"
+        >Please enter a <strong>valid</strong> email address</mat-error
+      >
+      <mat-error id="login-form-email-error-invalid" *ngIf="emailEmpty()">Email is <strong>required</strong></mat-error>
     </mat-form-field>
 
     <mat-form-field class="login-form-field">
-      <input
-        type="password"
-        matInput
-        placeholder="Passoword"
-        [(ngModel)]="credentials.password"
-        name="password"
-      />
-      <mat-error *ngIf="isFieldEmpty('password')">Password is <strong>required</strong></mat-error>
+      <input type="password" matInput placeholder="Password" formControlName="password" name="password" />
+      <mat-error id="login-form-password-error" *ngIf="passwordEmpty()"
+        >Password is <strong>required</strong></mat-error
+      >
     </mat-form-field>
 
-    <button
-      (click)="login()"
-      [disabled]="loginDisabled()"
-      class="login-button"
-      mat-stroked-button
-      color="primary"
-    >
+    <button type="submit" [disabled]="!loginForm.valid" class="login-form-button" mat-stroked-button color="primary">
       Log in
     </button>
-  </form>
 
-  <div *ngIf="loginFailure$ | async">
-    error
-  </div>
+    <div class="login-form-error" *ngIf="loginFailure$ | async">
+      The user has not been found. Please enter correct email address and password.
+    </div>
+  </form>
 </div>

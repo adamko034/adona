@@ -25,7 +25,7 @@ describe('Auth Reducer', () => {
     it('should return the previous state for unknown action when user is logged in', () => {
       // given
       const action = {} as any;
-      const previousState = { loggedIn: true, user };
+      const previousState = { loggedIn: true, user, loginFailed: false };
 
       // when
       const result = authReducer(previousState, action);

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
-import { noop, Observable, of } from 'rxjs';
+import { noop, Observable, of, throwError } from 'rxjs';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { MapperService } from 'src/app/core/services/mapper/mapper.service';
 import { NavigationService } from 'src/app/core/services/navigation/navigation.service';
@@ -11,6 +11,7 @@ import {
   AuthenticatedAction,
   GetAuthAction,
   LoginAction,
+  LoginFailedAction,
   LogoutAction,
   NotAuthenitcatedAction
 } from '../actions/auth.actions';
@@ -44,6 +45,7 @@ describe('Auth Effects', () => {
   describe('log in effect', () => {
     it('should call auth service login method, navigate to home page and result GetAuth action ', () => {
       // given
+      authService.login.calls.reset();
       authService.login.and.callFake(() => of(noop));
       navigationService.toHome.and.callFake(() => of(noop));
 
@@ -54,8 +56,23 @@ describe('Auth Effects', () => {
 
       // when & then
       expect(effects.logIn$).toBeObservable(expected);
-      expect(authService.login).toHaveBeenCalledTimes(1);
+      expect(authService.login).toHaveBeenCalled();
       expect(navigationService.toHome).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return login failure action when login fails', () => {
+      // given
+      authService.login.and.callFake(() => throwError(new Error()));
+
+      const action = new LoginAction({ email: 'test', password: 'testPwd' });
+      const completion = new LoginFailedAction();
+      actions$ = hot('--a', { a: action });
+      const expected = cold('--b', { b: completion });
+
+      // when & then
+      expect(effects.logIn$).toBeObservable(expected);
+      // expect(authService.login).toHaveBeenCalled();
+      // expect(navigationService.toHome).toHaveBeenCalledTimes(0);
     });
   });
 

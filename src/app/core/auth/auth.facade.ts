@@ -1,10 +1,10 @@
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
 import { AppState } from 'src/app/core/store/reducers';
-import { GetAuthAction, LoginAction, LogoutAction } from '../store/actions/auth.actions';
-import { authQuery } from 'src/app/core/store/selectors/auth.selectors';
-import { Observable } from 'rxjs';
 import { AuthState } from 'src/app/core/store/reducers/auth/auth.reducer';
+import { authQuery } from 'src/app/core/store/selectors/auth.selectors';
+import { LoginAction, LogoutAction } from '../store/actions/auth.actions';
 
 export class AuthFacade {
   constructor(private store: Store<AppState>) {}
