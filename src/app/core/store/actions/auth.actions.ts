@@ -7,7 +7,8 @@ export enum AuthActionTypes {
   AuthenticatedAction = '[Authenitcated] Action',
   NotAuthenticatedAction = '[Not Authenitcated] Action',
   LoginAction = '[Login] Action',
-  LogoutAction = '[Logout] Action'
+  LogoutAction = '[Logout] Action',
+  LoginFailedAction = '[Login Failed] Action'
 }
 
 export class LoginAction implements Action {
@@ -18,6 +19,10 @@ export class LoginAction implements Action {
 
 export class LogoutAction implements Action {
   readonly type = AuthActionTypes.LogoutAction;
+}
+
+export class LoginFailedAction implements Action {
+  readonly type = AuthActionTypes.LoginFailedAction;
 }
 
 export class GetAuthAction implements Action {
@@ -39,4 +44,5 @@ export type AuthActions =
   | AuthenticatedAction
   | NotAuthenitcatedAction
   | LoginAction
-  | LogoutAction;
+  | LogoutAction
+  | LoginFailedAction;

@@ -4,11 +4,13 @@ import { AuthActions, AuthActionTypes } from '../../actions/auth.actions';
 export interface AuthState {
   loggedIn: boolean;
   user: User;
+  loginFailed: boolean;
 }
 
 export const initialAuthState: AuthState = {
   loggedIn: false,
-  user: undefined
+  user: undefined,
+  loginFailed: false
 };
 
 export function authReducer(state = initialAuthState, action: AuthActions): AuthState {
@@ -16,11 +18,19 @@ export function authReducer(state = initialAuthState, action: AuthActions): Auth
     case AuthActionTypes.AuthenticatedAction:
       return {
         loggedIn: true,
+        loginFailed: false,
         user: action.payload
       };
     case AuthActionTypes.NotAuthenticatedAction:
       return {
         loggedIn: false,
+        loginFailed: false,
+        user: undefined
+      };
+    case AuthActionTypes.LoginFailedAction:
+      return {
+        loggedIn: false,
+        loginFailed: true,
         user: undefined
       };
     default:

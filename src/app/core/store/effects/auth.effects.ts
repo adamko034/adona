@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
-import { from, Observable } from 'rxjs';
-import { map, mapTo, switchMap, tap } from 'rxjs/operators';
+import { from, Observable, of } from 'rxjs';
+import { map, mapTo, switchMap, tap, catchError } from 'rxjs/operators';
 import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { MapperService } from 'src/app/core/services/mapper/mapper.service';
@@ -12,7 +12,8 @@ import {
   AuthenticatedAction,
   GetAuthAction,
   LoginAction,
-  NotAuthenitcatedAction
+  NotAuthenitcatedAction,
+  LoginFailedAction
 } from '../actions/auth.actions';
 
 @Injectable()
@@ -32,7 +33,8 @@ export class AuthEffects {
       return this.authService.login(credentials);
     }),
     tap(() => this.navigationService.toHome()),
-    mapTo(new GetAuthAction())
+    mapTo(new GetAuthAction()),
+    catchError(() => of(new LoginFailedAction()))
   );
 
   @Effect()

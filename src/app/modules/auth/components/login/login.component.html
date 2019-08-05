@@ -2,14 +2,32 @@
   <form class="login-form" (ngSubmit)="login()">
     <mat-form-field class="login-form-field">
       <input matInput placeholder="Email" [(ngModel)]="credentials.email" name="email" />
+      <mat-error *ngIf="isFieldEmpty('email')">Email is <strong>required</strong></mat-error>
     </mat-form-field>
 
     <mat-form-field class="login-form-field">
-      <input type="password" matInput placeholder="Passoword" [(ngModel)]="credentials.password" name="password" />
+      <input
+        type="password"
+        matInput
+        placeholder="Passoword"
+        [(ngModel)]="credentials.password"
+        name="password"
+      />
+      <mat-error *ngIf="isFieldEmpty('password')">Password is <strong>required</strong></mat-error>
     </mat-form-field>
 
-    <button (click)="login()" class="login-button" mat-stroked-button color="primary">
+    <button
+      (click)="login()"
+      [disabled]="loginDisabled()"
+      class="login-button"
+      mat-stroked-button
+      color="primary"
+    >
       Log in
     </button>
   </form>
+
+  <div *ngIf="loginFailure$ | async">
+    error
+  </div>
 </div>
