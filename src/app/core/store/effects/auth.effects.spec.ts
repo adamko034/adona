@@ -40,12 +40,14 @@ describe('Auth Effects', () => {
     effects = TestBed.get<AuthEffects>(AuthEffects);
     navigationService = TestBed.get<NavigationService>(NavigationService);
     authService = TestBed.get<AuthService>(AuthService);
+
+    authService.login.calls.reset();
+    navigationService.toHome.calls.reset();
   });
 
   describe('log in effect', () => {
     it('should call auth service login method, navigate to home page and result GetAuth action ', () => {
       // given
-      authService.login.calls.reset();
       authService.login.and.callFake(() => of(noop));
       navigationService.toHome.and.callFake(() => of(noop));
 
@@ -71,8 +73,8 @@ describe('Auth Effects', () => {
 
       // when & then
       expect(effects.logIn$).toBeObservable(expected);
-      // expect(authService.login).toHaveBeenCalled();
-      // expect(navigationService.toHome).toHaveBeenCalledTimes(0);
+      expect(authService.login).toHaveBeenCalledTimes(1);
+      expect(navigationService.toHome).toHaveBeenCalledTimes(0);
     });
   });
 
