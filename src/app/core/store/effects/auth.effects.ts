@@ -10,7 +10,7 @@ import { NavigationService } from 'src/app/core/services/navigation/navigation.s
 import {
   AuthActionTypes,
   AuthenticatedAction,
-  GetAuthAction,
+  AuthRequestedAction,
   LoginAction,
   LoginFailedAction,
   NotAuthenitcatedAction
@@ -27,11 +27,11 @@ export class AuthEffects {
 
   @Effect()
   logIn$: Observable<Action> = this.actions$.pipe(
-    ofType(AuthActionTypes.LoginAction),
+    ofType(AuthActionTypes.Login),
     map((action: LoginAction) => action.payload),
     switchMap((credentials: CredentialsLogin) => {
       return this.authService.login(credentials).pipe(
-        mapTo(new GetAuthAction()),
+        mapTo(new AuthRequestedAction()),
         tap(() => this.navigationService.toHome()),
         catchError(() => of(new LoginFailedAction()))
       );
@@ -40,7 +40,7 @@ export class AuthEffects {
 
   @Effect()
   getAuth$: Observable<any> = this.actions$.pipe(
-    ofType(AuthActionTypes.GetAuthAction),
+    ofType(AuthActionTypes.AuthRequested),
     mergeMap(() => this.authService.authState$),
     map((firebaseUser: firebase.User) => {
       if (firebaseUser) {
@@ -54,7 +54,7 @@ export class AuthEffects {
 
   @Effect()
   logOut$: Observable<Action> = this.actions$.pipe(
-    ofType(AuthActionTypes.LogoutAction),
+    ofType(AuthActionTypes.Logout),
     switchMap(() => this.authService.logout()),
     mapTo(new NotAuthenitcatedAction()),
     tap(() => this.navigationService.toLogin())

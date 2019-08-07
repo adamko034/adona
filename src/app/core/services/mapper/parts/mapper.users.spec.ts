@@ -1,5 +1,5 @@
 import { UsersMapper } from './mapper.users';
-import { UserTestBuilder } from 'src/app/utils/testUtils/builders/UserTestBuilder';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 
 describe('Users Mapper', () => {
   it('should map from firebase user to user', () => {

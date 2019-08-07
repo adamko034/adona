@@ -1,15 +1,15 @@
 import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
-import { UserTestBuilder } from 'src/app/utils/testUtils/builders/UserTestBuilder';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import {
   AuthActionTypes,
   AuthenticatedAction,
-  GetAuthAction,
+  AuthRequestedAction,
   LoginAction,
   LogoutAction,
   NotAuthenitcatedAction
 } from './auth.actions';
 
-describe('Auth NGRX Actions', () => {
+describe('Auth Actions', () => {
   const credentials: CredentialsLogin = {
     email: 'test@test.com',
     password: 'test'
@@ -21,7 +21,7 @@ describe('Auth NGRX Actions', () => {
 
     // then
     expect({ ...action }).toEqual({
-      type: AuthActionTypes.LoginAction,
+      type: AuthActionTypes.Login,
       payload: credentials
     });
   });
@@ -31,15 +31,15 @@ describe('Auth NGRX Actions', () => {
     const action = new LogoutAction();
 
     // then
-    expect({ ...action }).toEqual({ type: AuthActionTypes.LogoutAction });
+    expect({ ...action }).toEqual({ type: AuthActionTypes.Logout });
   });
 
   it('should create get auth action', () => {
     // when
-    const action = new GetAuthAction();
+    const action = new AuthRequestedAction();
 
     // then
-    expect({ ...action }).toEqual({ type: AuthActionTypes.GetAuthAction });
+    expect({ ...action }).toEqual({ type: AuthActionTypes.AuthRequested });
   });
 
   it('should create authenicated action', () => {
@@ -51,7 +51,7 @@ describe('Auth NGRX Actions', () => {
 
     // then
     expect({ ...action }).toEqual({
-      type: AuthActionTypes.AuthenticatedAction,
+      type: AuthActionTypes.Authenticated,
       payload: user
     });
   });
@@ -62,7 +62,7 @@ describe('Auth NGRX Actions', () => {
 
     // then
     expect({ ...action }).toEqual({
-      type: AuthActionTypes.NotAuthenticatedAction
+      type: AuthActionTypes.NotAuthenticated
     });
   });
 });

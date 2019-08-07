@@ -6,10 +6,10 @@ import { noop, Observable, of, throwError } from 'rxjs';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { MapperService } from 'src/app/core/services/mapper/mapper.service';
 import { NavigationService } from 'src/app/core/services/navigation/navigation.service';
-import { UserTestBuilder } from 'src/app/utils/testUtils/builders/UserTestBuilder';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import {
   AuthenticatedAction,
-  GetAuthAction,
+  AuthRequestedAction,
   LoginAction,
   LoginFailedAction,
   LogoutAction,
@@ -52,7 +52,7 @@ describe('Auth Effects', () => {
       navigationService.toHome.and.callFake(() => of(noop));
 
       const action = new LoginAction({ email: 'test', password: 'testPwd' });
-      const completion = new GetAuthAction();
+      const completion = new AuthRequestedAction();
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
 
@@ -84,7 +84,7 @@ describe('Auth Effects', () => {
       const firebaseLogin = new UserTestBuilder().withDefaultData().buildFirebaseUser();
       authService.authState$ = of(firebaseLogin);
 
-      const action = new GetAuthAction();
+      const action = new AuthRequestedAction();
       const completion = new AuthenticatedAction(new MapperService().Users.toUser(firebaseLogin));
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
@@ -96,7 +96,7 @@ describe('Auth Effects', () => {
     it('should result in Not Authenticated action if user is not logged in', () => {
       // given
       authService.authState$ = of(null);
-      const action = new GetAuthAction();
+      const action = new AuthRequestedAction();
       const completion = new NotAuthenitcatedAction();
 
       actions$ = hot('--a', { a: action });

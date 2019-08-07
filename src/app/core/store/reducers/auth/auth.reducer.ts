@@ -15,19 +15,19 @@ export const initialAuthState: AuthState = {
 
 export function authReducer(state = initialAuthState, action: AuthActions): AuthState {
   switch (action.type) {
-    case AuthActionTypes.AuthenticatedAction:
+    case AuthActionTypes.Authenticated:
       return {
         loggedIn: true,
         loginFailed: false,
         user: action.payload
       };
-    case AuthActionTypes.NotAuthenticatedAction:
+    case AuthActionTypes.NotAuthenticated:
       return {
         loggedIn: false,
         loginFailed: false,
         user: undefined
       };
-    case AuthActionTypes.LoginFailedAction:
+    case AuthActionTypes.LoginFailed:
       return {
         loggedIn: false,
         loginFailed: true,

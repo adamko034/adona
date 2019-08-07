@@ -1,5 +1,5 @@
 import { User } from 'src/app/core/auth/model/user-model';
-import { UserTestBuilder } from 'src/app/utils/testUtils/builders/UserTestBuilder';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { AuthenticatedAction, NotAuthenitcatedAction } from '../../actions/auth.actions';
 import { authReducer, initialAuthState } from './auth.reducer';
 
