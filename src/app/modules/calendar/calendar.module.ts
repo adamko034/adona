@@ -9,6 +9,8 @@ import { CalendarViewSwitchComponent } from './components/calendar-view-switch/c
 import { CalendarViewComponent } from './components/calendar-view/calendar-view.component';
 import { NewEventDialogComponent } from './components/new-event-dialog/new-event-dialog.component';
 import { CalendarComponent } from './pages/calendar/calendar.component';
+import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
+import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,7 @@ import { CalendarComponent } from './pages/calendar/calendar.component';
       useFactory: adapterFactory
     }),
     MatDialogModule
-  ]
+  ],
+  providers: [CalendarService, CalendarEffects]
 })
 export class AdonaCalendarModule {}
