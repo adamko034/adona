@@ -1,7 +1,8 @@
 import {
   AllEventsRequestedAction,
   CalendarActionTypes,
-  AllEventsLoadedAction
+  AllEventsLoadedAction,
+  EventsLoadedErrorAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
 
@@ -30,5 +31,13 @@ describe('Calendar Actions', () => {
       type: CalendarActionTypes.AllEventsLoaded,
       payload: { events }
     });
+  });
+
+  it('should create events error request acion', () => {
+    // when
+    const action = new EventsLoadedErrorAction();
+
+    // then
+    expect(action.type).toEqual(CalendarActionTypes.EventsLoadedError);
   });
 });

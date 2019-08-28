@@ -11,6 +11,8 @@ import { NewEventDialogComponent } from './components/new-event-dialog/new-event
 import { CalendarComponent } from './pages/calendar/calendar.component';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [
@@ -23,13 +25,15 @@ import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar
   entryComponents: [NewEventDialogComponent],
   imports: [
     CommonModule,
+    SharedModule,
     CalendarRoutingModule,
     CalendarModule.forRoot({
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
+    EffectsModule.forFeature([CalendarEffects]),
     MatDialogModule
   ],
-  providers: [CalendarService, CalendarEffects]
+  providers: [CalendarService]
 })
 export class AdonaCalendarModule {}

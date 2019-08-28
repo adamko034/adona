@@ -4,6 +4,7 @@ import {
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { EntityAdapter, createEntityAdapter, EntityState } from '@ngrx/entity';
+import { errors } from 'src/app/shared/constants/errors.constants';
 
 export interface CalendarState extends EntityState<Event> {
   eventsLoaded: boolean;

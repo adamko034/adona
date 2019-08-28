@@ -3,6 +3,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CalendarView } from 'angular-calendar';
 import { AdonaCalendarModule } from '../../calendar.module';
 import { CalendarComponent } from './calendar.component';
+import { Effect, EffectsModule } from '@ngrx/effects';
+import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
+import { StoreModule } from '@ngrx/store';
 
 describe('CalendarComponent', () => {
   let component: CalendarComponent;
@@ -10,7 +13,13 @@ describe('CalendarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [AdonaCalendarModule, BrowserAnimationsModule]
+      imports: [
+        AdonaCalendarModule,
+        BrowserAnimationsModule,
+        StoreModule.forRoot({}),
+        EffectsModule.forRoot([]),
+        EffectsModule.forFeature([CalendarEffects])
+      ]
     }).compileComponents();
   }));
 

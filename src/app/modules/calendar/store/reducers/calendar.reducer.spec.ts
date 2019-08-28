@@ -1,20 +1,18 @@
-import { Action } from 'rxjs/internal/scheduler/Action';
 import {
   calendarReducer,
   CalendarState
 } from 'src/app/modules/calendar/store/reducers/calendar.reducer';
 import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
 import { AllEventsLoadedAction } from 'src/app/modules/calendar/store/actions/calendar.actions';
+import { CalendarStateTestDataBuilder } from 'src/app/modules/calendar/utils/tests/calendar-state-test-data.builder';
 
 describe('Calendar Reducer', () => {
+  const calendarStateBuilder = new CalendarStateTestDataBuilder();
+
   it('should return initial state', () => {
     // given
     const action = {} as any;
-    const expected: CalendarState = {
-      ids: [],
-      entities: {},
-      eventsLoaded: false
-    };
+    const expected: CalendarState = calendarStateBuilder.fromEvents([]);
 
     // when
     const result = calendarReducer(undefined, action);
@@ -27,13 +25,7 @@ describe('Calendar Reducer', () => {
     // given
     const action = {} as any;
     const events = new EventsTestDataBuilder().addOneWithDefaultData().build();
-    const previousState = {
-      ids: [1],
-      entities: {
-        1: events[0]
-      },
-      eventsLoaded: true
-    };
+    const previousState = calendarStateBuilder.fromEvents(events);
 
     // when
     const result = calendarReducer(previousState, action);
@@ -51,25 +43,8 @@ describe('Calendar Reducer', () => {
       .addOneWithDefaultData()
       .build();
 
-    const previousState = {
-      ids: ['0', '1'],
-      entities: {
-        0: events[0],
-        1: events[1]
-      },
-      eventsLoaded: true
-    };
-
-    const expectedState = {
-      ids: ['0', '1', '2', '3'],
-      entities: {
-        0: events[0],
-        1: events[1],
-        2: events[2],
-        3: events[3]
-      },
-      eventsLoaded: true
-    };
+    const previousState = calendarStateBuilder.fromEvents(events.slice(0, 2), true);
+    const expectedState = calendarStateBuilder.fromEvents(events, true);
 
     const action = new AllEventsLoadedAction({ events });
 

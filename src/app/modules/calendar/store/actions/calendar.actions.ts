@@ -3,7 +3,8 @@ import { Event } from 'src/app/modules/calendar/model/event.model';
 
 export enum CalendarActionTypes {
   AllEventsRequested = '[Calendar View] All Events Requested',
-  AllEventsLoaded = '[Calendar API] All Events Loaded'
+  AllEventsLoaded = '[Calendar API] All Events Loaded',
+  EventsLoadedError = '[Calendar API] Events Loaded Error'
 }
 
 export class AllEventsRequestedAction implements Action {
@@ -16,4 +17,13 @@ export class AllEventsLoadedAction implements Action {
   constructor(public payload: { events: Event[] }) {}
 }
 
-export type CalendarActions = AllEventsLoadedAction | AllEventsRequestedAction;
+export class EventsLoadedErrorAction implements Action {
+  readonly type = CalendarActionTypes.EventsLoadedError;
+
+  constructor(public payload?: { error: string }) {}
+}
+
+export type CalendarActions =
+  | AllEventsLoadedAction
+  | AllEventsRequestedAction
+  | EventsLoadedErrorAction;
