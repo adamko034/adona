@@ -4,6 +4,7 @@ import { CalendarState } from 'src/app/modules/calendar/store/reducers/calendar.
 import { Store } from '@ngrx/store';
 import { AllEventsRequestedAction } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { AppState } from 'src/app/core/store/reducers';
+import { CalendarFacade } from '../../store/calendar.facade';
 
 @Component({
   selector: 'app-calendar',
@@ -14,10 +15,10 @@ export class CalendarComponent implements OnInit {
   view = CalendarView.Month;
   viewDate = new Date();
 
-  constructor(private store: Store<AppState>) {}
+  constructor(private calendarFacade: CalendarFacade) {}
 
   ngOnInit() {
-    this.store.dispatch(new AllEventsRequestedAction());
+    this.calendarFacade.loadAllEvents();
   }
 
   onViewChanged(newView: CalendarView) {

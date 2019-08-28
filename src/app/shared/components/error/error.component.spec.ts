@@ -1,43 +1,44 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material';
+import { ErrorFacade } from 'src/app/core/error/error.facade';
 import { ErrorComponent } from './error.component';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { ErrorState } from 'src/app/core/store/reducers/error/error.reducer';
-import { Store } from '@ngrx/store';
-import { errorQueries } from 'src/app/core/store/selectors/error.selectors';
-import { CommonModule } from '@angular/common';
-import { cold } from 'jasmine-marbles';
 
-describe('ErrorComponent', () => {
+describe('Error Component', () => {
   let component: ErrorComponent;
   let fixture: ComponentFixture<ErrorComponent>;
-  let mockStore: MockStore<ErrorState>;
+  const errorFacade = jasmine.createSpyObj('ErrorFacade', ['getErrors']);
+  const snackBar = jasmine.createSpyObj('SnackBar', ['open']);
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [MatSnackBarModule],
       declarations: [ErrorComponent],
-      providers: [provideMockStore()]
+      providers: [{ provide: ErrorFacade, useValue: errorFacade }, { provide: MatSnackBar, useValue: snackBar }]
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ErrorComponent);
     component = fixture.componentInstance;
-    mockStore = TestBed.get<Store<ErrorState>>(Store);
+
     fixture.detectChanges();
+    errorFacade.getErrors.calls.reset();
   });
 
-  describe('errors observable', () => {
-    it('should have new error message', () => {
-      // given
-      mockStore.overrideSelector(errorQueries.selectErrorMessage, 'This is new error');
-      const expected$ = cold('b', { b: 'This is new error' });
-
+  describe('On Init', () => {
+    it('should subscribe to errors from facade', () => {
       // when
       component.ngOnInit();
 
       // then
-      expect(component.errors$).toBeObservable(expected$);
+      expect(errorFacade.getErrors).toHaveBeenCalledTimes(1);
+    });
+
+    it('should open snack bar if new error occurs', () => {
+      // given
+
+      // when
+      component.ngOnInit();
     });
   });
 });
