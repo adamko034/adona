@@ -33,12 +33,5 @@ describe('Error Component', () => {
       // then
       expect(errorFacade.getErrors).toHaveBeenCalledTimes(1);
     });
-
-    it('should open snack bar if new error occurs', () => {
-      // given
-
-      // when
-      component.ngOnInit();
-    });
   });
 });
