@@ -1,9 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material';
+import { of } from 'rxjs';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
 import { ErrorComponent, ErrorContentComponent } from './error.component';
-import { hot } from 'jasmine-marbles';
-import { Observable, of } from 'rxjs';
 
 describe('Error Component', () => {
   let component: ErrorComponent;
@@ -15,10 +14,7 @@ describe('Error Component', () => {
     TestBed.configureTestingModule({
       imports: [MatSnackBarModule],
       declarations: [ErrorComponent],
-      providers: [
-        { provide: ErrorFacade, useValue: errorFacade },
-        { provide: MatSnackBar, useValue: snackBar }
-      ]
+      providers: [{ provide: ErrorFacade, useValue: errorFacade }, { provide: MatSnackBar, useValue: snackBar }]
     }).compileComponents();
   });
 
@@ -70,6 +66,19 @@ describe('Error Component', () => {
 
       // then
       expect(snackBar.openFromComponent).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('On Destroy', () => {
+    it('should unsubscribe subscriptions', () => {
+      // given
+      const errorSubscriptionSpy = spyOn((component as any).errorsSubscription, 'unsubscribe');
+
+      // when
+      component.ngOnDestroy();
+
+      // then
+      expect(errorSubscriptionSpy).toHaveBeenCalledTimes(1);
     });
   });
 });
