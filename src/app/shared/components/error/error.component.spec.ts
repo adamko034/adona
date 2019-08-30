@@ -1,19 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
-import { ErrorComponent } from './error.component';
+import { ErrorComponent, ErrorContentComponent } from './error.component';
+import { hot } from 'jasmine-marbles';
+import { Observable, of } from 'rxjs';
 
 describe('Error Component', () => {
   let component: ErrorComponent;
   let fixture: ComponentFixture<ErrorComponent>;
   const errorFacade = jasmine.createSpyObj('ErrorFacade', ['getErrors']);
-  const snackBar = jasmine.createSpyObj('SnackBar', ['open']);
+  const snackBar = jasmine.createSpyObj('SnackBar', ['openFromComponent']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [MatSnackBarModule],
       declarations: [ErrorComponent],
-      providers: [{ provide: ErrorFacade, useValue: errorFacade }, { provide: MatSnackBar, useValue: snackBar }]
+      providers: [
+        { provide: ErrorFacade, useValue: errorFacade },
+        { provide: MatSnackBar, useValue: snackBar }
+      ]
     }).compileComponents();
   });
 
@@ -21,8 +26,15 @@ describe('Error Component', () => {
     fixture = TestBed.createComponent(ErrorComponent);
     component = fixture.componentInstance;
 
+    errorFacade.getErrors.and.callFake(() => of('This is new error'));
+
     fixture.detectChanges();
     errorFacade.getErrors.calls.reset();
+    snackBar.openFromComponent.calls.reset();
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 
   describe('On Init', () => {
@@ -32,6 +44,32 @@ describe('Error Component', () => {
 
       // then
       expect(errorFacade.getErrors).toHaveBeenCalledTimes(1);
+    });
+
+    it('should open snack bar if new error occurs', () => {
+      // when
+      component.ngOnInit();
+
+      // then
+      expect(snackBar.openFromComponent).toHaveBeenCalledTimes(1);
+      expect(snackBar.openFromComponent).toHaveBeenCalledWith(ErrorContentComponent, {
+        duration: 5 * 1000,
+        data: {
+          message: 'This is new error'
+        }
+      });
+    });
+
+    it('should not open snack bar if message is null', () => {
+      // given
+      errorFacade.getErrors.and.returnValue(of(null));
+      fixture.detectChanges();
+
+      // when
+      component.ngOnInit();
+
+      // then
+      expect(snackBar.openFromComponent).not.toHaveBeenCalled();
     });
   });
 });
