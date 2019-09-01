@@ -90,7 +90,7 @@ describe('Auth Effects', () => {
       const expected = cold('--b', { b: completion });
 
       // when & then
-      expect(effects.getAuth$).toBeObservable(expected);
+      expect(effects.authRequested).toBeObservable(expected);
     });
 
     it('should result in Not Authenticated action if user is not logged in', () => {
@@ -102,7 +102,7 @@ describe('Auth Effects', () => {
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
 
-      expect(effects.getAuth$).toBeObservable(expected);
+      expect(effects.authRequested).toBeObservable(expected);
     });
   });
 

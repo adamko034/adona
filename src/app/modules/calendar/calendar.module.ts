@@ -14,6 +14,7 @@ import { CalendarViewComponent } from './components/calendar-view/calendar-view.
 import { NewEventDialogComponent } from './components/new-event-dialog/new-event-dialog.component';
 import { CalendarComponent } from './pages/calendar/calendar.component';
 import { CalendarFacade } from './store/calendar.facade';
+import { CalendarMapper } from 'src/app/modules/calendar/mappers/event.mapper';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,6 @@ import { CalendarFacade } from './store/calendar.facade';
     EffectsModule.forFeature([CalendarEffects]),
     MatDialogModule
   ],
-  providers: [CalendarService, CalendarFacade]
+  providers: [CalendarService, CalendarFacade, CalendarMapper]
 })
 export class AdonaCalendarModule {}

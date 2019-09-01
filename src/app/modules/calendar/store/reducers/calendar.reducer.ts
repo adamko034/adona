@@ -27,3 +27,5 @@ export function calendarReducer(
       return state;
   }
 }
+
+export const { selectAll, selectEntities, selectIds } = adapter.getSelectors();

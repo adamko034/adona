@@ -3,59 +3,66 @@ import { Observable, of } from 'rxjs';
 import { NavigationService } from '../../services/navigation/navigation.service';
 import { AuthService } from '../services/auth.service';
 import { AuthGuard } from './auth.guard';
+import { AuthFacade } from 'src/app/core/auth/auth.facade';
+import { cold } from 'jasmine-marbles';
 
 describe('AuthGuard', () => {
-  const authServiceSpy = jasmine.createSpyObj('AuthService', ['authState$']);
-  const navigationServiceSpy = jasmine.createSpyObj('NavigationService', ['toLogin']);
+  const authService = jasmine.createSpyObj('AuthService', ['authState$']);
+  const navigationService = jasmine.createSpyObj('NavigationService', ['toLogin']);
+  const authFacade = jasmine.createSpyObj('AuthFacade', ['authenticate', 'isLoggedIn']);
 
-  let navigationServiceMock;
-  let authServiceMock;
+  let guard: AuthGuard;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         AuthGuard,
-        { provide: NavigationService, useValue: navigationServiceSpy },
-        { provide: AuthService, useValue: authServiceSpy }
+        { provide: NavigationService, useValue: navigationService },
+        { provide: AuthService, useValue: authService },
+        { provide: AuthFacade, useValue: authFacade }
       ]
     });
-  });
 
-  beforeEach(() => {
-    authServiceMock = TestBed.get(AuthService);
-    navigationServiceMock = TestBed.get(NavigationService);
-  });
-
-  it('should create guard', () => {
-    // when
-    const guard = new AuthGuard(authServiceMock, navigationServiceMock);
-
-    // then
-    expect(guard).toBeTruthy();
+    guard = new AuthGuard(authFacade, authService, navigationService);
+    authFacade.authenticate.calls.reset();
   });
 
   it('should return false and redirect to login page', () => {
     // given
-    authServiceMock.authState$ = of(null);
+    authService.authState$ = of(null);
+    authFacade.isLoggedIn.and.returnValue(of(false));
 
     // when
-    const guard = new AuthGuard(authServiceMock, navigationServiceMock);
     const result: Observable<boolean> = guard.canActivate();
 
     // then
     result.subscribe(res => expect(res).toBeFalsy());
-    expect(navigationServiceMock.toLogin).toHaveBeenCalledTimes(1);
+    expect(navigationService.toLogin).toHaveBeenCalledTimes(1);
   });
 
-  it('should return true', () => {
+  it('should return true and not authenticate user', () => {
     // given
-    authServiceMock.authState$ = of({ state: true });
+    authService.authState$ = of({ state: true });
+    authFacade.isLoggedIn.and.returnValue(of(true));
 
     // when
-    const guard = new AuthGuard(authServiceMock, navigationServiceMock);
     const result: Observable<boolean> = guard.canActivate();
 
     // then
     result.subscribe(res => expect(res).toBeTruthy());
+    expect(authFacade.authenticate).not.toHaveBeenCalled();
+  });
+
+  it('should return true and authenticate user', () => {
+    // given
+    authService.authState$ = of({ state: true });
+    authFacade.isLoggedIn.and.returnValue(of(false));
+
+    // when
+    const result: Observable<boolean> = guard.canActivate();
+
+    // then
+    result.subscribe(res => expect(res).toBeTruthy());
+    expect(authFacade.authenticate).toHaveBeenCalledTimes(1);
   });
 });

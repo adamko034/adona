@@ -39,7 +39,7 @@ export class AuthEffects {
   );
 
   @Effect()
-  getAuth$: Observable<any> = this.actions$.pipe(
+  authRequested: Observable<any> = this.actions$.pipe(
     ofType(AuthActionTypes.AuthRequested),
     mergeMap(() => this.authService.authState$),
     map((firebaseUser: firebase.User) => {
