@@ -1,10 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CalendarDateFormatter, CalendarView, CalendarEvent } from 'angular-calendar';
-import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
-import { MatDialog } from '@angular/material';
-import { NewEventDialogComponent } from '../new-event-dialog/new-event-dialog.component';
-import { map } from 'rxjs/operators';
+import { CalendarDateFormatter, CalendarEvent, CalendarView } from 'angular-calendar';
 import { Observable } from 'rxjs';
+import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
 
 @Component({
   selector: 'app-calendar-view',
@@ -26,15 +23,7 @@ export class CalendarViewComponent implements OnInit {
   activeDayIsOpen = false;
   CalendarView = CalendarView;
 
-  constructor(public newEventModal: MatDialog) {}
+  constructor() {}
 
   ngOnInit() {}
-
-  public openNewEventModal(): void {
-    const dialogRef = this.newEventModal.open(NewEventDialogComponent, {
-      width: '250px'
-    });
-
-    dialogRef.afterClosed().pipe(map(result => console.log(result)));
-  }
 }

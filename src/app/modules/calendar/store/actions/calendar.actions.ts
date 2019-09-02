@@ -5,7 +5,8 @@ export enum CalendarActionTypes {
   AllEventsRequested = '[Calendar View] All Events Requested',
   AllEventsLoaded = '[Calendar API] All Events Loaded',
   EventsLoadedError = '[Calendar API] Events Loaded Error',
-  AddEvent = '[Calendar View] Add Event'
+  AddEvent = '[Calendar View] Add Event',
+  EventCreationError = '[Calendar View] Event Creation Error'
 }
 
 export class AllEventsRequestedAction implements Action {
@@ -30,8 +31,15 @@ export class AddEventAction implements Action {
   constructor(public payload: { event: Event }) {}
 }
 
+export class EventCreationErrorAction implements Action {
+  readonly type = CalendarActionTypes.EventCreationError;
+
+  constructor(public payload?: { error: string }) {}
+}
+
 export type CalendarActions =
   | AllEventsLoadedAction
   | AllEventsRequestedAction
   | EventsLoadedErrorAction
-  | AddEventAction;
+  | AddEventAction
+  | EventCreationErrorAction;

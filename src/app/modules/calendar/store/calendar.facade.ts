@@ -1,12 +1,12 @@
-import { Store, select } from '@ngrx/store';
-import { AllEventsRequestedAction } from './actions/calendar.actions';
-import { CalendarState } from './reducers/calendar.reducer';
-import { Observable } from 'rxjs';
-import { Event } from 'src/app/modules/calendar/model/event.model';
-import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
+import { select, Store } from '@ngrx/store';
 import { CalendarEvent } from 'calendar-utils';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CalendarMapper } from 'src/app/modules/calendar/mappers/event.mapper';
+import { Event } from 'src/app/modules/calendar/model/event.model';
+import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
+import { AddEventAction, AllEventsRequestedAction } from './actions/calendar.actions';
+import { CalendarState } from './reducers/calendar.reducer';
 
 export class CalendarFacade {
   constructor(private store: Store<CalendarState>, private mapper: CalendarMapper) {}
@@ -19,7 +19,7 @@ export class CalendarFacade {
   }
 
   public addEvent(event: Event): void {
-    this.store.dispatch(new AddEventAction(event));
+    this.store.dispatch(new AddEventAction({ event }));
   }
 
   public loadAllEvents(): void {

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-new-event-dialog',
@@ -6,10 +8,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./new-event-dialog.component.scss']
 })
 export class NewEventDialogComponent implements OnInit {
+  public form: FormGroup = new FormGroup({
+    title: new FormControl('', [Validators.required]),
+    startDate: new FormControl('', [Validators.required]),
+    endDate: new FormControl('')
+  });
 
-  constructor() { }
+  public constructor(private dialogRef: MatDialogRef<NewEventDialogComponent>) {}
 
-  ngOnInit() {
+  public ngOnInit() {}
+
+  public save() {
+    this.dialogRef.close(this.form.value);
   }
 
+  public cancel() {
+    this.dialogRef.close();
+  }
 }

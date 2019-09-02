@@ -1,21 +1,21 @@
 import { TestBed } from '@angular/core/testing';
-import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { Observable, of, from, throwError, noop } from 'rxjs';
-import { Action, Store, MemoizedSelector } from '@ngrx/store';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
+import { Action, MemoizedSelector, Store } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { cold, hot } from 'jasmine-marbles';
+import { Observable, of, throwError } from 'rxjs';
+import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
+import { Event } from 'src/app/modules/calendar/model/event.model';
+import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import {
-  AllEventsRequestedAction,
   AllEventsLoadedAction,
+  AllEventsRequestedAction,
   EventsLoadedErrorAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
-import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
-import { hot, cold } from 'jasmine-marbles';
-import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
-import { Event } from 'src/app/modules/calendar/model/event.model';
+import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
 import * as fromCalendar from 'src/app/modules/calendar/store/reducers/calendar.reducer';
 import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
-import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
+import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
 import { errors } from 'src/app/shared/constants/errors.constants';
 
 describe('Calendar Effects', () => {
@@ -109,7 +109,7 @@ describe('Calendar Effects', () => {
     it('should map to Error Occured action with default message', () => {
       // given
       const action = new EventsLoadedErrorAction();
-      const completion = new ErrorOccuredAction({ message: errors.DEFAULT_API_ERROR_MESSAGE });
+      const completion = new ErrorOccuredAction({ message: errors.DEFAULT_API_GET_ERROR_MESSAGE });
 
       actions$ = hot('-a', { a: action });
       const expected = cold('-b', { b: completion });

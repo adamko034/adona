@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CalendarView, CalendarEvent } from 'angular-calendar';
-import { CalendarState } from 'src/app/modules/calendar/store/reducers/calendar.reducer';
-import { Store } from '@ngrx/store';
-import { AllEventsRequestedAction } from 'src/app/modules/calendar/store/actions/calendar.actions';
-import { AppState } from 'src/app/core/store/reducers';
-import { CalendarFacade } from '../../store/calendar.facade';
+import { MatDialog } from '@angular/material';
+import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { Observable } from 'rxjs';
-import { Event } from 'src/app/modules/calendar/model/event.model';
+import { NewEventDialogComponent } from '../../components/new-event-dialog/new-event-dialog.component';
+import { CalendarFacade } from '../../store/calendar.facade';
 
 @Component({
   selector: 'app-calendar',
@@ -18,14 +15,22 @@ export class CalendarComponent implements OnInit {
   public viewDate = new Date();
   public events$: Observable<CalendarEvent[]>;
 
-  constructor(private calendarFacade: CalendarFacade) {}
+  constructor(private calendarFacade: CalendarFacade, public newEventModal: MatDialog) {}
 
   ngOnInit() {
     this.events$ = this.calendarFacade.events$;
     this.calendarFacade.loadAllEvents();
   }
 
-  onViewChanged(newView: CalendarView) {
+  public onViewChanged(newView: CalendarView) {
     this.view = newView;
+  }
+
+  public openNewEventModal(): void {
+    const dialogRef = this.newEventModal.open(NewEventDialogComponent, {
+      width: '250px'
+    });
+
+    dialogRef.afterClosed().subscribe(res => console.log(res));
   }
 }
