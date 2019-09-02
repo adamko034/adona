@@ -10,11 +10,11 @@
   </div>
 </div>
 
+<button (click)="openNewEventModal()">Add</button>
+
 <app-calendar-view
   *ngIf="events$ | async; let events"
   [events]="events"
   [view]="view"
   [viewDate]="viewDate"
 ></app-calendar-view>
-
-<button (click)="openNewEventModal()">Add</button>

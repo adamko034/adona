@@ -14,6 +14,7 @@ import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component
 import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
 import { CustomSerializer } from './utils/router-store/custom-serializer';
+import { MAT_DATE_LOCALE } from '@angular/material';
 
 @NgModule({
   declarations: [AppComponent, NavbarComponent, ContentLayoutComponent, AuthLayoutComponent],
@@ -28,7 +29,7 @@ import { CustomSerializer } from './utils/router-store/custom-serializer';
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     StoreRouterConnectingModule.forRoot({ stateKey: 'router', serializer: CustomSerializer })
   ],
-  providers: [],
+  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'pl-PL' }],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

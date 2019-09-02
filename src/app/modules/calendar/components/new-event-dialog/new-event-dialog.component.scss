@@ -1,0 +1,36 @@
+.dialog-container {
+  .full-width {
+    width: 100%;
+  }
+
+  .form-section-date-time {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .form-date-picker {
+    width: 180px;
+  }
+
+  .form-time-pickers {
+    .form-time-picker {
+      width: 60px;
+    }
+
+    .form-hour-picker {
+      margin-right: 10px;
+    }
+
+    .form-minutes-picker {
+      margin-left: 10px;
+    }
+  }
+
+  .dialog-actions {
+    float: right;
+
+    .dialog-actions-cancel {
+      margin-right: 10px;
+    }
+  }
+}

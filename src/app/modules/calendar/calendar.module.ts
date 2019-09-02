@@ -6,7 +6,9 @@ import {
   MatDatepickerModule,
   MatDialogModule,
   MatInputModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  MatCheckboxModule,
+  MatSelectModule
 } from '@angular/material';
 import { EffectsModule } from '@ngrx/effects';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
@@ -47,7 +49,9 @@ import { CalendarFacade } from './store/calendar.facade';
     MatNativeDateModule,
     MatButtonModule,
     MatDatepickerModule,
-    ReactiveFormsModule
+    MatCheckboxModule,
+    ReactiveFormsModule,
+    MatSelectModule
   ],
   providers: [CalendarService, CalendarFacade, CalendarMapper]
 })

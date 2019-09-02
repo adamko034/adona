@@ -1,24 +1,85 @@
-<div>
+<div class="dialog-container">
   <h2 mat-dialog-title>New event</h2>
   <mat-dialog-content>
     <form [formGroup]="form">
-      <mat-form-field>
-        <input matInput placeholder="Title" formControlName="title" name="email" />
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput placeholder="Choose start date" [matDatepicker]="startDatePicker" formControlName="startDate" />
-        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-        <mat-datepicker #startDatePicker></mat-datepicker>
-      </mat-form-field>
-      <mat-form-field>
-        <input matInput placeholder="Choose end date" [matDatepicker]="endDatePicker" formControlName="endDate" />
-        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
-        <mat-datepicker #endDatePicker></mat-datepicker>
-      </mat-form-field>
+      <div class="form-section">
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Title" formControlName="title" name="email" />
+        </mat-form-field>
+      </div>
+
+      <div class="form-section">
+        <mat-checkbox
+          (change)="showTimeSelects = !showTimeSelects"
+          [color]="'primary'"
+          formControlName="allDayEvent"
+          >All day event</mat-checkbox
+        >
+      </div>
+
+      <div class="form-section form-section-date-time">
+        <mat-form-field class="form-date-picker">
+          <input
+            matInput
+            [matDatepickerFilter]="excludePastDaysFilter"
+            placeholder="Start date"
+            [matDatepicker]="startDatePicker"
+            formControlName="startDate"
+          />
+          <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker touchUi #startDatePicker></mat-datepicker>
+        </mat-form-field>
+        <div *ngIf="showTimeSelects" class="form-time-pickers">
+          <mat-form-field class="form-time-picker form-hour-picker">
+            <mat-select name="startTimeHour" formControlName="startTimeHour">
+              <mat-option *ngFor="let hour of hours" [value]="hour">{{ hour }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <span>:</span>
+
+          <mat-form-field class="form-time-picker form-minutes-picker">
+            <mat-select name="startTimeMinutes" formControlName="startTimeMinutes">
+              <mat-option *ngFor="let minute of minutes" [value]="minute">{{ minute }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="form-section form-section-date-time">
+        <mat-form-field class="form-date-picker">
+          <input
+            matInput
+            placeholder="End date"
+            [matDatepicker]="endDatePicker"
+            formControlName="endDate"
+            [matDatepickerFilter]="excludePastDaysFilter"
+          />
+          <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker touchUi #endDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <div *ngIf="showTimeSelects" class="form-time-pickers">
+          <mat-form-field class="form-time-picker form-hour-picker">
+            <mat-select name="endTimeHour" formControlName="endTimeHour">
+              <mat-option *ngFor="let hour of hours" [value]="hour">{{ hour }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <span>:</span>
+
+          <mat-form-field class="form-time-picker form-minutes-picker">
+            <mat-select name="endTimeMinutes" formControlName="endTimeMinutes">
+              <mat-option *ngFor="let minute of minutes" [value]="minute">{{ minute }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
     </form>
   </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button (click)="cancel()">Cancel</button>
-    <button mat-button (click)="save()">Save</button>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-stroked-button (click)="cancel()" class="dialog-actions-cancel">Cancel</button>
+    <button mat-stroked-button (click)="save()" class="dialog-actions-save">Save</button>
   </mat-dialog-actions>
 </div>
