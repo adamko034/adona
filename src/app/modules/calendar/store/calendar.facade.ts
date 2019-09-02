@@ -18,6 +18,10 @@ export class CalendarFacade {
     );
   }
 
+  public addEvent(event: Event): void {
+    this.store.dispatch(new AddEventAction(event));
+  }
+
   public loadAllEvents(): void {
     this.store.dispatch(new AllEventsRequestedAction());
   }

@@ -4,7 +4,8 @@ import { Event } from 'src/app/modules/calendar/model/event.model';
 export enum CalendarActionTypes {
   AllEventsRequested = '[Calendar View] All Events Requested',
   AllEventsLoaded = '[Calendar API] All Events Loaded',
-  EventsLoadedError = '[Calendar API] Events Loaded Error'
+  EventsLoadedError = '[Calendar API] Events Loaded Error',
+  AddEvent = '[Calendar View] Add Event'
 }
 
 export class AllEventsRequestedAction implements Action {
@@ -23,7 +24,14 @@ export class EventsLoadedErrorAction implements Action {
   constructor(public payload?: { error: string }) {}
 }
 
+export class AddEventAction implements Action {
+  readonly type = CalendarActionTypes.AddEvent;
+
+  constructor(public payload: { event: Event }) {}
+}
+
 export type CalendarActions =
   | AllEventsLoadedAction
   | AllEventsRequestedAction
-  | EventsLoadedErrorAction;
+  | EventsLoadedErrorAction
+  | AddEventAction;

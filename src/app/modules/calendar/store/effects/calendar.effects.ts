@@ -42,4 +42,9 @@ export class CalendarEffects {
     ),
     map((message: string) => new ErrorOccuredAction({ message }))
   );
+
+  @Effect()
+  public addEvent$: Observable<Action> = this.actions$.pipe(
+    ofType<CalendarActions>(CalendarActionTypes.AddEvent)
+  );
 }

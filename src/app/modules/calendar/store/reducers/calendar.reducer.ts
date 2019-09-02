@@ -23,6 +23,8 @@ export function calendarReducer(
   switch (action.type) {
     case CalendarActionTypes.AllEventsLoaded:
       return adapter.addAll(action.payload.events, { ...state, eventsLoaded: true });
+    case CalendarActionTypes.AddEvent:
+      return adapter.addOne(action.payload.event, state);
     default:
       return state;
   }

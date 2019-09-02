@@ -15,6 +15,12 @@ export class CalendarMapper {
     };
   }
 
+  public toEvent(calendarEvent: CalendarEvent): Event {
+    const { id, title, start, end } = calendarEvent;
+
+    return { id: id.toString(), title, start, end };
+  }
+
   public toCalendarEvents(events: Event[]): CalendarEvent[] {
     return events.map(event => this.toCalendarEvent(event));
   }
