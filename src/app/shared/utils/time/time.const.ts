@@ -1,8 +1,10 @@
 import { KeyValue } from '@angular/common';
 
-export const dayHours: KeyValue<number, string>[] = Array.from(Array(25).keys()).map((x: number) => {
-  return { key: x, value: x <= 9 ? `0${x}` : x.toString() };
-});
+export const dayHours: KeyValue<number, string>[] = Array.from(Array(24).keys()).map(
+  (x: number) => {
+    return { key: x, value: x <= 9 ? `0${x}` : x.toString() };
+  }
+);
 
 export const hourQuartes: KeyValue<number, string>[] = [
   { key: 0, value: '00' },

@@ -9,7 +9,10 @@
       </div>
 
       <div class="form-section">
-        <mat-checkbox (change)="showTimeSelects = !showTimeSelects" [color]="'primary'" formControlName="allDayEvent"
+        <mat-checkbox
+          (change)="showTimeSelects = !showTimeSelects"
+          [color]="'primary'"
+          formControlName="allDayEvent"
           >All day event</mat-checkbox
         >
       </div>
@@ -18,7 +21,6 @@
         <mat-form-field class="form-date-picker">
           <input
             matInput
-            [matDatepickerFilter]="excludePastDaysFilter"
             placeholder="Start date"
             [matDatepicker]="startDatePicker"
             formControlName="startDate"
@@ -34,7 +36,9 @@
               formControlName="startTimeHour"
               (selectionChange)="startTimeHourChanged($event.value)"
             >
-              <mat-option *ngFor="let hour of startHours" [value]="hour.key">{{ hour.value }}</mat-option>
+              <mat-option *ngFor="let hour of startHours" [value]="hour.key">{{
+                hour.value
+              }}</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -46,7 +50,9 @@
               formControlName="startTimeMinutes"
               (selectionChange)="startTimeMinutesChanged($event.value)"
             >
-              <mat-option *ngFor="let minute of startMinutes" [value]="minute.key">{{ minute.value }}</mat-option>
+              <mat-option *ngFor="let minute of startMinutes" [value]="minute.key">{{
+                minute.value
+              }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -59,7 +65,7 @@
             placeholder="End date"
             [matDatepicker]="endDatePicker"
             formControlName="endDate"
-            [matDatepickerFilter]="excludePastDaysFilter"
+            [matDatepickerFilter]="excludeLowerThanStartDate"
           />
           <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
           <mat-datepicker touchUi #endDatePicker></mat-datepicker>
@@ -72,7 +78,9 @@
               formControlName="endTimeHour"
               (selectionChange)="endTimeHourChanged($event.value)"
             >
-              <mat-option *ngFor="let hour of endHours" [value]="hour.key">{{ hour.value }}</mat-option>
+              <mat-option *ngFor="let hour of endHours" [value]="hour.key">{{
+                hour.value
+              }}</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -80,7 +88,9 @@
 
           <mat-form-field class="form-time-picker form-minutes-picker">
             <mat-select name="endTimeMinutes" formControlName="endTimeMinutes">
-              <mat-option *ngFor="let minute of endMinutes" [value]="minute.key">{{ minute.value }}</mat-option>
+              <mat-option *ngFor="let minute of endMinutes" [value]="minute.key">{{
+                minute.value
+              }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
