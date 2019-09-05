@@ -2,9 +2,9 @@ import { KeyValue } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
-import * as moment from 'moment';
-import { hourQuartes } from 'src/app/shared/utils/time/time.const';
 import { TimeService } from 'src/app/shared/utils/time/time.service';
+import { NewEventFormValue } from '../../model/new-event-form.model';
+import { NewEventFormBuilder } from './builders/new-event-form.builder';
 
 @Component({
   selector: 'app-new-event-dialog',
@@ -15,12 +15,12 @@ export class NewEventDialogComponent implements OnInit {
   public showTimeSelects = true;
   public form: FormGroup = new FormGroup({
     title: new FormControl(''),
-    startDate: new FormControl(''),
-    startTimeHour: new FormControl(''),
-    startTimeMinutes: new FormControl(''),
-    endDate: new FormControl(''),
-    endTimeHour: new FormControl(''),
-    endTimeMinutes: new FormControl(''),
+    startDate: new FormControl(new Date()),
+    startTimeHour: new FormControl(12),
+    startTimeMinutes: new FormControl(0),
+    endDate: new FormControl(new Date()),
+    endTimeHour: new FormControl(12),
+    endTimeMinutes: new FormControl(0),
     allDayEvent: new FormControl(false)
   });
 
@@ -31,22 +31,27 @@ export class NewEventDialogComponent implements OnInit {
 
   public excludeLowerThanStartDate = (date: Date): boolean => {
     const startDate = new Date(this.form.value.startDate);
-    return date >= startDate;
+
+    if (this.timeService.areDatesTheSame(date, startDate)) {
+      const startHour = this.form.value.startTimeHour;
+      const startMinute = this.form.value.startTimeMinutes;
+
+      return !(startHour === 23 && startMinute === 45);
+    }
+
+    return this.timeService.isDateBeforeOrEqualThan(startDate, date);
   };
 
-  public constructor(
-    private dialogRef: MatDialogRef<NewEventDialogComponent>,
-    private timeService: TimeService
-  ) {}
+  public constructor(private dialogRef: MatDialogRef<NewEventDialogComponent>, private timeService: TimeService) {}
 
   public ngOnInit() {
-    this.form.patchValue({ startDate: new Date(), endDate: new Date() });
-    this.startMinutes = hourQuartes;
-    this.endMinutes = hourQuartes;
-    this.form.patchValue({ startTimeMinutes: 0, endTimeMinutes: 0 });
+    const today = new Date();
 
-    this.updateStartEndHoursAndMinutes(new Date());
-    //this.startTimeMinutesChanged(0);
+    this.startHours = this.timeService.DayHours.getAll();
+    this.startMinutes = this.timeService.HourQuarters.getAll();
+
+    this.adjustEndDateTo(today);
+    this.adjustEndTime();
   }
 
   public save() {
@@ -57,98 +62,98 @@ export class NewEventDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  public startDateChanged(newStartDate: Date) {}
+  public startDateChanged(newStartDate: Date) {
+    this.adjustEndDateTo(newStartDate);
+  }
 
-  public updateStartEndHoursAndMinutes(date: Date) {
-    this.startHours = this.timeService.DayHours.getAll();
-    this.endHours = this.timeService.DayHours.getAll();
-
-    let selectedStartHour = 12;
-    let selectedEndHour = 12;
-    let selectedStartMinute = 0;
-    let selectedEndMinute = 0;
-
-    if (this.timeService.isToday(date)) {
-      this.startHours = this.timeService.DayHours.getGreaterOrEqualThen(this.timeService.nowHour);
-      this.endHours = this.startHours;
-      selectedStartHour = this.startHours[0].key;
-      selectedEndHour = this.endHours[0].key;
-    }
-
-    this.form.patchValue({
-      startTimeHour: selectedStartHour,
-      endTimeHour: selectedEndHour
-    });
+  public endDateChanged(newEndDate: Date) {
+    this.adjustEndTime(null, newEndDate, null, null);
   }
 
   public startTimeHourChanged(newHour: number) {
-    //   this.endHours = this.startHours.filter(x => x.key >= newHour);
-    //   if (this.form.value.startTimeMinutes === 45) {
-    //     this.endHours = this.startHours.filter(x => x.key > newHour);
-    //   }
-    //   if (newHour > this.form.value.endTimeHour) {
-    //     this.form.patchValue({ endTimeHour: this.endHours[0].key });
-    //   }
+    this.adjustEndTime(null, null, newHour, null);
   }
 
   public startTimeMinutesChanged(newStartMinute: number) {
-    //   let newTimeMinutes = hourQuartes;
-    //   if (newStartMinute !== 45) {
-    //     this.endHours = this.startHours.filter(x => x.key >= this.form.value.startTimeHour);
-    //     newTimeMinutes = newTimeMinutes.filter(x => x.key > newStartMinute);
-    //   }
-    //   if (newStartMinute === 45) {
-    //     this.endHours = this.endHours.filter(x => x.key > this.endHours[0].key);
-    //   }
-    //   if (this.areStartEndHoursTheSame()) {
-    //     if (newStartMinute === 45) {
-    //       if (this.form.value.startTimeHour === 23) {
-    //         const selectedStartDate = new Date(this.form.value.startDate);
-    //         this.endHours = dayHours;
-    //         this.endMinutes = hourQuartes;
-    //         this.form.patchValue({
-    //           endDate: moment(selectedStartDate)
-    //             .add(1, 'd')
-    //             .toDate(),
-    //           endTimeHour: this.endHours[0].key,
-    //           endTimeMinutes: this.endMinutes[0].key
-    //         });
-    //       } else {
-    //         this.form.patchValue({ endTimeHour: this.form.value.startTimeHour + 1 });
-    //       }
-    //     }
-    //     this.endMinutes = newTimeMinutes;
-    //     this.form.patchValue({ endTimeMinutes: this.endMinutes[0].key });
-    //   }
+    this.adjustEndTime(null, null, null, newStartMinute);
   }
 
-  public endTimeHourChanged(newEndHour: number) {
-    //   this.endMinutes = hourQuartes;
-    //   if (
-    //     this.form.value.startTimeHour === newEndHour &&
-    //     this.form.value.startTimeMinutes >= this.form.value.endTimeMinutes
-    //   ) {
-    //     this.endMinutes = hourQuartes.filter(x => x.key > this.form.value.startTimeMinutes);
-    //     this.form.patchValue({ endTimeMinutes: this.endMinutes[0].key });
-    //   }
+  public endTimeHourChanged(newHour: number) {
+    this.adjustEndTime(null, null, null, null, newHour);
   }
 
-  private areStartEndDatesTheSame() {
-    const startDate = new Date(this.form.value.startDate);
-    const endDate = new Date(this.form.value.endDate);
+  private adjustEndDateTo(date: Date) {
+    let newEndDate = new Date();
 
-    return moment(startDate)
-      .startOf('day')
-      .isSame(moment(endDate).startOf('day'));
+    if (this.form.value.endDate) {
+      const endDate = new Date(this.form.value.endDate);
+      newEndDate = endDate;
+
+      if (this.timeService.isDateBefore(endDate, date)) {
+        newEndDate = date;
+      }
+    }
+
+    const formValue = NewEventFormBuilder.NewValues.withEndDate(newEndDate).build();
+    this.patchFormValue(formValue);
   }
 
-  private areStartEndHoursTheSame() {
-    return this.form.value.startTimeHour === this.form.value.endTimeHour;
+  private adjustEndTime(startDate?: Date, endDate?: Date, startHour?: number, startMinutes?: number, endHour?: number) {
+    this.handleMidnight(startHour, startMinutes);
+
+    startDate = startDate || new Date(this.form.value.startDate);
+    endDate = endDate || new Date(this.form.value.endDate);
+    startHour = startHour || this.form.value.startTimeHour;
+    startMinutes = startMinutes || this.form.value.startTimeMinutes;
+    let newEndHour = endHour || this.form.value.endTimeHour;
+    let newEndMinute = this.form.value.endTimeMinutes;
+
+    let newEndHours = this.timeService.DayHours.getAll();
+    let newEndMinutes = this.timeService.HourQuarters.getAll();
+
+    if (this.timeService.areDatesTheSame(startDate, endDate)) {
+      newEndHours = this.timeService.DayHours.getGreaterOrEqualThen(startHour);
+
+      if (startMinutes === 45) {
+        newEndHours = this.timeService.DayHours.getGreaterThen(startHour);
+      } else if (startHour === newEndHour) {
+        newEndMinutes = this.timeService.HourQuarters.getGreaterThan(startMinutes);
+      }
+
+      if (startHour >= newEndHour) {
+        newEndHour = newEndHours[0].key;
+        if (startMinutes >= newEndMinute) {
+          newEndMinute = newEndMinutes[0].key;
+        }
+      }
+    }
+
+    this.endHours = newEndHours;
+    this.endMinutes = newEndMinutes;
+
+    const formValue = NewEventFormBuilder.NewValues.withEndTimeHour(newEndHour)
+      .withEndTimeMinutes(newEndMinute)
+      .build();
+
+    this.patchFormValue(formValue);
   }
 
-  private isToday(date: Date) {
-    return moment()
-      .startOf('day')
-      .isSame(moment(date).startOf('day'));
+  private handleMidnight(hour?: number, minutes?: number) {
+    hour = hour || this.form.value.startTimeHour;
+    minutes = minutes || this.form.value.startTimeMinutes;
+
+    if (hour === 23 && minutes === 45) {
+      const formValue = NewEventFormBuilder.NewValues.withEndDate(
+        this.timeService.addDays(1, this.form.value.startDate)
+      )
+        .withEndTimeHour(12)
+        .withEndTimeMinutes(0)
+        .build();
+      this.patchFormValue(formValue);
+    }
+  }
+
+  private patchFormValue(value: NewEventFormValue) {
+    this.form.patchValue(value);
   }
 }

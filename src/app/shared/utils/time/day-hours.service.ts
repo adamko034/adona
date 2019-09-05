@@ -1,11 +1,11 @@
-import { dayHours } from 'src/app/shared/utils/time/time.const';
 import { KeyValue } from '@angular/common';
 import { Injectable } from '@angular/core';
+import { timeConts } from 'src/app/shared/utils/time/time.const';
 
 @Injectable()
 export class DayHoursService {
   public getAll(): KeyValue<number, string>[] {
-    return dayHours;
+    return timeConts.dayHours;
   }
 
   public getGreaterOrEqualThen(hour: number) {

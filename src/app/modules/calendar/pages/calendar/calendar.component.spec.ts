@@ -1,40 +1,15 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { EffectsModule } from '@ngrx/effects';
-import { StoreModule } from '@ngrx/store';
+import { MatDialog } from '@angular/material';
 import { CalendarView } from 'angular-calendar';
-import { CoreModule } from 'src/app/core/core.module';
-import { errorReducer } from 'src/app/core/store/reducers/error/error.reducer';
-import { AdonaCalendarModule } from '../../calendar.module';
 import { CalendarFacade } from '../../store/calendar.facade';
-import { calendarReducer } from '../../store/reducers/calendar.reducer';
 import { CalendarComponent } from './calendar.component';
 
 describe('CalendarComponent', () => {
   let component: CalendarComponent;
-  let fixture: ComponentFixture<CalendarComponent>;
-  let calendarFacade;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        AdonaCalendarModule,
-        BrowserAnimationsModule,
-        CoreModule,
-        StoreModule.forRoot({ calendar: calendarReducer, error: errorReducer }),
-        EffectsModule.forRoot([])
-      ],
-      providers: [{ provide: CalendarFacade, useValue: jasmine.createSpyObj('CalendarFacade', ['loadAllEvents']) }]
-    }).compileComponents();
-  }));
+  const calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', ['loadAllEvents']);
+  const dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CalendarComponent);
-    component = fixture.componentInstance;
-
-    fixture.detectChanges();
-    calendarFacade = TestBed.get<CalendarFacade>(CalendarFacade);
-
+    component = new CalendarComponent(calendarFacade, dialog);
     calendarFacade.loadAllEvents.calls.reset();
   });
 

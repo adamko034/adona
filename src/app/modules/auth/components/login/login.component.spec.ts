@@ -1,28 +1,12 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule, MatInputModule } from '@angular/material';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { AuthFacade } from '../../../../core/auth/auth.facade';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
-  let fixture: ComponentFixture<LoginComponent>;
 
-  const authFacadeSpy = jasmine.createSpyObj('AuthFacade', ['login', 'getLoginFailure']);
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [LoginComponent],
-      imports: [MatFormFieldModule, MatInputModule, ReactiveFormsModule, BrowserAnimationsModule],
-      providers: [{ provide: AuthFacade, useValue: authFacadeSpy }]
-    }).compileComponents();
-  }));
+  const authFacade = jasmine.createSpyObj('AuthFacade', ['login', 'getLoginFailure']);
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LoginComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    component = new LoginComponent(authFacade);
   });
 
   it('should default to empty credentials', () => {
@@ -32,14 +16,11 @@ describe('LoginComponent', () => {
   });
 
   it('should call facade on login', () => {
-    // given
-    const facade = TestBed.get(AuthFacade);
-
     // when
     component.login();
 
     // then
-    expect(facade.login).toHaveBeenCalledTimes(1);
+    expect(authFacade.login).toHaveBeenCalledTimes(1);
   });
 
   describe('validations', () => {
