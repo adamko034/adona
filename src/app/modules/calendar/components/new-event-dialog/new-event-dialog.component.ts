@@ -2,9 +2,10 @@ import { KeyValue } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
-import { TimeService } from 'src/app/shared/utils/time/time.service';
+import { TimeService } from 'src/app/shared/services/time/time.service';
 import { NewEventFormValue } from '../../model/new-event-form.model';
 import { NewEventFormBuilder } from './builders/new-event-form.builder';
+import { FromToDates } from 'src/app/shared/components/from-to-dates/model/from-to-dates.model';
 
 @Component({
   selector: 'app-new-event-dialog',
@@ -24,28 +25,7 @@ export class NewEventDialogComponent implements OnInit {
     allDayEvent: new FormControl(false)
   });
 
-  public startHours: KeyValue<number, string>[];
-  public startMinutes: KeyValue<number, string>[];
-  public endHours: KeyValue<number, string>[];
-  public endMinutes: KeyValue<number, string>[];
-
-  public excludeLowerThanStartDate = (date: Date): boolean => {
-    const startDate = new Date(this.form.value.startDate);
-
-    if (this.timeService.areDatesTheSame(date, startDate)) {
-      const startHour = this.form.value.startTimeHour;
-      const startMinute = this.form.value.startTimeMinutes;
-
-      return !(startHour === 23 && startMinute === 45);
-    }
-
-    return this.timeService.isDateBeforeOrEqualThan(startDate, date);
-  };
-
-  public constructor(
-    private dialogRef: MatDialogRef<NewEventDialogComponent>,
-    private timeService: TimeService
-  ) {}
+  public constructor(private dialogRef: MatDialogRef<NewEventDialogComponent>) {}
 
   public ngOnInit() {}
 
@@ -55,6 +35,10 @@ export class NewEventDialogComponent implements OnInit {
 
   public cancel() {
     this.dialogRef.close();
+  }
+
+  public fromToDateChanged(fromToDates: FromToDates) {
+    console.log(fromToDates);
   }
 
   private patchFormValue(value: NewEventFormValue) {

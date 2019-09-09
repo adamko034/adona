@@ -1,1 +1,95 @@
-<p>from-to-dates works!</p>
+<div class="from-to-dates-container">
+  <div class="from-to-dates-section">
+    <mat-checkbox (change)="allDayEventChanged()" [color]="'primary'">All day event</mat-checkbox>
+  </div>
+
+  <div class="from-to-dates-section">
+    <div class="from-to-dates-row">
+      <mat-form-field class="date-picker">
+        <input
+          matInput
+          name="startDate"
+          placeholder="Start date"
+          [matDatepicker]="startDatePicker"
+          [(ngModel)]="startDate"
+          (dateChange)="adjustValuesAndEmit()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker touchUi #startDatePicker></mat-datepicker>
+      </mat-form-field>
+      <div *ngIf="!isAllDay" class="time-pickers-row">
+        <mat-form-field class="time-picker hour-picker">
+          <mat-select
+            name="startTimeHour"
+            [(ngModel)]="startHour"
+            (selectionChange)="adjustValuesAndEmit()"
+          >
+            <mat-option *ngFor="let hour of startHoursOptions" [value]="hour.key">{{
+              hour.value
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <span>:</span>
+
+        <mat-form-field class="time-picker minutes-picker">
+          <mat-select
+            name="startTimeMinutes"
+            [(ngModel)]="startMinutes"
+            (selectionChange)="adjustValuesAndEmit()"
+          >
+            <mat-option *ngFor="let minute of startMinutesOptions" [value]="minute.key">{{
+              minute.value
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <div class="from-to-dates-section">
+    <div class="from-to-dates-row">
+      <mat-form-field class="date-picker">
+        <input
+          matInput
+          name="endDate"
+          placeholder="End date"
+          [matDatepicker]="endDatePicker"
+          [(ngModel)]="endDate"
+          [matDatepickerFilter]="excludeLowerThanStartDate"
+          (dateChange)="adjustValuesAndEmit()"
+        />
+        <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker touchUi #endDatePicker></mat-datepicker>
+      </mat-form-field>
+
+      <div *ngIf="!isAllDay" class="time-pickers-row">
+        <mat-form-field class="time-picker hour-picker">
+          <mat-select
+            name="endTimeHour"
+            [(ngModel)]="endHour"
+            (selectionChange)="adjustValuesAndEmit()"
+          >
+            <mat-option *ngFor="let hour of endHoursOptions" [value]="hour.key">{{
+              hour.value
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <span>:</span>
+
+        <mat-form-field class="time-picker minutes-picker">
+          <mat-select
+            name="endTimeMinutes"
+            [(ngModel)]="endMinutes"
+            (selectionChange)="adjustValuesAndEmit()"
+          >
+            <mat-option *ngFor="let minute of endMinutesOptions" [value]="minute.key">{{
+              minute.value
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</div>

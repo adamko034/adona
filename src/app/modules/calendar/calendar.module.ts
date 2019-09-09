@@ -48,10 +48,7 @@ import { CalendarFacade } from './store/calendar.facade';
     FormsModule,
     MatNativeDateModule,
     MatButtonModule,
-    MatDatepickerModule,
-    MatCheckboxModule,
-    ReactiveFormsModule,
-    MatSelectModule
+    ReactiveFormsModule
   ],
   providers: [CalendarService, CalendarFacade, CalendarMapper]
 })

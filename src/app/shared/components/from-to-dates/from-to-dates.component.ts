@@ -1,27 +1,37 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FromToDates } from 'src/app/shared/components/from-to-dates/model/from-to-dates.model';
 import { KeyValue } from '@angular/common';
-import { TimeService } from 'src/app/shared/utils/time/time.service';
+import { TimeService } from 'src/app/shared/services/time/time.service';
 
 @Component({
   selector: 'app-from-to-dates',
   templateUrl: './from-to-dates.component.html',
-  styleUrls: ['./from-to-dates.component.css']
+  styleUrls: ['./from-to-dates.component.scss']
 })
 export class FromToDatesComponent implements OnInit {
   @Output() dateChanged = new EventEmitter<FromToDates>();
 
-  private startDate: Date;
-  private endDate: Date;
-  private startHour: number;
-  private endHour: number;
-  private startMinutes: number;
-  private endMinutes: number;
+  public startHour: number;
+  public endHour: number;
+  public startMinutes: number;
+  public endMinutes: number;
 
+  public startDate: Date;
+  public endDate: Date;
   public startHoursOptions: KeyValue<number, string>[];
   public startMinutesOptions: KeyValue<number, string>[];
   public endHoursOptions: KeyValue<number, string>[];
   public endMinutesOptions: KeyValue<number, string>[];
+  public isAllDay = false;
+
+  public excludeLowerThanStartDate = (date: Date): boolean => {
+    if (this.timeService.Comparison.areDatesTheSame(date, this.startDate)) {
+      return !(this.startHour === 23 && this.startMinutes === 45);
+    }
+
+    return this.timeService.Comparison.isDateBeforeOrEqualThan(this.startDate, date);
+    // tslint:disable-next-line: semicolon
+  };
 
   constructor(private timeService: TimeService) {}
 
@@ -29,104 +39,77 @@ export class FromToDatesComponent implements OnInit {
     this.startHoursOptions = this.timeService.DayHours.getAll();
     this.startMinutesOptions = this.timeService.HourQuarters.getAll();
 
-    this.adjustEndDateTo(new Date());
-    this.adjustEndTime();
+    this.startDate = new Date();
+    this.endDate = new Date();
+    this.startHour = this.startDate.getHours();
+    this.startMinutes = 0;
+    this.endHour = this.startDate.getHours() + 1;
+    this.endMinutes = 0;
+
+    this.adjustValuesAndEmit();
   }
 
-  public startDateChanged(newStartDate: Date) {
-    this.adjustEndDateTo(newStartDate);
+  public allDayEventChanged(): void {
+    this.isAllDay = !this.isAllDay;
+    this.emitValue();
   }
 
-  public endDateChanged(newEndDate: Date) {
-    this.adjustEndTime(null, newEndDate, null, null);
-  }
+  public adjustValuesAndEmit() {
+    this.handleMidnight();
 
-  public startTimeHourChanged(newHour: number) {
-    this.adjustEndTime(null, null, newHour, null);
-  }
+    let newEndHoursOptions = this.timeService.DayHours.getAll();
+    let newEndMinutesOptions = this.timeService.HourQuarters.getAll();
 
-  public startTimeMinutesChanged(newStartMinute: number) {
-    this.adjustEndTime(null, null, null, newStartMinute);
-  }
-
-  public endTimeHourChanged(newHour: number) {
-    this.adjustEndTime(null, null, null, null, newHour);
-  }
-
-  private adjustEndDateTo(date: Date) {
-    let newEndDate = new Date();
-
-    if (this.form.value.endDate) {
-      const endDate = new Date(this.form.value.endDate);
-      newEndDate = endDate;
-
-      if (this.timeService.isDateBefore(endDate, date)) {
-        newEndDate = date;
-      }
+    if (this.timeService.Comparison.isDateBefore(this.endDate, this.startDate)) {
+      this.endDate = this.startDate;
     }
 
-    const formValue = NewEventFormBuilder.NewValues.withEndDate(newEndDate).build();
-    this.patchFormValue(formValue);
-  }
+    if (this.timeService.Comparison.areDatesTheSame(this.startDate, this.endDate)) {
+      newEndHoursOptions = this.timeService.DayHours.getGreaterOrEqualThen(this.startHour);
 
-  private adjustEndTime(
-    startDate?: Date,
-    endDate?: Date,
-    startHour?: number,
-    startMinutes?: number,
-    endHour?: number
-  ) {
-    this.handleMidnight(startHour, startMinutes);
-
-    startDate = startDate || new Date(this.form.value.startDate);
-    endDate = endDate || new Date(this.form.value.endDate);
-    startHour = startHour || this.form.value.startTimeHour;
-    startMinutes = startMinutes || this.form.value.startTimeMinutes;
-    let newEndHour = endHour || this.form.value.endTimeHour;
-    let newEndMinute = this.form.value.endTimeMinutes;
-
-    let newEndHours = this.timeService.DayHours.getAll();
-    let newEndMinutes = this.timeService.HourQuarters.getAll();
-
-    if (this.timeService.areDatesTheSame(startDate, endDate)) {
-      newEndHours = this.timeService.DayHours.getGreaterOrEqualThen(startHour);
-
-      if (startMinutes === 45) {
-        newEndHours = this.timeService.DayHours.getGreaterThen(startHour);
-      } else if (startHour === newEndHour) {
-        newEndMinutes = this.timeService.HourQuarters.getGreaterThan(startMinutes);
+      if (this.startMinutes === 45) {
+        newEndHoursOptions = this.timeService.DayHours.getGreaterThen(this.startHour);
+      } else if (this.startHour === this.endHour) {
+        newEndMinutesOptions = this.timeService.HourQuarters.getGreaterThan(this.startMinutes);
       }
 
-      if (startHour >= newEndHour) {
-        newEndHour = newEndHours[0].key;
-        if (startMinutes >= newEndMinute) {
-          newEndMinute = newEndMinutes[0].key;
+      if (this.startHour >= this.endHour) {
+        this.endHour = newEndHoursOptions[0].key;
+        if (this.startMinutes >= this.endMinutes) {
+          this.endMinutes = newEndMinutesOptions[0].key;
         }
       }
     }
 
-    this.endHours = newEndHours;
-    this.endMinutes = newEndMinutes;
+    this.endHoursOptions = newEndHoursOptions;
+    this.endMinutesOptions = newEndMinutesOptions;
 
-    const formValue = NewEventFormBuilder.NewValues.withEndTimeHour(newEndHour)
-      .withEndTimeMinutes(newEndMinute)
-      .build();
-
-    this.patchFormValue(formValue);
+    this.emitValue();
   }
 
-  private handleMidnight(hour?: number, minutes?: number) {
-    hour = hour || this.form.value.startTimeHour;
-    minutes = minutes || this.form.value.startTimeMinutes;
-
-    if (hour === 23 && minutes === 45) {
-      const formValue = NewEventFormBuilder.NewValues.withEndDate(
-        this.timeService.addDays(1, this.form.value.startDate)
-      )
-        .withEndTimeHour(12)
-        .withEndTimeMinutes(0)
-        .build();
-      this.patchFormValue(formValue);
+  private handleMidnight() {
+    if (
+      this.timeService.Comparison.areDatesTheSame(this.startDate, this.endDate) &&
+      this.startHour === 23 &&
+      this.startMinutes === 45
+    ) {
+      this.endDate = this.timeService.Manipulation.addDays(1, this.endDate);
+      this.endHour = 0;
+      this.endMinutes = 0;
     }
+  }
+
+  private emitValue(): void {
+    const value: FromToDates = {
+      from: this.timeService.Creation.getDateTimeFrom(
+        this.startDate,
+        this.startHour,
+        this.startMinutes
+      ),
+      to: this.timeService.Creation.getDateTimeFrom(this.endDate, this.endHour, this.endMinutes),
+      isAllDay: this.isAllDay
+    };
+
+    this.dateChanged.emit(value);
   }
 }
