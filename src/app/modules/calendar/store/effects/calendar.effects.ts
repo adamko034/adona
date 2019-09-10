@@ -6,23 +6,18 @@ import { catchError, filter, map, mergeMap, withLatestFrom } from 'rxjs/operator
 import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
-import {
-  AddEventAction,
-  AllEventsLoadedAction,
-  CalendarActions,
-  CalendarActionTypes,
-  EventCreationErrorAction,
-  EventsLoadedErrorAction
-} from 'src/app/modules/calendar/store/actions/calendar.actions';
+import { AllEventsLoadedAction, CalendarActions, CalendarActionTypes, EventCreationErrorAction, EventsLoadedErrorAction, NewEventRequestedAction } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { CalendarState } from 'src/app/modules/calendar/store/reducers/calendar.reducer';
 import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
 import { errors } from 'src/app/shared/constants/errors.constants';
+import { CalendarMapper } from '../../mappers/calendar.mapper';
 
 @Injectable()
 export class CalendarEffects {
   constructor(
     private actions$: Actions,
     private calendarService: CalendarService,
+    private mapper: CalendarMapper,
     private store: Store<CalendarState>
   ) {}
 
@@ -55,9 +50,8 @@ export class CalendarEffects {
   );
 
   @Effect()
-  public addEvent$: Observable<Action | void> = this.actions$.pipe(
-    ofType<CalendarActions>(CalendarActionTypes.AddEvent),
-    map((action: AddEventAction) => this.calendarService.addEvent(action.payload.event)),
-    catchError(() => of(new EventCreationErrorAction()))
+  public newEventRequested$: Observable<Action> = this.actions$.pipe(
+    ofType<CalendarActions>(CalendarActionTypes.NewEventRequested),
+    map((action: NewEventRequestedAction) => this.mapper.Event.)
   );
 }

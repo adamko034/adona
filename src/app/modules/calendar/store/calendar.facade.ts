@@ -2,10 +2,11 @@ import { select, Store } from '@ngrx/store';
 import { CalendarEvent } from 'calendar-utils';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CalendarMapper } from 'src/app/modules/calendar/mappers/event.mapper';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
-import { AddEventAction, AllEventsRequestedAction } from './actions/calendar.actions';
+import { CalendarMapper } from '../mappers/calendar.mapper';
+import { NewEventRequest } from '../model/new-event-request.model';
+import { AllEventsRequestedAction, NewEventRequestedAction } from './actions/calendar.actions';
 import { CalendarState } from './reducers/calendar.reducer';
 
 export class CalendarFacade {
@@ -14,12 +15,12 @@ export class CalendarFacade {
   public get events$(): Observable<CalendarEvent[]> {
     return this.store.pipe(
       select(calendarQueries.selectEvents),
-      map((events: Event[]) => this.mapper.toCalendarEvents(events))
+      map((events: Event[]) => this.mapper.CalendarEvent.fromEvents(events))
     );
   }
 
-  public addEvent(event: Event): void {
-    this.store.dispatch(new AddEventAction({ event }));
+  public addEvent(event: NewEventRequest): void {
+    this.store.dispatch(new NewEventRequestedAction({ newEvent: event }));
   }
 
   public loadAllEvents(): void {

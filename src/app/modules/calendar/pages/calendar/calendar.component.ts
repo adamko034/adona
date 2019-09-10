@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { CalendarEvent, CalendarView } from 'angular-calendar';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { NewEventDialogComponent } from '../../components/new-event-dialog/new-event-dialog.component';
+import { NewEventRequest } from '../../model/new-event-request.model';
 import { CalendarFacade } from '../../store/calendar.facade';
 
 @Component({
@@ -10,7 +11,9 @@ import { CalendarFacade } from '../../store/calendar.facade';
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss']
 })
-export class CalendarComponent implements OnInit {
+export class CalendarComponent implements OnInit, OnDestroy {
+  private dialogResultSubscription: Subscription;
+
   public view = CalendarView.Month;
   public viewDate = new Date();
   public events$: Observable<CalendarEvent[]>;
@@ -22,6 +25,10 @@ export class CalendarComponent implements OnInit {
     this.calendarFacade.loadAllEvents();
   }
 
+  ngOnDestroy() {
+    this.dialogResultSubscription.unsubscribe();
+  }
+
   public onViewChanged(newView: CalendarView) {
     this.view = newView;
   }
@@ -31,6 +38,8 @@ export class CalendarComponent implements OnInit {
       width: '400px'
     });
 
-    dialogRef.afterClosed().subscribe(res => console.log(res));
+    this.dialogResultSubscription = dialogRef.afterClosed().subscribe((newEventRequest: NewEventRequest) => {
+      this.calendarFacade.addEvent(newEventRequest);
+    });
   }
 }
