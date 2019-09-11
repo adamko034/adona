@@ -1,6 +1,5 @@
 export interface NewEventRequest {
-  id?: string;
-  title: boolean;
+  title: string;
   startDate: Date;
   endDate: Date;
   allDay: boolean;
