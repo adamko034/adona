@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CalendarDateFormatter, CalendarEvent, CalendarView } from 'angular-calendar';
-import { Observable } from 'rxjs';
+import { CalendarFacade } from '../../store/calendar.facade';
 import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
 
 @Component({
@@ -18,12 +18,12 @@ export class CalendarViewComponent implements OnInit {
   @Input() viewDate: Date;
   @Input() view: CalendarView;
   @Input() weekStartsOn: number;
-  @Input() events: Observable<CalendarEvent[]>;
+  @Input() events: CalendarEvent[];
 
-  activeDayIsOpen = false;
+  public activeDayIsOpen = true;
   CalendarView = CalendarView;
 
-  constructor() {}
+  constructor(private calendarFacade: CalendarFacade) {}
 
   ngOnInit() {}
 }
