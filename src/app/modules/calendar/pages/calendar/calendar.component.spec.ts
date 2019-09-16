@@ -5,12 +5,14 @@ import { CalendarComponent } from './calendar.component';
 
 describe('CalendarComponent', () => {
   let component: CalendarComponent;
-  const calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', ['loadAllEvents']);
+  const calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', [
+    'loadMonthEvents'
+  ]);
   const dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
 
   beforeEach(() => {
     component = new CalendarComponent(calendarFacade, dialog);
-    calendarFacade.loadAllEvents.calls.reset();
+    calendarFacade.loadMonthEvents.calls.reset();
   });
 
   describe('OnInit', () => {
@@ -19,7 +21,7 @@ describe('CalendarComponent', () => {
       component.ngOnInit();
 
       // then
-      expect(calendarFacade.loadAllEvents).toHaveBeenCalledTimes(1);
+      expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(1);
     });
   });
 

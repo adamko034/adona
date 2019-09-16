@@ -8,8 +8,8 @@ import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import {
-  AllEventsLoadedAction,
-  AllEventsRequestedAction,
+  EventsLoadedAction,
+  MonthEventsRequestedAction,
   EventsLoadedErrorAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
@@ -53,32 +53,33 @@ describe('Calendar Effects', () => {
       // given
       calendarService.getEvents.and.callFake(() => of(events));
 
-      const action = new AllEventsRequestedAction();
-      const completion = new AllEventsLoadedAction({ events });
+      const action = new MonthEventsRequestedAction({date: new Date()};
+      const completion = new EventsLoadedAction({ events });
       actions$ = hot('--a|', { a: action });
       const expected = cold('--b|', { b: completion });
 
       // when && then
-      expect(effects.allEventsRequested$).toBeObservable(expected);
+      expect(effects.monthEventsRequested$).toBeObservable(expected);
       expect(calendarService.getEvents).toHaveBeenCalledTimes(1);
+      expect(true).toBeFalsy()
     });
 
     it('should not load events if they were fetched before', () => {
       // given
       store.overrideSelector(calendarQueries.selectAllEventsLoaded, true);
 
-      const action = new AllEventsRequestedAction();
+      const action = new MonthEventsRequestedAction();
       actions$ = hot('--a|', { a: action });
       const expected = cold('---|');
 
       // when & then
-      expect(effects.allEventsRequested$).toBeObservable(expected);
+      expect(effects.monthEventsRequested$).toBeObservable(expected);
       expect(calendarService.getEvents).not.toHaveBeenCalled();
     });
 
     it('should return Events Loaded Error action when api call fail', () => {
       // given
-      const action = new AllEventsRequestedAction();
+      const action = new MonthEventsRequestedAction();
       const errored = new EventsLoadedErrorAction();
 
       calendarService.getEvents.and.returnValue(throwError(new Error()));
@@ -87,7 +88,7 @@ describe('Calendar Effects', () => {
       const expected = cold('(b|)', { b: errored });
 
       // when & then
-      expect(effects.allEventsRequested$).toBeObservable(expected);
+      expect(effects.monthEventsRequested$).toBeObservable(expected);
       expect(calendarService.getEvents).toHaveBeenCalledTimes(1);
     });
   });

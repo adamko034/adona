@@ -3,22 +3,24 @@ import { Event } from 'src/app/modules/calendar/model/event.model';
 import { NewEventRequest } from '../../model/new-event-request.model';
 
 export enum CalendarActionTypes {
-  AllEventsRequested = '[Calendar Page] All Events Requested',
-  AllEventsLoaded = '[Calendar API] All Events Loaded',
+  MonthEventsRequested = '[Calendar Page] Month Events Requested',
+  EventsLoaded = '[Calendar API] Events Loaded',
   EventsLoadedError = '[Calendar API] Events Loaded Error',
   NewEventRequested = '[Calendar Page] New Event Requested',
   NewEventAdded = '[Calendar API] New Event Added',
   EventCreationError = '[Calendar Page] Event Creation Error'
 }
 
-export class AllEventsRequestedAction implements Action {
-  readonly type = CalendarActionTypes.AllEventsRequested;
+export class MonthEventsRequestedAction implements Action {
+  readonly type = CalendarActionTypes.MonthEventsRequested;
+
+  constructor(public payload: { date: Date }) {}
 }
 
-export class AllEventsLoadedAction implements Action {
-  readonly type = CalendarActionTypes.AllEventsLoaded;
+export class EventsLoadedAction implements Action {
+  readonly type = CalendarActionTypes.EventsLoaded;
 
-  constructor(public payload: { events: Event[] }) {}
+  constructor(public payload: { events: Event[]; yearMonth: string }) {}
 }
 
 export class EventsLoadedErrorAction implements Action {
@@ -46,8 +48,8 @@ export class EventCreationErrorAction implements Action {
 }
 
 export type CalendarActions =
-  | AllEventsLoadedAction
-  | AllEventsRequestedAction
+  | EventsLoadedAction
+  | MonthEventsRequestedAction
   | EventsLoadedErrorAction
   | NewEventRequestedAction
   | NewEventAddedAction

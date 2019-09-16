@@ -4,7 +4,7 @@ import * as fromReducer from 'src/app/modules/calendar/store/reducers/calendar.r
 const selectCalendarState = createFeatureSelector<fromReducer.CalendarState>('calendar');
 const selectAllEventsLoaded = createSelector(
   selectCalendarState,
-  state => state.eventsLoaded
+  state => state.monthsLoaded
 );
 
 const selectEvents = createSelector(

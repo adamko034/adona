@@ -6,7 +6,7 @@ import { Event } from 'src/app/modules/calendar/model/event.model';
 import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
 import { CalendarMapper } from '../mappers/calendar.mapper';
 import { NewEventRequest } from '../model/new-event-request.model';
-import { AllEventsRequestedAction, NewEventRequestedAction } from './actions/calendar.actions';
+import { MonthEventsRequestedAction, NewEventRequestedAction } from './actions/calendar.actions';
 import { CalendarState } from './reducers/calendar.reducer';
 
 export class CalendarFacade {
@@ -23,7 +23,7 @@ export class CalendarFacade {
     this.store.dispatch(new NewEventRequestedAction({ newEvent: event }));
   }
 
-  public loadAllEvents(): void {
-    this.store.dispatch(new AllEventsRequestedAction());
+  public loadMonthEvents(date: Date): void {
+    this.store.dispatch(new MonthEventsRequestedAction({ date }));
   }
 }

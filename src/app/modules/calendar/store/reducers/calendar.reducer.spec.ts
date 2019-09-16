@@ -3,7 +3,7 @@ import {
   CalendarState
 } from 'src/app/modules/calendar/store/reducers/calendar.reducer';
 import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
-import { AllEventsLoadedAction } from 'src/app/modules/calendar/store/actions/calendar.actions';
+import { EventsLoadedAction } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { CalendarStateTestDataBuilder } from 'src/app/modules/calendar/utils/tests/calendar-state-test-data.builder';
 
 describe('Calendar Reducer', () => {
@@ -46,7 +46,7 @@ describe('Calendar Reducer', () => {
     const previousState = calendarStateBuilder.fromEvents(events.slice(0, 2), true);
     const expectedState = calendarStateBuilder.fromEvents(events, true);
 
-    const action = new AllEventsLoadedAction({ events });
+    const action = new EventsLoadedAction({ events });
 
     // when
     const result = calendarReducer(previousState, action);

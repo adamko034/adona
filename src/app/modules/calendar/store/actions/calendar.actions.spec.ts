@@ -1,7 +1,7 @@
 import {
-  AllEventsRequestedAction,
+  MonthEventsRequestedAction,
   CalendarActionTypes,
-  AllEventsLoadedAction,
+  EventsLoadedAction,
   EventsLoadedErrorAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
@@ -9,10 +9,10 @@ import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/even
 describe('Calendar Actions', () => {
   it('should create all events requested action', () => {
     // when
-    const action = new AllEventsRequestedAction();
+    const action = new MonthEventsRequestedAction();
 
     // then
-    expect({ ...action }).toEqual({ type: CalendarActionTypes.AllEventsRequested });
+    expect({ ...action }).toEqual({ type: CalendarActionTypes.MonthEventsRequested });
   });
 
   it('should create all events loaded action', () => {
@@ -24,11 +24,11 @@ describe('Calendar Actions', () => {
       .build();
 
     // when
-    const action = new AllEventsLoadedAction({ events });
+    const action = new EventsLoadedAction({ events });
 
     // then
     expect({ ...action }).toEqual({
-      type: CalendarActionTypes.AllEventsLoaded,
+      type: CalendarActionTypes.EventsLoaded,
       payload: { events }
     });
   });

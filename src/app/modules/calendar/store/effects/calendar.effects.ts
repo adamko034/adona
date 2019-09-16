@@ -8,33 +8,38 @@ import { Event } from 'src/app/modules/calendar/model/event.model';
 import { NewEventRequest } from 'src/app/modules/calendar/model/new-event-request.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import {
-  AllEventsLoadedAction,
+  EventsLoadedAction,
   CalendarActions,
   CalendarActionTypes,
   EventCreationErrorAction,
   EventsLoadedErrorAction,
   NewEventAddedAction,
-  NewEventRequestedAction
+  NewEventRequestedAction,
+  MonthEventsRequestedAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
-import { CalendarState } from 'src/app/modules/calendar/store/reducers/calendar.reducer';
-import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
 import { errors } from 'src/app/shared/constants/errors.constants';
+import { TimeService } from 'src/app/shared/services/time/time.service';
 
 @Injectable()
 export class CalendarEffects {
   constructor(
     private actions$: Actions,
     private calendarService: CalendarService,
-    private store: Store<CalendarState>
+    private timeService: TimeService
   ) {}
 
   @Effect()
-  public allEventsRequested$: Observable<Action> = this.actions$.pipe(
-    ofType<CalendarActions>(CalendarActionTypes.AllEventsRequested),
-    switchMap(() => this.store.pipe(select(calendarQueries.selectAllEventsLoaded))),
-    filter((eventsLoaded: boolean) => !eventsLoaded),
-    switchMap(() => this.calendarService.getEvents()),
-    map((events: Event[]) => new AllEventsLoadedAction({ events })),
+  public monthEventsRequested$: Observable<Action> = this.actions$.pipe(
+    ofType<CalendarActions>(CalendarActionTypes.MonthEventsRequested),
+    map((action: MonthEventsRequestedAction) => action.payload.date),
+    switchMap((date: Date) =>
+      this.calendarService.getMonthEvents(date).pipe(
+        map((events: Event[]) => {
+          const yearMonth = this.timeService.Extraction.getYearMonthString(date);
+          return new EventsLoadedAction({ events, yearMonth });
+        })
+      )
+    ),
     catchError(() => of(new EventsLoadedErrorAction()))
   );
 

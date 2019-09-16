@@ -22,7 +22,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.events$ = this.calendarFacade.events$;
-    this.calendarFacade.loadAllEvents();
+    this.calendarFacade.loadMonthEvents(this.viewDate);
   }
 
   ngOnDestroy() {
@@ -38,8 +38,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
       width: '400px'
     });
 
-    this.dialogResultSubscription = dialogRef.afterClosed().subscribe((newEventRequest: NewEventRequest) => {
-      this.calendarFacade.addEvent(newEventRequest);
-    });
+    this.dialogResultSubscription = dialogRef
+      .afterClosed()
+      .subscribe((newEventRequest: NewEventRequest) => {
+        this.calendarFacade.addEvent(newEventRequest);
+      });
   }
 }

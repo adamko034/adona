@@ -6,7 +6,7 @@ export class CalendarStateTestDataBuilder {
     const calendarState: CalendarState = {
       ids: events.map(event => event.id),
       entities: {},
-      eventsLoaded: loaded
+      monthsLoaded: []
     };
 
     return events.reduce((state, item) => {
