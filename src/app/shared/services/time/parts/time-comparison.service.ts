@@ -13,6 +13,10 @@ export class TimeComparisonService {
       .isSameOrBefore(moment(secondDate).startOf('day'));
   }
 
+  public areInTheSameMonth(date: Date, secondDate: Date) {
+    return moment(date).isSame(moment(secondDate), 'month');
+  }
+
   public areDatesTheSame(date: Date, secondDate: Date): boolean {
     return moment(date)
       .startOf('day')

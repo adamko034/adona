@@ -28,4 +28,8 @@ export class TimeExtractionService {
       .endOf('month')
       .toDate();
   }
+
+  public getTimeString(date: Date): string {
+    return moment(date).format('HH:mm');
+  }
 }

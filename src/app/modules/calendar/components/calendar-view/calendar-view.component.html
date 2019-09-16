@@ -6,6 +6,7 @@
     [viewDate]="viewDate"
     [activeDayIsOpen]="activeDayIsOpen"
     [weekStartsOn]="weekStartsOn"
+    (dayClicked)="dayClicked($event.day)"
   >
   </mwl-calendar-month-view>
 
