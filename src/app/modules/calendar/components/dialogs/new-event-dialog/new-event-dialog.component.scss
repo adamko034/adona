@@ -1,0 +1,17 @@
+.dialog-container {
+  .full-width {
+    width: 100%;
+  }
+
+  .form-section {
+    margin-bottom: 10px;
+  }
+
+  .dialog-actions {
+    float: right;
+
+    .dialog-actions-cancel {
+      margin-right: 10px;
+    }
+  }
+}

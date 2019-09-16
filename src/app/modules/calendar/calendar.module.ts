@@ -12,7 +12,7 @@ import { CalendarRoutingModule } from './calendar-routing.module';
 import { CalendarTitleComponent } from './components/calendar-title/calendar-title.component';
 import { CalendarViewSwitchComponent } from './components/calendar-view-switch/calendar-view-switch.component';
 import { CalendarViewComponent } from './components/calendar-view/calendar-view.component';
-import { NewEventDialogComponent } from './components/new-event-dialog/new-event-dialog.component';
+import { NewEventDialogComponent } from './components/dialogs/new-event-dialog/new-event-dialog.component';
 import { CalendarMapper } from './mappers/calendar.mapper';
 import { CalendarComponent } from './pages/calendar/calendar.component';
 import { CalendarFacade } from './store/calendar.facade';

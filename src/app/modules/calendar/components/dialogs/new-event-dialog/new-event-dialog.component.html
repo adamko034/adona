@@ -1,0 +1,24 @@
+<div class="dialog-container">
+  <h2 mat-dialog-title>{{ getTitle() }}</h2>
+  <mat-dialog-content>
+    <form [formGroup]="form">
+      <div class="form-section">
+        <mat-form-field class="full-width">
+          <input matInput placeholder="Title" formControlName="title" name="email" />
+        </mat-form-field>
+      </div>
+      <div class="form-section">
+        <app-from-to-dates
+          [start]="getInitialStartDate()"
+          [end]="getInitialEndDate()"
+          (dateChanged)="fromToDateChanged($event)"
+        ></app-from-to-dates>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-stroked-button (click)="cancel()" class="dialog-actions-cancel">Cancel</button>
+    <button mat-stroked-button (click)="save()" class="dialog-actions-save">Save</button>
+  </mat-dialog-actions>
+</div>

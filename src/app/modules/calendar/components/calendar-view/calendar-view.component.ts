@@ -1,9 +1,13 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { CalendarDateFormatter, CalendarEvent, CalendarEventTitleFormatter, CalendarView } from 'angular-calendar';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 import { TimeService } from 'src/app/shared/services/time/time.service';
+import { NewEventRequest } from '../../model/new-event-request.model';
 import { CalendarCustomEventTitleFormatter } from '../../utils/calendar-custom-event-title-formatter';
 import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
+import { NewEventDialogComponent } from '../dialogs/new-event-dialog/new-event-dialog.component';
 
 @Component({
   selector: 'app-calendar-view',
@@ -20,16 +24,18 @@ import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
     }
   ]
 })
-export class CalendarViewComponent implements OnInit, OnChanges {
+export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() viewDate: Date;
   @Input() view: CalendarView;
   @Input() weekStartsOn: number;
   @Input() events: CalendarEvent[];
 
+  private dialogResultSubscription: Subscription;
+
   public activeDayIsOpen = true;
   public CalendarView = CalendarView;
 
-  constructor(private timeService: TimeService) {}
+  constructor(private timeService: TimeService, private editEventDialog: MatDialog) {}
 
   ngOnInit() {}
 
@@ -38,6 +44,10 @@ export class CalendarViewComponent implements OnInit, OnChanges {
       _.findIndex(this.events, (x: CalendarEvent) =>
         this.timeService.Comparison.areDatesTheSame(this.viewDate, x.start)
       ) >= 0;
+  }
+
+  ngOnDestroy(): void {
+    this.dialogResultSubscription.unsubscribe();
   }
 
   public dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
@@ -54,5 +64,16 @@ export class CalendarViewComponent implements OnInit, OnChanges {
       this.activeDayIsOpen = showActiveDay;
       this.viewDate = date;
     }
+  }
+
+  public eventClicked(event: CalendarEvent): void {
+    const dialogRef = this.editEventDialog.open(NewEventDialogComponent, {
+      width: '400px',
+      data: { event }
+    });
+
+    this.dialogResultSubscription = dialogRef.afterClosed().subscribe((e: NewEventRequest) => {
+      console.log(e);
+    });
   }
 }

@@ -1,6 +1,6 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FromToDates } from 'src/app/shared/components/from-to-dates/model/from-to-dates.model';
 import { KeyValue } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FromToDates } from 'src/app/shared/components/from-to-dates/model/from-to-dates.model';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 
 @Component({
@@ -9,6 +9,8 @@ import { TimeService } from 'src/app/shared/services/time/time.service';
   styleUrls: ['./from-to-dates.component.scss']
 })
 export class FromToDatesComponent implements OnInit {
+  @Input() start: Date;
+  @Input() end: Date;
   @Output() dateChanged = new EventEmitter<FromToDates>();
 
   public startHour: number;
@@ -39,12 +41,12 @@ export class FromToDatesComponent implements OnInit {
     this.startHoursOptions = this.timeService.DayHours.getAll();
     this.startMinutesOptions = this.timeService.HourQuarters.getAll();
 
-    this.startDate = new Date();
-    this.endDate = new Date();
+    this.startDate = this.start || new Date();
+    this.endDate = this.end || new Date();
     this.startHour = this.startDate.getHours();
-    this.startMinutes = 0;
-    this.endHour = this.startDate.getHours() + 1;
-    this.endMinutes = 0;
+    this.startMinutes = this.start ? this.start.getMinutes() : 0;
+    this.endHour = this.end ? this.end.getHours() : this.startDate.getHours() + 1;
+    this.endMinutes = this.end ? this.end.getMinutes() : 0;
 
     this.adjustValuesAndEmit();
   }
@@ -54,7 +56,7 @@ export class FromToDatesComponent implements OnInit {
     this.emitValue();
   }
 
-  public adjustValuesAndEmit() {
+  public adjustValuesAndEmit(): void {
     this.handleMidnight();
 
     let newEndHoursOptions = this.timeService.DayHours.getAll();
@@ -87,7 +89,7 @@ export class FromToDatesComponent implements OnInit {
     this.emitValue();
   }
 
-  private handleMidnight() {
+  private handleMidnight(): void {
     if (
       this.timeService.Comparison.areDatesTheSame(this.startDate, this.endDate) &&
       this.startHour === 23 &&
@@ -101,11 +103,7 @@ export class FromToDatesComponent implements OnInit {
 
   private emitValue(): void {
     const value: FromToDates = {
-      from: this.timeService.Creation.getDateTimeFrom(
-        this.startDate,
-        this.startHour,
-        this.startMinutes
-      ),
+      from: this.timeService.Creation.getDateTimeFrom(this.startDate, this.startHour, this.startMinutes),
       to: this.timeService.Creation.getDateTimeFrom(this.endDate, this.endHour, this.endMinutes),
       isAllDay: this.isAllDay
     };

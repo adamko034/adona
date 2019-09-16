@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { Observable, Subscription } from 'rxjs';
-import { NewEventDialogComponent } from '../../components/new-event-dialog/new-event-dialog.component';
+import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
 import { NewEventRequest } from '../../model/new-event-request.model';
 import { CalendarFacade } from '../../store/calendar.facade';
 
@@ -38,10 +38,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
       width: '400px'
     });
 
-    this.dialogResultSubscription = dialogRef
-      .afterClosed()
-      .subscribe((newEventRequest: NewEventRequest) => {
+    this.dialogResultSubscription = dialogRef.afterClosed().subscribe((newEventRequest: NewEventRequest) => {
+      if (newEventRequest) {
         this.calendarFacade.addEvent(newEventRequest);
-      });
+      }
+    });
   }
 }
