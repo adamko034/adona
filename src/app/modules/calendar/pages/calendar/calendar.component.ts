@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material';
 import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { Observable, Subscription } from 'rxjs';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
-import { NewEventRequest } from '../../model/new-event-request.model';
+import { Event } from '../../model/event.model';
 import { CalendarFacade } from '../../store/calendar.facade';
 
 @Component({
@@ -38,9 +38,9 @@ export class CalendarComponent implements OnInit, OnDestroy {
       width: '400px'
     });
 
-    this.dialogResultSubscription = dialogRef.afterClosed().subscribe((newEventRequest: NewEventRequest) => {
-      if (newEventRequest) {
-        this.calendarFacade.addEvent(newEventRequest);
+    this.dialogResultSubscription = dialogRef.afterClosed().subscribe((newEvent: Event) => {
+      if (newEvent) {
+        this.calendarFacade.addEvent(newEvent);
       }
     });
   }

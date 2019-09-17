@@ -1,32 +1,31 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Action, select, Store } from '@ngrx/store';
+import { Update } from '@ngrx/entity';
+import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
-import { catchError, filter, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
 import { Event } from 'src/app/modules/calendar/model/event.model';
-import { NewEventRequest } from 'src/app/modules/calendar/model/new-event-request.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import {
-  EventsLoadedAction,
   CalendarActions,
   CalendarActionTypes,
   EventCreationErrorAction,
+  EventsLoadedAction,
   EventsLoadedErrorAction,
+  EventUpdatedAction,
+  EventUpdateErrorAction,
+  MonthEventsRequestedAction,
   NewEventAddedAction,
   NewEventRequestedAction,
-  MonthEventsRequestedAction
+  UpdateEventRequestedAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { errors } from 'src/app/shared/constants/errors.constants';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 
 @Injectable()
 export class CalendarEffects {
-  constructor(
-    private actions$: Actions,
-    private calendarService: CalendarService,
-    private timeService: TimeService
-  ) {}
+  constructor(private actions$: Actions, private calendarService: CalendarService, private timeService: TimeService) {}
 
   @Effect()
   public monthEventsRequested$: Observable<Action> = this.actions$.pipe(
@@ -56,7 +55,7 @@ export class CalendarEffects {
   public newEventRequested$: Observable<Action> = this.actions$.pipe(
     ofType<CalendarActions>(CalendarActionTypes.NewEventRequested),
     map((action: NewEventRequestedAction) => action.payload.newEvent),
-    switchMap((newEventRequest: NewEventRequest) => this.calendarService.addEvent(newEventRequest)),
+    switchMap((event: Event) => this.calendarService.addEvent(event)),
     map((event: Event) => new NewEventAddedAction({ event })),
     catchError(() => of(new EventCreationErrorAction()))
   );
@@ -66,6 +65,31 @@ export class CalendarEffects {
     ofType<CalendarActions>(CalendarActionTypes.EventCreationError),
     map((action: EventCreationErrorAction) =>
       action.payload ? action.payload.error : errors.DEFAULT_API_POST_ERROR_MESSAGE
+    ),
+    map((message: string) => new ErrorOccuredAction({ message }))
+  );
+
+  @Effect()
+  public updateEventRequested$: Observable<Action> = this.actions$.pipe(
+    ofType<CalendarActions>(CalendarActionTypes.UpdateEventRequested),
+    map((action: UpdateEventRequestedAction) => action.payload.event),
+    switchMap((event: Event) => this.calendarService.updateEvent(event)),
+    map((event: Event) => {
+      const eventUpdate: Update<Event> = {
+        id: event.id,
+        changes: event
+      };
+
+      return new EventUpdatedAction({ eventUpdate });
+    }),
+    catchError(() => of(new EventUpdateErrorAction()))
+  );
+
+  @Effect()
+  public eventUpdateError$: Observable<Action> = this.actions$.pipe(
+    ofType<CalendarActions>(CalendarActionTypes.EventUpdateError),
+    map((action: EventUpdateErrorAction) =>
+      action.payload ? action.payload.error : errors.DEFAULT_API_PUT_ERROR_MESSAGE
     ),
     map((message: string) => new ErrorOccuredAction({ message }))
   );

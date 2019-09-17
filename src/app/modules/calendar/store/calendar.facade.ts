@@ -5,8 +5,11 @@ import { map } from 'rxjs/operators';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
 import { CalendarMapper } from '../mappers/calendar.mapper';
-import { NewEventRequest } from '../model/new-event-request.model';
-import { MonthEventsRequestedAction, NewEventRequestedAction } from './actions/calendar.actions';
+import {
+  MonthEventsRequestedAction,
+  NewEventRequestedAction,
+  UpdateEventRequestedAction
+} from './actions/calendar.actions';
 import { CalendarState } from './reducers/calendar.reducer';
 
 export class CalendarFacade {
@@ -19,8 +22,12 @@ export class CalendarFacade {
     );
   }
 
-  public addEvent(event: NewEventRequest): void {
+  public addEvent(event: Event): void {
     this.store.dispatch(new NewEventRequestedAction({ newEvent: event }));
+  }
+
+  public updateEvent(event: Event): void {
+    this.store.dispatch(new UpdateEventRequestedAction({ event }));
   }
 
   public loadMonthEvents(date: Date): void {

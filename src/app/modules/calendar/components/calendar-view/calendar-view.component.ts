@@ -4,7 +4,8 @@ import { CalendarDateFormatter, CalendarEvent, CalendarEventTitleFormatter, Cale
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { TimeService } from 'src/app/shared/services/time/time.service';
-import { NewEventRequest } from '../../model/new-event-request.model';
+import { Event } from '../../model/event.model';
+import { CalendarFacade } from '../../store/calendar.facade';
 import { CalendarCustomEventTitleFormatter } from '../../utils/calendar-custom-event-title-formatter';
 import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
 import { NewEventDialogComponent } from '../dialogs/new-event-dialog/new-event-dialog.component';
@@ -35,7 +36,7 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
   public activeDayIsOpen = true;
   public CalendarView = CalendarView;
 
-  constructor(private timeService: TimeService, private editEventDialog: MatDialog) {}
+  constructor(private timeService: TimeService, private editEventDialog: MatDialog, private facade: CalendarFacade) {}
 
   ngOnInit() {}
 
@@ -72,8 +73,10 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
       data: { event }
     });
 
-    this.dialogResultSubscription = dialogRef.afterClosed().subscribe((e: NewEventRequest) => {
-      console.log(e);
+    this.dialogResultSubscription = dialogRef.afterClosed().subscribe((updatedEvent: Event) => {
+      if (updatedEvent) {
+        this.facade.updateEvent(updatedEvent);
+      }
     });
   }
 }

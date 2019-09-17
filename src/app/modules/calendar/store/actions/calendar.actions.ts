@@ -1,6 +1,6 @@
+import { Update } from '@ngrx/entity';
 import { Action } from '@ngrx/store';
 import { Event } from 'src/app/modules/calendar/model/event.model';
-import { NewEventRequest } from '../../model/new-event-request.model';
 
 export enum CalendarActionTypes {
   MonthEventsRequested = '[Calendar Page] Month Events Requested',
@@ -8,7 +8,10 @@ export enum CalendarActionTypes {
   EventsLoadedError = '[Calendar API] Events Loaded Error',
   NewEventRequested = '[Calendar Page] New Event Requested',
   NewEventAdded = '[Calendar API] New Event Added',
-  EventCreationError = '[Calendar Page] Event Creation Error'
+  UpdateEventRequested = '[Calendar Page] Edit Event Requested',
+  EventCreationError = '[Calendar API] Event Creation Error',
+  EventUpdated = '[Calendar API] Event Updated',
+  EventUpdateError = '[Calendar API] Event Updated Error'
 }
 
 export class MonthEventsRequestedAction implements Action {
@@ -32,13 +35,31 @@ export class EventsLoadedErrorAction implements Action {
 export class NewEventRequestedAction implements Action {
   readonly type = CalendarActionTypes.NewEventRequested;
 
-  constructor(public payload: { newEvent: NewEventRequest }) {}
+  constructor(public payload: { newEvent: Event }) {}
 }
 
 export class NewEventAddedAction implements Action {
   readonly type = CalendarActionTypes.NewEventAdded;
 
   constructor(public payload: { event: Event }) {}
+}
+
+export class UpdateEventRequestedAction implements Action {
+  readonly type = CalendarActionTypes.UpdateEventRequested;
+
+  constructor(public payload: { event: Event }) {}
+}
+
+export class EventUpdatedAction implements Action {
+  readonly type = CalendarActionTypes.EventUpdated;
+
+  constructor(public payload: { eventUpdate: Update<Event> }) {}
+}
+
+export class EventUpdateErrorAction implements Action {
+  readonly type = CalendarActionTypes.EventUpdateError;
+
+  constructor(public payload?: { error: string }) {}
 }
 
 export class EventCreationErrorAction implements Action {
@@ -53,4 +74,7 @@ export type CalendarActions =
   | EventsLoadedErrorAction
   | NewEventRequestedAction
   | NewEventAddedAction
+  | UpdateEventRequestedAction
+  | EventUpdatedAction
+  | EventUpdateErrorAction
   | EventCreationErrorAction;

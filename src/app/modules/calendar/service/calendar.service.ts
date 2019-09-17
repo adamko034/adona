@@ -6,7 +6,6 @@ import { map, take } from 'rxjs/operators';
 import { CalendarMapper } from 'src/app/modules/calendar/mappers/calendar.mapper';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { TimeService } from 'src/app/shared/services/time/time.service';
-import { NewEventRequest } from '../model/new-event-request.model';
 
 @Injectable()
 export class CalendarService {
@@ -14,15 +13,24 @@ export class CalendarService {
 
   constructor(private db: AngularFirestore, private mapper: CalendarMapper, private timeService: TimeService) {}
 
-  public addEvent(newEventRequest: NewEventRequest): Observable<Event> {
-    const newId = this.db.createId();
-    const newEvent = this.mapper.Event.fromNewEventRequest(newEventRequest, newId);
+  public addEvent(event: Event): Observable<Event> {
+    event.id = this.db.createId();
 
     return from(
       this.db
         .collection<Event>(this.collectionName)
-        .add(newEvent)
-        .then(() => newEvent)
+        .add(event)
+        .then(() => event)
+    );
+  }
+
+  public updateEvent(event: Event): Observable<Event> {
+    return from(
+      this.db
+        .collection(this.collectionName)
+        .doc(event.id)
+        .update(event)
+        .then(() => event)
     );
   }
 

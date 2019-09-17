@@ -13,9 +13,10 @@ export class NewEventDialogComponent implements OnInit {
   private editMode = false;
 
   public form: FormGroup = new FormGroup({
+    id: new FormControl(''),
     title: new FormControl(''),
-    startDate: new FormControl(new Date()),
-    endDate: new FormControl(new Date()),
+    start: new FormControl(new Date()),
+    end: new FormControl(new Date()),
     allDay: new FormControl(false)
   });
 
@@ -25,12 +26,14 @@ export class NewEventDialogComponent implements OnInit {
   ) {
     if (this.data && this.data.event) {
       this.editMode = true;
-      const { title, start, end, allDay } = this.data.event;
+
+      const { title, start, end, allDay, id } = this.data.event;
       this.form.setValue({
+        id,
         title,
         allDay,
-        startDate: start,
-        endDate: end
+        start,
+        end
       });
     }
   }
@@ -51,8 +54,8 @@ export class NewEventDialogComponent implements OnInit {
 
   public fromToDateChanged(fromToDates: FromToDates) {
     const value = {
-      startDate: fromToDates.from,
-      endDate: fromToDates.to,
+      start: fromToDates.from,
+      end: fromToDates.to,
       allDay: fromToDates.isAllDay
     };
 
