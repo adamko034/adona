@@ -73,7 +73,10 @@ export class CalendarEffects {
   public updateEventRequested$: Observable<Action> = this.actions$.pipe(
     ofType<CalendarActions>(CalendarActionTypes.UpdateEventRequested),
     map((action: UpdateEventRequestedAction) => action.payload.event),
-    switchMap((event: Event) => this.calendarService.updateEvent(event)),
+    switchMap((event: Event) => {
+      console.log(event);
+      return this.calendarService.updateEvent(event);
+    }),
     map((event: Event) => {
       const eventUpdate: Update<Event> = {
         id: event.id,
@@ -82,7 +85,10 @@ export class CalendarEffects {
 
       return new EventUpdatedAction({ eventUpdate });
     }),
-    catchError(() => of(new EventUpdateErrorAction()))
+    catchError(err => {
+      console.log(err);
+      return of(new EventUpdateErrorAction());
+    })
   );
 
   @Effect()
