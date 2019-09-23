@@ -13,6 +13,7 @@ import { TimeService } from 'src/app/shared/services/time/time.service';
 import { ErrorComponent, ErrorContentComponent } from './components/error/error.component';
 import { FromToDatesComponent } from './components/from-to-dates/from-to-dates.component';
 import { FormsModule } from '@angular/forms';
+import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 
 @NgModule({
   imports: [
@@ -26,7 +27,7 @@ import { FormsModule } from '@angular/forms';
     MatDatepickerModule,
     MatSelectModule
   ],
-  providers: [TimeService],
+  providers: [TimeService, EnvironmentService],
   declarations: [ErrorComponent, ErrorContentComponent, FromToDatesComponent],
   exports: [ErrorComponent, FromToDatesComponent],
   entryComponents: [ErrorContentComponent]

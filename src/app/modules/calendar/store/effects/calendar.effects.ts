@@ -25,7 +25,11 @@ import { TimeService } from 'src/app/shared/services/time/time.service';
 
 @Injectable()
 export class CalendarEffects {
-  constructor(private actions$: Actions, private calendarService: CalendarService, private timeService: TimeService) {}
+  constructor(
+    private actions$: Actions,
+    private calendarService: CalendarService,
+    private timeService: TimeService
+  ) {}
 
   @Effect()
   public monthEventsRequested$: Observable<Action> = this.actions$.pipe(
@@ -39,16 +43,20 @@ export class CalendarEffects {
         })
       )
     ),
-    catchError(() => of(new EventsLoadedErrorAction()))
+    catchError(err => of(new EventsLoadedErrorAction({ error: { errorObj: err } })))
   );
 
   @Effect()
   public eventsLoadedError$: Observable<Action> = this.actions$.pipe(
     ofType<CalendarActions>(CalendarActionTypes.EventsLoadedError),
-    map((action: EventsLoadedErrorAction) =>
-      action.payload ? action.payload.error : errors.DEFAULT_API_GET_ERROR_MESSAGE
-    ),
-    map((message: string) => new ErrorOccuredAction({ message }))
+    map((action: EventsLoadedErrorAction) => {
+      const message = action.payload.error.message
+        ? action.payload.error.message
+        : errors.DEFAULT_API_GET_ERROR_MESSAGE;
+
+      return { ...action.payload.error, message };
+    }),
+    map((error: Error) => new ErrorOccuredAction({ error }))
   );
 
   @Effect()
@@ -63,10 +71,13 @@ export class CalendarEffects {
   @Effect()
   public eventCreationError$: Observable<Action> = this.actions$.pipe(
     ofType<CalendarActions>(CalendarActionTypes.EventCreationError),
-    map((action: EventCreationErrorAction) =>
-      action.payload ? action.payload.error : errors.DEFAULT_API_POST_ERROR_MESSAGE
-    ),
-    map((message: string) => new ErrorOccuredAction({ message }))
+    map((action: EventCreationErrorAction) => {
+      const message = action.payload.error.message
+        ? action.payload.error
+        : errors.DEFAULT_API_POST_ERROR_MESSAGE;
+      return { ...action.payload.error, message };
+    }),
+    map((error: Error) => new ErrorOccuredAction({ error }))
   );
 
   @Effect()
@@ -94,9 +105,13 @@ export class CalendarEffects {
   @Effect()
   public eventUpdateError$: Observable<Action> = this.actions$.pipe(
     ofType<CalendarActions>(CalendarActionTypes.EventUpdateError),
-    map((action: EventUpdateErrorAction) =>
-      action.payload ? action.payload.error : errors.DEFAULT_API_PUT_ERROR_MESSAGE
-    ),
-    map((message: string) => new ErrorOccuredAction({ message }))
+    map((action: EventUpdateErrorAction) => {
+      const message = action.payload.error.message
+        ? action.payload.error.message
+        : errors.DEFAULT_API_PUT_ERROR_MESSAGE;
+
+      return { ...action.payload.error, message };
+    }),
+    map((error: Error) => new ErrorOccuredAction({ error }))
   );
 }
