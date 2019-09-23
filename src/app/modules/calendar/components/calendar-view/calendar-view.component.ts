@@ -1,6 +1,11 @@
 import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { CalendarDateFormatter, CalendarEvent, CalendarEventTitleFormatter, CalendarView } from 'angular-calendar';
+import {
+  CalendarDateFormatter,
+  CalendarEvent,
+  CalendarEventTitleFormatter,
+  CalendarView
+} from 'angular-calendar';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { TimeService } from 'src/app/shared/services/time/time.service';
@@ -9,6 +14,7 @@ import { CalendarFacade } from '../../store/calendar.facade';
 import { CalendarCustomEventTitleFormatter } from '../../utils/calendar-custom-event-title-formatter';
 import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
 import { NewEventDialogComponent } from '../dialogs/new-event-dialog/new-event-dialog.component';
+import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 
 @Component({
   selector: 'app-calendar-view',
@@ -36,7 +42,11 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
   public activeDayIsOpen = true;
   public CalendarView = CalendarView;
 
-  constructor(private timeService: TimeService, private editEventDialog: MatDialog, private facade: CalendarFacade) {}
+  constructor(
+    private timeService: TimeService,
+    private editEventDialog: MatDialog,
+    private facade: CalendarFacade
+  ) {}
 
   ngOnInit() {}
 
@@ -56,7 +66,8 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
       let showActiveDay = true;
 
       if (
-        (this.timeService.Comparison.areDatesTheSame(this.viewDate, date) && this.activeDayIsOpen) ||
+        (this.timeService.Comparison.areDatesTheSame(this.viewDate, date) &&
+          this.activeDayIsOpen) ||
         events.length === 0
       ) {
         showActiveDay = false;
