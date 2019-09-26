@@ -24,7 +24,9 @@ export class FromToDatesComponent implements OnInit {
   public startMinutesOptions: KeyValue<number, string>[];
   public endHoursOptions: KeyValue<number, string>[];
   public endMinutesOptions: KeyValue<number, string>[];
+
   public isAllDay = false;
+  public endDateValid = true;
 
   public excludeLowerThanStartDate = (date: Date): boolean => {
     if (this.timeService.Comparison.areDatesTheSame(date, this.startDate)) {
@@ -52,11 +54,24 @@ export class FromToDatesComponent implements OnInit {
   }
 
   public allDayEventChanged(): void {
+    if (this.isAtLeastOneValueNull()) {
+      this.endDateValid = false;
+      this.emitValue(null, null);
+      return;
+    }
+
     this.isAllDay = !this.isAllDay;
-    this.emitValue();
+    this.endDateValid = this.timeService.Comparison.isDateBeforeOrEqualThan(this.startDate, this.endDate);
+    this.emitValue(this.getStartDateTime(), this.getEndDateTime());
   }
 
   public adjustValuesAndEmit(): void {
+    if (this.isAtLeastOneValueNull()) {
+      this.endDateValid = false;
+      this.emitValue(null, null);
+      return;
+    }
+
     this.handleMidnight();
 
     let newEndHoursOptions = this.timeService.DayHours.getAll();
@@ -81,12 +96,19 @@ export class FromToDatesComponent implements OnInit {
           this.endMinutes = newEndMinutesOptions[0].key;
         }
       }
+
+      if (this.timeService.Comparison.areDateHoursTheSame(this.getStartDateTime(), this.getEndDateTime())) {
+        newEndMinutesOptions = this.timeService.HourQuarters.getGreaterThan(this.startMinutes);
+        this.endMinutes = newEndMinutesOptions[0].key;
+      }
     }
 
     this.endHoursOptions = newEndHoursOptions;
     this.endMinutesOptions = newEndMinutesOptions;
 
-    this.emitValue();
+    this.endDateValid = this.timeService.Comparison.isDateTimeBefore(this.getStartDateTime(), this.getEndDateTime());
+
+    this.emitValue(this.getStartDateTime(), this.getEndDateTime());
   }
 
   private handleMidnight(): void {
@@ -101,13 +123,32 @@ export class FromToDatesComponent implements OnInit {
     }
   }
 
-  private emitValue(): void {
+  private emitValue(from: Date, to: Date): void {
     const value: FromToDates = {
-      from: this.timeService.Creation.getDateTimeFrom(this.startDate, this.startHour, this.startMinutes),
-      to: this.timeService.Creation.getDateTimeFrom(this.endDate, this.endHour, this.endMinutes),
+      from,
+      to,
       isAllDay: this.isAllDay
     };
 
     this.dateChanged.emit(value);
+  }
+
+  private getStartDateTime(): Date {
+    return this.timeService.Creation.getDateTimeFrom(this.startDate, this.startHour, this.startMinutes);
+  }
+
+  private getEndDateTime(): Date {
+    return this.timeService.Creation.getDateTimeFrom(this.endDate, this.endHour, this.endMinutes);
+  }
+
+  private isAtLeastOneValueNull(): boolean {
+    return (
+      this.startDate === null ||
+      this.endDate === null ||
+      this.startHour === null ||
+      this.endHour === null ||
+      this.startMinutes === null ||
+      this.endMinutes === null
+    );
   }
 }

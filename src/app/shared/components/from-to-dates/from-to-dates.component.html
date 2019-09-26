@@ -19,28 +19,16 @@
       </mat-form-field>
       <div *ngIf="!isAllDay" class="time-pickers-row">
         <mat-form-field class="time-picker hour-picker">
-          <mat-select
-            name="startTimeHour"
-            [(ngModel)]="startHour"
-            (selectionChange)="adjustValuesAndEmit()"
-          >
-            <mat-option *ngFor="let hour of startHoursOptions" [value]="hour.key">{{
-              hour.value
-            }}</mat-option>
+          <mat-select name="startTimeHour" [(ngModel)]="startHour" (selectionChange)="adjustValuesAndEmit()">
+            <mat-option *ngFor="let hour of startHoursOptions" [value]="hour.key">{{ hour.value }}</mat-option>
           </mat-select>
         </mat-form-field>
 
         <span>:</span>
 
         <mat-form-field class="time-picker minutes-picker">
-          <mat-select
-            name="startTimeMinutes"
-            [(ngModel)]="startMinutes"
-            (selectionChange)="adjustValuesAndEmit()"
-          >
-            <mat-option *ngFor="let minute of startMinutesOptions" [value]="minute.key">{{
-              minute.value
-            }}</mat-option>
+          <mat-select name="startTimeMinutes" [(ngModel)]="startMinutes" (selectionChange)="adjustValuesAndEmit()">
+            <mat-option *ngFor="let minute of startMinutesOptions" [value]="minute.key">{{ minute.value }}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
@@ -48,7 +36,7 @@
   </div>
 
   <div class="from-to-dates-section">
-    <div class="from-to-dates-row">
+    <div class="from-to-dates-row" [ngClass]="{ error: !endDateValid }">
       <mat-form-field class="date-picker">
         <input
           matInput
@@ -61,32 +49,21 @@
         />
         <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
         <mat-datepicker touchUi #endDatePicker></mat-datepicker>
+        <mat-error *ngIf="!endDateValid">Please enter valid end date</mat-error>
       </mat-form-field>
 
       <div *ngIf="!isAllDay" class="time-pickers-row">
         <mat-form-field class="time-picker hour-picker">
-          <mat-select
-            name="endTimeHour"
-            [(ngModel)]="endHour"
-            (selectionChange)="adjustValuesAndEmit()"
-          >
-            <mat-option *ngFor="let hour of endHoursOptions" [value]="hour.key">{{
-              hour.value
-            }}</mat-option>
+          <mat-select name="endTimeHour" [(ngModel)]="endHour" (selectionChange)="adjustValuesAndEmit()">
+            <mat-option *ngFor="let hour of endHoursOptions" [value]="hour.key">{{ hour.value }}</mat-option>
           </mat-select>
         </mat-form-field>
 
         <span>:</span>
 
         <mat-form-field class="time-picker minutes-picker">
-          <mat-select
-            name="endTimeMinutes"
-            [(ngModel)]="endMinutes"
-            (selectionChange)="adjustValuesAndEmit()"
-          >
-            <mat-option *ngFor="let minute of endMinutesOptions" [value]="minute.key">{{
-              minute.value
-            }}</mat-option>
+          <mat-select name="endTimeMinutes" [(ngModel)]="endMinutes" (selectionChange)="adjustValuesAndEmit()">
+            <mat-option *ngFor="let minute of endMinutesOptions" [value]="minute.key">{{ minute.value }}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>

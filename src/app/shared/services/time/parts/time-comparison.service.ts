@@ -7,6 +7,10 @@ export class TimeComparisonService {
       .isBefore(moment(secondDate).startOf('day'));
   }
 
+  public isDateTimeBefore(date: Date, secondDate: Date): boolean {
+    return moment(date).isBefore(moment(secondDate));
+  }
+
   public isDateBeforeOrEqualThan(date: Date, secondDate: Date): boolean {
     return moment(date)
       .startOf('day')
@@ -21,5 +25,11 @@ export class TimeComparisonService {
     return moment(date)
       .startOf('day')
       .isSame(moment(secondDate).startOf('day'));
+  }
+
+  public areDateHoursTheSame(date: Date, secondDate: Date): boolean {
+    return moment(date)
+      .startOf('hour')
+      .isSame(moment(secondDate).startOf('hour'));
   }
 }

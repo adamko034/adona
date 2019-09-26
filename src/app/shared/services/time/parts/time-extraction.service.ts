@@ -32,4 +32,12 @@ export class TimeExtractionService {
   public getTimeString(date: Date): string {
     return moment(date).format('HH:mm');
   }
+
+  public getDateTimeString(date: Date): string {
+    return moment(date).format('DD-MM-YYYY HH:mm');
+  }
+
+  public getDateString(date: Date): string {
+    return moment(date).format('DD-MM-YYYY');
+  }
 }

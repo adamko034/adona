@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { CalendarEvent } from 'calendar-utils';
 import { FromToDates } from 'src/app/shared/components/from-to-dates/model/from-to-dates.model';
+import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.validator';
 
 @Component({
   selector: 'app-new-event-dialog',
@@ -12,13 +13,16 @@ import { FromToDates } from 'src/app/shared/components/from-to-dates/model/from-
 export class NewEventDialogComponent implements OnInit {
   private editMode = false;
 
-  public form: FormGroup = new FormGroup({
-    id: new FormControl(''),
-    title: new FormControl(''),
-    start: new FormControl(new Date()),
-    end: new FormControl(new Date()),
-    allDay: new FormControl(false)
-  });
+  public form: FormGroup = new FormGroup(
+    {
+      id: new FormControl(''),
+      title: new FormControl('', CustomValidators.requiredValue),
+      start: new FormControl(new Date()),
+      end: new FormControl(new Date()),
+      allDay: new FormControl(false)
+    },
+    { validators: CustomValidators.dateBefore('start', 'end') }
+  );
 
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: { event: CalendarEvent },
@@ -45,7 +49,9 @@ export class NewEventDialogComponent implements OnInit {
   }
 
   public save() {
-    this.dialogRef.close(this.form.value);
+    if (this.form.valid) {
+      this.dialogRef.close(this.form.value);
+    }
   }
 
   public cancel() {

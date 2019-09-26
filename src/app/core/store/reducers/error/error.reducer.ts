@@ -1,8 +1,8 @@
-import { ErrorActions, ErrorActionTypes } from 'src/app/core/store/actions/error.actions';
 import { Error } from 'src/app/core/error/model/error.model';
+import { ErrorActions, ErrorActionTypes } from 'src/app/core/store/actions/error.actions';
 
 export interface ErrorState {
-  error: Error;
+  error?: Error;
 }
 
 export const initialState: ErrorState = {

@@ -4,7 +4,8 @@
     <form [formGroup]="form">
       <div class="form-section">
         <mat-form-field class="full-width">
-          <input matInput placeholder="Title" formControlName="title" name="email" />
+          <input matInput placeholder="Title" id="title" formControlName="title" name="title" />
+          <mat-error *ngIf="form.get('title').hasError('requiredValue')">Please enter event title</mat-error>
         </mat-form-field>
       </div>
       <div class="form-section">
@@ -19,6 +20,8 @@
 
   <mat-dialog-actions class="dialog-actions">
     <button mat-stroked-button (click)="cancel()" class="dialog-actions-cancel">Cancel</button>
-    <button mat-stroked-button (click)="save()" class="dialog-actions-save">Save</button>
+    <button mat-stroked-button [disabled]="form.invalid" (click)="save()" class="dialog-actions-save">
+      Save
+    </button>
   </mat-dialog-actions>
 </div>

@@ -5,7 +5,7 @@ const selectErrorState = createFeatureSelector<ErrorState>('error');
 
 const selectErrorMessage = createSelector(
   selectErrorState,
-  (errorState: ErrorState) => errorState.error.message
+  (errorState: ErrorState) => (errorState.error ? errorState.error.message : null)
 );
 
 export const errorQueries = {
