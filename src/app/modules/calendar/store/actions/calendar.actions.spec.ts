@@ -9,7 +9,7 @@ import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/even
 describe('Calendar Actions', () => {
   it('should create all events requested action', () => {
     // when
-    const action = new MonthEventsRequestedAction();
+    const action = new MonthEventsRequestedAction({ date: new Date() });
 
     // then
     expect({ ...action }).toEqual({ type: CalendarActionTypes.MonthEventsRequested });
@@ -24,7 +24,7 @@ describe('Calendar Actions', () => {
       .build();
 
     // when
-    const action = new EventsLoadedAction({ events });
+    const action = new EventsLoadedAction({ events, yearMonth: '201901' });
 
     // then
     expect({ ...action }).toEqual({

@@ -23,7 +23,6 @@ describe('Calendar Effects', () => {
   let effects: CalendarEffects;
   let events: Event[];
   let store: MockStore<fromCalendar.CalendarState>;
-  let selectEventsLoadedMock: MemoizedSelector<fromCalendar.CalendarState, boolean>;
 
   const calendarService = jasmine.createSpyObj('CalendarService', ['getEvents']);
 
@@ -40,7 +39,6 @@ describe('Calendar Effects', () => {
     calendarService.getEvents.calls.reset();
     store = TestBed.get<Store<fromCalendar.CalendarState>>(Store);
     effects = TestBed.get<CalendarEffects>(CalendarEffects);
-    selectEventsLoadedMock = store.overrideSelector(calendarQueries.selectAllEventsLoaded, false);
     events = new EventsTestDataBuilder()
       .addOneWithDefaultData()
       .addOneWithDefaultData()
@@ -53,22 +51,21 @@ describe('Calendar Effects', () => {
       // given
       calendarService.getEvents.and.callFake(() => of(events));
 
-      const action = new MonthEventsRequestedAction({date: new Date()};
-      const completion = new EventsLoadedAction({ events });
+      const action = new MonthEventsRequestedAction({ date: new Date() });
+      const completion = new EventsLoadedAction({ events, yearMonth: '201901' });
       actions$ = hot('--a|', { a: action });
       const expected = cold('--b|', { b: completion });
 
       // when && then
       expect(effects.monthEventsRequested$).toBeObservable(expected);
       expect(calendarService.getEvents).toHaveBeenCalledTimes(1);
-      expect(true).toBeFalsy()
+      expect(true).toBeFalsy();
     });
 
     it('should not load events if they were fetched before', () => {
       // given
-      store.overrideSelector(calendarQueries.selectAllEventsLoaded, true);
 
-      const action = new MonthEventsRequestedAction();
+      const action = new MonthEventsRequestedAction({ date: new Date() });
       actions$ = hot('--a|', { a: action });
       const expected = cold('---|');
 
@@ -79,7 +76,7 @@ describe('Calendar Effects', () => {
 
     it('should return Events Loaded Error action when api call fail', () => {
       // given
-      const action = new MonthEventsRequestedAction();
+      const action = new MonthEventsRequestedAction({ date: new Date() });
       const errored = new EventsLoadedErrorAction();
 
       calendarService.getEvents.and.returnValue(throwError(new Error()));
@@ -96,9 +93,9 @@ describe('Calendar Effects', () => {
   describe('Events Loaded Error effect', () => {
     it('should map to Error Occured action with custom message', () => {
       // given
-      const error = 'this is error';
-      const action = new EventsLoadedErrorAction({ error });
-      const completion = new ErrorOccuredAction({ message: error });
+      const message = 'this is error';
+      const action = new EventsLoadedErrorAction({ error: { message } });
+      const completion = new ErrorOccuredAction({ error: { message } });
 
       actions$ = hot('-a', { a: action });
       const expected = cold('-b', { b: completion });
@@ -110,7 +107,9 @@ describe('Calendar Effects', () => {
     it('should map to Error Occured action with default message', () => {
       // given
       const action = new EventsLoadedErrorAction();
-      const completion = new ErrorOccuredAction({ message: errors.DEFAULT_API_GET_ERROR_MESSAGE });
+      const completion = new ErrorOccuredAction({
+        error: { message: errors.DEFAULT_API_GET_ERROR_MESSAGE }
+      });
 
       actions$ = hot('-a', { a: action });
       const expected = cold('-b', { b: completion });

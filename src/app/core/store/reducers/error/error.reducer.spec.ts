@@ -18,7 +18,7 @@ describe('Error Reducer', () => {
     // given
     const action = {} as any;
     const previousState: ErrorState = {
-      message: 'this is error message'
+      error: { message: 'this is error message' }
     };
 
     // when
@@ -30,15 +30,15 @@ describe('Error Reducer', () => {
 
   it('should return new state for Error Occured action', () => {
     // given
-    const action = new ErrorOccuredAction({ message: 'this is error' });
+    const action = new ErrorOccuredAction({ error: { message: 'this is error' } });
     const previousState: ErrorState = {
-      message: 'this is previous error'
+      error: { message: 'this is previous error' }
     };
 
     // when
     const newState = errorReducer(previousState, action);
 
     // then
-    expect(newState).toEqual({ message: action.payload.message });
+    expect(newState).toEqual({ message: action.payload.error.message });
   });
 });
