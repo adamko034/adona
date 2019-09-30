@@ -40,7 +40,7 @@ export class CalendarEffects {
     withLatestFrom(this.calendarFacade.monthsLoaded$),
     filter(([date, monthsLoaded]) => {
       const monthYear = this.timeService.Extraction.getYearMonthString(date);
-      return monthsLoaded.findIndex(x => x === monthYear) >= 0;
+      return monthsLoaded.findIndex(x => x === monthYear) < 0;
     }),
     switchMap(([date, monthsLoaded]) =>
       this.calendarService.getMonthEvents(date).pipe(
@@ -79,7 +79,9 @@ export class CalendarEffects {
   public eventCreationError$: Observable<Action> = this.actions$.pipe(
     ofType<CalendarActions>(CalendarActionTypes.EventCreationError),
     map((action: EventCreationErrorAction) => {
-      const message = action.payload.error.message ? action.payload.error : errors.DEFAULT_API_POST_ERROR_MESSAGE;
+      const message = action.payload.error.message
+        ? action.payload.error
+        : errors.DEFAULT_API_POST_ERROR_MESSAGE;
       return { ...action.payload.error, message };
     }),
     map((error: Error) => new ErrorOccuredAction({ error }))

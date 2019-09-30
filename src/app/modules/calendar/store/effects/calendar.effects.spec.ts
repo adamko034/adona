@@ -18,6 +18,7 @@ import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/even
 import { errors } from 'src/app/shared/constants/errors.constants';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
+import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 
 describe('Calendar Effects', () => {
   let actions$: Observable<Action>;
@@ -26,9 +27,14 @@ describe('Calendar Effects', () => {
   let store: MockStore<fromCalendar.CalendarState>;
 
   const timeService = {
-    Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', ['getYearMonthString'])
+    Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', [
+      'getYearMonthString'
+    ])
   };
-  const calendarService = jasmine.createSpyObj<CalendarService>('CalendarService', ['getMonthEvents']);
+  const calendarService = jasmine.createSpyObj<CalendarService>('CalendarService', [
+    'getMonthEvents'
+  ]);
+  const calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', ['monthsLoaded$']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -36,6 +42,7 @@ describe('Calendar Effects', () => {
         CalendarEffects,
         { provide: CalendarService, useValue: calendarService },
         { provide: TimeService, useValue: timeService },
+        { provide: CalendarFacade, useValue: calendarFacade },
         provideMockActions(() => actions$),
         provideMockStore()
       ]
@@ -70,8 +77,11 @@ describe('Calendar Effects', () => {
       expect(timeService.Extraction.getYearMonthString).toHaveBeenCalledTimes(1);
     });
 
-    it('should not load events if they were fetched before', () => {
+    fit('should not load events for month if they were fetched before', () => {
       // given
+      spyOnProperty(calendarFacade, 'monthsLoaded$', 'get').and.returnValue(of(['201901']));
+      timeService.Extraction.getYearMonthString.and.returnValue('201901');
+
       const action = new MonthEventsRequestedAction({ date: new Date() });
       actions$ = hot('-a', { a: action });
       const expected = cold('--|');
