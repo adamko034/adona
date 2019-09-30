@@ -1,7 +1,7 @@
 import { Update } from '@ngrx/entity';
 import { Action } from '@ngrx/store';
-import { Event } from 'src/app/modules/calendar/model/event.model';
 import { Error } from 'src/app/core/error/model/error.model';
+import { Event } from 'src/app/modules/calendar/model/event.model';
 
 export enum CalendarActionTypes {
   MonthEventsRequested = '[Calendar Page] Month Events Requested',
@@ -30,7 +30,7 @@ export class EventsLoadedAction implements Action {
 export class EventsLoadedErrorAction implements Action {
   readonly type = CalendarActionTypes.EventsLoadedError;
 
-  constructor(public payload?: { error: Error }) {}
+  constructor(public payload: { error: Error }) {}
 }
 
 export class NewEventRequestedAction implements Action {

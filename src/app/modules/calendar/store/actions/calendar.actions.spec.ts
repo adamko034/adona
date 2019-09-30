@@ -1,18 +1,21 @@
 import {
-  MonthEventsRequestedAction,
   CalendarActionTypes,
   EventsLoadedAction,
-  EventsLoadedErrorAction
+  EventsLoadedErrorAction,
+  MonthEventsRequestedAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
 
 describe('Calendar Actions', () => {
   it('should create all events requested action', () => {
+    // given
+    const date = new Date();
+
     // when
-    const action = new MonthEventsRequestedAction({ date: new Date() });
+    const action = new MonthEventsRequestedAction({ date });
 
     // then
-    expect({ ...action }).toEqual({ type: CalendarActionTypes.MonthEventsRequested });
+    expect({ ...action }).toEqual({ type: CalendarActionTypes.MonthEventsRequested, payload: { date } });
   });
 
   it('should create all events loaded action', () => {
@@ -29,15 +32,18 @@ describe('Calendar Actions', () => {
     // then
     expect({ ...action }).toEqual({
       type: CalendarActionTypes.EventsLoaded,
-      payload: { events }
+      payload: { events, yearMonth: '201901' }
     });
   });
 
   it('should create events error request acion', () => {
     // when
-    const action = new EventsLoadedErrorAction();
+    const action = new EventsLoadedErrorAction({ error: { errorObj: { code: '500' } } });
 
     // then
-    expect(action.type).toEqual(CalendarActionTypes.EventsLoadedError);
+    expect({ ...action }).toEqual({
+      type: CalendarActionTypes.EventsLoadedError,
+      payload: { error: { errorObj: { code: '500' } } }
+    });
   });
 });

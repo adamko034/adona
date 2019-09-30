@@ -1,18 +1,13 @@
-import {
-  calendarReducer,
-  CalendarState
-} from 'src/app/modules/calendar/store/reducers/calendar.reducer';
-import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
 import { EventsLoadedAction } from 'src/app/modules/calendar/store/actions/calendar.actions';
+import { calendarReducer, CalendarState } from 'src/app/modules/calendar/store/reducers/calendar.reducer';
 import { CalendarStateTestDataBuilder } from 'src/app/modules/calendar/utils/tests/calendar-state-test-data.builder';
+import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
 
 describe('Calendar Reducer', () => {
-  const calendarStateBuilder = new CalendarStateTestDataBuilder();
-
   it('should return initial state', () => {
     // given
     const action = {} as any;
-    const expected: CalendarState = calendarStateBuilder.fromEvents([]);
+    const expected: CalendarState = new CalendarStateTestDataBuilder().build();
 
     // when
     const result = calendarReducer(undefined, action);
@@ -25,7 +20,10 @@ describe('Calendar Reducer', () => {
     // given
     const action = {} as any;
     const events = new EventsTestDataBuilder().addOneWithDefaultData().build();
-    const previousState = calendarStateBuilder.fromEvents(events);
+    const previousState = new CalendarStateTestDataBuilder()
+      .withEvents(events)
+      .withMonthsLoaded(['201901'])
+      .build();
 
     // when
     const result = calendarReducer(previousState, action);
@@ -43,10 +41,16 @@ describe('Calendar Reducer', () => {
       .addOneWithDefaultData()
       .build();
 
-    const previousState = calendarStateBuilder.fromEvents(events.slice(0, 2), true);
-    const expectedState = calendarStateBuilder.fromEvents(events, true);
+    const previousState = new CalendarStateTestDataBuilder()
+      .withEvents(events.slice(0, 2))
+      .withMonthsLoaded(['201901'])
+      .build();
+    const expectedState = new CalendarStateTestDataBuilder()
+      .withEvents(events)
+      .withMonthsLoaded(['201901', '201902'])
+      .build();
 
-    const action = new EventsLoadedAction({ events });
+    const action = new EventsLoadedAction({ events, yearMonth: '201902' });
 
     // when
     const result = calendarReducer(previousState, action);

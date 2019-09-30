@@ -8,6 +8,12 @@ const selectEvents = createSelector(
   fromReducer.selectAll
 );
 
+const selectMonthsLoaded = createSelector(
+  selectCalendarState,
+  (state: fromReducer.CalendarState) => state.monthsLoaded
+);
+
 export const calendarQueries = {
-  selectEvents
+  selectEvents,
+  selectMonthsLoaded
 };

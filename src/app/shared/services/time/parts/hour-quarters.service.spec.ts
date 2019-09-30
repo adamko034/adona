@@ -1,7 +1,7 @@
 import { KeyValue } from '@angular/common';
 import { HourQuartersService } from './hour-quarters.service';
 
-fdescribe('HourQuartersService', () => {
+describe('HourQuartersService', () => {
   let service: HourQuartersService;
 
   beforeEach(() => {

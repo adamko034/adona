@@ -1,11 +1,11 @@
-import { errorReducer, ErrorState } from 'src/app/core/store/reducers/error/error.reducer';
 import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
+import { errorReducer, ErrorState } from 'src/app/core/store/reducers/error/error.reducer';
 
 describe('Error Reducer', () => {
   it('should return initial value if state is not set', () => {
     // given
     const action = {} as any;
-    const expectedState = { message: null };
+    const expectedState: ErrorState = { error: null };
 
     // when
     const actual = errorReducer(undefined, action);
@@ -39,6 +39,6 @@ describe('Error Reducer', () => {
     const newState = errorReducer(previousState, action);
 
     // then
-    expect(newState).toEqual({ message: action.payload.error.message });
+    expect(newState).toEqual({ error: { message: action.payload.error.message } });
   });
 });

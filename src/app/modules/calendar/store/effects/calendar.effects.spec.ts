@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { Action, MemoizedSelector, Store } from '@ngrx/store';
+import { Action, Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of, throwError } from 'rxjs';
@@ -9,14 +9,15 @@ import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import {
   EventsLoadedAction,
-  MonthEventsRequestedAction,
-  EventsLoadedErrorAction
+  EventsLoadedErrorAction,
+  MonthEventsRequestedAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
 import * as fromCalendar from 'src/app/modules/calendar/store/reducers/calendar.reducer';
-import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
 import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
 import { errors } from 'src/app/shared/constants/errors.constants';
+import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
+import { TimeService } from 'src/app/shared/services/time/time.service';
 
 describe('Calendar Effects', () => {
   let actions$: Observable<Action>;
@@ -24,19 +25,25 @@ describe('Calendar Effects', () => {
   let events: Event[];
   let store: MockStore<fromCalendar.CalendarState>;
 
-  const calendarService = jasmine.createSpyObj('CalendarService', ['getEvents']);
+  const timeService = {
+    Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', ['getYearMonthString'])
+  };
+  const calendarService = jasmine.createSpyObj<CalendarService>('CalendarService', ['getMonthEvents']);
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         CalendarEffects,
         { provide: CalendarService, useValue: calendarService },
+        { provide: TimeService, useValue: timeService },
         provideMockActions(() => actions$),
         provideMockStore()
       ]
     });
 
-    calendarService.getEvents.calls.reset();
+    calendarService.getMonthEvents.calls.reset();
+    timeService.Extraction.getYearMonthString.calls.reset();
+
     store = TestBed.get<Store<fromCalendar.CalendarState>>(Store);
     effects = TestBed.get<CalendarEffects>(CalendarEffects);
     events = new EventsTestDataBuilder()
@@ -46,10 +53,11 @@ describe('Calendar Effects', () => {
       .build();
   });
 
-  describe('All Events Requested effect', () => {
-    it('should load events if not fetched earlier and return All Evnets Loaded action', () => {
+  describe('Month Events Requested effect', () => {
+    it('should load events if not fetched earlier for this month and return Events Loaded action', () => {
       // given
-      calendarService.getEvents.and.callFake(() => of(events));
+      calendarService.getMonthEvents.and.callFake(() => of(events));
+      timeService.Extraction.getYearMonthString.and.returnValue('201901');
 
       const action = new MonthEventsRequestedAction({ date: new Date() });
       const completion = new EventsLoadedAction({ events, yearMonth: '201901' });
@@ -58,35 +66,36 @@ describe('Calendar Effects', () => {
 
       // when && then
       expect(effects.monthEventsRequested$).toBeObservable(expected);
-      expect(calendarService.getEvents).toHaveBeenCalledTimes(1);
-      expect(true).toBeFalsy();
+      expect(calendarService.getMonthEvents).toHaveBeenCalledTimes(1);
+      expect(timeService.Extraction.getYearMonthString).toHaveBeenCalledTimes(1);
     });
 
     it('should not load events if they were fetched before', () => {
       // given
-
       const action = new MonthEventsRequestedAction({ date: new Date() });
-      actions$ = hot('--a|', { a: action });
-      const expected = cold('---|');
+      actions$ = hot('-a', { a: action });
+      const expected = cold('--|');
 
       // when & then
       expect(effects.monthEventsRequested$).toBeObservable(expected);
-      expect(calendarService.getEvents).not.toHaveBeenCalled();
+      expect(calendarService.getMonthEvents).not.toHaveBeenCalled();
     });
 
     it('should return Events Loaded Error action when api call fail', () => {
       // given
+      const errorObj = new Error();
+
       const action = new MonthEventsRequestedAction({ date: new Date() });
-      const errored = new EventsLoadedErrorAction();
+      const errored = new EventsLoadedErrorAction({ error: { errorObj } });
 
-      calendarService.getEvents.and.returnValue(throwError(new Error()));
+      calendarService.getMonthEvents.and.returnValue(throwError(errorObj));
 
-      actions$ = hot('a|', { a: action });
-      const expected = cold('(b|)', { b: errored });
+      actions$ = hot('-a', { a: action });
+      const expected = cold('-b', { b: errored });
 
       // when & then
       expect(effects.monthEventsRequested$).toBeObservable(expected);
-      expect(calendarService.getEvents).toHaveBeenCalledTimes(1);
+      expect(calendarService.getMonthEvents).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -94,8 +103,8 @@ describe('Calendar Effects', () => {
     it('should map to Error Occured action with custom message', () => {
       // given
       const message = 'this is error';
-      const action = new EventsLoadedErrorAction({ error: { message } });
-      const completion = new ErrorOccuredAction({ error: { message } });
+      const action = new EventsLoadedErrorAction({ error: { message, errorObj: { code: '500' } } });
+      const completion = new ErrorOccuredAction({ error: { message, errorObj: { code: '500' } } });
 
       actions$ = hot('-a', { a: action });
       const expected = cold('-b', { b: completion });
@@ -106,9 +115,9 @@ describe('Calendar Effects', () => {
 
     it('should map to Error Occured action with default message', () => {
       // given
-      const action = new EventsLoadedErrorAction();
+      const action = new EventsLoadedErrorAction({ error: { errorObj: { code: '404' } } });
       const completion = new ErrorOccuredAction({
-        error: { message: errors.DEFAULT_API_GET_ERROR_MESSAGE }
+        error: { errorObj: { code: '404' }, message: errors.DEFAULT_API_GET_ERROR_MESSAGE }
       });
 
       actions$ = hot('-a', { a: action });

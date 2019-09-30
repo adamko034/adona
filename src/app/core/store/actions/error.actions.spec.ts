@@ -1,4 +1,4 @@
-import { ErrorOccuredAction, ErrorActionTypes } from 'src/app/core/store/actions/error.actions';
+import { ErrorActionTypes, ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
 
 describe('Error Actions', () => {
   describe('Error Occured action', () => {
@@ -27,7 +27,7 @@ describe('Error Actions', () => {
       // then
       expect({ ...action }).toEqual({
         type: ErrorActionTypes.ErrorOccured,
-        payload: { error: { errorObj: errObj, message: null } }
+        payload: { error: { errorObj: errObj } }
       });
     });
 
@@ -41,7 +41,7 @@ describe('Error Actions', () => {
       // then
       expect({ ...action }).toEqual({
         type: ErrorActionTypes.ErrorOccured,
-        payload: { error: { errorObj: null, message } }
+        payload: { error: { message } }
       });
     });
 
