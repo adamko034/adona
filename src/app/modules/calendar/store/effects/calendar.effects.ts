@@ -3,7 +3,7 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Update } from '@ngrx/entity';
 import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
-import { catchError, filter, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
 import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
@@ -36,21 +36,23 @@ export class CalendarEffects {
   @Effect()
   public monthEventsRequested$: Observable<Action> = this.actions$.pipe(
     ofType<CalendarActions>(CalendarActionTypes.MonthEventsRequested),
-    map((action: MonthEventsRequestedAction) => action.payload.date),
-    withLatestFrom(this.calendarFacade.monthsLoaded$),
+    map((action: MonthEventsRequestedAction) => {
+      return action.payload.date;
+    }),
+    withLatestFrom(this.calendarFacade.getMonthsLoaded()),
     filter(([date, monthsLoaded]) => {
       const monthYear = this.timeService.Extraction.getYearMonthString(date);
       return monthsLoaded.findIndex(x => x === monthYear) < 0;
     }),
-    switchMap(([date, monthsLoaded]) =>
-      this.calendarService.getMonthEvents(date).pipe(
+    mergeMap(([date, monthsLoaded]) => {
+      return this.calendarService.getMonthEvents(date).pipe(
         map((events: Event[]) => {
           const yearMonth = this.timeService.Extraction.getYearMonthString(date);
           return new EventsLoadedAction({ events, yearMonth });
         }),
         catchError(err => of(new EventsLoadedErrorAction({ error: { errorObj: err } })))
-      )
-    )
+      );
+    })
   );
 
   @Effect()
@@ -79,9 +81,7 @@ export class CalendarEffects {
   public eventCreationError$: Observable<Action> = this.actions$.pipe(
     ofType<CalendarActions>(CalendarActionTypes.EventCreationError),
     map((action: EventCreationErrorAction) => {
-      const message = action.payload.error.message
-        ? action.payload.error
-        : errors.DEFAULT_API_POST_ERROR_MESSAGE;
+      const message = action.payload.error.message ? action.payload.error : errors.DEFAULT_API_POST_ERROR_MESSAGE;
       return { ...action.payload.error, message };
     }),
     map((error: Error) => new ErrorOccuredAction({ error }))

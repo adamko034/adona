@@ -19,7 +19,7 @@ describe('Calendar Reducer', () => {
   it('should return previous state for unknown action', () => {
     // given
     const action = {} as any;
-    const events = new EventsTestDataBuilder().addOneWithDefaultData().build();
+    const events = new EventsTestDataBuilder().addOneWithDefaultData().buildEvent();
     const previousState = new CalendarStateTestDataBuilder()
       .withEvents(events)
       .withMonthsLoaded(['201901'])
@@ -39,7 +39,7 @@ describe('Calendar Reducer', () => {
       .addOneWithDefaultData()
       .addOneWithDefaultData()
       .addOneWithDefaultData()
-      .build();
+      .buildEvent();
 
     const previousState = new CalendarStateTestDataBuilder()
       .withEvents(events.slice(0, 2))

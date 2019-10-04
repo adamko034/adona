@@ -22,7 +22,7 @@ export class CalendarFacade {
     );
   }
 
-  public get monthsLoaded$(): Observable<string[]> {
+  public getMonthsLoaded(): Observable<string[]> {
     return this.store.pipe(select(calendarQueries.selectMonthsLoaded));
   }
 

@@ -16,6 +16,7 @@ import { NewEventDialogComponent } from './components/dialogs/new-event-dialog/n
 import { CalendarMapper } from './mappers/calendar.mapper';
 import { CalendarComponent } from './pages/calendar/calendar.component';
 import { CalendarFacade } from './store/calendar.facade';
+import { CalendarDateSwitchComponent } from './components/calendar-date-switch/calendar-date-switch.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { CalendarFacade } from './store/calendar.facade';
     CalendarViewComponent,
     CalendarViewSwitchComponent,
     CalendarTitleComponent,
-    NewEventDialogComponent
+    NewEventDialogComponent,
+    CalendarDateSwitchComponent
   ],
   entryComponents: [NewEventDialogComponent],
   imports: [

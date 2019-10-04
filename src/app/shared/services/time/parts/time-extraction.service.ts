@@ -2,7 +2,7 @@ import * as moment from 'moment';
 
 export class TimeExtractionService {
   public getYearMonthString(date: Date) {
-    return `${date.getFullYear()}${date.getMonth()}`;
+    return `${date.getFullYear()}${date.getMonth() + 1}`;
   }
 
   public getStartOfDay(date: Date): Date {
@@ -39,5 +39,11 @@ export class TimeExtractionService {
 
   public getDateString(date: Date): string {
     return moment(date).format('DD-MM-YYYY');
+  }
+
+  public getPreviousMonthOf(date: Date): Date {
+    return moment(date)
+      .add(-1, 'month')
+      .toDate();
   }
 }

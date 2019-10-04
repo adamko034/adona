@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { Observable, Subscription } from 'rxjs';
+import { TimeService } from 'src/app/shared/services/time/time.service';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
 import { Event } from '../../model/event.model';
 import { CalendarFacade } from '../../store/calendar.facade';
@@ -18,11 +19,16 @@ export class CalendarComponent implements OnInit, OnDestroy {
   public viewDate = new Date();
   public events$: Observable<CalendarEvent[]>;
 
-  constructor(private calendarFacade: CalendarFacade, public newEventModal: MatDialog) {}
+  constructor(
+    private calendarFacade: CalendarFacade,
+    public newEventModal: MatDialog,
+    private timeService: TimeService
+  ) {}
 
   ngOnInit() {
     this.events$ = this.calendarFacade.events$;
     this.calendarFacade.loadMonthEvents(this.viewDate);
+    this.calendarFacade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate));
   }
 
   ngOnDestroy() {
@@ -31,6 +37,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   public onViewChanged(newView: CalendarView) {
     this.view = newView;
+  }
+
+  public onViewDateChanged(newViewDate: Date) {
+    this.viewDate = newViewDate;
+    this.calendarFacade.loadMonthEvents(this.viewDate);
   }
 
   public openNewEventModal(): void {

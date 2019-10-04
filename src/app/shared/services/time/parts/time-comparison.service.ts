@@ -32,4 +32,13 @@ export class TimeComparisonService {
       .startOf('hour')
       .isSame(moment(secondDate).startOf('hour'));
   }
+
+  public isDateBetweenDates(date: Date, firstDate: Date, lastDate: Date): boolean {
+    const rangeStart = moment(firstDate).startOf('day');
+    const rangeEnd = moment(lastDate).endOf('day');
+
+    const dateMoment = moment(date).startOf('day');
+
+    return dateMoment.isBetween(rangeStart, rangeEnd);
+  }
 }

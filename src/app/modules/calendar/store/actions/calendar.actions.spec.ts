@@ -24,7 +24,7 @@ describe('Calendar Actions', () => {
       .addOneWithDefaultData()
       .addOneWithDefaultData()
       .addOneWithDefaultData()
-      .build();
+      .buildEvent();
 
     // when
     const action = new EventsLoadedAction({ events, yearMonth: '201901' });

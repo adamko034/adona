@@ -41,10 +41,7 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {}
 
   ngOnChanges(): void {
-    this.activeDayIsOpen =
-      _.findIndex(this.events, (x: CalendarEvent) =>
-        this.timeService.Comparison.areDatesTheSame(this.viewDate, x.start)
-      ) >= 0;
+    this.activeDayIsOpen = this.eventExistsOnViewDate();
   }
 
   ngOnDestroy(): void {
@@ -63,7 +60,6 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
       }
 
       this.activeDayIsOpen = showActiveDay;
-      this.viewDate = date;
     }
   }
 
@@ -78,5 +74,13 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
         this.facade.updateEvent(updatedEvent);
       }
     });
+  }
+
+  private eventExistsOnViewDate(): boolean {
+    return (
+      _.findIndex(this.events, (x: CalendarEvent) =>
+        this.timeService.Comparison.isDateBetweenDates(this.viewDate, x.start, x.end)
+      ) >= 0
+    );
   }
 }
