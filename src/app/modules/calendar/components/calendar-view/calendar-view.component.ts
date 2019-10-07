@@ -33,7 +33,7 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
 
   private dialogResultSubscription: Subscription;
 
-  public activeDayIsOpen = true;
+  public activeDayIsOpen = false;
   public CalendarView = CalendarView;
 
   constructor(private timeService: TimeService, private editEventDialog: MatDialog, private facade: CalendarFacade) {}
@@ -45,7 +45,9 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.dialogResultSubscription.unsubscribe();
+    if (this.dialogResultSubscription) {
+      this.dialogResultSubscription.unsubscribe();
+    }
   }
 
   public dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {

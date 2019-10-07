@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { TimeComparisonService } from 'src/app/shared/services/time/parts/time-comparison.service';
 import { Event } from '../../model/event.model';
 import { CalendarFacade } from '../../store/calendar.facade';
@@ -38,6 +38,10 @@ describe('CalendarViewComponent', () => {
     matDialog.open.calls.reset();
 
     facade.updateEvent.calls.reset();
+  });
+
+  afterEach(() => {
+    component.ngOnDestroy();
   });
 
   describe('Date Changed event', () => {
@@ -131,6 +135,94 @@ describe('CalendarViewComponent', () => {
       expect(matDialog.open).toHaveBeenCalledTimes(1);
       expect(matDialog.open).toHaveBeenCalledWith(NewEventDialogComponent, { width: '400px', data: { event } });
       expect(facade.updateEvent).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('On Component Destroy', () => {
+    it('should unsubscribe', () => {
+      // given
+      (component as any).dialogResultSubscription = new Subject();
+      const subsribtionSpy = spyOn((component as any).dialogResultSubscription, 'unsubscribe');
+
+      // when
+      component.ngOnDestroy();
+
+      // then
+      expect(subsribtionSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not unsubscribe if subscription is null', () => {
+      // given
+      (component as any).dialogResultSubscription = new Subject();
+      const subsribtionSpy = spyOn((component as any).dialogResultSubscription, 'unsubscribe');
+      (component as any).dialogResultSubscription = undefined;
+
+      // when
+      component.ngOnDestroy();
+
+      // then
+      expect(subsribtionSpy).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  describe('Setting Is Active Day', () => {
+    it('default to false', () => {
+      expect(component.activeDayIsOpen).toBeFalsy();
+    });
+
+    it('should set to false if event does not exists on this day', () => {
+      // given
+      component.viewDate = moment()
+        .add('1', 'weeks')
+        .toDate();
+      component.events = events;
+
+      // when
+      component.ngOnChanges();
+
+      // then
+      expect(component.activeDayIsOpen).toBeFalsy();
+    });
+
+    it('should set to true if event exists on this day', () => {
+      // given
+      component.viewDate = moment().toDate();
+      component.events = new EventsTestDataBuilder()
+        .addOneWithDefaultData()
+        .addOneWithDefaultData()
+        .buildCalendarEvents();
+
+      // when
+      component.ngOnChanges();
+
+      // then
+      expect(component.activeDayIsOpen).toBeTruthy();
+    });
+
+    it('should set to true if all days event exists on this day', () => {
+      // given
+      component.viewDate = moment()
+        .add('5', 'days')
+        .toDate();
+
+      const calendarEvents = new EventsTestDataBuilder()
+        .addOneWithDefaultData()
+        .addOneWithDefaultData()
+        .buildCalendarEvents();
+      calendarEvents[0].start = moment()
+        .add('3', 'days')
+        .toDate();
+      calendarEvents[0].end = moment()
+        .add('6', 'days')
+        .toDate();
+
+      component.events = calendarEvents;
+
+      // when
+      component.ngOnChanges();
+
+      // then
+      expect(component.activeDayIsOpen).toBeTruthy();
     });
   });
 });
