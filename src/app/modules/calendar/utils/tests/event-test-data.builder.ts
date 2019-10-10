@@ -19,13 +19,25 @@ export class EventsTestDataBuilder {
     return this;
   }
 
-  public buildEvent(): Event[] {
+  public buildEvents(): Event[] {
     return this.events;
   }
 
   public buildCalendarEvents(): CalendarEvent[] {
     return this.events.map(({ id, title, start, end, allDay }) => {
       return { id, title, start, end, allDay };
+    });
+  }
+
+  public buildFirebaseEvents(): any[] {
+    return this.events.map(({ id, title, start, end, allDay }) => {
+      return {
+        id,
+        title,
+        start: { seconds: moment(start).get('seconds') },
+        end: { seconds: moment(end).get('seconds') },
+        allDay
+      };
     });
   }
 }

@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 import { of, Subject } from 'rxjs';
-import { TimeComparisonService } from 'src/app/shared/services/time/parts/time-comparison.service';
+import { TimeService } from 'src/app/shared/services/time/time.service';
 import { Event } from '../../model/event.model';
 import { CalendarFacade } from '../../store/calendar.facade';
 import { EventsTestDataBuilder } from '../../utils/tests/event-test-data.builder';
@@ -12,27 +12,17 @@ describe('CalendarViewComponent', () => {
   const events = new EventsTestDataBuilder()
     .addOneWithDefaultData()
     .addOneWithDefaultData()
-    .buildEvent();
+    .buildEvents();
 
   let component: CalendarViewComponent;
 
-  const timeService: any = {
-    Comparison: jasmine.createSpyObj<TimeComparisonService>('TimeComparisonService', [
-      'isDateBetweenDates',
-      'areInTheSameMonth',
-      'areDatesTheSame'
-    ])
-  };
+  const timeService = new TimeService();
   const matDialog: any = jasmine.createSpyObj('MatDialog', ['open']);
   const facade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', ['updateEvent']);
 
   beforeEach(() => {
     component = new CalendarViewComponent(timeService, matDialog, facade);
     component.viewDate = currentViewDate;
-
-    timeService.Comparison.areInTheSameMonth.calls.reset();
-    timeService.Comparison.areDatesTheSame.calls.reset();
-    timeService.Comparison.areInTheSameMonth.and.returnValue(true);
 
     matDialog.open.and.returnValue({ afterClosed: () => of(null) } as any);
     matDialog.open.calls.reset();
@@ -50,8 +40,6 @@ describe('CalendarViewComponent', () => {
       const currentDate = new Date(2019, 5, 1);
       const newDate = new Date(2019, 6, 1);
 
-      timeService.Comparison.areInTheSameMonth.and.returnValue(false);
-
       // when
       component.activeDayIsOpen = true;
       component.viewDate = currentDate;
@@ -59,8 +47,6 @@ describe('CalendarViewComponent', () => {
 
       // then
       expect(component.activeDayIsOpen).toBeTruthy();
-      expect(timeService.Comparison.areInTheSameMonth).toHaveBeenCalledTimes(1);
-      expect(timeService.Comparison.areInTheSameMonth).toHaveBeenCalledWith(currentDate, newDate);
     });
 
     describe('New date in the same month', () => {
@@ -72,7 +58,6 @@ describe('CalendarViewComponent', () => {
               .add(1, 'days')
               .toDate();
             component.activeDayIsOpen = value;
-            timeService.Comparison.areDatesTheSame.and.returnValue(false);
 
             // when
             component.dayClicked({ date: newDate, events: [] });
@@ -88,7 +73,6 @@ describe('CalendarViewComponent', () => {
           it(`should toggle active day, current value: ${currentValue.toString()}`, () => {
             // given
             component.activeDayIsOpen = currentValue;
-            timeService.Comparison.areDatesTheSame.and.returnValue(true);
 
             // when
             component.dayClicked({ date: currentViewDate, events });

@@ -32,7 +32,9 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.dialogResultSubscription.unsubscribe();
+    if (this.dialogResultSubscription) {
+      this.dialogResultSubscription.unsubscribe();
+    }
   }
 
   public onViewChanged(newView: CalendarView) {

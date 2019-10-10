@@ -37,8 +37,8 @@ export class TimeComparisonService {
     const rangeStart = moment(firstDate).startOf('day');
     const rangeEnd = moment(lastDate).endOf('day');
 
-    const dateMoment = moment(date).startOf('day');
+    const dateMoment = moment(date);
 
-    return dateMoment.isBetween(rangeStart, rangeEnd);
+    return dateMoment.isBetween(rangeStart, rangeEnd, null, '[]');
   }
 }

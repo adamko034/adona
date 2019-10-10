@@ -59,7 +59,7 @@ describe('Calendar Effects', () => {
       .addOneWithDefaultData()
       .addOneWithDefaultData()
       .addOneWithDefaultData()
-      .buildEvent();
+      .buildEvents();
   });
 
   describe('Month Events Requested effect', () => {
