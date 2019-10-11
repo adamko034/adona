@@ -19,6 +19,7 @@ describe('CalendarComponent', () => {
     component = new CalendarComponent(calendarFacade, dialog, timeService);
 
     calendarFacade.loadMonthEvents.calls.reset();
+    calendarFacade.addEvent.calls.reset();
     dialog.open.calls.reset();
   });
 

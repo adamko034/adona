@@ -74,7 +74,7 @@ export class CalendarEffects {
     map((action: NewEventRequestedAction) => action.payload.newEvent),
     switchMap((event: Event) => this.calendarService.addEvent(event)),
     map((event: Event) => new NewEventAddedAction({ event })),
-    catchError(() => of(new EventCreationErrorAction()))
+    catchError(err => of(new EventCreationErrorAction({ error: { errorObj: err } })))
   );
 
   @Effect()
@@ -103,7 +103,7 @@ export class CalendarEffects {
       return new EventUpdatedAction({ eventUpdate });
     }),
     catchError(err => {
-      return of(new EventUpdateErrorAction());
+      return of(new EventUpdateErrorAction({ error: { errorObj: err } }));
     })
   );
 

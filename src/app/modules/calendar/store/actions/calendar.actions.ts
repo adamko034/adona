@@ -60,13 +60,13 @@ export class EventUpdatedAction implements Action {
 export class EventUpdateErrorAction implements Action {
   readonly type = CalendarActionTypes.EventUpdateError;
 
-  constructor(public payload?: { error: Error }) {}
+  constructor(public payload: { error: Error }) {}
 }
 
 export class EventCreationErrorAction implements Action {
   readonly type = CalendarActionTypes.EventCreationError;
 
-  constructor(public payload?: { error: Error }) {}
+  constructor(public payload: { error: Error }) {}
 }
 
 export type CalendarActions =
