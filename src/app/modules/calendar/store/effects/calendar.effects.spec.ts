@@ -9,7 +9,10 @@ import { CalendarService } from 'src/app/modules/calendar/service/calendar.servi
 import {
   EventsLoadedAction,
   EventsLoadedErrorAction,
-  MonthEventsRequestedAction
+  MonthEventsRequestedAction,
+  NewEventAddedAction,
+  NewEventRequestedAction,
+  EventCreationErrorAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
@@ -17,6 +20,7 @@ import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/even
 import { errors } from 'src/app/shared/constants/errors.constants';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
+import { ErrorTestDataBuilder } from 'src/app/core/utils/tests/error-test-data.builder';
 
 describe('Calendar Effects', () => {
   let actions$: Observable<Action>;
@@ -28,11 +32,16 @@ describe('Calendar Effects', () => {
   let monthsLoaded$;
 
   const timeService = {
-    Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', ['getYearMonthString'])
+    Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', [
+      'getYearMonthString'
+    ])
   };
 
   beforeEach(() => {
-    calendarService = jasmine.createSpyObj<CalendarService>('CalendarService', ['getMonthEvents']);
+    calendarService = jasmine.createSpyObj<CalendarService>('CalendarService', [
+      'getMonthEvents',
+      'addEvent'
+    ]);
     calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', ['getMonthsLoaded']);
 
     TestBed.configureTestingModule({
@@ -48,6 +57,7 @@ describe('Calendar Effects', () => {
     monthsLoaded$ = new BehaviorSubject([]);
 
     calendarService.getMonthEvents.calls.reset();
+    calendarService.addEvent.calls.reset();
     timeService.Extraction.getYearMonthString.calls.reset();
 
     calendarService.getMonthEvents.and.callFake(() => of(events));
@@ -81,7 +91,6 @@ describe('Calendar Effects', () => {
       monthsLoaded$.next(['201901']);
 
       const action = new MonthEventsRequestedAction({ date: new Date() });
-      const completion = new EventsLoadedAction({ events, yearMonth: '201901' });
       actions$ = hot('--a', { a: action });
       const expected = cold('---');
 
@@ -135,6 +144,41 @@ describe('Calendar Effects', () => {
 
       // when & then
       expect(effects.eventsLoadedError$).toBeObservable(expected);
+    });
+  });
+
+  describe('New Event Requested effect', () => {
+    it('should add event and map to New Event Added action', () => {
+      // givent
+      const eventRequest = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const newEvent = { ...eventRequest, id: 'new id' };
+      calendarService.addEvent.and.returnValue(of(newEvent));
+
+      actions$ = hot('-a', { a: new NewEventRequestedAction({ newEvent: eventRequest }) });
+      const expected = cold('-b', { b: new NewEventAddedAction({ event: newEvent }) });
+
+      // when & then
+      expect(effects.newEventRequested$).toBeObservable(expected);
+      expect(calendarService.addEvent).toHaveBeenCalledTimes(1);
+      expect(calendarService.addEvent).toHaveBeenCalledWith(eventRequest);
+    });
+
+    it('should map to Event Creation Error action', () => {
+      // given
+      const eventRequest = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const error = new ErrorTestDataBuilder().withDefaultData().build();
+
+      calendarService.addEvent.and.returnValue(throwError(error));
+
+      actions$ = hot('-a', { a: new NewEventRequestedAction({ newEvent: eventRequest }) });
+      const expected = cold('-b', {
+        b: new EventCreationErrorAction({ error: { errorObj: error } })
+      });
+
+      // when & then
+      expect(effects.newEventRequested$).toBeObservable(expected);
+      expect(calendarService.addEvent).toHaveBeenCalledTimes(1);
+      expect(calendarService.addEvent).toHaveBeenCalledWith(eventRequest);
     });
   });
 });
