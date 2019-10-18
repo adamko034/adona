@@ -1,17 +1,8 @@
 import { CalendarEvent } from 'calendar-utils';
 import { Event } from '../../model/event.model';
 import { EventsTestDataBuilder } from '../../utils/tests/event-test-data.builder';
+import { toCalendarEvent } from '../../utils/tests/mappers-test-functions';
 import { CalendarEventMapper } from './calendar-event.mapper';
-
-function toCalendarEvent(event: Event): CalendarEvent {
-  return {
-    id: event.id,
-    start: event.start,
-    end: event.end,
-    allDay: event.allDay,
-    title: event.title
-  };
-}
 
 describe('Calendar Event Mapper', () => {
   let mapper: CalendarEventMapper;
