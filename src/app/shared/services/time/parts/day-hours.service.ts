@@ -18,7 +18,7 @@ export class DayHoursService {
     return this.getAll().filter(x => x.key < hour);
   }
 
-  public getLowerOrEqualThen(hour: number) {
+  public getLowerOrEqualThan(hour: number) {
     return this.getAll().filter(x => x.key <= hour);
   }
 }

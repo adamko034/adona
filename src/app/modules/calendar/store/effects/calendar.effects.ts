@@ -97,18 +97,19 @@ export class CalendarEffects {
     ofType<CalendarActions>(CalendarActionTypes.UpdateEventRequested),
     map((action: UpdateEventRequestedAction) => action.payload.event),
     switchMap((event: Event) => {
-      return this.calendarService.updateEvent(event);
-    }),
-    map((event: Event) => {
-      const eventUpdate: Update<Event> = {
-        id: event.id,
-        changes: event
-      };
+      return this.calendarService.updateEvent(event).pipe(
+        map((updatedEvent: Event) => {
+          const eventUpdate: Update<Event> = {
+            id: updatedEvent.id,
+            changes: updatedEvent
+          };
 
-      return new EventUpdatedAction({ eventUpdate });
-    }),
-    catchError(err => {
-      return of(new EventUpdateErrorAction({ error: { errorObj: err } }));
+          return new EventUpdatedAction({ eventUpdate });
+        }),
+        catchError(err => {
+          return of(new EventUpdateErrorAction({ error: { errorObj: err } }));
+        })
+      );
     })
   );
 

@@ -12,6 +12,7 @@ import {
 import { CalendarFacade } from './calendar.facade';
 import { CalendarState } from './reducers/calendar.reducer';
 import { calendarQueries } from './selectors/calendar.selectors';
+import { of } from 'rxjs';
 
 describe('Calendar Facade', () => {
   let mockStore: MockStore<CalendarState>;
@@ -77,21 +78,21 @@ describe('Calendar Facade', () => {
     });
   });
 
-  fdescribe('Get Months Loaded method', () => {
+  describe('Get Months Loaded method', () => {
     it('should return months loaded', () => {
       // given
       const months = ['201901', '201902', '201812'];
       mockStore.overrideSelector(calendarQueries.selectMonthsLoaded, months);
-
+      const expected = cold('(b|)', { b: months });
       // when
       const result = facade.getMonthsLoaded();
 
       // then
-      expect(result).toEqual(months);
+      expect(result).toBeObservable(expected);
     });
   });
 
-  fdescribe('Events$ property', () => {
+  describe('Events$ property', () => {
     it('should return events', () => {
       // given
       const events = new EventsTestDataBuilder()
@@ -103,7 +104,7 @@ describe('Calendar Facade', () => {
       const expected = cold('(b|)', { b: toCalendarEvents(events) });
 
       // when
-      const result = facade.getMonthsLoaded();
+      const result = facade.events$;
 
       // then
       expect(result).toBeObservable(expected);

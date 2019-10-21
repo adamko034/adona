@@ -18,8 +18,7 @@ export class ErrorContentComponent {
 
 @Component({
   selector: 'app-error',
-  templateUrl: './error.component.html',
-  styleUrls: ['./error.component.css']
+  templateUrl: './error.component.html'
 })
 export class ErrorComponent implements OnInit, OnDestroy {
   private errors$: Observable<string>;

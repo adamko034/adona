@@ -24,7 +24,10 @@ export class CalendarFacade {
   }
 
   public getMonthsLoaded(): Observable<string[]> {
-    return this.store.pipe(select(calendarQueries.selectMonthsLoaded));
+    return this.store.pipe(
+      select(calendarQueries.selectMonthsLoaded),
+      take(1)
+    );
   }
 
   public addEvent(event: Event): void {

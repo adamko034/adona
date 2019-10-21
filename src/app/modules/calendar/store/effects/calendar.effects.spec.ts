@@ -12,7 +12,10 @@ import {
   MonthEventsRequestedAction,
   NewEventAddedAction,
   NewEventRequestedAction,
-  EventCreationErrorAction
+  EventCreationErrorAction,
+  UpdateEventRequestedAction,
+  EventUpdatedAction,
+  EventUpdateErrorAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
@@ -40,7 +43,8 @@ describe('Calendar Effects', () => {
   beforeEach(() => {
     calendarService = jasmine.createSpyObj<CalendarService>('CalendarService', [
       'getMonthEvents',
-      'addEvent'
+      'addEvent',
+      'updateEvent'
     ]);
     calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', ['getMonthsLoaded']);
 
@@ -58,6 +62,7 @@ describe('Calendar Effects', () => {
 
     calendarService.getMonthEvents.calls.reset();
     calendarService.addEvent.calls.reset();
+    calendarService.updateEvent.calls.reset();
     timeService.Extraction.getYearMonthString.calls.reset();
 
     calendarService.getMonthEvents.and.callFake(() => of(events));
@@ -179,6 +184,88 @@ describe('Calendar Effects', () => {
       expect(effects.newEventRequested$).toBeObservable(expected);
       expect(calendarService.addEvent).toHaveBeenCalledTimes(1);
       expect(calendarService.addEvent).toHaveBeenCalledWith(eventRequest);
+    });
+  });
+
+  describe('Event Creation Error effect', () => {
+    it('should map to Error Occured Action with default message', () => {
+      // given
+      const error = new ErrorTestDataBuilder().withErrorObj({ status: 500 }).build();
+      const expectedError = { ...error, message: errors.DEFAULT_API_POST_ERROR_MESSAGE };
+      actions$ = hot('-a', { a: new EventCreationErrorAction({ error }) });
+      const expected = hot('-b', { b: new ErrorOccuredAction({ error: expectedError }) });
+
+      // then
+      expect(effects.eventCreationError$).toBeObservable(expected);
+    });
+
+    it('should map to Error Occured Action with custom message', () => {
+      // given
+      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      actions$ = hot('-a', { a: new EventCreationErrorAction({ error }) });
+      const expected = hot('-b', { b: new ErrorOccuredAction({ error }) });
+
+      // then
+      expect(effects.eventCreationError$).toBeObservable(expected);
+    });
+  });
+
+  describe('Update Event Request effect', () => {
+    it('should call service and return Event Updated Action', () => {
+      // given
+      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const eventUpdate = { id: event.id, changes: event };
+
+      calendarService.updateEvent.and.returnValue(of(event));
+
+      actions$ = hot('-a', { a: new UpdateEventRequestedAction({ event }) });
+      const expected = cold('-b', { b: new EventUpdatedAction({ eventUpdate }) });
+
+      // when & then
+      expect(effects.updateEventRequested$).toBeObservable(expected);
+      expect(calendarService.updateEvent).toHaveBeenCalledTimes(1);
+      expect(calendarService.updateEvent).toHaveBeenCalledWith(event);
+    });
+
+    it('should return Event Update Error Action when updating fails', () => {
+      // given
+      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const error = new ErrorTestDataBuilder().withDefaultData().build();
+
+      calendarService.updateEvent.and.returnValue(throwError(error.errorObj));
+
+      actions$ = hot('-a', { a: new UpdateEventRequestedAction({ event }) });
+      const expected = cold('-b', {
+        b: new EventUpdateErrorAction({ error: { errorObj: error.errorObj } })
+      });
+
+      // when & then
+      expect(effects.updateEventRequested$).toBeObservable(expected);
+      expect(calendarService.updateEvent).toHaveBeenCalledTimes(1);
+      expect(calendarService.updateEvent).toHaveBeenCalledWith(event);
+    });
+  });
+
+  describe('Event Update Error effect', () => {
+    it('should map to Event Occured Action with custom message', () => {
+      // given
+      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      actions$ = hot('-a', { a: new EventUpdateErrorAction({ error }) });
+      const expected = cold('-b', { b: new ErrorOccuredAction({ error }) });
+
+      // when & then
+      expect(effects.eventUpdateError$).toBeObservable(expected);
+    });
+
+    it('should map to Event Occured Action with default message', () => {
+      // given
+      const error = new ErrorTestDataBuilder().withErrorObj({ status: 503 }).build();
+      const expectedError = { ...error, message: errors.DEFAULT_API_PUT_ERROR_MESSAGE };
+      actions$ = hot('-a', { a: new EventUpdateErrorAction({ error }) });
+      const expected = cold('-b', { b: new ErrorOccuredAction({ error: expectedError }) });
+
+      // when & then
+      expect(effects.eventUpdateError$).toBeObservable(expected);
     });
   });
 });
