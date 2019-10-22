@@ -46,4 +46,8 @@ export class TimeExtractionService {
       .add(-1, 'month')
       .toDate();
   }
+
+  public getHourString(date: Date): string {
+    return moment(date).format('HH');
+  }
 }

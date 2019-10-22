@@ -34,8 +34,12 @@ export class TimeComparisonService {
   }
 
   public isDateBetweenDates(date: Date, firstDate: Date, lastDate: Date): boolean {
-    const rangeStart = moment(firstDate).startOf('day');
-    const rangeEnd = moment(lastDate).endOf('day');
+    const rangeStart = this.isDateTimeBefore(firstDate, lastDate)
+      ? moment(firstDate).startOf('day')
+      : moment(lastDate).startOf('day');
+    const rangeEnd = this.isDateTimeBefore(firstDate, lastDate)
+      ? moment(lastDate).endOf('day')
+      : moment(firstDate).endOf('day');
 
     const dateMoment = moment(date);
 

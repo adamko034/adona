@@ -1,14 +1,13 @@
-import {
-  CalendarNativeDateFormatter,
-  DateFormatterParams
-} from 'angular-calendar';
+import { CalendarNativeDateFormatter, DateFormatterParams } from 'angular-calendar';
+import { TimeService } from 'src/app/shared/services/time/time.service';
 
 export class CalendarHourFormatter extends CalendarNativeDateFormatter {
+  public constructor(private timeService: TimeService) {
+    super({} as any);
+  }
+
   public dayViewHour({ date }: DateFormatterParams): string {
-    return new Intl.DateTimeFormat('en-US', {
-      hour: '2-digit',
-      hour12: false
-    }).format(date);
+    return this.timeService.Extraction.getHourString(date);
   }
 
   public weekViewHour({ date }: DateFormatterParams): string {
