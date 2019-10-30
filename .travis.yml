@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "11"
+  - '11'
 branches:
   only:
     - master
@@ -8,6 +8,7 @@ before_script:
   - npm install -g @angular/cli
 script:
   - npm install
+  - npm run test
   - npm run build
 deploy:
   skip_cleanup: true
