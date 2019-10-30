@@ -1,0 +1,32 @@
+<div [ngSwitch]="view">
+  <mwl-calendar-month-view
+    *ngSwitchCase="CalendarView.Month"
+    [@.disabled]="true"
+    [events]="events"
+    [viewDate]="viewDate"
+    [activeDayIsOpen]="activeDayIsOpen"
+    [weekStartsOn]="weekStartsOn"
+    (dayClicked)="dayClicked($event.day)"
+    (eventClicked)="eventClicked($event.event)"
+  >
+  </mwl-calendar-month-view>
+
+  <mwl-calendar-day-view
+    *ngSwitchCase="CalendarView.Day"
+    [@.disabled]="true"
+    [events]="events"
+    [viewDate]="viewDate"
+    [dayStartHour]="7"
+  >
+  </mwl-calendar-day-view>
+
+  <mwl-calendar-week-view
+    *ngSwitchCase="CalendarView.Week"
+    [@.disabled]="true"
+    [events]="events"
+    [viewDate]="viewDate"
+    [weekStartsOn]="weekStartsOn"
+    [dayStartHour]="7"
+  >
+  </mwl-calendar-week-view>
+</div>

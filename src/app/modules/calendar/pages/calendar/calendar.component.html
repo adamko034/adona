@@ -1,0 +1,28 @@
+<div class="row text-center">
+  <app-error></app-error>
+
+  <div class="col-md-4">
+    <app-calendar-date-switch
+      [view]="view"
+      [viewDate]="viewDate"
+      (viewDateChanged)="onViewDateChanged($event)"
+    ></app-calendar-date-switch>
+  </div>
+
+  <div class="col-md-4">
+    <app-celendar-title [view]="view" [viewDate]="viewDate"></app-celendar-title>
+  </div>
+
+  <div class="col-md-4">
+    <app-calendar-view-switch (viewChanged)="onViewChanged($event)"></app-calendar-view-switch>
+  </div>
+</div>
+
+<button (click)="openNewEventModal()">Add</button>
+
+<app-calendar-view
+  *ngIf="events$ | async; let events"
+  [events]="events"
+  [view]="view"
+  [viewDate]="viewDate"
+></app-calendar-view>

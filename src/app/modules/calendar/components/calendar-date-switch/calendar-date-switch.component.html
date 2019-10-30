@@ -1,0 +1,28 @@
+<div class="btn-group">
+  <div
+    class="btn btn-primary"
+    mwlCalendarPreviousView
+    [view]="view"
+    [(viewDate)]="viewDate"
+    (viewDateChange)="calendarViewDateChanged()"
+  >
+    Previous
+  </div>
+  <div
+    class="btn btn-outline-secondary"
+    mwlCalendarToday
+    [(viewDate)]="viewDate"
+    (viewDateChange)="calendarViewDateChanged()"
+  >
+    Today
+  </div>
+  <div
+    class="btn btn-primary"
+    mwlCalendarNextView
+    [view]="view"
+    [(viewDate)]="viewDate"
+    (viewDateChange)="calendarViewDateChanged()"
+  >
+    Next
+  </div>
+</div>
