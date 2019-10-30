@@ -2,7 +2,8 @@ import * as moment from 'moment';
 
 export class TimeExtractionService {
   public getYearMonthString(date: Date) {
-    return `${date.getFullYear()}${date.getMonth() + 1}`;
+    const leadingZero = date.getMonth() < 9 ? '0' : '';
+    return `${date.getFullYear()}${leadingZero}${date.getMonth() + 1}`;
   }
 
   public getStartOfDay(date: Date): Date {

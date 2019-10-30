@@ -1,7 +1,7 @@
 import { TimeCreationService } from 'src/app/shared/services/time/parts/time-creation.service';
 
-describe('TimeCreationService', () => {
-  describe('GetDateTimeFrom', () => {
+describe('Time Creation Service', () => {
+  describe('Get Date Time From', () => {
     it('should create date object', () => {
       // given
       const service = new TimeCreationService();
