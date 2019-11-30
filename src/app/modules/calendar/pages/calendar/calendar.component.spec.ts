@@ -6,6 +6,8 @@ import { NewEventDialogComponent } from '../../components/dialogs/new-event-dial
 import { CalendarFacade } from '../../store/calendar.facade';
 import { EventsTestDataBuilder } from '../../utils/tests/event-test-data.builder';
 import { CalendarComponent } from './calendar.component';
+import { AdonaCalendarModule } from 'src/app/modules/calendar/calendar.module';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 
 describe('CalendarComponent', () => {
   let component: CalendarComponent;
@@ -42,8 +44,8 @@ describe('CalendarComponent', () => {
     });
 
     it('should default to month view', () => {
-      expect(component.view).toBe(CalendarView.Month);
-      expect(component.viewDate.toDateString()).toBe(new Date().toDateString());
+      expect(component.view).toEqual({ view: CalendarView.Month, isList: false });
+      expect(component.viewDate.toDateString()).toEqual(new Date().toDateString());
     });
   });
 
@@ -75,15 +77,23 @@ describe('CalendarComponent', () => {
   });
 
   describe('On View Changed', () => {
-    it('should change view type', () => {
-      component.onViewChanged(CalendarView.Day);
-      expect(component.view).toBe(CalendarView.Day);
+    it('should change view type  journey', () => {
+      const adonaView: AdonaCalendarView = { view: CalendarView.Day, isList: false };
+      component.onViewChanged(adonaView);
+      expect(component.view).toBe(adonaView);
 
-      component.onViewChanged(CalendarView.Week);
-      expect(component.view).toBe(CalendarView.Week);
+      adonaView.view = CalendarView.Week;
+      component.onViewChanged(adonaView);
+      expect(component.view).toBe(adonaView);
 
-      component.onViewChanged(CalendarView.Month);
-      expect(component.view).toBe(CalendarView.Month);
+      adonaView.isList = true;
+      component.onViewChanged(adonaView);
+      expect(component.view).toBe(adonaView);
+
+      adonaView.isList = false;
+      adonaView.view = CalendarView.Month;
+      component.onViewChanged(adonaView);
+      expect(component.view).toBe(adonaView);
     });
   });
 

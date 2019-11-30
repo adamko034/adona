@@ -2,9 +2,9 @@
   <div
     class="btn btn-primary"
     mwlCalendarPreviousView
-    [view]="view"
+    [view]="view.view"
     [(viewDate)]="viewDate"
-    (viewDateChange)="calendarViewDateChanged()"
+    (viewDateChange)="onViewDateChanged()"
   >
     Previous
   </div>
@@ -12,16 +12,16 @@
     class="btn btn-outline-secondary"
     mwlCalendarToday
     [(viewDate)]="viewDate"
-    (viewDateChange)="calendarViewDateChanged()"
+    (viewDateChange)="onViewDateChanged()"
   >
     Today
   </div>
   <div
     class="btn btn-primary"
     mwlCalendarNextView
-    [view]="view"
+    [view]="view.view"
     [(viewDate)]="viewDate"
-    (viewDateChange)="calendarViewDateChanged()"
+    (viewDateChange)="onViewDateChanged()"
   >
     Next
   </div>

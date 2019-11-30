@@ -6,6 +6,7 @@ import { TimeService } from 'src/app/shared/services/time/time.service';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
 import { Event } from '../../model/event.model';
 import { CalendarFacade } from '../../store/calendar.facade';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 
 @Component({
   selector: 'app-calendar',
@@ -15,7 +16,7 @@ import { CalendarFacade } from '../../store/calendar.facade';
 export class CalendarComponent implements OnInit, OnDestroy {
   private dialogResultSubscription: Subscription;
 
-  public view = CalendarView.Month;
+  public view: AdonaCalendarView = { isList: false, view: CalendarView.Month };
   public viewDate = new Date();
   public events$: Observable<CalendarEvent[]>;
 
@@ -25,20 +26,20 @@ export class CalendarComponent implements OnInit, OnDestroy {
     private timeService: TimeService
   ) {}
 
-  ngOnInit() {
+  public ngOnInit() {
     this.events$ = this.calendarFacade.events$;
     this.calendarFacade.loadMonthEvents(this.viewDate);
     this.calendarFacade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate));
   }
 
-  ngOnDestroy() {
+  public ngOnDestroy() {
     if (this.dialogResultSubscription) {
       this.dialogResultSubscription.unsubscribe();
     }
   }
 
-  public onViewChanged(newView: CalendarView) {
-    this.view = newView;
+  public onViewChanged(adonaCalendarView: AdonaCalendarView) {
+    this.view = adonaCalendarView;
   }
 
   public onViewDateChanged(newViewDate: Date) {

@@ -1,4 +1,4 @@
-<div [ngSwitch]="view">
+<div *ngIf="!view.isList" [ngSwitch]="view.view">
   <mwl-calendar-month-view
     *ngSwitchCase="CalendarView.Month"
     [@.disabled]="true"
@@ -29,4 +29,8 @@
     [dayStartHour]="7"
   >
   </mwl-calendar-week-view>
+</div>
+
+<div *ngIf="view.isList">
+  <app-calendar-view-list *ngIf="view.isList"></app-calendar-view-list>
 </div>

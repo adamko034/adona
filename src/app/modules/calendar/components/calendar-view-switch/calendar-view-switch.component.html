@@ -1,11 +1,14 @@
 <div class="btn-group">
-  <div class="btn btn-primary" (click)="setView(CalendarView.Month)" [class.active]="view === CalendarView.Month">
+  <div class="btn btn-primary" (click)="setView(Views.Month)" [class.active]="view === Views.Month">
     Month
   </div>
-  <div class="btn btn-primary" (click)="setView(CalendarView.Week)" [class.active]="view === CalendarView.Week">
+  <div class="btn btn-primary" (click)="setView(Views.Week)" [class.active]="view === Views.Week">
     Week
   </div>
-  <div class="btn btn-primary" (click)="setView(CalendarView.Day)" [class.active]="view === CalendarView.Day">
+  <div class="btn btn-primary" (click)="setView(Views.Day)" [class.active]="view === Views.Day">
     Day
+  </div>
+  <div class="btn btn-primary" (click)="setView(Views.List)" [class.active]="view === Views.List">
+    List
   </div>
 </div>

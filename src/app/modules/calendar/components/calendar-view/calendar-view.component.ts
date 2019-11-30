@@ -9,7 +9,7 @@ import { CalendarFacade } from '../../store/calendar.facade';
 import { CalendarCustomEventTitleFormatter } from '../../utils/calendar-custom-event-title-formatter';
 import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
 import { NewEventDialogComponent } from '../dialogs/new-event-dialog/new-event-dialog.component';
-
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 @Component({
   selector: 'app-calendar-view',
   templateUrl: './calendar-view.component.html',
@@ -27,7 +27,7 @@ import { NewEventDialogComponent } from '../dialogs/new-event-dialog/new-event-d
 })
 export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() viewDate: Date;
-  @Input() view: CalendarView;
+  @Input() view: AdonaCalendarView;
   @Input() weekStartsOn: number;
   @Input() events: CalendarEvent[];
 

@@ -9,17 +9,19 @@ describe('CelendarTitleComponent', () => {
   let fixture: ComponentFixture<CalendarTitleComponent>;
   let h3: HTMLElement;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [CalendarTitleComponent],
-      imports: [
-        CalendarModule.forRoot({
-          provide: DateAdapter,
-          useFactory: adapterFactory
-        })
-      ]
-    }).compileComponents();
-  }));
+  beforeEach(
+    async(() => {
+      TestBed.configureTestingModule({
+        declarations: [CalendarTitleComponent],
+        imports: [
+          CalendarModule.forRoot({
+            provide: DateAdapter,
+            useFactory: adapterFactory
+          })
+        ]
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CalendarTitleComponent);
@@ -31,7 +33,7 @@ describe('CelendarTitleComponent', () => {
     // given
     const dtNow = new Date();
     component.viewDate = dtNow;
-    component.view = CalendarView.Month;
+    component.view = { view: CalendarView.Month, isList: false };
 
     // when
     fixture.detectChanges();
@@ -44,18 +46,14 @@ describe('CelendarTitleComponent', () => {
     // given
     const dtNow = new Date();
     component.viewDate = dtNow;
-    component.view = CalendarView.Week;
+    component.view = { view: CalendarView.Week, isList: false };
 
     // when
     fixture.detectChanges();
 
     // then
-    const startOfWeek = moment()
-      .startOf('week')
-      .format('MMM D');
-    const endOfWeek = moment()
-      .endOf('week')
-      .format('MMM D');
+    const startOfWeek = moment().startOf('week').format('MMM D');
+    const endOfWeek = moment().endOf('week').format('MMM D');
     const year = moment().format('YYYY');
 
     const expectedContent = `${startOfWeek} - ${endOfWeek}, ${year}`;
@@ -67,7 +65,7 @@ describe('CelendarTitleComponent', () => {
     // given
     const dtNow = new Date();
     component.viewDate = dtNow;
-    component.view = CalendarView.Day;
+    component.view = { view: CalendarView.Day, isList: false };
 
     // when
     fixture.detectChanges();

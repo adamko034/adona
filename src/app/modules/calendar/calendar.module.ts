@@ -1,7 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatDialogModule, MatInputModule, MatNativeDateModule } from '@angular/material';
+import {
+  MatButtonModule,
+  MatDialogModule,
+  MatInputModule,
+  MatNativeDateModule
+} from '@angular/material';
 import { EffectsModule } from '@ngrx/effects';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
@@ -17,6 +22,7 @@ import { CalendarMapper } from './mappers/calendar.mapper';
 import { CalendarComponent } from './pages/calendar/calendar.component';
 import { CalendarFacade } from './store/calendar.facade';
 import { CalendarDateSwitchComponent } from './components/calendar-date-switch/calendar-date-switch.component';
+import { CalendarViewListComponent } from './components/calendar-view/calendar-view-list/calendar-view-list.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +31,8 @@ import { CalendarDateSwitchComponent } from './components/calendar-date-switch/c
     CalendarViewSwitchComponent,
     CalendarTitleComponent,
     NewEventDialogComponent,
-    CalendarDateSwitchComponent
+    CalendarDateSwitchComponent,
+    CalendarViewListComponent
   ],
   entryComponents: [NewEventDialogComponent],
   imports: [
