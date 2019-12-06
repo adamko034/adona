@@ -1,11 +1,21 @@
-<div class="btn-group">
-  <div class="btn btn-primary" (click)="setView(CalendarView.Month)" [class.active]="view === CalendarView.Month">
-    Month
+<div fxLayout fxLayoutGap.gt-xs="10px" fxLayoutGap.xs="5px">
+  <div>
+    <button mat-icon-button [disableRipple]="true" (click)="setView(CalendarView.Month)">
+      <mat-icon [ngClass.xs]="'custom-icon-small'" [ngClass.gt-xs]="'custom-icon-large'" [class.active]="view === CalendarView.Month"
+        svgIcon="calendar-month"></mat-icon>
+    </button>
+
   </div>
-  <div class="btn btn-primary" (click)="setView(CalendarView.Week)" [class.active]="view === CalendarView.Week">
-    Week
+  <div>
+    <button mat-icon-button [disableRipple]="true" (click)="setView(CalendarView.Week)">
+      <mat-icon [ngClass.xs]="'custom-icon-small'" [ngClass.gt-xs]="'custom-icon-large'" [class.active]="view === CalendarView.Month"
+        svgIcon="calendar-week"></mat-icon>
+    </button>
+
   </div>
-  <div class="btn btn-primary" (click)="setView(CalendarView.Day)" [class.active]="view === CalendarView.Day">
-    Day
+  <div>
+    <button mat-icon-button [disableRipple]="true" (click)="setView(CalendarView.Day)">
+      <mat-icon [ngClass.xs]="'custom-icon-small'" [ngClass.gt-xs]="'custom-icon-large'" [class.active]="view === CalendarView.Month" svgIcon="calendar-day"></mat-icon>
+    </button>
   </div>
 </div>
