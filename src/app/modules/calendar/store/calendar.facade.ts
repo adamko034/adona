@@ -1,7 +1,7 @@
 import { select, Store } from '@ngrx/store';
 import { CalendarEvent } from 'calendar-utils';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
 import { CalendarMapper } from '../mappers/calendar.mapper';
@@ -18,16 +18,12 @@ export class CalendarFacade {
   public get events$(): Observable<CalendarEvent[]> {
     return this.store.pipe(
       select(calendarQueries.selectEvents),
-      map((events: Event[]) => this.mapper.CalendarEvent.fromEvents(events)),
-      take(1)
+      map((events: Event[]) => this.mapper.CalendarEvent.fromEvents(events))
     );
   }
 
   public getMonthsLoaded(): Observable<string[]> {
-    return this.store.pipe(
-      select(calendarQueries.selectMonthsLoaded),
-      take(1)
-    );
+    return this.store.pipe(select(calendarQueries.selectMonthsLoaded));
   }
 
   public addEvent(event: Event): void {

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { cold } from 'jasmine-marbles';
+import { hot } from 'jasmine-marbles';
 import { EventsTestDataBuilder } from '../utils/tests/event-test-data.builder';
 import { fromCalendarEvents, toCalendarEvents } from '../utils/tests/mappers-test-functions';
 import {
@@ -12,7 +12,6 @@ import {
 import { CalendarFacade } from './calendar.facade';
 import { CalendarState } from './reducers/calendar.reducer';
 import { calendarQueries } from './selectors/calendar.selectors';
-import { of } from 'rxjs';
 
 describe('Calendar Facade', () => {
   let mockStore: MockStore<CalendarState>;
@@ -83,7 +82,8 @@ describe('Calendar Facade', () => {
       // given
       const months = ['201901', '201902', '201812'];
       mockStore.overrideSelector(calendarQueries.selectMonthsLoaded, months);
-      const expected = cold('(b|)', { b: months });
+      const expected = hot('b', { b: months });
+
       // when
       const result = facade.getMonthsLoaded();
 
@@ -101,7 +101,7 @@ describe('Calendar Facade', () => {
         .addOneWithDefaultData()
         .buildEvents();
       mockStore.overrideSelector(calendarQueries.selectEvents, events);
-      const expected = cold('(b|)', { b: toCalendarEvents(events) });
+      const expected = hot('b', { b: toCalendarEvents(events) });
 
       // when
       const result = facade.events$;

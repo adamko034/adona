@@ -1,0 +1,22 @@
+<mat-toolbar [ngClass.gt-xs]="'calendar-toolbar-rounded'" class="calendar-toolbar">
+  <mat-toolbar-row [ngClass.xs]="'calendar-toolbar-small-padding'" fxLayout fxLayoutGap.gt-xs="20px"
+    fxLayoutAlign.gt-xs="start center" fxLayoutAlign.xs="space-around center">
+
+    <div [ngClass.gt-xs]="'toolbar-item'">
+      <button class="toolbar-button" mat-icon-button [disableRipple]="true" onclick="this.blur()" (click)="onNewEventClicked()">
+        <mat-icon>add</mat-icon>
+        <span fxHide.xs>New Event</span>
+      </button>
+    </div>
+
+    <div [ngClass.gt-xs]="'toolbar-item'">
+      <app-calendar-date-switch [view]="view" [(viewDate)]="viewDate" (viewDateChanged)="onViewDateChanged($event)">
+      </app-calendar-date-switch>
+    </div>
+
+    <div [ngClass.gt-xs]="'toolbar-item'">
+      <app-calendar-view-switch (viewChanged)="onViewChanged($event)"></app-calendar-view-switch>
+    </div>
+
+  </mat-toolbar-row>
+</mat-toolbar>

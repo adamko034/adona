@@ -1,4 +1,27 @@
 @import '../node_modules/angular-calendar/css/angular-calendar.css';
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+*:focus {
+  outline: none !important;
+  border: 0 !important;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.mat-icon-large {
+  transform: scale(1.5);
+}
+
+.mat-icon-small {
+  transform: scale(0.8);
+}
