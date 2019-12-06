@@ -5,13 +5,13 @@
 export const environment = {
   production: false,
   firebase: {
-    apiKey: "AIzaSyCpb-IuvyErf7LZl904UI9hgFt118_1G40",
-    authDomain: "adona-73208.firebaseapp.com",
-    databaseURL: "https://adona-73208.firebaseio.com",
-    projectId: "adona-73208",
-    storageBucket: "",
-    messagingSenderId: "113224921251",
-    appId: "1:113224921251:web:188b37b8fa2e4a62"
+    apiKey: 'AIzaSyDRSs-JoA5KJn5vas6df9h-Ni6hF93TXT4',
+    authDomain: 'adona-test.firebaseapp.com',
+    databaseURL: 'https://adona-test.firebaseio.com',
+    projectId: 'adona-test',
+    storageBucket: 'adona-test.appspot.com',
+    messagingSenderId: '219251712640',
+    appId: '1:219251712640:web:c22fd8f33440fbabfefc65'
   }
 };
 
