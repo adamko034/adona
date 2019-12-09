@@ -1,26 +1,15 @@
-.from-to-dates-section {
-  margin-bottom: 10px;
+.date-picker {
+  width: 120px;
+}
 
-  .from-to-dates-row {
-    display: flex;
-    justify-content: space-between;
+.time-picker {
+  width: 40px;
+}
 
-    .date-picker {
-      width: 180px;
-    }
+.hour-picker {
+  margin-right: 10px;
+}
 
-    .time-pickers-row {
-      .time-picker {
-        width: 60px;
-      }
-
-      .hour-picker {
-        margin-right: 10px;
-      }
-
-      .minutes-picker {
-        margin-left: 10px;
-      }
-    }
-  }
+.minutes-picker {
+  margin-left: 10px;
 }
