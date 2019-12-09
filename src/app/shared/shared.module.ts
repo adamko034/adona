@@ -1,19 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { FormsModule } from '@angular/forms';
 import {
-  MatIconModule,
-  MatSnackBarModule,
   MatCheckboxModule,
-  MatFormFieldModule,
   MatDatepickerModule,
+  MatFormFieldModule,
+  MatIconModule,
   MatInputModule,
-  MatSelectModule
+  MatSelectModule,
+  MatSnackBarModule
 } from '@angular/material';
+import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { ErrorComponent, ErrorContentComponent } from './components/error/error.component';
 import { FromToDatesComponent } from './components/from-to-dates/from-to-dates.component';
-import { FormsModule } from '@angular/forms';
-import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 
 @NgModule({
   imports: [
@@ -25,7 +26,8 @@ import { EnvironmentService } from 'src/app/shared/services/environment/environm
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
-    MatSelectModule
+    MatSelectModule,
+    FlexLayoutModule
   ],
   providers: [TimeService, EnvironmentService],
   declarations: [ErrorComponent, ErrorContentComponent, FromToDatesComponent],
