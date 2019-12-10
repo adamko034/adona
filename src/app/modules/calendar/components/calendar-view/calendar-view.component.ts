@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { CalendarDateFormatter, CalendarEvent, CalendarEventTitleFormatter, CalendarView } from 'angular-calendar';
 import * as _ from 'lodash';
@@ -10,6 +10,7 @@ import { CalendarCustomEventTitleFormatter } from '../../utils/calendar-custom-e
 import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
 import { NewEventDialogComponent } from '../dialogs/new-event-dialog/new-event-dialog.component';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
+
 @Component({
   selector: 'app-calendar-view',
   templateUrl: './calendar-view.component.html',
@@ -31,6 +32,8 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() weekStartsOn: number;
   @Input() events: CalendarEvent[];
 
+  @Output() viewDateChanged = new EventEmitter<Date>();
+
   private dialogResultSubscription: Subscription;
 
   public activeDayIsOpen = false;
@@ -50,7 +53,16 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  public dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+  onViewDateChanged(newDate: Date) {
+    this.viewDateChanged.emit(newDate);
+  }
+
+  onNextMonth() {
+    const newDate = this.timeService.Manipulation.addMonths(1, this.viewDate);
+    this.onViewDateChanged(newDate);
+  }
+
+  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (this.timeService.Comparison.areInTheSameMonth(this.viewDate, date)) {
       let showActiveDay = true;
 

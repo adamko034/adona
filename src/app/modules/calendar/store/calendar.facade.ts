@@ -18,16 +18,12 @@ export class CalendarFacade {
   public get events$(): Observable<CalendarEvent[]> {
     return this.store.pipe(
       select(calendarQueries.selectEvents),
-      map((events: Event[]) => this.mapper.CalendarEvent.fromEvents(events)),
-      take(1)
+      map((events: Event[]) => this.mapper.CalendarEvent.fromEvents(events))
     );
   }
 
   public getMonthsLoaded(): Observable<string[]> {
-    return this.store.pipe(
-      select(calendarQueries.selectMonthsLoaded),
-      take(1)
-    );
+    return this.store.pipe(select(calendarQueries.selectMonthsLoaded));
   }
 
   public addEvent(event: Event): void {

@@ -32,5 +32,9 @@
 </div>
 
 <div *ngIf="view.isList">
-  <app-calendar-view-list *ngIf="view.isList"></app-calendar-view-list>
+  <app-calendar-view-list
+    *ngIf="view.isList"
+    [events]="events"
+    (eventClicked)="eventClicked($event.event)"
+    (nextMonth)="onNextMonth()"></app-calendar-view-list>
 </div>

@@ -14,6 +14,7 @@ import { ErrorComponent, ErrorContentComponent } from './components/error/error.
 import { FromToDatesComponent } from './components/from-to-dates/from-to-dates.component';
 import { FormsModule } from '@angular/forms';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
+import { DateFormatPipe } from './pipes/date/date-format.pipe';
 
 @NgModule({
   imports: [
@@ -27,9 +28,9 @@ import { EnvironmentService } from 'src/app/shared/services/environment/environm
     MatDatepickerModule,
     MatSelectModule
   ],
-  providers: [TimeService, EnvironmentService],
-  declarations: [ErrorComponent, ErrorContentComponent, FromToDatesComponent],
-  exports: [ErrorComponent, FromToDatesComponent],
+  providers: [TimeService, EnvironmentService, DateFormatPipe],
+  declarations: [ErrorComponent, ErrorContentComponent, FromToDatesComponent, DateFormatPipe],
+  exports: [ErrorComponent, FromToDatesComponent, DateFormatPipe],
   entryComponents: [ErrorContentComponent]
 })
 export class SharedModule {}
