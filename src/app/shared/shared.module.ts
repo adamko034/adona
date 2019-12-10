@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import {
-  MatIconModule,
-  MatSnackBarModule,
   MatCheckboxModule,
-  MatFormFieldModule,
   MatDatepickerModule,
+  MatFormFieldModule,
+  MatIconModule,
   MatInputModule,
-  MatSelectModule
+  MatSelectModule,
+  MatSnackBarModule
 } from '@angular/material';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { ErrorComponent, ErrorContentComponent } from './components/error/error.component';
@@ -26,7 +27,8 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
-    MatSelectModule
+    MatSelectModule,
+    FlexLayoutModule
   ],
   providers: [TimeService, EnvironmentService, DateFormatPipe],
   declarations: [ErrorComponent, ErrorContentComponent, FromToDatesComponent, DateFormatPipe],

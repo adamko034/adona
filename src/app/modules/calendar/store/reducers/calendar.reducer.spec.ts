@@ -25,10 +25,7 @@ describe('Calendar Reducer', () => {
       // given
       const action = {} as any;
       const events = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents();
-      const previousState = new CalendarStateTestDataBuilder()
-        .withEvents(events)
-        .withMonthsLoaded(['201901'])
-        .build();
+      const previousState = new CalendarStateTestDataBuilder().withEvents(events).withMonthsLoaded(['201901']).build();
 
       // when
       const result = calendarReducer(previousState, action);

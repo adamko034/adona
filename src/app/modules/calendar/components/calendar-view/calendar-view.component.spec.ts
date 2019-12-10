@@ -9,10 +9,7 @@ import { CalendarViewComponent } from './calendar-view.component';
 
 describe('CalendarViewComponent', () => {
   const currentViewDate = new Date(2019, 10, 5);
-  const events = new EventsTestDataBuilder()
-    .addOneWithDefaultData()
-    .addOneWithDefaultData()
-    .buildEvents();
+  const events = new EventsTestDataBuilder().addOneWithDefaultData().addOneWithDefaultData().buildEvents();
 
   let component: CalendarViewComponent;
 
@@ -34,7 +31,7 @@ describe('CalendarViewComponent', () => {
     component.ngOnDestroy();
   });
 
-  describe('Date Changed event', () => {
+  describe('Day Clicked', () => {
     it('should not change view date and active day when when new date in different month', () => {
       // given
       const currentDate = new Date(2019, 5, 1);
@@ -47,6 +44,7 @@ describe('CalendarViewComponent', () => {
 
       // then
       expect(component.activeDayIsOpen).toBeTruthy();
+      expect(component.viewDate).toEqual(currentDate);
     });
 
     describe('New date in the same month', () => {
@@ -54,9 +52,7 @@ describe('CalendarViewComponent', () => {
         [true, false].forEach((value: boolean) => {
           it(`shold disable active day when previous value is: ${value.toString()}`, () => {
             // given
-            const newDate = moment(currentViewDate)
-              .add(1, 'days')
-              .toDate();
+            const newDate = moment(currentViewDate).add(1, 'days').toDate();
             component.activeDayIsOpen = value;
 
             // when
@@ -64,6 +60,7 @@ describe('CalendarViewComponent', () => {
 
             // then
             expect(component.activeDayIsOpen).toBeFalsy();
+            expect(component.viewDate).toEqual(newDate);
           });
         });
       });
@@ -79,6 +76,7 @@ describe('CalendarViewComponent', () => {
 
             // then
             expect(component.activeDayIsOpen).toBe(!currentValue);
+            expect(component.viewDate).toEqual(currentViewDate);
           });
         });
       });
@@ -156,9 +154,7 @@ describe('CalendarViewComponent', () => {
 
     it('should set to false if event does not exists on this day', () => {
       // given
-      component.viewDate = moment()
-        .add('1', 'weeks')
-        .toDate();
+      component.viewDate = moment().add('1', 'weeks').toDate();
       component.events = events;
 
       // when
@@ -185,20 +181,14 @@ describe('CalendarViewComponent', () => {
 
     it('should set to true if all days event exists on this day', () => {
       // given
-      component.viewDate = moment()
-        .add('5', 'days')
-        .toDate();
+      component.viewDate = moment().add('5', 'days').toDate();
 
       const calendarEvents = new EventsTestDataBuilder()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .buildCalendarEvents();
-      calendarEvents[0].start = moment()
-        .add('3', 'days')
-        .toDate();
-      calendarEvents[0].end = moment()
-        .add('6', 'days')
-        .toDate();
+      calendarEvents[0].start = moment().add('3', 'days').toDate();
+      calendarEvents[0].end = moment().add('6', 'days').toDate();
 
       component.events = calendarEvents;
 

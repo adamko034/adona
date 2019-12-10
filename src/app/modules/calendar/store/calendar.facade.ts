@@ -1,7 +1,7 @@
 import { select, Store } from '@ngrx/store';
 import { CalendarEvent } from 'calendar-utils';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
 import { CalendarMapper } from '../mappers/calendar.mapper';

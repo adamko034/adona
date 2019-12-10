@@ -7,7 +7,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "prod": "ng build --prod"
   },
   "private": true,
   "dependencies": {
@@ -17,6 +18,7 @@
     "@angular/compiler": "~8.0.3",
     "@angular/core": "~8.0.3",
     "@angular/fire": "^5.2.1",
+    "@angular/flex-layout": "^8.0.0-beta.27",
     "@angular/forms": "~8.0.3",
     "@angular/material": "^8.0.2",
     "@angular/platform-browser": "~8.0.3",

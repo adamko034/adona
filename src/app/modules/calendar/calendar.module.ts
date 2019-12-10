@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatButtonModule,
   MatDialogModule,
+  MatIconModule,
   MatInputModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  MatToolbarModule
 } from '@angular/material';
 import { EffectsModule } from '@ngrx/effects';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
@@ -15,6 +18,7 @@ import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CalendarRoutingModule } from './calendar-routing.module';
 import { CalendarTitleComponent } from './components/calendar-title/calendar-title.component';
+import { CalendarToolbarComponent } from './components/calendar-toolbar/calendar-toolbar.component';
 import { CalendarViewSwitchComponent } from './components/calendar-view-switch/calendar-view-switch.component';
 import { CalendarViewComponent } from './components/calendar-view/calendar-view.component';
 import { NewEventDialogComponent } from './components/dialogs/new-event-dialog/new-event-dialog.component';
@@ -32,7 +36,8 @@ import { CalendarViewListComponent } from './components/calendar-view/calendar-v
     CalendarTitleComponent,
     NewEventDialogComponent,
     CalendarDateSwitchComponent,
-    CalendarViewListComponent
+    CalendarViewListComponent,
+    CalendarToolbarComponent
   ],
   entryComponents: [NewEventDialogComponent],
   imports: [
@@ -46,9 +51,12 @@ import { CalendarViewListComponent } from './components/calendar-view/calendar-v
     EffectsModule.forFeature([CalendarEffects]),
     MatDialogModule,
     MatInputModule,
+    MatToolbarModule,
+    MatIconModule,
     FormsModule,
     MatNativeDateModule,
     MatButtonModule,
+    FlexLayoutModule,
     ReactiveFormsModule
   ],
   providers: [CalendarService, CalendarFacade, CalendarMapper]

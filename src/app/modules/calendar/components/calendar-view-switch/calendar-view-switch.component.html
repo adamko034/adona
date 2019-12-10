@@ -1,14 +1,24 @@
-<div class="btn-group">
-  <div class="btn btn-primary" (click)="setView(Views.Month)" [class.active]="view === Views.Month">
-    Month
+<div fxLayout fxLayoutGap.gt-xs="10px" fxLayoutGap.xs="5px">
+  <div>
+    <button mat-icon-button [disableRipple]="true" (click)="setView(Views.Month)">
+      <mat-icon [ngClass.xs]="'custom-icon-small'" [ngClass.gt-xs]="'custom-icon-large'"
+        svgIcon="calendar-month"></mat-icon>
+    </button>
+
   </div>
-  <div class="btn btn-primary" (click)="setView(Views.Week)" [class.active]="view === Views.Week">
-    Week
+  <div>
+    <button mat-icon-button [disableRipple]="true" (click)="setView(Views.Week)">
+      <mat-icon [ngClass.xs]="'custom-icon-small'" [ngClass.gt-xs]="'custom-icon-large'"
+        svgIcon="calendar-week"></mat-icon>
+    </button>
+
   </div>
-  <div class="btn btn-primary" (click)="setView(Views.Day)" [class.active]="view === Views.Day">
-    Day
+  <div>
+    <button mat-icon-button [disableRipple]="true" (click)="setView(Views.Day)">
+      <mat-icon [ngClass.xs]="'custom-icon-small'" [ngClass.gt-xs]="'custom-icon-large'" svgIcon="calendar-day"></mat-icon>
+    </button>
   </div>
-  <div class="btn btn-primary" (click)="setView(Views.List)" [class.active]="view === Views.List">
+  <div class="btn btn-primary" (click)="setView(Views.List)">
     List
   </div>
 </div>

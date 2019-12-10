@@ -1,10 +1,14 @@
 .dialog-container {
-  .full-width {
-    width: 100%;
-  }
+  .dialog-content {
+    margin-top: -10px;
 
-  .form-section {
-    margin-bottom: 10px;
+    .full-width {
+      width: 100%;
+    }
+
+    .form-section {
+      margin-bottom: 10px;
+    }
   }
 
   .dialog-actions {
