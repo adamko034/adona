@@ -12,6 +12,7 @@
         <app-from-to-dates
           [start]="getInitialStartDate()"
           [end]="getInitialEndDate()"
+          [allDay]="getInitialAllDayFlag()"
           (dateChanged)="fromToDateChanged($event)"
         ></app-from-to-dates>
       </div>

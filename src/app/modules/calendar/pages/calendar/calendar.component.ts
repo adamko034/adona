@@ -25,13 +25,13 @@ export class CalendarComponent implements OnInit, OnDestroy {
     private timeService: TimeService
   ) {}
 
-  ngOnInit() {
+  public ngOnInit() {
     this.events$ = this.calendarFacade.events$;
     this.calendarFacade.loadMonthEvents(this.viewDate);
     this.calendarFacade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate));
   }
 
-  ngOnDestroy() {
+  public ngOnDestroy() {
     if (this.dialogResultSubscription) {
       this.dialogResultSubscription.unsubscribe();
     }

@@ -32,13 +32,7 @@ export class NewEventDialogComponent implements OnInit {
       this.editMode = true;
 
       const { title, start, end, allDay, id } = this.data.event;
-      this.form.setValue({
-        id,
-        title,
-        allDay,
-        start,
-        end
-      });
+      this.form.setValue({id, title, allDay, start, end});
     }
   }
 
@@ -66,6 +60,10 @@ export class NewEventDialogComponent implements OnInit {
     };
 
     this.form.patchValue(value);
+  }
+
+  public getInitialAllDayFlag(): boolean {
+    return this.editMode ? this.data.event.allDay : false;
   }
 
   public getInitialStartDate(): Date {
