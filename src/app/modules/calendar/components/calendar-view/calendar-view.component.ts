@@ -33,24 +33,24 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
 
   private dialogResultSubscription: Subscription;
 
-  activeDayIsOpen = false;
-  CalendarView = CalendarView;
+  public activeDayIsOpen = false;
+  public CalendarView = CalendarView;
 
   constructor(private timeService: TimeService, private editEventDialog: MatDialog, private facade: CalendarFacade) {}
 
-  ngOnInit() {}
+  public ngOnInit() {}
 
-  ngOnChanges(): void {
+  public ngOnChanges() {
     this.activeDayIsOpen = this.eventExistsOnViewDate();
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy() {
     if (this.dialogResultSubscription) {
       this.dialogResultSubscription.unsubscribe();
     }
   }
 
-  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+  public dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }) {
     if (this.timeService.Comparison.areInTheSameMonth(this.viewDate, date)) {
       let showActiveDay = true;
 
@@ -66,7 +66,7 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  eventClicked(event: CalendarEvent): void {
+  public eventClicked(event: CalendarEvent) {
     const dialogRef = this.editEventDialog.open(NewEventDialogComponent, {
       width: '400px',
       data: { event }
@@ -79,7 +79,7 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  eventExistsOnViewDate(): boolean {
+  public eventExistsOnViewDate(): boolean {
     return (
       _.findIndex(this.events, (x: CalendarEvent) =>
         this.timeService.Comparison.isDateBetweenDates(this.viewDate, x.start, x.end)

@@ -1,5 +1,5 @@
 <div fxLayout="column" fxLayoutGap="10px">
-  <mat-checkbox (change)="allDayEventChanged()" [color]="'primary'">All day event</mat-checkbox>
+  <mat-checkbox (change)="allDayEventChanged()" [(ngModel)]="allDay" [color]="'primary'">All day event</mat-checkbox>
 
   <div fxLayout fxLayoutGap="20px">
     <div>
@@ -11,7 +11,7 @@
       </mat-form-field>
     </div>
 
-    <div *ngIf="!isAllDay" class="time-pickers-row">
+    <div *ngIf="!allDay" class="time-pickers-row">
       <mat-form-field class="time-picker hour-picker">
         <mat-select name="startTimeHour" [(ngModel)]="startHour" (selectionChange)="adjustValuesAndEmit()">
           <mat-option *ngFor="let hour of startHoursOptions" [value]="hour.key">{{ hour.value }}</mat-option>
@@ -44,7 +44,7 @@
       <mat-error *ngIf="!endDateValid">Please enter valid end date</mat-error>
     </mat-form-field>
 
-    <div *ngIf="!isAllDay" class="time-pickers-row">
+    <div *ngIf="!allDay" class="time-pickers-row">
       <mat-form-field class="time-picker hour-picker">
         <mat-select name="endTimeHour" [(ngModel)]="endHour" (selectionChange)="adjustValuesAndEmit()">
           <mat-option *ngFor="let hour of endHoursOptions" [value]="hour.key">{{ hour.value }}</mat-option>

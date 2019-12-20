@@ -11,6 +11,7 @@ import { TimeService } from 'src/app/shared/services/time/time.service';
 export class FromToDatesComponent implements OnInit {
   @Input() start: Date;
   @Input() end: Date;
+  @Input() allDay: boolean;
   @Output() dateChanged = new EventEmitter<FromToDates>();
 
   public startHour: number;
@@ -25,7 +26,6 @@ export class FromToDatesComponent implements OnInit {
   public endHoursOptions: KeyValue<number, string>[];
   public endMinutesOptions: KeyValue<number, string>[];
 
-  public isAllDay = false;
   public endDateValid = true;
 
   public excludeLowerThanStartDate = (date: Date): boolean => {
@@ -45,27 +45,26 @@ export class FromToDatesComponent implements OnInit {
 
     this.startDate = this.start || new Date();
     this.endDate = this.end || new Date();
-    this.startHour = this.startDate.getHours();
+    this.startHour = this.allDay ? new Date().getHours() : this.startDate.getHours();
     this.startMinutes = this.start ? this.start.getMinutes() : 0;
-    this.endHour = this.end ? this.end.getHours() : this.startDate.getHours() + 1;
-    this.endMinutes = this.end ? this.end.getMinutes() : 0;
+    this.endHour = this.end && !this.allDay ? this.end.getHours() : this.startHour + 1;
+    this.endMinutes = this.end && !this.allDay ? this.end.getMinutes() : 0;
 
     this.adjustValuesAndEmit();
   }
 
-  public allDayEventChanged(): void {
+  public allDayEventChanged() {
     if (this.isAtLeastOneValueNull()) {
       this.endDateValid = false;
       this.emitValue(null, null);
       return;
     }
 
-    this.isAllDay = !this.isAllDay;
     this.endDateValid = this.timeService.Comparison.isDateBeforeOrEqualThan(this.startDate, this.endDate);
     this.emitValue(this.getStartDateTime(), this.getEndDateTime());
   }
 
-  public adjustValuesAndEmit(): void {
+  public adjustValuesAndEmit() {
     if (this.isAtLeastOneValueNull()) {
       this.endDateValid = false;
       this.emitValue(null, null);
@@ -111,7 +110,7 @@ export class FromToDatesComponent implements OnInit {
     this.emitValue(this.getStartDateTime(), this.getEndDateTime());
   }
 
-  private handleMidnight(): void {
+  private handleMidnight() {
     if (
       this.timeService.Comparison.areDatesTheSame(this.startDate, this.endDate) &&
       this.startHour === 23 &&
@@ -123,21 +122,24 @@ export class FromToDatesComponent implements OnInit {
     }
   }
 
-  private emitValue(from: Date, to: Date): void {
-    const value: FromToDates = {
-      from,
-      to,
-      isAllDay: this.isAllDay
-    };
+  private emitValue(from: Date, to: Date) {
+    const value: FromToDates = { from, to, isAllDay: this.allDay };
 
     this.dateChanged.emit(value);
   }
 
   private getStartDateTime(): Date {
+    if (this.allDay) {
+      return this.timeService.Creation.getDateTimeFrom(this.startDate, 0, 0);
+    }
     return this.timeService.Creation.getDateTimeFrom(this.startDate, this.startHour, this.startMinutes);
   }
 
   private getEndDateTime(): Date {
+    if (this.allDay) {
+      return this.timeService.Creation.getDateTimeFrom(this.endDate, 23, 59);
+    }
+
     return this.timeService.Creation.getDateTimeFrom(this.endDate, this.endHour, this.endMinutes);
   }
 
