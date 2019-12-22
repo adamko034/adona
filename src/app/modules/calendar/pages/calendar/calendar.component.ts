@@ -22,14 +22,15 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   constructor(
     private calendarFacade: CalendarFacade,
-    public newEventModal: MatDialog,
-    private timeService: TimeService
+    private timeService: TimeService,
+    public newEventModal: MatDialog
   ) {}
 
   public ngOnInit() {
     this.events$ = this.calendarFacade.events$;
     this.calendarFacade.loadMonthEvents(this.viewDate);
     this.calendarFacade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate));
+    this.calendarFacade.loadMonthEvents(this.timeService.Extraction.getNextMonthOf(this.viewDate));
   }
 
   public ngOnDestroy() {
@@ -43,11 +44,13 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   public onViewDateChanged(newViewDate: Date) {
+    const fetchDate = this.adjustFetchDate(newViewDate);
     this.viewDate = newViewDate;
-    this.calendarFacade.loadMonthEvents(this.viewDate);
+
+    this.calendarFacade.loadMonthEvents(fetchDate);
   }
 
-  public openNewEventModal(): void {
+  public openNewEventModal() {
     const dialogRef = this.newEventModal.open(NewEventDialogComponent, {
       width: '400px'
     });
@@ -57,5 +60,17 @@ export class CalendarComponent implements OnInit, OnDestroy {
         this.calendarFacade.addEvent(newEvent);
       }
     });
+  }
+
+  private adjustFetchDate(newViewDate: Date): Date {
+    if (this.view.view === CalendarView.Week) {
+      const startOfWeek = this.timeService.Extraction.getStartOfWeek(newViewDate);
+      const endOfWeek = this.timeService.Extraction.getEndOfWeek(newViewDate);
+
+      if (!this.timeService.Comparison.areDatesInTheSameMonth(this.viewDate, startOfWeek)) return startOfWeek;
+      if (!this.timeService.Comparison.areDatesInTheSameMonth(this.viewDate, endOfWeek)) return endOfWeek;
+    }
+
+    return newViewDate;
   }
 }

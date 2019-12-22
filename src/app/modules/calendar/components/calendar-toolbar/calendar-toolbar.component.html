@@ -9,14 +9,20 @@
       </button>
     </div>
 
-    <div [ngClass.gt-xs]="'toolbar-item'">
+    <div *ngIf="!view.isList" [ngClass.gt-xs]="'toolbar-item'">
       <app-calendar-date-switch [view]="view" [(viewDate)]="viewDate" (viewDateChanged)="onViewDateChanged($event)">
       </app-calendar-date-switch>
+    </div>
+
+    <div *ngIf="view.isList" [ngClass.gt-xs]="'toolbar-item'">
+      <app-calendar-list-scroll></app-calendar-list-scroll>
     </div>
 
     <div [ngClass.gt-xs]="'toolbar-item'">
       <app-calendar-view-switch (viewChanged)="onViewChanged($event)"></app-calendar-view-switch>
     </div>
+
+
 
   </mat-toolbar-row>
 </mat-toolbar>

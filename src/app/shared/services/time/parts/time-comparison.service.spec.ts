@@ -57,9 +57,7 @@ describe('TimeComparisonService', () => {
     ];
 
     for (const input of inputs) {
-      it(`should return ${
-        input.expected
-      } when comparing ${input.firstDate.toLocaleString()} to ${input.secondDate.toLocaleString()}`, () => {
+      it(`should return ${input.expected} when comparing ${input.firstDate.toLocaleString()} to ${input.secondDate.toLocaleString()}`, () => {
         // when
         const result = service.isDateBefore(input.firstDate, input.secondDate);
 
@@ -119,9 +117,7 @@ describe('TimeComparisonService', () => {
     ];
 
     for (const input of inputs) {
-      it(`should return ${
-        input.expected
-      } when comparing ${input.firstDate.toLocaleString()} to ${input.secondDate.toLocaleString()}`, () => {
+      it(`should return ${input.expected} when comparing ${input.firstDate.toLocaleString()} to ${input.secondDate.toLocaleString()}`, () => {
         // when
         const result = service.isDateBeforeOrEqualThan(input.firstDate, input.secondDate);
 
@@ -181,9 +177,7 @@ describe('TimeComparisonService', () => {
     ];
 
     for (const input of inputs) {
-      it(`should return ${
-        input.expected
-      } when comparing ${input.firstDate.toLocaleString()} to ${input.secondDate.toLocaleString()}`, () => {
+      it(`should return ${input.expected} when comparing ${input.firstDate.toLocaleString()} to ${input.secondDate.toLocaleString()}`, () => {
         // when
         const result = service.areDatesTheSame(input.firstDate, input.secondDate);
 
@@ -209,10 +203,8 @@ describe('TimeComparisonService', () => {
       { firstDate: new Date(2019, 11, 1, 7, 30), secondDate: new Date(2019, 10, 1, 6, 15), expected: false },
       { firstDate: new Date(2019, 11, 1, 7, 30), secondDate: new Date(2018, 10, 1, 6, 15), expected: false },
       { firstDate: new Date(2018, 11, 1, 7, 30), secondDate: new Date(2019, 10, 1, 6, 15), expected: true }
-    ].forEach(input => {
-      it(`should return ${
-        input.expected
-      } when comparing ${input.firstDate.toLocaleString()} with ${input.secondDate.toLocaleString()}`, () => {
+    ].forEach((input) => {
+      it(`should return ${input.expected} when comparing ${input.firstDate.toLocaleString()} with ${input.secondDate.toLocaleString()}`, () => {
         // when
         const result = service.isDateTimeBefore(input.firstDate, input.secondDate);
 
@@ -229,7 +221,7 @@ describe('TimeComparisonService', () => {
       { firstDate: new Date(2019, 10, 1, 7, 30), secondDate: new Date(2019, 10, 2, 7, 30), expected: true },
       { firstDate: new Date(2019, 10, 1, 7, 30), secondDate: new Date(2020, 10, 1, 7, 30), expected: false },
       { firstDate: new Date(2019, 10, 1, 7, 30), secondDate: new Date(2019, 11, 1, 7, 30), expected: false }
-    ].forEach(input => {
+    ].forEach((input) => {
       it(`should return ${input.expected} for dates: ${input.firstDate} and ${input.secondDate}`, () => {
         // when
         const result = service.areInTheSameMonth(input.firstDate, input.secondDate);
@@ -253,7 +245,7 @@ describe('TimeComparisonService', () => {
       { firstDate: new Date(2019, 10, 1, 7, 30), secondDate: new Date(2019, 10, 2, 7, 30), expected: false },
       { firstDate: new Date(2019, 10, 1, 7, 30), secondDate: new Date(2019, 11, 1, 7, 30), expected: false },
       { firstDate: new Date(2019, 10, 1, 7, 30), secondDate: new Date(2018, 10, 1, 7, 30), expected: false }
-    ].forEach(input => {
+    ].forEach((input) => {
       it(`should return ${input.expected} for dates: ${input.firstDate} and ${input.secondDate}`, () => {
         // when
         const result = service.areDateHoursTheSame(input.firstDate, input.secondDate);
@@ -387,13 +379,30 @@ describe('TimeComparisonService', () => {
         secondDate: new Date(2021, 3, 15, 20, 45),
         expected: false
       }
-    ].forEach(input => {
+    ].forEach((input) => {
       it(`should return ${input.expected} when comparing ${input.date} to ${input.firstDate} and ${input.secondDate}`, () => {
         // when
         const result = service.isDateBetweenDates(input.date, input.firstDate, input.secondDate);
 
         // then
         expect(result).toEqual(input.expected);
+      });
+    });
+  });
+
+  describe('Are Dates In The Same Month', () => {
+    [
+      { date1: new Date(2019, 1, 1), date2: new Date(2019, 1, 10), expected: true },
+      { date1: new Date(2019, 2, 1), date2: new Date(2019, 1, 10), expected: false },
+      { date1: new Date(2019, 1, 1), date2: new Date(2020, 1, 10), expected: false },
+      { date1: new Date(2018, 1, 1), date2: new Date(2019, 1, 10), expected: false }
+    ].forEach((input) => {
+      it(`should return ${input.expected} for comparing dates: ${input.date1} and ${input.date2}`, () => {
+        // when
+        const actual = service.areDatesInTheSameMonth(input.date1, input.date2);
+
+        // then
+        expect(actual).toEqual(input.expected);
       });
     });
   });

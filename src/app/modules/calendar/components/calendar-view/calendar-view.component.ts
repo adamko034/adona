@@ -29,15 +29,14 @@ import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar
 export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() viewDate: Date;
   @Input() view: AdonaCalendarView;
-  @Input() weekStartsOn: number;
   @Input() events: CalendarEvent[];
 
   @Output() viewDateChanged = new EventEmitter<Date>();
 
   private dialogResultSubscription: Subscription;
 
-  activeDayIsOpen = false;
-  CalendarView = CalendarView;
+  public activeDayIsOpen = false;
+  public CalendarView = CalendarView;
 
   constructor(private timeService: TimeService, private editEventDialog: MatDialog, private facade: CalendarFacade) {}
 

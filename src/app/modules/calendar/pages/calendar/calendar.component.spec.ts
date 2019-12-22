@@ -8,17 +8,24 @@ import { EventsTestDataBuilder } from '../../utils/tests/event-test-data.builder
 import { CalendarComponent } from './calendar.component';
 import { AdonaCalendarModule } from 'src/app/modules/calendar/calendar.module';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
+import { TimeComparisonService } from '../../../../shared/services/time/parts/time-comparison.service';
 
 describe('CalendarComponent', () => {
   let component: CalendarComponent;
   const calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', ['loadMonthEvents', 'addEvent']);
   const dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
   const timeService: any = {
-    Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', ['getPreviousMonthOf'])
+    Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', [
+      'getPreviousMonthOf',
+      'getNextMonthOf',
+      'getStartOfWeek',
+      'getEndOfWeek'
+    ]),
+    Comparison: jasmine.createSpyObj<TimeComparisonService>('TimeComparisonService', ['areDatesInTheSameMonth'])
   };
 
   beforeEach(() => {
-    component = new CalendarComponent(calendarFacade, dialog, timeService);
+    component = new CalendarComponent(calendarFacade, timeService, dialog);
 
     calendarFacade.loadMonthEvents.calls.reset();
     calendarFacade.addEvent.calls.reset();
@@ -30,15 +37,17 @@ describe('CalendarComponent', () => {
       // given
       const viewDate = new Date(2019, 10, 10);
       const previousMonth = new Date(2019, 9, 10);
+      const nextMonth = new Date(2019, 11, 10);
 
       component.viewDate = viewDate;
       timeService.Extraction.getPreviousMonthOf.and.returnValue(previousMonth);
+      timeService.Extraction.getNextMonthOf.and.returnValue(nextMonth);
 
       // when
       component.ngOnInit();
 
       // then
-      expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(2);
+      expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(3);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(viewDate);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(previousMonth);
     });
@@ -77,7 +86,7 @@ describe('CalendarComponent', () => {
   });
 
   describe('On View Changed', () => {
-    it('should change view type  journey', () => {
+    it('should change view type journey', () => {
       const adonaView: AdonaCalendarView = { view: CalendarView.Day, isList: false };
       component.onViewChanged(adonaView);
       expect(component.view).toBe(adonaView);
@@ -110,6 +119,72 @@ describe('CalendarComponent', () => {
       expect(component.viewDate).toBe(newDate);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(1);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(newDate);
+    });
+
+    describe('adjuest fetch date for week view', () => {
+      beforeEach(() => {
+        timeService.Extraction.getStartOfWeek.calls.reset;
+        timeService.Extraction.getEndOfWeek.calls.reset;
+        timeService.Comparison.areDatesInTheSameMonth.calls.reset;
+      });
+
+      it('should load for previous month', () => {
+        // given
+        const currentViewDate = new Date(2019, 10, 8);
+        component.view = { isList: false, view: CalendarView.Week };
+        component.viewDate = currentViewDate;
+        const newDate = new Date(2019, 10, 1);
+        const fetchDate = new Date(2019, 9, 28);
+
+        const startOfWeek = new Date(2019, 9, 28);
+        const endOfWeek = new Date(2019, 10, 3);
+
+        timeService.Extraction.getStartOfWeek.and.returnValue(startOfWeek);
+        timeService.Extraction.getEndOfWeek.and.returnValue(endOfWeek);
+
+        timeService.Comparison.areDatesInTheSameMonth
+          .withArgs(currentViewDate, startOfWeek)
+          .and.returnValue(false)
+          .withArgs(currentViewDate, endOfWeek)
+          .and.returnValue(true);
+
+        // when
+        component.onViewDateChanged(newDate);
+
+        // then
+        expect(component.viewDate).toBe(newDate);
+        expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(1);
+        expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(fetchDate);
+      });
+
+      it('should load for next month', () => {
+        // given
+        const currentViewDate = new Date(2020, 0, 23);
+        component.view = { isList: false, view: CalendarView.Week };
+        component.viewDate = currentViewDate;
+        const newDate = new Date(2020, 0, 30);
+        const fetchDate = new Date(2020, 1, 2);
+
+        const startOfWeek = new Date(2020, 0, 27);
+        const endOfWeek = new Date(2020, 1, 2);
+
+        timeService.Extraction.getStartOfWeek.and.returnValue(startOfWeek);
+        timeService.Extraction.getEndOfWeek.and.returnValue(endOfWeek);
+
+        timeService.Comparison.areDatesInTheSameMonth
+          .withArgs(currentViewDate, startOfWeek)
+          .and.returnValue(true)
+          .withArgs(currentViewDate, endOfWeek)
+          .and.returnValue(false);
+
+        // when
+        component.onViewDateChanged(newDate);
+
+        // then
+        expect(component.viewDate).toBe(newDate);
+        expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(1);
+        expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(fetchDate);
+      });
     });
   });
 

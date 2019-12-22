@@ -32,7 +32,6 @@ export class TimeExtractionService {
   }
 
   public getDateString(date: Date): string {
-    console.log(date);
     return moment.utc(date).format('DD-MM-YYYY');
   }
 
@@ -46,5 +45,17 @@ export class TimeExtractionService {
 
   public getDateFormatted(date: Date, format: DateFormat): string {
     return moment(date).format(format.toString());
+  }
+
+  public getEndOfWeek(date: Date): Date {
+    return moment(date).endOf('isoWeek').toDate();
+  }
+
+  public getStartOfWeek(date: Date): Date {
+    return moment(date).startOf('isoWeek').toDate();
+  }
+
+  public getNextMonthOf(date: Date): Date {
+    return moment(date).add(1, 'month').toDate();
   }
 }

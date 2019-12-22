@@ -5,7 +5,7 @@
     [events]="events"
     [viewDate]="viewDate"
     [activeDayIsOpen]="activeDayIsOpen"
-    [weekStartsOn]="weekStartsOn"
+    [weekStartsOn]="1"
     (dayClicked)="dayClicked($event.day)"
     (eventClicked)="eventClicked($event.event)"
   >
@@ -25,7 +25,7 @@
     [@.disabled]="true"
     [events]="events"
     [viewDate]="viewDate"
-    [weekStartsOn]="weekStartsOn"
+    [weekStartsOn]="1"
     [dayStartHour]="7"
   >
   </mwl-calendar-week-view>
@@ -35,6 +35,5 @@
   <app-calendar-view-list
     *ngIf="view.isList"
     [events]="events"
-    (eventClicked)="eventClicked($event.event)"
-    (nextMonth)="onNextMonth()"></app-calendar-view-list>
+    (eventClicked)="eventClicked($event)"></app-calendar-view-list>
 </div>

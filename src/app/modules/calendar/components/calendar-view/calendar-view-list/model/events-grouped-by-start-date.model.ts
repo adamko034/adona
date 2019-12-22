@@ -1,7 +1,7 @@
 import { CalendarEvent } from 'calendar-utils';
 
 export interface EventsGroupedByStartDate {
-  timestamp: number;
+  id: string;
   start: Date;
   events: CalendarEvent[];
 }

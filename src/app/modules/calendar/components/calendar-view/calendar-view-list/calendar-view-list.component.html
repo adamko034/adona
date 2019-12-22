@@ -1,14 +1,20 @@
 <div class="list-view-container">
-  <div class="width-full">
-    <button class="width-full" mat-stroked-button>Load previous</button>
+  <div class="list-view-filters">
+    <mat-checkbox [(ngModel)]="hidePastEvents" color="primary" (change)="onHidePastEventsChanged()">Hide past events</mat-checkbox>
   </div>
-  <div *ngFor="let group of eventsGrouped" class="groups-container">
-    <div id="{{group.timestamp}}" class="group-container">
+
+  <div class="width-full">
+    <button class="width-full list-view-button" mat-flat-button (click)="onLoadPrevious()">
+      Load events from {{previousDateToLoad | dateFormat:monthNameFormat}}
+    </button>
+  </div>
+  <div class="groups-container">
+    <div *ngFor="let group of eventsGrouped" id="{{group.id}}" class="group-container">
       <div class="group-title">
         {{group.start | dateFormat:startDateFormat}}
       </div>
       <div class="group-events-container">
-        <div *ngFor="let event of group.events" class="event-container">
+        <div *ngFor="let event of group.events" class="event-container" (click)="onEventClicked(event)">
           <div class="event-hours">
             <div class="event-hours-all-day" *ngIf="event.allDay;else eventHours">
               <span>all-day</span>
@@ -31,6 +37,7 @@
     </div>
   </div>
   <div class="width-full">
-    <button class="width-full" mat-stroked-button (click)="onLoadNext()">Load next</button>
+    <button class="width-full list-view-button" mat-flat-button (click)="onLoadNext()">
+      Load events from {{nextDateToLoad | dateFormat:monthNameFormat}}</button>
   </div>
 </div>

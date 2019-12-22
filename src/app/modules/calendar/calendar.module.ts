@@ -8,7 +8,8 @@ import {
   MatIconModule,
   MatInputModule,
   MatNativeDateModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatCheckboxModule
 } from '@angular/material';
 import { EffectsModule } from '@ngrx/effects';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
@@ -27,6 +28,7 @@ import { CalendarComponent } from './pages/calendar/calendar.component';
 import { CalendarFacade } from './store/calendar.facade';
 import { CalendarDateSwitchComponent } from './components/calendar-date-switch/calendar-date-switch.component';
 import { CalendarViewListComponent } from './components/calendar-view/calendar-view-list/calendar-view-list.component';
+import { CalendarListScrollComponent } from './components/calendar-toolbar/calendar-list-scroll/calendar-list-scroll.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,8 @@ import { CalendarViewListComponent } from './components/calendar-view/calendar-v
     NewEventDialogComponent,
     CalendarDateSwitchComponent,
     CalendarViewListComponent,
-    CalendarToolbarComponent
+    CalendarToolbarComponent,
+    CalendarListScrollComponent
   ],
   entryComponents: [NewEventDialogComponent],
   imports: [
@@ -57,6 +60,7 @@ import { CalendarViewListComponent } from './components/calendar-view/calendar-v
     MatNativeDateModule,
     MatButtonModule,
     FlexLayoutModule,
+    MatCheckboxModule,
     ReactiveFormsModule
   ],
   providers: [CalendarService, CalendarFacade, CalendarMapper]

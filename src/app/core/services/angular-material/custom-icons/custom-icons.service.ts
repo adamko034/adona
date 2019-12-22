@@ -19,5 +19,9 @@ export class CustomIconsService {
       'calendar-day',
       this.domSanitizer.bypassSecurityTrustResourceUrl('../../../../../../assets/icons/calendar/calendar-day.svg')
     );
+    this.matIconRegistry.addSvgIcon(
+      'calendar-list',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('../../../../../../assets/icons/calendar/calendar-list.svg')
+    );
   }
 }

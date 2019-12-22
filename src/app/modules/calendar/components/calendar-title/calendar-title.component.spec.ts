@@ -26,7 +26,6 @@ describe('CelendarTitleComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CalendarTitleComponent);
     component = fixture.componentInstance;
-    h3 = fixture.nativeElement.querySelector('h3');
   });
 
   it('should show date on month view', () => {
@@ -39,6 +38,7 @@ describe('CelendarTitleComponent', () => {
     fixture.detectChanges();
 
     // then
+    h3 = fixture.nativeElement.querySelector('h3');
     expect(h3.textContent).toBe(moment().format('MMMM YYYY'));
   });
 
@@ -52,8 +52,9 @@ describe('CelendarTitleComponent', () => {
     fixture.detectChanges();
 
     // then
-    const startOfWeek = moment().startOf('week').format('MMM D');
-    const endOfWeek = moment().endOf('week').format('MMM D');
+    h3 = fixture.nativeElement.querySelector('h3');
+    const startOfWeek = moment().startOf('isoWeek').format('MMM D');
+    const endOfWeek = moment().endOf('isoWeek').format('MMM D');
     const year = moment().format('YYYY');
 
     const expectedContent = `${startOfWeek} - ${endOfWeek}, ${year}`;
@@ -71,6 +72,7 @@ describe('CelendarTitleComponent', () => {
     fixture.detectChanges();
 
     // then
+    h3 = fixture.nativeElement.querySelector('h3');
     expect(h3.textContent).toBe(moment().format('dddd, MMMM D, YYYY'));
   });
 
@@ -79,6 +81,19 @@ describe('CelendarTitleComponent', () => {
     fixture.detectChanges();
 
     // then
+    h3 = fixture.nativeElement.querySelector('h3');
     expect(h3.textContent).toBe(moment().format('MMMM YYYY'));
+  });
+
+  it('should not show title if list view', () => {
+    // given
+    component.view = { view: CalendarView.Month, isList: true };
+
+    // when
+    fixture.detectChanges();
+
+    // then
+    h3 = fixture.nativeElement.querySelector('h3');
+    expect(h3).toBeFalsy();
   });
 });

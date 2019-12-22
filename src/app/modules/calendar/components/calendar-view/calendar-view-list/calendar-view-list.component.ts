@@ -6,64 +6,120 @@ import {
   EventEmitter,
   OnChanges,
   SimpleChanges,
-  AfterViewChecked
+  AfterViewChecked,
+  OnDestroy
 } from '@angular/core';
 import { CalendarEvent } from 'calendar-utils';
 import { EventsGroupedByStartDate } from './model/events-grouped-by-start-date.model';
 import { TimeService } from '../../../../../shared/services/time/time.service';
 import { DateFormat } from '../../../../../shared/services/time/model/date-format.enum';
+import { Event } from '../../../model/event.model';
+import { CalendarFacade } from '../../../store/calendar.facade';
+import { Subscription } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
+import { CalendarConstants } from '../../../utils/calendar-constants';
 
 @Component({
   selector: 'app-calendar-view-list',
   templateUrl: './calendar-view-list.component.html',
   styleUrls: ['./calendar-view-list.component.scss']
 })
-export class CalendarViewListComponent implements OnInit, OnChanges, AfterViewChecked {
+export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
   @Input() events: CalendarEvent[];
 
   @Output() eventClicked = new EventEmitter<CalendarEvent>();
-  @Output() nextMonth = new EventEmitter();
-  @Output() previousMonth = new EventEmitter();
+
+  private monthsLoadedSubscription: Subscription;
 
   eventsGrouped: EventsGroupedByStartDate[] = [];
-  hideEmptyDays = false;
+  hidePastEvents = true;
   startDateFormat = DateFormat.LongDayNameDayNumberLongMonthName;
+  monthNameFormat = DateFormat.LongMonthName;
 
-  private scrollTo = '';
-  private shouldScroll = false;
+  previousDateToLoad: Date;
+  nextDateToLoad: Date;
 
-  constructor(public timeService: TimeService) {}
+  constructor(private calendarFacade: CalendarFacade, public timeService: TimeService) {}
 
-  ngOnInit() {
+  public ngOnInit() {
+    if (!this.previousDateToLoad) {
+      this.previousDateToLoad = this.timeService.Manipulation.addMonths(-2, new Date());
+    }
+
+    if (!this.nextDateToLoad) {
+      this.nextDateToLoad = this.timeService.Manipulation.addMonths(2, new Date());
+    }
+
+    this.monthsLoadedSubscription = this.calendarFacade
+      .getMonthsLoaded()
+      .pipe(
+        filter((monthsLoaded: string[]) => monthsLoaded.length === 0),
+        map((monthsLoaded: string[]) => {
+          monthsLoaded.sort();
+          const minMonth = this.timeService.Creation.getDateTimeFromMonthLoaded(monthsLoaded[0]);
+          const maxMonth = this.timeService.Creation.getDateTimeFromMonthLoaded(monthsLoaded[monthsLoaded.length - 1]);
+
+          this.previousDateToLoad = this.timeService.Manipulation.addMonths(-1, minMonth);
+          this.nextDateToLoad = this.timeService.Manipulation.addMonths(1, maxMonth);
+        })
+      )
+      .subscribe();
+  }
+
+  public ngOnChanges() {
+    console.log('on changes');
     this.calculateEventsGrouped();
   }
 
-  ngOnChanges({ events: changes }: SimpleChanges) {
+  public ngOnDestroy() {
+    if (this.monthsLoadedSubscription) {
+      this.monthsLoadedSubscription.unsubscribe();
+    }
+  }
+
+  public onLoadNext() {
+    this.calendarFacade.loadMonthEvents(this.nextDateToLoad);
+    this.nextDateToLoad = this.timeService.Manipulation.addMonths(1, this.nextDateToLoad);
+  }
+
+  public onLoadPrevious() {
+    this.hidePastEvents = false;
+    this.calendarFacade.loadMonthEvents(this.previousDateToLoad);
+    this.previousDateToLoad = this.timeService.Manipulation.addMonths(-1, this.previousDateToLoad);
+  }
+
+  public onHidePastEventsChanged() {
     this.calculateEventsGrouped();
-    let newScrollTo = '';
-
-    if (changes.previousValue) {
-      newScrollTo = (+changes.previousValue[changes.previousValue.length - 1].start).toString();
-    }
-
-    this.shouldScroll = this.scrollTo !== newScrollTo;
-    this.scrollTo = newScrollTo;
   }
 
-  ngAfterViewChecked() {
-    if (this.shouldScroll) {
-      document.getElementById(this.scrollTo).scrollIntoView({ behavior: 'smooth' });
-      this.shouldScroll = false;
-    }
-  }
-
-  onLoadNext() {
-    this.nextMonth.emit();
+  public onEventClicked(event: CalendarEvent) {
+    this.eventClicked.emit(event);
   }
 
   private calculateEventsGrouped() {
     this.eventsGrouped = [];
-    this.events.forEach((event) => {
+    let eventsToGroup = [...this.events];
+
+    this.createGroups(eventsToGroup);
+    this.appendTodayGroupIfNotExists();
+
+    this.eventsGrouped.sort((g1, g2) => +g1.start - +g2.start);
+
+    this.filterPastEventsIfNeeded();
+    this.appendIds();
+  }
+
+  private filterPastEventsIfNeeded() {
+    if (this.hidePastEvents) {
+      const now = new Date();
+      this.eventsGrouped = this.eventsGrouped.filter(
+        (group: EventsGroupedByStartDate) => !this.timeService.Comparison.isDateBefore(group.start, now)
+      );
+    }
+  }
+
+  private createGroups(eventsToGroup: CalendarEvent[]) {
+    eventsToGroup.forEach((event) => {
       let date = event.start;
       const end = event.end;
 
@@ -71,11 +127,7 @@ export class CalendarViewListComponent implements OnInit, OnChanges, AfterViewCh
         let group = this.eventsGrouped.find((x) => this.timeService.Comparison.areDatesTheSame(x.start, date));
 
         if (!group) {
-          group = {
-            timestamp: +date,
-            start: date,
-            events: []
-          };
+          group = this.createEmptyGroup(date);
           this.eventsGrouped.push(group);
         }
 
@@ -84,7 +136,25 @@ export class CalendarViewListComponent implements OnInit, OnChanges, AfterViewCh
         date = this.timeService.Manipulation.addDays(1, date);
       } while (this.timeService.Comparison.isDateBeforeOrEqualThan(date, end));
     });
+  }
 
-    this.eventsGrouped.sort((g1, g2) => g1.timestamp - g2.timestamp);
+  private createEmptyGroup(startDate: Date): EventsGroupedByStartDate {
+    return {
+      id: '',
+      start: startDate,
+      events: []
+    };
+  }
+
+  private appendTodayGroupIfNotExists() {
+    const now = new Date();
+    if (this.eventsGrouped.findIndex((group) => this.timeService.Comparison.areDatesTheSame(group.start, now)) < 0) {
+      this.eventsGrouped.push({ id: '', start: now, events: [] });
+    }
+  }
+
+  private appendIds() {
+    this.eventsGrouped.find((x) => this.timeService.Comparison.areDatesTheSame(x.start, new Date())).id =
+      CalendarConstants.EventContainerTodayId;
   }
 }
