@@ -1,21 +1,24 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { SharedModule } from '../../shared.module';
 
 @Injectable({ providedIn: SharedModule })
 export class ScrollService {
+
+  constructor(@Inject('Window') private window: Window, @Inject('Document') private document: Document) {}
+
   public scrollToTop() {
-    window.scrollTo(0, 0);
+    this.window.scrollTo(0, 0);
   }
 
   public scrollToElement(elementId: string, offset: number = 0) {
-    const el = document.getElementById(elementId);
+    const el = this.document.getElementById(elementId);
     if (el) {
       el.scrollIntoView(true);
-      window.scrollBy(0, offset);
+      this.window.scrollBy(0, offset);
     }
   }
 
   public scrollToBottom() {
-    document.getElementById('footer').scrollIntoView();
+    this.document.getElementById('footer').scrollIntoView();
   }
 }

@@ -1,23 +1,12 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  OnChanges,
-  SimpleChanges,
-  AfterViewChecked,
-  OnDestroy
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { CalendarEvent } from 'calendar-utils';
-import { EventsGroupedByStartDate } from './model/events-grouped-by-start-date.model';
-import { TimeService } from '../../../../../shared/services/time/time.service';
-import { DateFormat } from '../../../../../shared/services/time/model/date-format.enum';
-import { Event } from '../../../model/event.model';
-import { CalendarFacade } from '../../../store/calendar.facade';
 import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { DateFormat } from '../../../../../shared/services/time/model/date-format.enum';
+import { TimeService } from '../../../../../shared/services/time/time.service';
+import { CalendarFacade } from '../../../store/calendar.facade';
 import { CalendarConstants } from '../../../utils/calendar-constants';
+import { EventsGroupedByStartDate } from './model/events-grouped-by-start-date.model';
 
 @Component({
   selector: 'app-calendar-view-list',
@@ -67,7 +56,6 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public ngOnChanges() {
-    console.log('on changes');
     this.calculateEventsGrouped();
   }
 
@@ -98,7 +86,7 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
 
   private calculateEventsGrouped() {
     this.eventsGrouped = [];
-    let eventsToGroup = [...this.events];
+    const eventsToGroup = [...this.events];
 
     this.createGroups(eventsToGroup);
     this.appendTodayGroupIfNotExists();
