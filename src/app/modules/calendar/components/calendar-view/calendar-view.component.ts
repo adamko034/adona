@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { CalendarDateFormatter, CalendarEvent, CalendarEventTitleFormatter, CalendarView } from 'angular-calendar';
 import * as _ from 'lodash';
@@ -9,6 +9,7 @@ import { CalendarFacade } from '../../store/calendar.facade';
 import { CalendarCustomEventTitleFormatter } from '../../utils/calendar-custom-event-title-formatter';
 import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
 import { NewEventDialogComponent } from '../dialogs/new-event-dialog/new-event-dialog.component';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 
 @Component({
   selector: 'app-calendar-view',
@@ -27,9 +28,10 @@ import { NewEventDialogComponent } from '../dialogs/new-event-dialog/new-event-d
 })
 export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() viewDate: Date;
-  @Input() view: CalendarView;
-  @Input() weekStartsOn: number;
+  @Input() view: AdonaCalendarView;
   @Input() events: CalendarEvent[];
+
+  @Output() viewDateChanged = new EventEmitter<Date>();
 
   private dialogResultSubscription: Subscription;
 

@@ -1,5 +1,6 @@
 import { CalendarView } from 'angular-calendar';
 import { CalendarToolbarComponent } from './calendar-toolbar.component';
+import { AdonaCalendarView } from '../../model/adona-calendar-view.model';
 
 describe('Calendar Toolbar Component', () => {
   let component: CalendarToolbarComponent;
@@ -36,13 +37,17 @@ describe('Calendar Toolbar Component', () => {
     it(`should emit view: ${input.toString()} on view changed`, () => {
       // given
       const spy = spyOn(component.viewChanged, 'emit');
+      const emitValue: AdonaCalendarView = {
+        isList: false,
+        view: input
+      };
 
       // when
-      component.onViewChanged(input);
+      component.onViewChanged(emitValue);
 
       // then
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith(input);
+      expect(spy).toHaveBeenCalledWith(emitValue);
     });
   });
 });

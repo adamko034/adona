@@ -8,7 +8,8 @@ import {
   MatIconModule,
   MatInputModule,
   MatNativeDateModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatCheckboxModule
 } from '@angular/material';
 import { EffectsModule } from '@ngrx/effects';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
@@ -17,7 +18,6 @@ import { CalendarService } from 'src/app/modules/calendar/service/calendar.servi
 import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CalendarRoutingModule } from './calendar-routing.module';
-import { CalendarDateSwitchComponent } from './components/calendar-date-switch/calendar-date-switch.component';
 import { CalendarTitleComponent } from './components/calendar-title/calendar-title.component';
 import { CalendarToolbarComponent } from './components/calendar-toolbar/calendar-toolbar.component';
 import { CalendarViewSwitchComponent } from './components/calendar-view-switch/calendar-view-switch.component';
@@ -26,6 +26,9 @@ import { NewEventDialogComponent } from './components/dialogs/new-event-dialog/n
 import { CalendarMapper } from './mappers/calendar.mapper';
 import { CalendarComponent } from './pages/calendar/calendar.component';
 import { CalendarFacade } from './store/calendar.facade';
+import { CalendarDateSwitchComponent } from './components/calendar-date-switch/calendar-date-switch.component';
+import { CalendarViewListComponent } from './components/calendar-view/calendar-view-list/calendar-view-list.component';
+import { CalendarListScrollComponent } from './components/calendar-toolbar/calendar-list-scroll/calendar-list-scroll.component';
 
 @NgModule({
   declarations: [
@@ -35,9 +38,11 @@ import { CalendarFacade } from './store/calendar.facade';
     CalendarTitleComponent,
     NewEventDialogComponent,
     CalendarDateSwitchComponent,
-    CalendarToolbarComponent
+    CalendarViewListComponent,
+    CalendarToolbarComponent,
+    CalendarListScrollComponent
   ],
-  entryComponents: [ NewEventDialogComponent ],
+  entryComponents: [NewEventDialogComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -46,7 +51,7 @@ import { CalendarFacade } from './store/calendar.facade';
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
-    EffectsModule.forFeature([ CalendarEffects ]),
+    EffectsModule.forFeature([CalendarEffects]),
     MatDialogModule,
     MatInputModule,
     MatToolbarModule,
@@ -55,8 +60,9 @@ import { CalendarFacade } from './store/calendar.facade';
     MatNativeDateModule,
     MatButtonModule,
     FlexLayoutModule,
+    MatCheckboxModule,
     ReactiveFormsModule
   ],
-  providers: [ CalendarService, CalendarFacade, CalendarMapper ]
+  providers: [CalendarService, CalendarFacade, CalendarMapper]
 })
 export class AdonaCalendarModule {}

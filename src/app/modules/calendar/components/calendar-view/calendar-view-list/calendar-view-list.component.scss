@@ -1,0 +1,70 @@
+.list-view-container {
+  padding-bottom: 10px;
+
+  .list-view-filters {
+    padding-left: 10px;
+  }
+
+  .list-view-button {
+    background-color: #b94a48;
+    color: #fff;
+  }
+
+  .groups-container {
+    margin: 10px 0;
+
+    #event-container-today {
+      .group-title {
+        border-top: 1px solid #b94a48;
+        border-bottom: 1px solid #b94a48;
+        color: #b94a48;
+      }
+    }
+
+    .group-container {
+      margin-top: 20px;
+
+      .group-title {
+        font-weight: 500;
+        background-color: #f3f3f3;
+        padding: 5px 5px;
+        border-bottom: 1px solid #9f9f9f;
+        border-top: 1px solid #9f9f9f;
+        color: #000;
+      }
+
+      .event-container {
+        cursor: pointer;
+        display: flex;
+        margin-bottom: 5px;
+        background-color: #fff;
+
+        .event-hours-all-day {
+          font-weight: 500;
+        }
+
+        .event-hours {
+          display: flex;
+          flex-direction: column;
+          padding: 3px 20px;
+          font-size: small;
+          min-width: 80px;
+          min-height: 45px;
+
+          .event-hour-start {
+            font-weight: bold;
+          }
+        }
+
+        .event-title {
+          padding: 0 20px;
+          border-left: 2px solid #007bff;
+        }
+      }
+    }
+  }
+
+  .width-full {
+    width: 100%;
+  }
+}

@@ -19,6 +19,9 @@ describe('Custom Icons Service', () => {
     service.init();
 
     // then
+    expect(domSanitizerMock.bypassSecurityTrustResourceUrl).toHaveBeenCalledTimes(4);
+    expect(matIconRegistryMock.addSvgIcon).toHaveBeenCalledTimes(4);
+
     expect(domSanitizerMock.bypassSecurityTrustResourceUrl).toHaveBeenCalledWith(
       jasmine.stringMatching('assets/icons/calendar/calendar-month.svg')
     );
@@ -28,9 +31,13 @@ describe('Custom Icons Service', () => {
     expect(domSanitizerMock.bypassSecurityTrustResourceUrl).toHaveBeenCalledWith(
       jasmine.stringMatching('assets/icons/calendar/calendar-day.svg')
     );
+    expect(domSanitizerMock.bypassSecurityTrustResourceUrl).toHaveBeenCalledWith(
+      jasmine.stringMatching('assets/icons/calendar/calendar-list.svg')
+    );
 
     expect(matIconRegistryMock.addSvgIcon).toHaveBeenCalledWith('calendar-month', jasmine.any(Object));
     expect(matIconRegistryMock.addSvgIcon).toHaveBeenCalledWith('calendar-week', jasmine.any(Object));
     expect(matIconRegistryMock.addSvgIcon).toHaveBeenCalledWith('calendar-day', jasmine.any(Object));
+    expect(matIconRegistryMock.addSvgIcon).toHaveBeenCalledWith('calendar-list', jasmine.any(Object));
   });
 });

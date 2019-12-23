@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 import { CalendarView } from 'angular-calendar';
 
 @Component({
@@ -7,7 +8,7 @@ import { CalendarView } from 'angular-calendar';
   styleUrls: ['./calendar-date-switch.component.scss']
 })
 export class CalendarDateSwitchComponent implements OnInit {
-  @Input() view: CalendarView;
+  @Input() view: AdonaCalendarView;
   @Input() viewDate: Date;
   @Output() viewDateChanged = new EventEmitter<Date>();
 
@@ -15,7 +16,7 @@ export class CalendarDateSwitchComponent implements OnInit {
 
   ngOnInit() {}
 
-  public onViewDateChanged() {
+  onViewDateChanged() {
     this.viewDateChanged.emit(this.viewDate);
   }
 }

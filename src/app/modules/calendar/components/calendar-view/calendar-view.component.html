@@ -1,11 +1,11 @@
-<div [ngSwitch]="view">
+<div *ngIf="!view.isList" [ngSwitch]="view.view">
   <mwl-calendar-month-view
     *ngSwitchCase="CalendarView.Month"
     [@.disabled]="true"
     [events]="events"
     [viewDate]="viewDate"
     [activeDayIsOpen]="activeDayIsOpen"
-    [weekStartsOn]="weekStartsOn"
+    [weekStartsOn]="1"
     (dayClicked)="dayClicked($event.day)"
     (eventClicked)="eventClicked($event.event)"
   >
@@ -26,9 +26,16 @@
     [@.disabled]="true"
     [events]="events"
     [viewDate]="viewDate"
-    [weekStartsOn]="weekStartsOn"
+    [weekStartsOn]="1"
     [dayStartHour]="7"
     (eventClicked)="eventClicked($event.event)"
   >
   </mwl-calendar-week-view>
+</div>
+
+<div *ngIf="view.isList">
+  <app-calendar-view-list
+    *ngIf="view.isList"
+    [events]="events"
+    (eventClicked)="eventClicked($event)"></app-calendar-view-list>
 </div>

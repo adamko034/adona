@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CalendarView } from 'angular-calendar';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 
 @Component({
   selector: 'app-celendar-title',
@@ -8,9 +9,17 @@ import { CalendarView } from 'angular-calendar';
 })
 export class CalendarTitleComponent implements OnInit {
   @Input() viewDate: Date = new Date();
-  @Input() view: CalendarView = CalendarView.Month;
+  @Input() view: AdonaCalendarView;
 
   constructor() {}
 
   ngOnInit() {}
+
+  public getCalendarView(): CalendarView {
+    if (this.view && !this.view.isList) {
+      return this.view.view;
+    }
+
+    return CalendarView.Month;
+  }
 }

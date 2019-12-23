@@ -9,34 +9,36 @@ describe('CelendarTitleComponent', () => {
   let fixture: ComponentFixture<CalendarTitleComponent>;
   let h3: HTMLElement;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [CalendarTitleComponent],
-      imports: [
-        CalendarModule.forRoot({
-          provide: DateAdapter,
-          useFactory: adapterFactory
-        })
-      ]
-    }).compileComponents();
-  }));
+  beforeEach(
+    async(() => {
+      TestBed.configureTestingModule({
+        declarations: [CalendarTitleComponent],
+        imports: [
+          CalendarModule.forRoot({
+            provide: DateAdapter,
+            useFactory: adapterFactory
+          })
+        ]
+      }).compileComponents();
+    })
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CalendarTitleComponent);
     component = fixture.componentInstance;
-    h3 = fixture.nativeElement.querySelector('h3');
   });
 
   it('should show date on month view', () => {
     // given
     const dtNow = new Date();
     component.viewDate = dtNow;
-    component.view = CalendarView.Month;
+    component.view = { view: CalendarView.Month, isList: false };
 
     // when
     fixture.detectChanges();
 
     // then
+    h3 = fixture.nativeElement.querySelector('h3');
     expect(h3.textContent).toBe(moment().format('MMMM YYYY'));
   });
 
@@ -44,18 +46,15 @@ describe('CelendarTitleComponent', () => {
     // given
     const dtNow = new Date();
     component.viewDate = dtNow;
-    component.view = CalendarView.Week;
+    component.view = { view: CalendarView.Week, isList: false };
 
     // when
     fixture.detectChanges();
 
     // then
-    const startOfWeek = moment()
-      .startOf('week')
-      .format('MMM D');
-    const endOfWeek = moment()
-      .endOf('week')
-      .format('MMM D');
+    h3 = fixture.nativeElement.querySelector('h3');
+    const startOfWeek = moment().startOf('isoWeek').format('MMM D');
+    const endOfWeek = moment().endOf('isoWeek').format('MMM D');
     const year = moment().format('YYYY');
 
     const expectedContent = `${startOfWeek} - ${endOfWeek}, ${year}`;
@@ -67,12 +66,13 @@ describe('CelendarTitleComponent', () => {
     // given
     const dtNow = new Date();
     component.viewDate = dtNow;
-    component.view = CalendarView.Day;
+    component.view = { view: CalendarView.Day, isList: false };
 
     // when
     fixture.detectChanges();
 
     // then
+    h3 = fixture.nativeElement.querySelector('h3');
     expect(h3.textContent).toBe(moment().format('dddd, MMMM D, YYYY'));
   });
 
@@ -81,6 +81,19 @@ describe('CelendarTitleComponent', () => {
     fixture.detectChanges();
 
     // then
+    h3 = fixture.nativeElement.querySelector('h3');
     expect(h3.textContent).toBe(moment().format('MMMM YYYY'));
+  });
+
+  it('should not show title if list view', () => {
+    // given
+    component.view = { view: CalendarView.Month, isList: true };
+
+    // when
+    fixture.detectChanges();
+
+    // then
+    h3 = fixture.nativeElement.querySelector('h3');
+    expect(h3).toBeFalsy();
   });
 });

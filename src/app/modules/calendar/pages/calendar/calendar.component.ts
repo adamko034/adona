@@ -6,6 +6,7 @@ import { TimeService } from 'src/app/shared/services/time/time.service';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
 import { Event } from '../../model/event.model';
 import { CalendarFacade } from '../../store/calendar.facade';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 
 @Component({
   selector: 'app-calendar',
@@ -15,20 +16,21 @@ import { CalendarFacade } from '../../store/calendar.facade';
 export class CalendarComponent implements OnInit, OnDestroy {
   private dialogResultSubscription: Subscription;
 
-  public view = CalendarView.Month;
+  public view: AdonaCalendarView = { isList: false, view: CalendarView.Month };
   public viewDate = new Date();
   public events$: Observable<CalendarEvent[]>;
 
   constructor(
     private calendarFacade: CalendarFacade,
-    public newEventModal: MatDialog,
-    private timeService: TimeService
+    private timeService: TimeService,
+    public newEventModal: MatDialog
   ) {}
 
   public ngOnInit() {
     this.events$ = this.calendarFacade.events$;
     this.calendarFacade.loadMonthEvents(this.viewDate);
     this.calendarFacade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate));
+    this.calendarFacade.loadMonthEvents(this.timeService.Extraction.getNextMonthOf(this.viewDate));
   }
 
   public ngOnDestroy() {
@@ -37,16 +39,18 @@ export class CalendarComponent implements OnInit, OnDestroy {
     }
   }
 
-  public onViewChanged(newView: CalendarView) {
-    this.view = newView;
+  public onViewChanged(adonaCalendarView: AdonaCalendarView) {
+    this.view = adonaCalendarView;
   }
 
   public onViewDateChanged(newViewDate: Date) {
+    const fetchDate = this.adjustFetchDate(newViewDate);
     this.viewDate = newViewDate;
-    this.calendarFacade.loadMonthEvents(this.viewDate);
+
+    this.calendarFacade.loadMonthEvents(fetchDate);
   }
 
-  public openNewEventModal(): void {
+  public openNewEventModal() {
     const dialogRef = this.newEventModal.open(NewEventDialogComponent, {
       width: '400px'
     });
@@ -56,5 +60,17 @@ export class CalendarComponent implements OnInit, OnDestroy {
         this.calendarFacade.addEvent(newEvent);
       }
     });
+  }
+
+  private adjustFetchDate(newViewDate: Date): Date {
+    if (this.view.view === CalendarView.Week) {
+      const startOfWeek = this.timeService.Extraction.getStartOfWeek(newViewDate);
+      const endOfWeek = this.timeService.Extraction.getEndOfWeek(newViewDate);
+
+      if (!this.timeService.Comparison.areDatesInTheSameMonth(this.viewDate, startOfWeek)) return startOfWeek;
+      if (!this.timeService.Comparison.areDatesInTheSameMonth(this.viewDate, endOfWeek)) return endOfWeek;
+    }
+
+    return newViewDate;
   }
 }

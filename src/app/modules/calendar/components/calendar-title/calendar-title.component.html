@@ -1,1 +1,1 @@
-<h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+<h3 *ngIf="!view?.isList">{{ viewDate | calendarDate:(getCalendarView() + 'ViewTitle'):'en':1 }}</h3>

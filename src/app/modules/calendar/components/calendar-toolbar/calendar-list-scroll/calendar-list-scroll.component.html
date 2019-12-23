@@ -1,0 +1,18 @@
+<div fxLayout fxLayoutGap.gt-xs="10px" fxLayoutGap.xs="2px">
+  <div>
+    <button mat-icon-button [ngClass.xs]="'mat-icon-small'" (click)="scrollToTop()">
+      <mat-icon>arrow_upward</mat-icon>
+    </button>
+  </div>
+  <div>
+    <button mat-icon-button [ngClass.xs]="'mat-icon-small'" (click)="scrollToToday()">
+      <span fxHide.xs>Today</span>
+      <mat-icon fxHide.gt-xs>gps_fixed</mat-icon>
+    </button>
+  </div>
+  <div>
+    <button mat-icon-button [ngClass.xs]="'mat-icon-small'" (click)="scrollToBottom()">
+      <mat-icon>arrow_downward</mat-icon>
+    </button>
+  </div>
+</div>

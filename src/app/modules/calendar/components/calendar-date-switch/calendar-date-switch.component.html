@@ -3,7 +3,7 @@
     <button mat-icon-button
       [ngClass.xs]="'mat-icon-small'"
       mwlCalendarPreviousView
-      [view]="view"
+      [view]="view.view"
       [(viewDate)]="viewDate"
       (viewDateChange)="onViewDateChanged()">
       <mat-icon>arrow_back</mat-icon>
@@ -24,7 +24,7 @@
     <button mat-icon-button
       [ngClass.xs]="'mat-icon-small'"
       mwlCalendarNextView
-      [view]="view"
+      [view]="view.view"
       [(viewDate)]="viewDate"
       (viewDateChange)="onViewDateChanged()">
       <mat-icon>arrow_forward</mat-icon>

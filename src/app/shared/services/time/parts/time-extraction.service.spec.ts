@@ -1,5 +1,6 @@
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { act } from '@ngrx/effects';
+import { DateFormat } from '../model/date-format.enum';
 
 describe('Time Extraction Service', () => {
   let service: TimeExtractionService;
@@ -15,7 +16,7 @@ describe('Time Extraction Service', () => {
         expected: '201909'
       },
       { date: new Date(2018, 9, 4), expected: '201810' }
-    ].forEach(input => {
+    ].forEach((input) => {
       it(`should return ${input.expected} for date: ${input.date}`, () => {
         // when
         const actual = service.getYearMonthString(input.date);
@@ -102,7 +103,7 @@ describe('Time Extraction Service', () => {
     [
       { date: new Date(2019, 1, 1, 7, 7), expected: '07:07' },
       { date: new Date(2019, 1, 1, 22, 45), expected: '22:45' }
-    ].forEach(input => {
+    ].forEach((input) => {
       it(`should return ${input.expected} for date ${input.date}`, () => {
         // when
         const actual = service.getTimeString(input.date);
@@ -163,13 +164,99 @@ describe('Time Extraction Service', () => {
     [
       { date: new Date(2019, 1, 1, 7, 7), expected: '07' },
       { date: new Date(2019, 1, 1, 22, 45), expected: '22' }
-    ].forEach(input => {
+    ].forEach((input) => {
       it(`should return ${input.expected} for date ${input.date}`, () => {
         // when
         const actual = service.getHourString(input.date);
 
         // then
         expect(actual).toEqual(input.expected);
+      });
+    });
+  });
+
+  describe('Get Date Formatted', () => {
+    [
+      {
+        date: new Date(2019, 11, 22, 11, 38),
+        format: DateFormat.LongDayNameDayNumberLongMonthName,
+        expected: 'Sunday 22 December'
+      },
+      {
+        date: new Date(2019, 11, 6, 11, 38),
+        format: DateFormat.LongDayNameDayNumberLongMonthName,
+        expected: 'Friday 06 December'
+      },
+      { date: new Date(2019, 11, 22, 11, 38), format: DateFormat.LongMonthName, expected: 'December' },
+      {
+        date: new Date(2019, 11, 22, 11, 38),
+        format: DateFormat.MidDayNameDayNumberMidMonthName,
+        expected: 'Sun 22 Dec'
+      },
+      {
+        date: new Date(2019, 11, 6, 11, 38),
+        format: DateFormat.MidDayNameDayNumberMidMonthName,
+        expected: 'Fri 06 Dec'
+      }
+    ].forEach((input) => {
+      it(`should return ${input.expected} for ${input.date} and format: ${input.format}`, () => {
+        // when
+        const actual = service.getDateFormatted(input.date, input.format);
+
+        // then
+        expect(actual).toEqual(input.expected);
+      });
+    });
+  });
+
+  describe('Get End Of Week', () => {
+    [
+      { date: new Date(2019, 11, 22, 11, 18), expected: new Date(2019, 11, 22, 23, 59, 59) },
+      { date: new Date(2019, 11, 16, 11, 18), expected: new Date(2019, 11, 22, 23, 59, 59) },
+      { date: new Date(2019, 11, 19, 11, 18), expected: new Date(2019, 11, 22, 23, 59, 59) }
+    ].forEach((input) => {
+      it(`should return ${input.expected} as a end of week for ${input.date}`, () => {
+        // when
+        const actual = service.getEndOfWeek(input.date);
+
+        // then
+        expect(actual.getFullYear()).toEqual(input.expected.getFullYear());
+        expect(actual.getMonth()).toEqual(input.expected.getMonth());
+        expect(actual.getDate()).toEqual(input.expected.getDate());
+        expect(actual.getMinutes()).toEqual(input.expected.getMinutes());
+        expect(actual.getHours()).toEqual(input.expected.getHours());
+      });
+    });
+  });
+
+  describe('Get Start Of Week', () => {
+    [
+      { date: new Date(2019, 11, 22, 11, 18), expected: new Date(2019, 11, 16, 0, 0) },
+      { date: new Date(2019, 11, 16, 11, 18), expected: new Date(2019, 11, 16, 0, 0) },
+      { date: new Date(2019, 11, 19, 11, 18), expected: new Date(2019, 11, 16, 0, 0) }
+    ].forEach((input) => {
+      it(`should return ${input.expected} as a start of week for ${input.date}`, () => {
+        // when
+        const actual = service.getStartOfWeek(input.date);
+
+        // then
+        expect(actual).toEqual(input.expected);
+      });
+    });
+  });
+
+  describe('Get Next Month Of', () => {
+    [
+      { date: new Date(2019, 10, 11, 20, 15), expected: new Date(2019, 11, 11, 20, 15) },
+      { date: new Date(2019, 11, 11, 20, 15), expected: new Date(2020, 0, 11, 20, 15) },
+      { date: new Date(2019, 2, 31, 20, 15), expected: new Date(2019, 3, 30, 20, 15) }
+    ].forEach(({ date, expected }) => {
+      it(`should return ${expected} for ${date}`, () => {
+        // when
+        const actual = service.getNextMonthOf(date);
+
+        // then
+        expect(actual).toEqual(expected);
       });
     });
   });
