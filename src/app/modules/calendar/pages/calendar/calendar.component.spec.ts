@@ -1,14 +1,13 @@
 import { MatDialog } from '@angular/material';
 import { CalendarView } from 'angular-calendar';
 import { of, Subject } from 'rxjs';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
+import { TimeComparisonService } from '../../../../shared/services/time/parts/time-comparison.service';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
 import { CalendarFacade } from '../../store/calendar.facade';
 import { EventsTestDataBuilder } from '../../utils/tests/event-test-data.builder';
 import { CalendarComponent } from './calendar.component';
-import { AdonaCalendarModule } from 'src/app/modules/calendar/calendar.module';
-import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
-import { TimeComparisonService } from '../../../../shared/services/time/parts/time-comparison.service';
 
 describe('CalendarComponent', () => {
   let component: CalendarComponent;
@@ -123,9 +122,9 @@ describe('CalendarComponent', () => {
 
     describe('adjuest fetch date for week view', () => {
       beforeEach(() => {
-        timeService.Extraction.getStartOfWeek.calls.reset;
-        timeService.Extraction.getEndOfWeek.calls.reset;
-        timeService.Comparison.areDatesInTheSameMonth.calls.reset;
+        timeService.Extraction.getStartOfWeek.calls.reset();
+        timeService.Extraction.getEndOfWeek.calls.reset();
+        timeService.Comparison.areDatesInTheSameMonth.calls.reset();
       });
 
       it('should load for previous month', () => {

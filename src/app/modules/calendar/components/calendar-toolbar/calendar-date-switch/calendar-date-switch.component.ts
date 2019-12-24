@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
-import { CalendarView } from 'angular-calendar';
 
 @Component({
   selector: 'app-calendar-date-switch',
@@ -12,9 +11,9 @@ export class CalendarDateSwitchComponent implements OnInit {
   @Input() viewDate: Date;
   @Output() viewDateChanged = new EventEmitter<Date>();
 
-  constructor() {}
+  constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   onViewDateChanged() {
     this.viewDateChanged.emit(this.viewDate);

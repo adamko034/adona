@@ -1,12 +1,12 @@
-import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
-import { Update } from '@ngrx/entity';
-import { Action } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
-import { catchError, filter, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
-import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
-import { Event } from 'src/app/modules/calendar/model/event.model';
-import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
+import {Injectable} from '@angular/core';
+import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Update} from '@ngrx/entity';
+import {Action} from '@ngrx/store';
+import {Observable, of} from 'rxjs';
+import {catchError, filter, map, mergeMap, switchMap, withLatestFrom} from 'rxjs/operators';
+import {ErrorOccuredAction} from 'src/app/core/store/actions/error.actions';
+import {Event} from 'src/app/modules/calendar/model/event.model';
+import {CalendarService} from 'src/app/modules/calendar/service/calendar.service';
 import {
   CalendarActions,
   CalendarActionTypes,
@@ -20,9 +20,9 @@ import {
   NewEventRequestedAction,
   UpdateEventRequestedAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
-import { errors } from 'src/app/shared/constants/errors.constants';
-import { TimeService } from 'src/app/shared/services/time/time.service';
-import { CalendarFacade } from '../calendar.facade';
+import {errors} from 'src/app/shared/constants/errors.constants';
+import {TimeService} from 'src/app/shared/services/time/time.service';
+import {CalendarFacade} from '../calendar.facade';
 
 @Injectable()
 export class CalendarEffects {
@@ -44,13 +44,13 @@ export class CalendarEffects {
       const monthYear = this.timeService.Extraction.getYearMonthString(date);
       return monthsLoaded.findIndex(x => x === monthYear) < 0;
     }),
-    mergeMap(([date, monthsLoaded]) => {
+    mergeMap(([date]) => {
       return this.calendarService.getMonthEvents(date).pipe(
         map((events: Event[]) => {
           const yearMonth = this.timeService.Extraction.getYearMonthString(date);
-          return new EventsLoadedAction({ events, yearMonth });
+          return new EventsLoadedAction({events, yearMonth});
         }),
-        catchError(err => of(new EventsLoadedErrorAction({ error: { errorObj: err } })))
+        catchError(err => of(new EventsLoadedErrorAction({error: {errorObj: err}})))
       );
     })
   );
@@ -63,9 +63,9 @@ export class CalendarEffects {
         ? action.payload.error.message
         : errors.DEFAULT_API_GET_ERROR_MESSAGE;
 
-      return { ...action.payload.error, message };
+      return {...action.payload.error, message};
     }),
-    map((error: Error) => new ErrorOccuredAction({ error }))
+    map((error: Error) => new ErrorOccuredAction({error}))
   );
 
   @Effect()
@@ -74,8 +74,8 @@ export class CalendarEffects {
     map((action: NewEventRequestedAction) => action.payload.newEvent),
     switchMap((event: Event) => {
       return this.calendarService.addEvent(event).pipe(
-        map((newEvent: Event) => new NewEventAddedAction({ event: newEvent })),
-        catchError(err => of(new EventCreationErrorAction({ error: { errorObj: err } })))
+        map((newEvent: Event) => new NewEventAddedAction({event: newEvent})),
+        catchError(err => of(new EventCreationErrorAction({error: {errorObj: err}})))
       );
     })
   );
@@ -87,9 +87,9 @@ export class CalendarEffects {
       const message = action.payload.error.message
         ? action.payload.error.message
         : errors.DEFAULT_API_POST_ERROR_MESSAGE;
-      return { ...action.payload.error, message };
+      return {...action.payload.error, message};
     }),
-    map((error: Error) => new ErrorOccuredAction({ error }))
+    map((error: Error) => new ErrorOccuredAction({error}))
   );
 
   @Effect()
@@ -104,10 +104,10 @@ export class CalendarEffects {
             changes: updatedEvent
           };
 
-          return new EventUpdatedAction({ eventUpdate });
+          return new EventUpdatedAction({eventUpdate});
         }),
         catchError(err => {
-          return of(new EventUpdateErrorAction({ error: { errorObj: err } }));
+          return of(new EventUpdateErrorAction({error: {errorObj: err}}));
         })
       );
     })
@@ -121,8 +121,8 @@ export class CalendarEffects {
         ? action.payload.error.message
         : errors.DEFAULT_API_PUT_ERROR_MESSAGE;
 
-      return { ...action.payload.error, message };
+      return {...action.payload.error, message};
     }),
-    map((error: Error) => new ErrorOccuredAction({ error }))
+    map((error: Error) => new ErrorOccuredAction({error}))
   );
 }
