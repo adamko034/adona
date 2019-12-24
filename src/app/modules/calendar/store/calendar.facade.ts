@@ -1,3 +1,4 @@
+import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { CalendarEvent } from 'calendar-utils';
 import { Observable } from 'rxjs';
@@ -12,6 +13,7 @@ import {
 } from './actions/calendar.actions';
 import { CalendarState } from './reducers/calendar.reducer';
 
+@Injectable()
 export class CalendarFacade {
   constructor(private store: Store<CalendarState>, private mapper: CalendarMapper) {}
 

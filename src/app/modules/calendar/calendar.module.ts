@@ -22,7 +22,7 @@ import { CalendarTitleComponent } from './components/calendar-title/calendar-tit
 import { CalendarDateSwitchComponent } from './components/calendar-toolbar/calendar-date-switch/calendar-date-switch.component';
 import { CalendarListScrollComponent } from './components/calendar-toolbar/calendar-list-scroll/calendar-list-scroll.component';
 import { CalendarToolbarComponent } from './components/calendar-toolbar/calendar-toolbar.component';
-import { CalendarViewSwitchComponent } from './components/calendar-view-switch/calendar-view-switch.component';
+import { CalendarViewSwitchComponent } from './components/calendar-toolbar/calendar-view-switch/calendar-view-switch.component';
 import { CalendarViewListComponent } from './components/calendar-view/calendar-view-list/calendar-view-list.component';
 import { CalendarViewComponent } from './components/calendar-view/calendar-view.component';
 import { NewEventDialogComponent } from './components/dialogs/new-event-dialog/new-event-dialog.component';

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CalendarView } from 'angular-calendar';
+import { Views } from 'src/app/modules/calendar/components/calendar-toolbar/calendar-view-switch/model/calendar-view-switch-views.enum';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
-import { Views } from 'src/app/modules/calendar/components/calendar-view-switch/model/calendar-view-switch-views.enum';
 
 @Component({
   selector: 'app-calendar-view-switch',
