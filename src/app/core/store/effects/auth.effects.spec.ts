@@ -4,9 +4,10 @@ import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { noop, Observable, of, throwError } from 'rxjs';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
-import { MapperService } from 'src/app/core/services/mapper/mapper.service';
 import { NavigationService } from 'src/app/core/services/navigation/navigation.service';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
+import { MapperService } from '../../services/mapper/mapper.service';
+import { UsersMapper } from '../../services/mapper/parts/mapper.users';
 import {
   AuthenticatedAction,
   AuthRequestedAction,
@@ -22,9 +23,13 @@ describe('Auth Effects', () => {
   let actions$: Observable<Action>;
   let navigationService;
   let authService;
+  let mapperService;
 
   const navigationServiceSpy = jasmine.createSpyObj('NavigationService', ['toHome', 'toLogin']);
   const authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'logout', 'authState$']);
+  const mapperServiceSpy = {
+    Users: jasmine.createSpyObj<UsersMapper>('users', ['toUser'])
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -33,16 +38,19 @@ describe('Auth Effects', () => {
         AuthEffects,
         provideMockActions(() => actions$),
         { provide: NavigationService, useValue: navigationServiceSpy },
-        { provide: AuthService, useValue: authServiceSpy }
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: MapperService, useValue: mapperServiceSpy }
       ]
     });
 
     effects = TestBed.get<AuthEffects>(AuthEffects);
     navigationService = TestBed.get<NavigationService>(NavigationService);
     authService = TestBed.get<AuthService>(AuthService);
+    mapperService = TestBed.get<MapperService>(MapperService);
 
     authService.login.calls.reset();
     navigationService.toHome.calls.reset();
+    mapperService.Users.toUser.calls.reset();
   });
 
   describe('log in effect', () => {
@@ -81,11 +89,14 @@ describe('Auth Effects', () => {
   describe('get auth effect', () => {
     it('should result in Authenticated action if user is logged in', () => {
       // given
+      const user = new UserTestBuilder().withDefaultData().build();
       const firebaseLogin = new UserTestBuilder().withDefaultData().buildFirebaseUser();
+
       authService.authState$ = of(firebaseLogin);
+      mapperService.Users.toUser.and.returnValue(user);
 
       const action = new AuthRequestedAction();
-      const completion = new AuthenticatedAction(new MapperService().Users.toUser(firebaseLogin));
+      const completion = new AuthenticatedAction(user);
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
 

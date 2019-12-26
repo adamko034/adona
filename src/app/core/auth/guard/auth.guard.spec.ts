@@ -1,10 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { Observable, of } from 'rxjs';
+import { AuthFacade } from 'src/app/core/auth/auth.facade';
 import { NavigationService } from '../../services/navigation/navigation.service';
 import { AuthService } from '../services/auth.service';
 import { AuthGuard } from './auth.guard';
-import { AuthFacade } from 'src/app/core/auth/auth.facade';
-import { cold } from 'jasmine-marbles';
 
 describe('AuthGuard', () => {
   const authService = jasmine.createSpyObj('AuthService', ['authState$']);

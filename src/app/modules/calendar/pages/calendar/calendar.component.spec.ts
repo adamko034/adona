@@ -1,5 +1,6 @@
 import { MatDialog } from '@angular/material';
 import { CalendarView } from 'angular-calendar';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { of, Subject } from 'rxjs';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
@@ -13,6 +14,7 @@ describe('CalendarComponent', () => {
   let component: CalendarComponent;
   const calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', ['loadMonthEvents', 'addEvent']);
   const dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
+  const deviceService = jasmine.createSpyObj<DeviceDetectorService>('DeviceService', ['isMobile']);
   const timeService: any = {
     Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', [
       'getPreviousMonthOf',
@@ -24,7 +26,7 @@ describe('CalendarComponent', () => {
   };
 
   beforeEach(() => {
-    component = new CalendarComponent(calendarFacade, timeService, dialog);
+    component = new CalendarComponent(calendarFacade, timeService, deviceService, dialog);
 
     calendarFacade.loadMonthEvents.calls.reset();
     calendarFacade.addEvent.calls.reset();
@@ -51,8 +53,27 @@ describe('CalendarComponent', () => {
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(previousMonth);
     });
 
-    it('should default to month view', () => {
+    it('should default to month view on non mobile device', () => {
+      // given
+      deviceService.isMobile.and.returnValue(false);
+
+      // when
+      component.ngOnInit();
+
+      // then
       expect(component.view).toEqual({ view: CalendarView.Month, isList: false });
+      expect(component.viewDate.toDateString()).toEqual(new Date().toDateString());
+    });
+
+    it('should default to list view on mobile device', () => {
+      // given
+      deviceService.isMobile.and.returnValue(true);
+
+      // when
+      component.ngOnInit();
+
+      // then
+      expect(component.view).toEqual({ view: CalendarView.Month, isList: true });
       expect(component.viewDate.toDateString()).toEqual(new Date().toDateString());
     });
   });

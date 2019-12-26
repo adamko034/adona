@@ -2,11 +2,20 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
-import { MatCheckboxModule, MatDatepickerModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatSnackBarModule } from '@angular/material';
+import {
+  MatCheckboxModule,
+  MatDatepickerModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatInputModule,
+  MatSelectModule,
+  MatSnackBarModule
+} from '@angular/material';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { ErrorComponent, ErrorContentComponent } from './components/error/error.component';
 import { FromToDatesComponent } from './components/from-to-dates/from-to-dates.component';
+import { MobileHideDirective } from './directives/device/mobile-hide.directive';
 import { DateFormatPipe } from './pipes/date/date-format.pipe';
 
 @NgModule({
@@ -29,8 +38,8 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     { provide: 'Window', useValue: window },
     { provide: 'Document', useValue: document }
   ],
-  declarations: [ErrorComponent, ErrorContentComponent, FromToDatesComponent, DateFormatPipe],
-  exports: [ErrorComponent, FromToDatesComponent, DateFormatPipe],
+  declarations: [ErrorComponent, ErrorContentComponent, FromToDatesComponent, DateFormatPipe, MobileHideDirective],
+  exports: [ErrorComponent, FromToDatesComponent, DateFormatPipe, MobileHideDirective],
   entryComponents: [ErrorContentComponent]
 })
 export class SharedModule {}

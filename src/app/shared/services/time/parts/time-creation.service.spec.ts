@@ -30,14 +30,14 @@ describe('Time Creation Service', () => {
       {
         stringValue: '201910',
         year: 2019,
-        month: 10
+        month: 9
       },
       {
         stringValue: '201903',
         year: 2019,
-        month: 3
+        month: 2
       }
-    ].forEach((input) => {
+    ].forEach(input => {
       it(`should get date from ${input.stringValue}`, () => {
         // when
         const actual = service.getDateTimeFromMonthLoaded(input.stringValue);

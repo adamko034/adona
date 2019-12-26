@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { CalendarEvent } from 'calendar-utils';
 import { Subscription } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { DateFormat } from '../../../../../shared/services/time/model/date-format.enum';
 import { TimeService } from '../../../../../shared/services/time/time.service';
 import { CalendarFacade } from '../../../store/calendar.facade';
@@ -31,28 +31,17 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
   constructor(private calendarFacade: CalendarFacade, public timeService: TimeService) {}
 
   public ngOnInit() {
-    if (!this.previousDateToLoad) {
-      this.previousDateToLoad = this.timeService.Manipulation.addMonths(-2, new Date());
-    }
-
-    if (!this.nextDateToLoad) {
-      this.nextDateToLoad = this.timeService.Manipulation.addMonths(2, new Date());
-    }
-
     this.monthsLoadedSubscription = this.calendarFacade
       .getMonthsLoaded()
-      .pipe(
-        filter((monthsLoaded: string[]) => monthsLoaded.length === 0),
-        map((monthsLoaded: string[]) => {
-          monthsLoaded.sort();
-          const minMonth = this.timeService.Creation.getDateTimeFromMonthLoaded(monthsLoaded[0]);
-          const maxMonth = this.timeService.Creation.getDateTimeFromMonthLoaded(monthsLoaded[monthsLoaded.length - 1]);
+      .pipe(filter((monthsLoaded: string[]) => monthsLoaded.length !== 0))
+      .subscribe((monthsLoaded: string[]) => {
+        monthsLoaded = [...monthsLoaded].sort();
+        const minMonth = this.timeService.Creation.getDateTimeFromMonthLoaded(monthsLoaded[0]);
+        const maxMonth = this.timeService.Creation.getDateTimeFromMonthLoaded(monthsLoaded[monthsLoaded.length - 1]);
 
-          this.previousDateToLoad = this.timeService.Manipulation.addMonths(-1, minMonth);
-          this.nextDateToLoad = this.timeService.Manipulation.addMonths(1, maxMonth);
-        })
-      )
-      .subscribe();
+        this.previousDateToLoad = this.timeService.Manipulation.addMonths(-1, minMonth);
+        this.nextDateToLoad = this.timeService.Manipulation.addMonths(1, maxMonth);
+      });
   }
 
   public ngOnChanges() {
@@ -107,12 +96,12 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private createGroups(eventsToGroup: CalendarEvent[]) {
-    eventsToGroup.forEach((event) => {
+    eventsToGroup.forEach(event => {
       let date = event.start;
       const end = event.end;
 
       do {
-        let group = this.eventsGrouped.find((x) => this.timeService.Comparison.areDatesTheSame(x.start, date));
+        let group = this.eventsGrouped.find(x => this.timeService.Comparison.areDatesTheSame(x.start, date));
 
         if (!group) {
           group = this.createEmptyGroup(date);
@@ -136,13 +125,13 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
 
   private appendTodayGroupIfNotExists() {
     const now = new Date();
-    if (this.eventsGrouped.findIndex((group) => this.timeService.Comparison.areDatesTheSame(group.start, now)) < 0) {
+    if (this.eventsGrouped.findIndex(group => this.timeService.Comparison.areDatesTheSame(group.start, now)) < 0) {
       this.eventsGrouped.push({ id: '', start: now, events: [] });
     }
   }
 
   private appendIds() {
-    this.eventsGrouped.find((x) => this.timeService.Comparison.areDatesTheSame(x.start, new Date())).id =
+    this.eventsGrouped.find(x => this.timeService.Comparison.areDatesTheSame(x.start, new Date())).id =
       CalendarConstants.EventContainerTodayId;
   }
 }

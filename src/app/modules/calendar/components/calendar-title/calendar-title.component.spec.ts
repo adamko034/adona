@@ -9,19 +9,17 @@ describe('CelendarTitleComponent', () => {
   let fixture: ComponentFixture<CalendarTitleComponent>;
   let h3: HTMLElement;
 
-  beforeEach(
-    async(() => {
-      TestBed.configureTestingModule({
-        declarations: [CalendarTitleComponent],
-        imports: [
-          CalendarModule.forRoot({
-            provide: DateAdapter,
-            useFactory: adapterFactory
-          })
-        ]
-      }).compileComponents();
-    })
-  );
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [CalendarTitleComponent],
+      imports: [
+        CalendarModule.forRoot({
+          provide: DateAdapter,
+          useFactory: adapterFactory
+        })
+      ]
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CalendarTitleComponent);
@@ -39,7 +37,7 @@ describe('CelendarTitleComponent', () => {
 
     // then
     h3 = fixture.nativeElement.querySelector('h3');
-    expect(h3.textContent).toBe(moment().format('MMMM YYYY'));
+    expect(h3.textContent.trim()).toEqual(moment().format('MMMM YYYY'));
   });
 
   it('should show date on week view', () => {
@@ -53,13 +51,17 @@ describe('CelendarTitleComponent', () => {
 
     // then
     h3 = fixture.nativeElement.querySelector('h3');
-    const startOfWeek = moment().startOf('isoWeek').format('MMM D');
-    const endOfWeek = moment().endOf('isoWeek').format('MMM D');
+    const startOfWeek = moment()
+      .startOf('isoWeek')
+      .format('MMM D');
+    const endOfWeek = moment()
+      .endOf('isoWeek')
+      .format('MMM D');
     const year = moment().format('YYYY');
 
     const expectedContent = `${startOfWeek} - ${endOfWeek}, ${year}`;
 
-    expect(h3.textContent).toBe(expectedContent);
+    expect(h3.textContent.trim()).toEqual(expectedContent);
   });
 
   it('should show date on day view', () => {
@@ -73,7 +75,7 @@ describe('CelendarTitleComponent', () => {
 
     // then
     h3 = fixture.nativeElement.querySelector('h3');
-    expect(h3.textContent).toBe(moment().format('dddd, MMMM D, YYYY'));
+    expect(h3.textContent.trim()).toEqual(moment().format('dddd, MMMM D, YYYY'));
   });
 
   it('should show month view if not passed', () => {
@@ -82,7 +84,7 @@ describe('CelendarTitleComponent', () => {
 
     // then
     h3 = fixture.nativeElement.querySelector('h3');
-    expect(h3.textContent).toBe(moment().format('MMMM YYYY'));
+    expect(h3.textContent.trim()).toEqual(moment().format('MMMM YYYY'));
   });
 
   it('should not show title if list view', () => {

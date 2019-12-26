@@ -1,18 +1,11 @@
-import { DayHoursService } from 'src/app/shared/services/time/parts/day-hours.service';
-import { start } from 'repl';
-import { toBase64String } from '@angular/compiler/src/output/source_map';
 import { KeyValue } from '@angular/common';
-import { create } from 'domain';
+import { DayHoursService } from 'src/app/shared/services/time/parts/day-hours.service';
 
 const hourToString = (hour: number): string => {
   return hour <= 9 ? `0${hour.toString()}` : hour.toString();
 };
 
-const createHoursArray = (
-  startHour: number,
-  includeEquals: boolean,
-  greaterMode: boolean
-): number[] => {
+const createHoursArray = (startHour: number, includeEquals: boolean, greaterMode: boolean): number[] => {
   let predicate;
   if (greaterMode) {
     predicate = includeEquals ? x => x >= startHour : x => x > startHour;
@@ -37,11 +30,7 @@ const createDayHoursInput = (includeEquals: boolean, greaterMode: boolean): any[
   return inputs;
 };
 
-const assertDayHoursResult = (
-  result: KeyValue<number, string>[],
-  expected: number[],
-  greaterMode: boolean
-) => {
+const assertDayHoursResult = (result: KeyValue<number, string>[], expected: number[], greaterMode: boolean) => {
   expect(result).toBeTruthy();
   expect(result.length).toBe(expected.length);
 
