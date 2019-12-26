@@ -1,6 +1,8 @@
+import { Injectable } from '@angular/core';
 import { CalendarEvent, CalendarEventTitleFormatter } from 'angular-calendar';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 
+@Injectable()
 export class CalendarCustomEventTitleFormatter extends CalendarEventTitleFormatter {
   constructor(private timeService: TimeService) {
     super();

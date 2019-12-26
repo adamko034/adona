@@ -1,5 +1,4 @@
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
-import { act } from '@ngrx/effects';
 import { DateFormat } from '../model/date-format.enum';
 
 describe('Time Extraction Service', () => {
@@ -16,7 +15,7 @@ describe('Time Extraction Service', () => {
         expected: '201909'
       },
       { date: new Date(2018, 9, 4), expected: '201810' }
-    ].forEach((input) => {
+    ].forEach(input => {
       it(`should return ${input.expected} for date: ${input.date}`, () => {
         // when
         const actual = service.getYearMonthString(input.date);
@@ -103,7 +102,7 @@ describe('Time Extraction Service', () => {
     [
       { date: new Date(2019, 1, 1, 7, 7), expected: '07:07' },
       { date: new Date(2019, 1, 1, 22, 45), expected: '22:45' }
-    ].forEach((input) => {
+    ].forEach(input => {
       it(`should return ${input.expected} for date ${input.date}`, () => {
         // when
         const actual = service.getTimeString(input.date);
@@ -164,7 +163,7 @@ describe('Time Extraction Service', () => {
     [
       { date: new Date(2019, 1, 1, 7, 7), expected: '07' },
       { date: new Date(2019, 1, 1, 22, 45), expected: '22' }
-    ].forEach((input) => {
+    ].forEach(input => {
       it(`should return ${input.expected} for date ${input.date}`, () => {
         // when
         const actual = service.getHourString(input.date);
@@ -198,7 +197,7 @@ describe('Time Extraction Service', () => {
         format: DateFormat.MidDayNameDayNumberMidMonthName,
         expected: 'Fri 06 Dec'
       }
-    ].forEach((input) => {
+    ].forEach(input => {
       it(`should return ${input.expected} for ${input.date} and format: ${input.format}`, () => {
         // when
         const actual = service.getDateFormatted(input.date, input.format);
@@ -214,7 +213,7 @@ describe('Time Extraction Service', () => {
       { date: new Date(2019, 11, 22, 11, 18), expected: new Date(2019, 11, 22, 23, 59, 59) },
       { date: new Date(2019, 11, 16, 11, 18), expected: new Date(2019, 11, 22, 23, 59, 59) },
       { date: new Date(2019, 11, 19, 11, 18), expected: new Date(2019, 11, 22, 23, 59, 59) }
-    ].forEach((input) => {
+    ].forEach(input => {
       it(`should return ${input.expected} as a end of week for ${input.date}`, () => {
         // when
         const actual = service.getEndOfWeek(input.date);
@@ -234,7 +233,7 @@ describe('Time Extraction Service', () => {
       { date: new Date(2019, 11, 22, 11, 18), expected: new Date(2019, 11, 16, 0, 0) },
       { date: new Date(2019, 11, 16, 11, 18), expected: new Date(2019, 11, 16, 0, 0) },
       { date: new Date(2019, 11, 19, 11, 18), expected: new Date(2019, 11, 16, 0, 0) }
-    ].forEach((input) => {
+    ].forEach(input => {
       it(`should return ${input.expected} as a start of week for ${input.date}`, () => {
         // when
         const actual = service.getStartOfWeek(input.date);

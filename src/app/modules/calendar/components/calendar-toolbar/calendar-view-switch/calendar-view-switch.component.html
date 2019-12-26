@@ -1,0 +1,38 @@
+<div fxLayout fxLayoutGap.gt-xs="10px" fxLayoutGap.xs="5px">
+  <div *appMobileHide>
+    <button mat-icon-button [disableRipple]="true" (click)="setView(Views.Month)">
+      <mat-icon
+        [ngClass.xs]="'custom-icon-small'"
+        [ngClass.gt-xs]="'custom-icon-large'"
+        svgIcon="calendar-month"
+      ></mat-icon>
+    </button>
+  </div>
+  <div *appMobileHide>
+    <button mat-icon-button [disableRipple]="true" (click)="setView(Views.Week)">
+      <mat-icon
+        [ngClass.xs]="'custom-icon-small'"
+        [ngClass.gt-xs]="'custom-icon-large'"
+        svgIcon="calendar-week"
+      ></mat-icon>
+    </button>
+  </div>
+  <div>
+    <button mat-icon-button [disableRipple]="true" (click)="setView(Views.Day)">
+      <mat-icon
+        [ngClass.xs]="'custom-icon-small'"
+        [ngClass.gt-xs]="'custom-icon-large'"
+        svgIcon="calendar-day"
+      ></mat-icon>
+    </button>
+  </div>
+  <div>
+    <button mat-icon-button [disableRipple]="true" (click)="setView(Views.List)">
+      <mat-icon
+        [ngClass.xs]="'custom-icon-small'"
+        [ngClass.gt-xs]="'custom-icon-large'"
+        svgIcon="calendar-list"
+      ></mat-icon>
+    </button>
+  </div>
+</div>

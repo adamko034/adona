@@ -1,8 +1,8 @@
 import { EventEmitter } from '@angular/core';
 import { CalendarView } from 'angular-calendar';
-import { CalendarViewSwitchComponent } from './calendar-view-switch.component';
+import { Views } from 'src/app/modules/calendar/components/calendar-toolbar/calendar-view-switch/model/calendar-view-switch-views.enum';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
-import { Views } from 'src/app/modules/calendar/components/calendar-view-switch/model/calendar-view-switch-views.enum';
+import { CalendarViewSwitchComponent } from './calendar-view-switch.component';
 
 describe('CalendarViewSwitchComponent', () => {
   let component: CalendarViewSwitchComponent;
@@ -24,7 +24,7 @@ describe('CalendarViewSwitchComponent', () => {
     { newView: Views.Week, expectedViewEmitted: CalendarView.Week, expectedIsList: false },
     { newView: Views.Month, expectedViewEmitted: CalendarView.Month, expectedIsList: false },
     { newView: Views.List, expectedViewEmitted: CalendarView.Month, expectedIsList: true }
-  ].forEach((input) => {
+  ].forEach(input => {
     it(`should set view to ${input.newView.toString()} and emit value`, () => {
       // when
       component.setView(input.newView);

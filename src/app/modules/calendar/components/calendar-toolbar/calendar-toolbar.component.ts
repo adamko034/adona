@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { CalendarView } from 'angular-calendar';
 import { AdonaCalendarView } from '../../model/adona-calendar-view.model';
 
 @Component({
@@ -15,19 +14,19 @@ export class CalendarToolbarComponent implements OnInit {
   @Output() viewChanged = new EventEmitter<AdonaCalendarView>();
   @Output() newEventClicked = new EventEmitter();
 
-  constructor() {}
+  constructor() { }
 
-  ngOnInit() {}
+  public ngOnInit() { }
 
-  onNewEventClicked() {
+  public onNewEventClicked() {
     this.newEventClicked.emit();
   }
 
-  onViewDateChanged(newViewDate: Date) {
+  public onViewDateChanged(newViewDate: Date) {
     this.viewDateChanged.emit(newViewDate);
   }
 
-  onViewChanged(newView: AdonaCalendarView) {
+  public onViewChanged(newView: AdonaCalendarView) {
     this.viewChanged.emit(newView);
   }
 }

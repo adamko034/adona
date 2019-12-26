@@ -7,6 +7,6 @@ export class TimeCreationService {
     const year = +monthLoaded.substring(0, 4);
     const month = +monthLoaded.substring(4, 6);
 
-    return new Date(year, month, 1);
+    return new Date(year, month - 1, 1);
   }
 }

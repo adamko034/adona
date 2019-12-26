@@ -1,1 +1,3 @@
-<h3 *ngIf="!view?.isList">{{ viewDate | calendarDate:(getCalendarView() + 'ViewTitle'):'en':1 }}</h3>
+<h3 ngClass.xs="mobile" *ngIf="!view?.isList">
+  {{ viewDate | calendarDate: getCalendarView() + 'ViewTitle':'en':1 }}
+</h3>

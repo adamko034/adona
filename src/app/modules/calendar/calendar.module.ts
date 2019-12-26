@@ -4,12 +4,12 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatButtonModule,
+  MatCheckboxModule,
   MatDialogModule,
   MatIconModule,
   MatInputModule,
   MatNativeDateModule,
-  MatToolbarModule,
-  MatCheckboxModule
+  MatToolbarModule
 } from '@angular/material';
 import { EffectsModule } from '@ngrx/effects';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
@@ -19,16 +19,16 @@ import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CalendarRoutingModule } from './calendar-routing.module';
 import { CalendarTitleComponent } from './components/calendar-title/calendar-title.component';
+import { CalendarDateSwitchComponent } from './components/calendar-toolbar/calendar-date-switch/calendar-date-switch.component';
+import { CalendarListScrollComponent } from './components/calendar-toolbar/calendar-list-scroll/calendar-list-scroll.component';
 import { CalendarToolbarComponent } from './components/calendar-toolbar/calendar-toolbar.component';
-import { CalendarViewSwitchComponent } from './components/calendar-view-switch/calendar-view-switch.component';
+import { CalendarViewSwitchComponent } from './components/calendar-toolbar/calendar-view-switch/calendar-view-switch.component';
+import { CalendarViewListComponent } from './components/calendar-view/calendar-view-list/calendar-view-list.component';
 import { CalendarViewComponent } from './components/calendar-view/calendar-view.component';
 import { NewEventDialogComponent } from './components/dialogs/new-event-dialog/new-event-dialog.component';
 import { CalendarMapper } from './mappers/calendar.mapper';
 import { CalendarComponent } from './pages/calendar/calendar.component';
 import { CalendarFacade } from './store/calendar.facade';
-import { CalendarDateSwitchComponent } from './components/calendar-date-switch/calendar-date-switch.component';
-import { CalendarViewListComponent } from './components/calendar-view/calendar-view-list/calendar-view-list.component';
-import { CalendarListScrollComponent } from './components/calendar-toolbar/calendar-list-scroll/calendar-list-scroll.component';
 
 @NgModule({
   declarations: [

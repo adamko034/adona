@@ -1,6 +1,8 @@
+import { Injectable } from '@angular/core';
 import { CalendarNativeDateFormatter, DateFormatterParams } from 'angular-calendar';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 
+@Injectable()
 export class CalendarHourFormatter extends CalendarNativeDateFormatter {
   public constructor(private timeService: TimeService) {
     super({} as any);
