@@ -1,15 +1,10 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { CalendarDateFormatter, CalendarEvent, CalendarEventTitleFormatter, CalendarView } from 'angular-calendar';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 import { TimeService } from 'src/app/shared/services/time/time.service';
-import { Event } from '../../model/event.model';
-import { CalendarFacade } from '../../store/calendar.facade';
 import { CalendarCustomEventTitleFormatter } from '../../utils/calendar-custom-event-title-formatter';
 import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
-import { NewEventDialogComponent } from '../dialogs/new-event-dialog/new-event-dialog.component';
-import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 
 @Component({
   selector: 'app-calendar-view',
@@ -26,30 +21,21 @@ import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar
     }
   ]
 })
-export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
+export class CalendarViewComponent implements OnChanges {
   @Input() viewDate: Date;
   @Input() view: AdonaCalendarView;
   @Input() events: CalendarEvent[];
 
   @Output() viewDateChanged = new EventEmitter<Date>();
-
-  private dialogResultSubscription: Subscription;
+  @Output() eventClicked = new EventEmitter<CalendarEvent>();
 
   public activeDayIsOpen = false;
   public CalendarView = CalendarView;
 
-  constructor(private timeService: TimeService, private editEventDialog: MatDialog, private facade: CalendarFacade) {}
-
-  public ngOnInit() {}
+  constructor(private timeService: TimeService) {}
 
   public ngOnChanges() {
     this.activeDayIsOpen = this.eventExistsOnViewDate();
-  }
-
-  public ngOnDestroy() {
-    if (this.dialogResultSubscription) {
-      this.dialogResultSubscription.unsubscribe();
-    }
   }
 
   public dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }) {
@@ -68,17 +54,8 @@ export class CalendarViewComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  public eventClicked(event: CalendarEvent) {
-    const dialogRef = this.editEventDialog.open(NewEventDialogComponent, {
-      width: '400px',
-      data: { event }
-    });
-
-    this.dialogResultSubscription = dialogRef.afterClosed().subscribe((updatedEvent: Event) => {
-      if (updatedEvent) {
-        this.facade.updateEvent(updatedEvent);
-      }
-    });
+  public onEventClicked(event: CalendarEvent) {
+    this.eventClicked.emit(event);
   }
 
   public eventExistsOnViewDate(): boolean {

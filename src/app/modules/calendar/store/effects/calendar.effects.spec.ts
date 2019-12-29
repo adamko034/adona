@@ -2,20 +2,24 @@ import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
+import { ErrorTestDataBuilder } from 'src/app/core/utils/tests/error-test-data.builder';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import {
+  EventCreationErrorAction,
+  EventDeleteErrorAction,
+  EventDeleteRequestedAction,
+  EventDeleteSuccessAction,
   EventsLoadedAction,
   EventsLoadedErrorAction,
+  EventUpdatedAction,
+  EventUpdateErrorAction,
   MonthEventsRequestedAction,
   NewEventAddedAction,
   NewEventRequestedAction,
-  EventCreationErrorAction,
-  UpdateEventRequestedAction,
-  EventUpdatedAction,
-  EventUpdateErrorAction
+  UpdateEventRequestedAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
@@ -23,7 +27,6 @@ import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/even
 import { errors } from 'src/app/shared/constants/errors.constants';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
-import { ErrorTestDataBuilder } from 'src/app/core/utils/tests/error-test-data.builder';
 
 describe('Calendar Effects', () => {
   let actions$: Observable<Action>;
@@ -35,16 +38,15 @@ describe('Calendar Effects', () => {
   let monthsLoaded$;
 
   const timeService = {
-    Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', [
-      'getYearMonthString'
-    ])
+    Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', ['getYearMonthString'])
   };
 
   beforeEach(() => {
     calendarService = jasmine.createSpyObj<CalendarService>('CalendarService', [
       'getMonthEvents',
       'addEvent',
-      'updateEvent'
+      'updateEvent',
+      'deleteEvent'
     ]);
     calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', ['getMonthsLoaded']);
 
@@ -63,6 +65,7 @@ describe('Calendar Effects', () => {
     calendarService.getMonthEvents.calls.reset();
     calendarService.addEvent.calls.reset();
     calendarService.updateEvent.calls.reset();
+    calendarService.deleteEvent.calls.reset();
     timeService.Extraction.getYearMonthString.calls.reset();
 
     calendarService.getMonthEvents.and.callFake(() => of(events));
@@ -107,15 +110,15 @@ describe('Calendar Effects', () => {
 
     it('should return Events Loaded Error action when api call fail', () => {
       // given
-      const errorObj = new Error();
-
+      const errorObj = new Error('test error');
       const action = new MonthEventsRequestedAction({ date: new Date() });
       const errored = new EventsLoadedErrorAction({ error: { errorObj } });
 
-      calendarService.getMonthEvents.and.returnValue(throwError(errorObj));
-
       actions$ = hot('-a', { a: action });
-      const expected = cold('-b', { b: errored });
+      const response = cold('-#|', {}, errorObj);
+      const expected = cold('--(b|)', { b: errored });
+
+      calendarService.getMonthEvents.and.callFake(() => response);
 
       // when & then
       expect(effects.monthEventsRequested$).toBeObservable(expected);
@@ -173,12 +176,13 @@ describe('Calendar Effects', () => {
       const eventRequest = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
       const error = new ErrorTestDataBuilder().withDefaultData().build();
 
-      calendarService.addEvent.and.returnValue(throwError(error));
-
       actions$ = hot('-a', { a: new NewEventRequestedAction({ newEvent: eventRequest }) });
-      const expected = cold('-b', {
+      const serviceError = cold('-#|', {}, error);
+      const expected = cold('--(b|)', {
         b: new EventCreationErrorAction({ error: { errorObj: error } })
       });
+
+      calendarService.addEvent.and.callFake(() => serviceError);
 
       // when & then
       expect(effects.newEventRequested$).toBeObservable(expected);
@@ -232,12 +236,13 @@ describe('Calendar Effects', () => {
       const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
       const error = new ErrorTestDataBuilder().withDefaultData().build();
 
-      calendarService.updateEvent.and.returnValue(throwError(error.errorObj));
-
       actions$ = hot('-a', { a: new UpdateEventRequestedAction({ event }) });
-      const expected = cold('-b', {
-        b: new EventUpdateErrorAction({ error: { errorObj: error.errorObj } })
+      const expected = cold('--(b|)', {
+        b: new EventUpdateErrorAction({ error: { errorObj: error } })
       });
+      const serviceResponse = cold('-#|', {}, error);
+
+      calendarService.updateEvent.and.callFake(() => serviceResponse);
 
       // when & then
       expect(effects.updateEventRequested$).toBeObservable(expected);
@@ -266,6 +271,61 @@ describe('Calendar Effects', () => {
 
       // when & then
       expect(effects.eventUpdateError$).toBeObservable(expected);
+    });
+  });
+
+  describe('Event Delete Requested effect', () => {
+    it('should map to Event Delete Success action', () => {
+      // given
+      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+
+      const action = new EventDeleteRequestedAction({ id: event.id });
+      actions$ = hot('--a', { a: action });
+
+      const serviceResponse = cold('b', { b: event.id });
+      calendarService.deleteEvent.and.returnValue(serviceResponse);
+
+      const expectedAction = new EventDeleteSuccessAction({ id: event.id });
+      const expected = cold('--c', { c: expectedAction });
+
+      // when & then
+      expect(effects.eventDeleteRequested$).toBeObservable(expected);
+      expect(calendarService.deleteEvent).toHaveBeenCalledTimes(1);
+      expect(calendarService.deleteEvent).toHaveBeenCalledWith(event.id);
+    });
+
+    it('should map to Event Delete Error action ', () => {
+      // given
+      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const error = new ErrorTestDataBuilder().withDefaultData().build();
+
+      const action = new EventDeleteRequestedAction({ id: event.id });
+      actions$ = hot('--a', { a: action });
+
+      const serviceResponse = cold('#', {}, error);
+      calendarService.deleteEvent.and.returnValue(serviceResponse);
+
+      const expectedAction = new EventDeleteErrorAction({ error: { errorObj: error } });
+      const expected = cold('--(c|)', { c: expectedAction });
+
+      // when & then
+      expect(effects.eventDeleteRequested$).toBeObservable(expected);
+      expect(calendarService.deleteEvent).toHaveBeenCalledTimes(1);
+      expect(calendarService.deleteEvent).toHaveBeenCalledWith(event.id);
+    });
+  });
+
+  describe('Event Delete Error effect', () => {
+    it('should map to Event Occured Action', () => {
+      // given
+      const error = new ErrorTestDataBuilder().withErrorObj({ status: 503 }).build();
+      const expectedError = { ...error, message: errors.DEFAULT_API_DELETE_ERROR_MESSAGE };
+
+      actions$ = hot('-a', { a: new EventDeleteErrorAction({ error }) });
+      const expected = cold('-b', { b: new ErrorOccuredAction({ error: expectedError }) });
+
+      // when & then
+      expect(effects.eventDeleteError$).toBeObservable(expected);
     });
   });
 });

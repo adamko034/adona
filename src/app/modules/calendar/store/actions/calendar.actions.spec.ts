@@ -3,6 +3,9 @@ import { ErrorTestDataBuilder } from 'src/app/core/utils/tests/error-test-data.b
 import {
   CalendarActionTypes,
   EventCreationErrorAction,
+  EventDeleteErrorAction,
+  EventDeleteRequestedAction,
+  EventDeleteSuccessAction,
   EventsLoadedAction,
   EventsLoadedErrorAction,
   EventUpdatedAction,
@@ -128,6 +131,38 @@ describe('Calendar Actions', () => {
 
       // then
       expect({ ...action }).toEqual({ type: CalendarActionTypes.EventUpdateError, payload: { error } });
+    });
+  });
+
+  describe('Event Delete actions', () => {
+    it('should create event delete requested action', () => {
+      // given
+      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+
+      // when
+      const action = new EventDeleteRequestedAction({ id: event.id });
+
+      // then
+      expect({ ...action }).toEqual({ type: CalendarActionTypes.EventDeleteRequested, payload: { id: event.id } });
+    });
+
+    it('should create event delete success action', () => {
+      // given
+      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+
+      // when
+      const action = new EventDeleteSuccessAction({ id: event.id });
+
+      // then
+      expect({ ...action }).toEqual({ type: CalendarActionTypes.EventDeleteSuccess, payload: { id: event.id } });
+    });
+
+    it('should create event delete error action', () => {
+      // when
+      const action = new EventDeleteErrorAction({ error });
+
+      // then
+      expect({ ...action }).toEqual({ type: CalendarActionTypes.EventDeleteError, payload: { error } });
     });
   });
 });

@@ -12,7 +12,10 @@ export enum CalendarActionTypes {
   UpdateEventRequested = '[Calendar Page] Edit Event Requested',
   EventCreationError = '[Calendar API] Event Creation Error',
   EventUpdated = '[Calendar API] Event Updated',
-  EventUpdateError = '[Calendar API] Event Updated Error'
+  EventUpdateError = '[Calendar API] Event Updated Error',
+  EventDeleteRequested = '[Calendar Page] Event Delete Requested',
+  EventDeleteSuccess = '[Calendar API] Event Delete Success',
+  EventDeleteError = '[Calendar API] Event Delete Error'
 }
 
 export class MonthEventsRequestedAction implements Action {
@@ -69,6 +72,24 @@ export class EventCreationErrorAction implements Action {
   constructor(public payload: { error: Error }) {}
 }
 
+export class EventDeleteRequestedAction implements Action {
+  readonly type = CalendarActionTypes.EventDeleteRequested;
+
+  constructor(public payload: { id: string }) {}
+}
+
+export class EventDeleteSuccessAction implements Action {
+  readonly type = CalendarActionTypes.EventDeleteSuccess;
+
+  constructor(public payload: { id: string }) {}
+}
+
+export class EventDeleteErrorAction implements Action {
+  readonly type = CalendarActionTypes.EventDeleteError;
+
+  constructor(public payload: { error: Error }) {}
+}
+
 export type CalendarActions =
   | EventsLoadedAction
   | MonthEventsRequestedAction
@@ -78,4 +99,7 @@ export type CalendarActions =
   | UpdateEventRequestedAction
   | EventUpdatedAction
   | EventUpdateErrorAction
-  | EventCreationErrorAction;
+  | EventCreationErrorAction
+  | EventDeleteRequestedAction
+  | EventDeleteSuccessAction
+  | EventDeleteErrorAction;

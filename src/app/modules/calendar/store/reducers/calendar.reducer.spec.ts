@@ -1,4 +1,5 @@
 import {
+  EventDeleteSuccessAction,
   EventsLoadedAction,
   EventUpdatedAction,
   NewEventAddedAction
@@ -25,7 +26,10 @@ describe('Calendar Reducer', () => {
       // given
       const action = {} as any;
       const events = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents();
-      const previousState = new CalendarStateTestDataBuilder().withEvents(events).withMonthsLoaded(['201901']).build();
+      const previousState = new CalendarStateTestDataBuilder()
+        .withEvents(events)
+        .withMonthsLoaded(['201901'])
+        .build();
 
       // when
       const result = calendarReducer(previousState, action);
@@ -117,6 +121,30 @@ describe('Calendar Reducer', () => {
       const expectedEvents = [...events];
       expectedEvents[3].title = 'this is new updated title';
 
+      const expectedState = new CalendarStateTestDataBuilder().withEvents(expectedEvents).build();
+
+      // when
+      const result = calendarReducer(previousState, action);
+
+      // then
+      expect(result).toEqual(expectedState);
+    });
+  });
+
+  describe('Event Deleted', () => {
+    it('should delete event', () => {
+      // given
+      const events = new EventsTestDataBuilder()
+        .addOneWithDefaultData()
+        .addOneWithDefaultData()
+        .addOneWithDefaultData()
+        .addOneWithDefaultData()
+        .buildEvents();
+      const eventToDelete = events[2];
+      const action = new EventDeleteSuccessAction({ id: eventToDelete.id });
+      const previousState = new CalendarStateTestDataBuilder().withEvents(events).build();
+
+      const expectedEvents = events.filter(e => e.id !== eventToDelete.id);
       const expectedState = new CalendarStateTestDataBuilder().withEvents(expectedEvents).build();
 
       // when

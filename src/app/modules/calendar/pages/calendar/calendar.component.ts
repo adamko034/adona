@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
 import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { Observable, Subscription } from 'rxjs';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 import { TimeService } from 'src/app/shared/services/time/time.service';
+import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
+import { DialogResult } from '../../../../shared/models/dialog-result.model';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
-import { Event } from '../../model/event.model';
+import { CalendarEventDialogService } from '../../service/calendar-event-dialog.service';
 import { CalendarFacade } from '../../store/calendar.facade';
 
 @Component({
@@ -22,19 +23,19 @@ export class CalendarComponent implements OnInit, OnDestroy {
   public events$: Observable<CalendarEvent[]>;
 
   constructor(
-    private calendarFacade: CalendarFacade,
+    private facade: CalendarFacade,
     private timeService: TimeService,
     private deviceService: DeviceDetectorService,
-    public newEventModal: MatDialog
+    private dialogService: CalendarEventDialogService
   ) {}
 
   public ngOnInit() {
     this.view.isList = this.deviceService.isMobile();
 
-    this.events$ = this.calendarFacade.events$;
-    this.calendarFacade.loadMonthEvents(this.viewDate);
-    this.calendarFacade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate));
-    this.calendarFacade.loadMonthEvents(this.timeService.Extraction.getNextMonthOf(this.viewDate));
+    this.events$ = this.facade.events$;
+    this.facade.loadMonthEvents(this.viewDate);
+    this.facade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate));
+    this.facade.loadMonthEvents(this.timeService.Extraction.getNextMonthOf(this.viewDate));
   }
 
   public ngOnDestroy() {
@@ -51,19 +52,30 @@ export class CalendarComponent implements OnInit, OnDestroy {
     const fetchDate = this.adjustFetchDate(newViewDate);
     this.viewDate = newViewDate;
 
-    this.calendarFacade.loadMonthEvents(fetchDate);
+    this.facade.loadMonthEvents(fetchDate);
   }
 
-  public openNewEventModal() {
-    const dialogRef = this.newEventModal.open(NewEventDialogComponent, {
-      width: '400px'
-    });
-
-    this.dialogResultSubscription = dialogRef.afterClosed().subscribe((newEvent: Event) => {
-      if (newEvent) {
-        this.calendarFacade.addEvent(newEvent);
-      }
-    });
+  public onEventClicked(event?: CalendarEvent) {
+    const props = { width: '400px', data: { event } };
+    this.dialogResultSubscription = this.dialogService
+      .open(NewEventDialogComponent, props)
+      .subscribe((result: DialogResult) => {
+        if (result && result.payload) {
+          switch (result.action) {
+            case DialogAction.SaveAdd:
+              this.facade.addEvent(result.payload);
+              break;
+            case DialogAction.SaveUpdate:
+              this.facade.updateEvent(result.payload);
+              break;
+            case DialogAction.Delete:
+              this.facade.deleteEvent(result.payload);
+              break;
+            default:
+              break;
+          }
+        }
+      });
   }
 
   private adjustFetchDate(newViewDate: Date): Date {

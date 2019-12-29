@@ -20,9 +20,11 @@ export function calendarReducer(state = initialCalendarState, action: CalendarAc
 
       return adapter.addMany(action.payload.events, newState);
     case CalendarActionTypes.NewEventAdded:
-      return adapter.addOne(action.payload.event, state);
+      return adapter.addOne(action.payload.event, { ...state });
     case CalendarActionTypes.EventUpdated:
-      return adapter.updateOne(action.payload.eventUpdate, state);
+      return adapter.updateOne(action.payload.eventUpdate, { ...state });
+    case CalendarActionTypes.EventDeleteSuccess:
+      return adapter.removeOne(action.payload.id, { ...state });
     default:
       return state;
   }

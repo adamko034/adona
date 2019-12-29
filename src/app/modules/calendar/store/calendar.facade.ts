@@ -7,6 +7,7 @@ import { Event } from 'src/app/modules/calendar/model/event.model';
 import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
 import { CalendarMapper } from '../mappers/calendar.mapper';
 import {
+  EventDeleteRequestedAction,
   MonthEventsRequestedAction,
   NewEventRequestedAction,
   UpdateEventRequestedAction
@@ -38,5 +39,9 @@ export class CalendarFacade {
 
   public loadMonthEvents(date: Date): void {
     this.store.dispatch(new MonthEventsRequestedAction({ date }));
+  }
+
+  public deleteEvent(event: Event) {
+    this.store.dispatch(new EventDeleteRequestedAction({ id: event.id }));
   }
 }
