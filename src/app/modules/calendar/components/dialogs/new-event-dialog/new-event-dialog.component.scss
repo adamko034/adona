@@ -12,10 +12,11 @@
   }
 
   .dialog-actions {
-    float: right;
+    margin-top: -10px;
 
-    .dialog-actions-cancel {
-      margin-right: 10px;
+    .dialog-actions-delete {
+      background-color: #b94a48;
+      color: #fff;
     }
   }
 }

@@ -5,6 +5,7 @@ import { hot } from 'jasmine-marbles';
 import { EventsTestDataBuilder } from '../utils/tests/event-test-data.builder';
 import { fromCalendarEvents, toCalendarEvents } from '../utils/tests/mappers-test-functions';
 import {
+  EventDeleteRequestedAction,
   MonthEventsRequestedAction,
   NewEventRequestedAction,
   UpdateEventRequestedAction
@@ -74,6 +75,20 @@ describe('Calendar Facade', () => {
       // then
       expect(dispatchSpy).toHaveBeenCalledTimes(1);
       expect(dispatchSpy).toHaveBeenCalledWith(new NewEventRequestedAction({ newEvent: event }));
+    });
+  });
+
+  describe('Delete Event method', () => {
+    it('should dispatch Event Delete Requested Action', () => {
+      // given
+      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+
+      // when
+      facade.deleteEvent(event);
+
+      // then
+      expect(dispatchSpy).toHaveBeenCalledTimes(1);
+      expect(dispatchSpy).toHaveBeenCalledWith(new EventDeleteRequestedAction({ id: event.id }));
     });
   });
 

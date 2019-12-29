@@ -9,9 +9,8 @@ import { TimeService } from 'src/app/shared/services/time/time.service';
 
 @Injectable()
 export class CalendarService {
-  private readonly collectionName: string = '/events';
-
   constructor(private db: AngularFirestore, private mapper: CalendarMapper, private timeService: TimeService) {}
+  private readonly collectionName: string = '/events';
 
   public addEvent(event: Event): Observable<Event> {
     return from(
@@ -31,6 +30,16 @@ export class CalendarService {
         .doc(event.id)
         .update(event)
         .then(() => event)
+    );
+  }
+
+  public deleteEvent(id: string): Observable<string> {
+    return from(
+      this.db
+        .collection(this.collectionName)
+        .doc(id)
+        .delete()
+        .then(() => id)
     );
   }
 

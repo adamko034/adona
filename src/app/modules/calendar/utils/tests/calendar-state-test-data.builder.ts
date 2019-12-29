@@ -4,7 +4,7 @@ import { CalendarState } from 'src/app/modules/calendar/store/reducers/calendar.
 export class CalendarStateTestDataBuilder {
   private state: CalendarState;
 
-  public constructor() {
+  constructor() {
     this.state = { monthsLoaded: [], ids: [], entities: {} };
   }
 

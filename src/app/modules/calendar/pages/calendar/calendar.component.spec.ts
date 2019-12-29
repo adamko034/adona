@@ -1,19 +1,27 @@
-import { MatDialog } from '@angular/material';
 import { CalendarView } from 'angular-calendar';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { of, Subject } from 'rxjs';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
+import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
+import { DialogResult } from '../../../../shared/models/dialog-result.model';
 import { TimeComparisonService } from '../../../../shared/services/time/parts/time-comparison.service';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
+import { CalendarEventDialogService } from '../../service/calendar-event-dialog.service';
 import { CalendarFacade } from '../../store/calendar.facade';
+import { DialogResultTestDataBuilder } from '../../utils/tests/dialog-result-test-data.builder';
 import { EventsTestDataBuilder } from '../../utils/tests/event-test-data.builder';
 import { CalendarComponent } from './calendar.component';
 
 describe('CalendarComponent', () => {
   let component: CalendarComponent;
-  const calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', ['loadMonthEvents', 'addEvent']);
-  const dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
+  const calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', [
+    'loadMonthEvents',
+    'addEvent',
+    'updateEvent',
+    'deleteEvent'
+  ]);
+  const dialogService = jasmine.createSpyObj<CalendarEventDialogService>('DialogService', ['open']);
   const deviceService = jasmine.createSpyObj<DeviceDetectorService>('DeviceService', ['isMobile']);
   const timeService: any = {
     Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', [
@@ -26,11 +34,13 @@ describe('CalendarComponent', () => {
   };
 
   beforeEach(() => {
-    component = new CalendarComponent(calendarFacade, timeService, deviceService, dialog);
+    component = new CalendarComponent(calendarFacade, timeService, deviceService, dialogService);
 
     calendarFacade.loadMonthEvents.calls.reset();
     calendarFacade.addEvent.calls.reset();
-    dialog.open.calls.reset();
+    calendarFacade.updateEvent.calls.reset();
+    calendarFacade.deleteEvent.calls.reset();
+    dialogService.open.calls.reset();
   });
 
   describe('On Init', () => {
@@ -208,38 +218,104 @@ describe('CalendarComponent', () => {
     });
   });
 
-  describe('Open New Event Dialog', () => {
-    it('should open dialog and call addEvent if new event passed as a result', () => {
+  describe('On Event Clicked', () => {
+    it('should open dialog and add new event', () => {
       // given
       const newEvent = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const dialogResult: DialogResult = DialogResultTestDataBuilder.init()
+        .withAction(DialogAction.SaveAdd)
+        .withPayload(newEvent)
+        .build();
 
-      dialog.open.and.returnValue({
-        afterClosed: () => of(newEvent)
-      } as any);
+      dialogService.open.and.returnValue(of(dialogResult));
 
       // when
-      component.openNewEventModal();
+      component.onEventClicked();
 
       // then
-      expect(dialog.open).toHaveBeenCalledTimes(1);
-      expect(dialog.open).toHaveBeenCalledWith(NewEventDialogComponent, { width: '400px' });
+      expect(dialogService.open).toHaveBeenCalledTimes(1);
+      expect(dialogService.open).toHaveBeenCalledWith(NewEventDialogComponent, {
+        width: '400px',
+        data: { event: undefined }
+      });
       expect(calendarFacade.addEvent).toHaveBeenCalledTimes(1);
+      expect(calendarFacade.updateEvent).toHaveBeenCalledTimes(0);
+      expect(calendarFacade.deleteEvent).toHaveBeenCalledTimes(0);
       expect(calendarFacade.addEvent).toHaveBeenCalledWith(newEvent);
     });
 
-    it('should open dialog and and do nothing if new event is not passed as a result', () => {
+    it('should open dialog and do nothing if dialog was cancelled', () => {
       // given
-      dialog.open.and.returnValue({
-        afterClosed: () => of(null)
-      } as any);
+      const dialogResult = DialogResultTestDataBuilder.init()
+        .withAction(DialogAction.Cancel)
+        .withPayload(null)
+        .build();
+
+      dialogService.open.and.returnValue(of(dialogResult));
 
       // when
-      component.openNewEventModal();
+      component.onEventClicked();
 
       // then
-      expect(dialog.open).toHaveBeenCalledTimes(1);
-      expect(dialog.open).toHaveBeenCalledWith(NewEventDialogComponent, { width: '400px' });
+      expect(dialogService.open).toHaveBeenCalledTimes(1);
+      expect(dialogService.open).toHaveBeenCalledWith(NewEventDialogComponent, {
+        width: '400px',
+        data: { event: undefined }
+      });
       expect(calendarFacade.addEvent).not.toHaveBeenCalled();
+      expect(calendarFacade.updateEvent).not.toHaveBeenCalled();
+      expect(calendarFacade.deleteEvent).not.toHaveBeenCalled();
+    });
+
+    it('should open dialog to edit mode and update event', () => {
+      // given
+      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const updatedEvent = { ...event, title: 'new updated title' };
+      const dialogResult: DialogResult = DialogResultTestDataBuilder.init()
+        .withAction(DialogAction.SaveUpdate)
+        .withPayload(updatedEvent)
+        .build();
+
+      dialogService.open.and.returnValue(of(dialogResult));
+
+      // when
+      component.onEventClicked(event);
+
+      // then
+      expect(dialogService.open).toHaveBeenCalledTimes(1);
+      expect(dialogService.open).toHaveBeenCalledWith(NewEventDialogComponent, {
+        width: '400px',
+        data: { event }
+      });
+      expect(calendarFacade.addEvent).toHaveBeenCalledTimes(0);
+      expect(calendarFacade.updateEvent).toHaveBeenCalledTimes(1);
+      expect(calendarFacade.deleteEvent).toHaveBeenCalledTimes(0);
+      expect(calendarFacade.updateEvent).toHaveBeenCalledWith(updatedEvent);
+    });
+
+    it('should open dialog to edit mode and delete event', () => {
+      // given
+      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const dialogResult: DialogResult = DialogResultTestDataBuilder.init()
+        .withAction(DialogAction.Delete)
+        .withPayload(event)
+        .build();
+
+      dialogService.open.and.returnValue(of(dialogResult));
+
+      // when
+      component.onEventClicked(event);
+
+      // then
+      expect(dialogService.open).toHaveBeenCalledTimes(1);
+      expect(dialogService.open).toHaveBeenCalledWith(NewEventDialogComponent, {
+        width: '400px',
+        data: { event }
+      });
+      expect(calendarFacade.addEvent).toHaveBeenCalledTimes(0);
+      expect(calendarFacade.updateEvent).toHaveBeenCalledTimes(0);
+      expect(calendarFacade.deleteEvent).toHaveBeenCalledTimes(1);
+      expect(calendarFacade.deleteEvent).toHaveBeenCalledWith(event);
     });
   });
 });

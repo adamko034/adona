@@ -1,15 +1,21 @@
 <app-calendar-toolbar
-  (newEventClicked)="openNewEventModal()"
+  (newEventClicked)="onEventClicked()"
   (viewDateChanged)="onViewDateChanged($event)"
   (viewChanged)="onViewChanged($event)"
   [view]="view"
   [(viewDate)]="viewDate"
-  ></app-calendar-toolbar>
+></app-calendar-toolbar>
 <app-error></app-error>
 
 <div class="calendar-view">
   <app-celendar-title class="align-center" [view]="view" [viewDate]="viewDate"></app-celendar-title>
 
-  <app-calendar-view *ngIf="events$ | async; let events" [events]="events" [view]="view" [viewDate]="viewDate">
+  <app-calendar-view
+    *ngIf="events$ | async; let events"
+    [events]="events"
+    [view]="view"
+    [viewDate]="viewDate"
+    (eventClicked)="onEventClicked($event)"
+  >
   </app-calendar-view>
 </div>

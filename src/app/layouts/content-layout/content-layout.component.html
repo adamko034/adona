@@ -1,5 +1,7 @@
-<app-navbar></app-navbar>
-<div class="container-fluid" [ngClass.xs]="'container-fluid-no-padding'">
-  <router-outlet></router-outlet>
+<div class="app-container">
+  <app-navbar></app-navbar>
+  <div class="container-fluid" [ngClass.xs]="'container-fluid-no-padding'">
+    <router-outlet></router-outlet>
+  </div>
+  <div id="footer"></div>
 </div>
-<div id="footer"></div>

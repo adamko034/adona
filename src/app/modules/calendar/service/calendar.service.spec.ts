@@ -75,6 +75,28 @@ describe('Calendar Service', () => {
     }));
   });
 
+  describe('Delete Event', () => {
+    it('should delete event', fakeAsync(() => {
+      // given
+      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      firestore.collection().doc.and.returnValue({
+        delete: jasmine.createSpy('delete').and.returnValue(Promise.resolve())
+      });
+
+      // when
+      const result = service.deleteEvent(event.id);
+      flush();
+
+      // then
+      result.subscribe(resData => {
+        expect(resData).toEqual(event.id);
+      });
+      expect(firestore.collection).toHaveBeenCalledWith('/events');
+      expect(firestore.collection().doc).toHaveBeenCalledWith(event.id);
+      expect(firestore.collection().doc().delete).toHaveBeenCalledTimes(1);
+    }));
+  });
+
   describe('Get Month Events', () => {
     it('should get events', () => {
       // given

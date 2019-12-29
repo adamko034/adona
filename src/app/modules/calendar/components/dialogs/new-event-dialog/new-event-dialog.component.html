@@ -19,10 +19,17 @@
     </form>
   </mat-dialog-content>
 
-  <mat-dialog-actions class="dialog-actions">
-    <button mat-stroked-button (click)="cancel()" class="dialog-actions-cancel">Cancel</button>
-    <button mat-stroked-button [disabled]="form.invalid" (click)="save()" class="dialog-actions-save">
-      Save
-    </button>
+  <mat-dialog-actions class="dialog-actions" fxLayout fxLayoutAlign="space-between">
+    <div>
+      <button mat-raised-button class="dialog-actions-delete" (click)="delete()">
+        Delete
+      </button>
+    </div>
+    <div>
+      <button mat-stroked-button (click)="cancel()">Cancel</button>
+      <button mat-stroked-button [disabled]="form.invalid" (click)="save()" class="dialog-actions-save">
+        Save
+      </button>
+    </div>
   </mat-dialog-actions>
 </div>
