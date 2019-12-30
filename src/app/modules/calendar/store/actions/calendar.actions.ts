@@ -18,7 +18,7 @@ export enum CalendarActionTypes {
   EventDeleteSuccess = '[Calendar API] Event Delete Success',
   EventDeleteError = '[Calendar API] Event Delete Error',
   ViewChanged = '[Calendar Page] View Changed',
-  ViewDateChanged = '[Calendar Page] View Date Changed',
+  ViewDateChanged = '[Calendar Page] View Date Changed'
 }
 
 export class MonthEventsRequestedAction implements Action {
@@ -93,16 +93,16 @@ export class EventDeleteErrorAction implements Action {
   constructor(public payload: { error: Error }) {}
 }
 
-export class ViewChangedAction implements Action {
+export class CalendarViewChangedAction implements Action {
   readonly type = CalendarActionTypes.ViewChanged;
 
-  constructor(public payload: {newView: AdonaCalendarView}) {}
+  constructor(public payload: { newView: AdonaCalendarView }) {}
 }
 
-export class ViewDateChangedAction implements Action {
+export class CalendarViewDateChangedAction implements Action {
   readonly type = CalendarActionTypes.ViewDateChanged;
 
-  constructor(public payload: {newDate: Date}){}
+  constructor(public payload: { newDate: Date }) {}
 }
 
 export type CalendarActions =
@@ -118,5 +118,5 @@ export type CalendarActions =
   | EventDeleteRequestedAction
   | EventDeleteSuccessAction
   | EventDeleteErrorAction
-  | ViewDateChangedAction
-  | ViewChangedAction;
+  | CalendarViewDateChangedAction
+  | CalendarViewChangedAction;

@@ -1,7 +1,6 @@
 import { CalendarView } from 'angular-calendar';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { of, Subject } from 'rxjs';
-import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
 import { DialogResult } from '../../../../shared/models/dialog-result.model';
@@ -19,7 +18,10 @@ describe('CalendarComponent', () => {
     'loadMonthEvents',
     'addEvent',
     'updateEvent',
-    'deleteEvent'
+    'deleteEvent',
+    'getView',
+    'getViewDate',
+    'changeView'
   ]);
   const dialogService = jasmine.createSpyObj<CalendarEventDialogService>('DialogService', ['open']);
   const deviceService = jasmine.createSpyObj<DeviceDetectorService>('DeviceService', ['isMobile']);
@@ -40,17 +42,24 @@ describe('CalendarComponent', () => {
     calendarFacade.addEvent.calls.reset();
     calendarFacade.updateEvent.calls.reset();
     calendarFacade.deleteEvent.calls.reset();
+    calendarFacade.getView.calls.reset();
+    calendarFacade.getViewDate.calls.reset();
+    calendarFacade.changeView.calls.reset();
     dialogService.open.calls.reset();
+
+    calendarFacade.getView.and.returnValue(of({ isList: false, calendarView: CalendarView.Month }));
+    calendarFacade.getViewDate.and.returnValue(of(new Date()));
   });
 
   describe('On Init', () => {
-    it('should call for events for this and previous month', () => {
+    it('should read from store (view, view date, events for this, previous and next months)', () => {
       // given
       const viewDate = new Date(2019, 10, 10);
       const previousMonth = new Date(2019, 9, 10);
       const nextMonth = new Date(2019, 11, 10);
 
       component.viewDate = viewDate;
+      calendarFacade.getViewDate.and.returnValue(of(viewDate));
       timeService.Extraction.getPreviousMonthOf.and.returnValue(previousMonth);
       timeService.Extraction.getNextMonthOf.and.returnValue(nextMonth);
 
@@ -58,6 +67,8 @@ describe('CalendarComponent', () => {
       component.ngOnInit();
 
       // then
+      expect(calendarFacade.getView).toHaveBeenCalledTimes(1);
+      expect(calendarFacade.getViewDate).toHaveBeenCalledTimes(1);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(3);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(viewDate);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(previousMonth);
@@ -71,8 +82,8 @@ describe('CalendarComponent', () => {
       component.ngOnInit();
 
       // then
-      expect(component.view).toEqual({ view: CalendarView.Month, isList: false });
-      expect(component.viewDate.toDateString()).toEqual(new Date().toDateString());
+      expect(calendarFacade.changeView).toHaveBeenCalledTimes(1);
+      expect(calendarFacade.changeView).toHaveBeenCalledWith({ isList: false, calendarView: CalendarView.Month });
     });
 
     it('should default to list view on mobile device', () => {
@@ -83,8 +94,8 @@ describe('CalendarComponent', () => {
       component.ngOnInit();
 
       // then
-      expect(component.view).toEqual({ view: CalendarView.Month, isList: true });
-      expect(component.viewDate.toDateString()).toEqual(new Date().toDateString());
+      expect(calendarFacade.changeView).toHaveBeenCalledTimes(1);
+      expect(calendarFacade.changeView).toHaveBeenCalledWith({ isList: true, calendarView: CalendarView.Month });
     });
   });
 
@@ -113,108 +124,55 @@ describe('CalendarComponent', () => {
       // then
       expect(spy).not.toHaveBeenCalled();
     });
-  });
 
-  describe('On View Changed', () => {
-    it('should change view type journey', () => {
-      const adonaView: AdonaCalendarView = { calendarView: CalendarView.Day, isList: false };
-      component.onViewChanged(adonaView);
-      expect(component.view).toBe(adonaView);
-
-      adonaView.calendarView = CalendarView.Week;
-      component.onViewChanged(adonaView);
-      expect(component.view).toBe(adonaView);
-
-      adonaView.isList = true;
-      component.onViewChanged(adonaView);
-      expect(component.view).toBe(adonaView);
-
-      adonaView.isList = false;
-      adonaView.calendarView = CalendarView.Month;
-      component.onViewChanged(adonaView);
-      expect(component.view).toBe(adonaView);
-    });
-  });
-
-  describe('On View Date Changed', () => {
-    it('should set view date and load events for this date', () => {
+    it('should unsubscribe from view subscirption', () => {
       // given
-      component.viewDate = new Date();
-      const newDate = new Date(2019, 1, 1);
+      (component as any).viewSubscription = new Subject();
+      const spy = spyOn((component as any).viewSubscription, 'unsubscribe');
 
       // when
-      component.onViewDateChanged(newDate);
+      component.ngOnDestroy();
 
       // then
-      expect(component.viewDate).toBe(newDate);
-      expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(1);
-      expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(newDate);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
-    describe('adjuest fetch date for week view', () => {
-      beforeEach(() => {
-        timeService.Extraction.getStartOfWeek.calls.reset();
-        timeService.Extraction.getEndOfWeek.calls.reset();
-        timeService.Comparison.areDatesInTheSameMonth.calls.reset();
-      });
+    it('should not unsubsribe from view subscription if subscription is null', () => {
+      // given
+      (component as any).viewSubscription = new Subject();
+      const spy = spyOn((component as any).viewSubscription, 'unsubscribe');
+      (component as any).viewSubscription = undefined;
 
-      it('should load for previous month', () => {
-        // given
-        const currentViewDate = new Date(2019, 10, 8);
-        component.view = { isList: false, calendarView: CalendarView.Week };
-        component.viewDate = currentViewDate;
-        const newDate = new Date(2019, 10, 1);
-        const fetchDate = new Date(2019, 9, 28);
+      // when
+      component.ngOnDestroy();
 
-        const startOfWeek = new Date(2019, 9, 28);
-        const endOfWeek = new Date(2019, 10, 3);
+      // then
+      expect(spy).not.toHaveBeenCalled();
+    });
 
-        timeService.Extraction.getStartOfWeek.and.returnValue(startOfWeek);
-        timeService.Extraction.getEndOfWeek.and.returnValue(endOfWeek);
+    it('should unsubscribe from view date subsciption', () => {
+      // given
+      (component as any).viewDateSubsciption = new Subject();
+      const spy = spyOn((component as any).viewDateSubsciption, 'unsubscribe');
 
-        timeService.Comparison.areDatesInTheSameMonth
-          .withArgs(currentViewDate, startOfWeek)
-          .and.returnValue(false)
-          .withArgs(currentViewDate, endOfWeek)
-          .and.returnValue(true);
+      // when
+      component.ngOnDestroy();
 
-        // when
-        component.onViewDateChanged(newDate);
+      // then
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
 
-        // then
-        expect(component.viewDate).toBe(newDate);
-        expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(1);
-        expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(fetchDate);
-      });
+    it('should not unsubsribe from view date subsciption if subscription is null', () => {
+      // given
+      (component as any).viewDateSubsciption = new Subject();
+      const spy = spyOn((component as any).viewDateSubsciption, 'unsubscribe');
+      (component as any).viewDateSubsciption = undefined;
 
-      it('should load for next month', () => {
-        // given
-        const currentViewDate = new Date(2020, 0, 23);
-        component.view = { isList: false, calendarView: CalendarView.Week };
-        component.viewDate = currentViewDate;
-        const newDate = new Date(2020, 0, 30);
-        const fetchDate = new Date(2020, 1, 2);
+      // when
+      component.ngOnDestroy();
 
-        const startOfWeek = new Date(2020, 0, 27);
-        const endOfWeek = new Date(2020, 1, 2);
-
-        timeService.Extraction.getStartOfWeek.and.returnValue(startOfWeek);
-        timeService.Extraction.getEndOfWeek.and.returnValue(endOfWeek);
-
-        timeService.Comparison.areDatesInTheSameMonth
-          .withArgs(currentViewDate, startOfWeek)
-          .and.returnValue(true)
-          .withArgs(currentViewDate, endOfWeek)
-          .and.returnValue(false);
-
-        // when
-        component.onViewDateChanged(newDate);
-
-        // then
-        expect(component.viewDate).toBe(newDate);
-        expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(1);
-        expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(fetchDate);
-      });
+      // then
+      expect(spy).not.toHaveBeenCalled();
     });
   });
 

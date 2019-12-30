@@ -1,10 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { CalendarView } from 'angular-calendar';
 import { hot } from 'jasmine-marbles';
+import { AdonaCalendarView } from '../model/adona-calendar-view.model';
 import { EventsTestDataBuilder } from '../utils/tests/event-test-data.builder';
 import { fromCalendarEvents, toCalendarEvents } from '../utils/tests/mappers-test-functions';
 import {
+  CalendarViewChangedAction,
+  CalendarViewDateChangedAction,
   EventDeleteRequestedAction,
   MonthEventsRequestedAction,
   NewEventRequestedAction,
@@ -120,6 +124,67 @@ describe('Calendar Facade', () => {
 
       // when
       const result = facade.events$;
+
+      // then
+      expect(result).toBeObservable(expected);
+    });
+  });
+
+  describe('Change View', () => {
+    it('should dispatch View Changed Action', () => {
+      // given
+      const newView: AdonaCalendarView = { isList: true, calendarView: CalendarView.Month };
+
+      // when
+      facade.changeView(newView);
+
+      // then
+      expect(dispatchSpy).toHaveBeenCalledTimes(1);
+      expect(dispatchSpy).toHaveBeenCalledWith(new CalendarViewChangedAction({ newView }));
+    });
+  });
+
+  describe('Change View Date', () => {
+    it('should dispatch View Date Changed Action', () => {
+      // given
+      const newDate = new Date(2020, 1, 20);
+
+      // when
+      facade.changeViewDate(newDate);
+
+      // then
+      expect(dispatchSpy).toHaveBeenCalledTimes(1);
+      expect(dispatchSpy).toHaveBeenCalledWith(new CalendarViewDateChangedAction({ newDate }));
+    });
+  });
+
+  describe('Get View', () => {
+    it('should return observable of view', () => {
+      // given
+      const view: AdonaCalendarView = {
+        isList: false,
+        calendarView: CalendarView.Week
+      };
+      mockStore.overrideSelector(calendarQueries.selectView, view);
+      const expected = hot('b', { b: view });
+
+      // when
+      const result = facade.getView();
+
+      // then
+      expect(result).toBeObservable(expected);
+    });
+  });
+
+  describe('Get View Date', () => {
+    it('should return observable of date', () => {
+      // given
+      const newDate = new Date(2020, 1, 22);
+      mockStore.overrideSelector(calendarQueries.selectViewDate, newDate);
+      const expected = hot('b', { b: newDate });
+
+      // when
+      const result = facade.getViewDate();
 
       // then
       expect(result).toBeObservable(expected);

@@ -4,7 +4,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import * as moment from 'moment';
 import { CalendarTitleComponent } from './calendar-title.component';
 
-describe('CelendarTitleComponent', () => {
+describe('Celendar Title Component', () => {
   let component: CalendarTitleComponent;
   let fixture: ComponentFixture<CalendarTitleComponent>;
   let h3: HTMLElement;
@@ -30,7 +30,7 @@ describe('CelendarTitleComponent', () => {
     // given
     const dtNow = new Date();
     component.viewDate = dtNow;
-    component.view = { view: CalendarView.Month, isList: false };
+    component.view = { calendarView: CalendarView.Month, isList: false };
 
     // when
     fixture.detectChanges();
@@ -40,26 +40,49 @@ describe('CelendarTitleComponent', () => {
     expect(h3.textContent.trim()).toEqual(moment().format('MMMM YYYY'));
   });
 
-  it('should show date on week view', () => {
+  it('should show date on week view for the same year', () => {
     // given
-    const dtNow = new Date();
+    const dtNow = new Date(2019, 10, 10);
     component.viewDate = dtNow;
-    component.view = { view: CalendarView.Week, isList: false };
+    component.view = { calendarView: CalendarView.Week, isList: false };
 
     // when
     fixture.detectChanges();
 
     // then
     h3 = fixture.nativeElement.querySelector('h3');
-    const startOfWeek = moment()
+    const startOfWeek = moment(dtNow)
       .startOf('isoWeek')
       .format('MMM D');
-    const endOfWeek = moment()
+    const endOfWeek = moment(dtNow)
       .endOf('isoWeek')
       .format('MMM D');
-    const year = moment().format('YYYY');
+    const year = moment(dtNow).format('YYYY');
 
     const expectedContent = `${startOfWeek} - ${endOfWeek}, ${year}`;
+
+    expect(h3.textContent.trim()).toEqual(expectedContent);
+  });
+
+  it('should show date on week view for different year', () => {
+    // given
+    const date = new Date(2019, 11, 30);
+    component.viewDate = date;
+    component.view = { calendarView: CalendarView.Week, isList: false };
+
+    // when
+    fixture.detectChanges();
+
+    // then
+    h3 = fixture.nativeElement.querySelector('h3');
+    const startOfWeek = moment(date)
+      .startOf('isoWeek')
+      .format('MMM D, YYYY');
+    const endOfWeek = moment(date)
+      .endOf('isoWeek')
+      .format('MMM D, YYYY');
+
+    const expectedContent = `${startOfWeek} - ${endOfWeek}`;
 
     expect(h3.textContent.trim()).toEqual(expectedContent);
   });
@@ -68,7 +91,7 @@ describe('CelendarTitleComponent', () => {
     // given
     const dtNow = new Date();
     component.viewDate = dtNow;
-    component.view = { view: CalendarView.Day, isList: false };
+    component.view = { calendarView: CalendarView.Day, isList: false };
 
     // when
     fixture.detectChanges();
@@ -89,7 +112,7 @@ describe('CelendarTitleComponent', () => {
 
   it('should not show title if list view', () => {
     // given
-    component.view = { view: CalendarView.Month, isList: true };
+    component.view = { calendarView: CalendarView.Month, isList: true };
 
     // when
     fixture.detectChanges();

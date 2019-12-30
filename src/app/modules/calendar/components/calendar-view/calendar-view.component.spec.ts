@@ -1,9 +1,10 @@
 import * as moment from 'moment';
 import { TimeService } from 'src/app/shared/services/time/time.service';
+import { CalendarFacade } from '../../store/calendar.facade';
 import { EventsTestDataBuilder } from '../../utils/tests/event-test-data.builder';
 import { CalendarViewComponent } from './calendar-view.component';
 
-describe('CalendarViewComponent', () => {
+describe('Calendar View Component', () => {
   const currentViewDate = new Date(2019, 10, 5);
   const events = new EventsTestDataBuilder()
     .addOneWithDefaultData()
@@ -13,14 +14,17 @@ describe('CalendarViewComponent', () => {
   let component: CalendarViewComponent;
 
   const timeService = new TimeService();
+  const facade = jasmine.createSpyObj<CalendarFacade>('calendarFacade', ['changeViewDate']);
 
   beforeEach(() => {
-    component = new CalendarViewComponent(timeService);
+    component = new CalendarViewComponent(timeService, facade);
     component.viewDate = currentViewDate;
+
+    facade.changeViewDate.calls.reset();
   });
 
   describe('Day Clicked', () => {
-    it('should not change view date and active day when when new date in different month', () => {
+    it('should fetch new events when new date is on different month', () => {
       // given
       const currentDate = new Date(2019, 5, 1);
       const newDate = new Date(2019, 6, 1);
@@ -33,6 +37,8 @@ describe('CalendarViewComponent', () => {
       // then
       expect(component.activeDayIsOpen).toBeTruthy();
       expect(component.viewDate).toEqual(currentDate);
+      expect(facade.changeViewDate).toHaveBeenCalledTimes(1);
+      expect(facade.changeViewDate).toHaveBeenCalledWith(newDate);
     });
 
     describe('New date in the same month', () => {
@@ -50,14 +56,15 @@ describe('CalendarViewComponent', () => {
 
             // then
             expect(component.activeDayIsOpen).toBeFalsy();
-            expect(component.viewDate).toEqual(newDate);
+            expect(facade.changeViewDate).toHaveBeenCalledTimes(1);
+            expect(facade.changeViewDate).toHaveBeenCalledWith(newDate);
           });
         });
       });
 
       describe('The same date', () => {
         [true, false].forEach((currentValue: boolean) => {
-          it(`should toggle active day, current value: ${currentValue.toString()}`, () => {
+          it(`should toggle active day, current value: ${currentValue.toString()} and should not change view date`, () => {
             // given
             component.activeDayIsOpen = currentValue;
 
@@ -65,8 +72,8 @@ describe('CalendarViewComponent', () => {
             component.dayClicked({ date: currentViewDate, events });
 
             // then
-            expect(component.activeDayIsOpen).toBe(!currentValue);
-            expect(component.viewDate).toEqual(currentViewDate);
+            expect(component.activeDayIsOpen).toEqual(!currentValue);
+            expect(facade.changeViewDate).toHaveBeenCalledTimes(0);
           });
         });
       });
@@ -146,6 +153,19 @@ describe('CalendarViewComponent', () => {
 
       // then
       expect(component.activeDayIsOpen).toBeTruthy();
+    });
+  });
+
+  describe('Ng On Changes', () => {
+    it('should recalculate if active day is open', () => {
+      // given
+      const spy = spyOn(component as any, 'eventExistsOnViewDate');
+
+      // when
+      component.ngOnChanges();
+
+      // then
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });

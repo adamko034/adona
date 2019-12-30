@@ -8,6 +8,7 @@ import { ErrorTestDataBuilder } from 'src/app/core/utils/tests/error-test-data.b
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import {
+  CalendarViewDateChangedAction,
   EventCreationErrorAction,
   EventDeleteErrorAction,
   EventDeleteRequestedAction,
@@ -326,6 +327,19 @@ describe('Calendar Effects', () => {
 
       // when & then
       expect(effects.eventDeleteError$).toBeObservable(expected);
+    });
+  });
+
+  describe('View Date Changed effect', () => {
+    it('should invoke Month Events Requested Action', () => {
+      // given
+      const newDate = new Date(2020, 1, 20);
+
+      actions$ = hot('--a', { a: new CalendarViewDateChangedAction({ newDate }) });
+      const expected = cold('--b', { b: new MonthEventsRequestedAction({ date: newDate }) });
+
+      // when & then
+      expect(effects.viewDateChanged$).toBeObservable(expected);
     });
   });
 });

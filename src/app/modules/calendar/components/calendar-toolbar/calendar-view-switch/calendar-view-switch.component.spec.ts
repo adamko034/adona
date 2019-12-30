@@ -1,22 +1,17 @@
-import { EventEmitter } from '@angular/core';
 import { CalendarView } from 'angular-calendar';
 import { Views } from 'src/app/modules/calendar/components/calendar-toolbar/calendar-view-switch/model/calendar-view-switch-views.enum';
-import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
+import { CalendarFacade } from '../../../store/calendar.facade';
 import { CalendarViewSwitchComponent } from './calendar-view-switch.component';
 
-describe('CalendarViewSwitchComponent', () => {
+describe('Calendar View Switch Component', () => {
   let component: CalendarViewSwitchComponent;
 
+  const facade = jasmine.createSpyObj<CalendarFacade>('calendarFacade', ['changeView']);
+
   beforeEach(() => {
-    component = new CalendarViewSwitchComponent();
+    component = new CalendarViewSwitchComponent(facade);
 
-    component.viewChanged = jasmine.createSpyObj<EventEmitter<AdonaCalendarView>>('ViewChangedEventEmitter', ['emit']);
-  });
-
-  it('should set default values', () => {
-    // then
-    expect(component.view).toBe(Views.Month);
-    expect(component.Views).toEqual(Views);
+    facade.changeView.calls.reset();
   });
 
   [
@@ -25,15 +20,14 @@ describe('CalendarViewSwitchComponent', () => {
     { newView: Views.Month, expectedViewEmitted: CalendarView.Month, expectedIsList: false },
     { newView: Views.List, expectedViewEmitted: CalendarView.Month, expectedIsList: true }
   ].forEach(input => {
-    it(`should set view to ${input.newView.toString()} and emit value`, () => {
+    it(`should change view to ${input.newView.toString()}`, () => {
       // when
       component.onViewChanged(input.newView);
 
       // then
-      expect(component.view).toEqual(input.newView);
-      expect(component.viewChanged.emit).toHaveBeenCalledTimes(1);
-      expect(component.viewChanged.emit).toHaveBeenCalledWith({
-        view: input.expectedViewEmitted,
+      expect(facade.changeView).toHaveBeenCalledTimes(1);
+      expect(facade.changeView).toHaveBeenCalledWith({
+        calendarView: input.expectedViewEmitted,
         isList: input.expectedIsList
       });
     });

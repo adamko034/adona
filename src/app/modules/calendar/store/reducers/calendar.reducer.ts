@@ -34,7 +34,6 @@ export function calendarReducer(state = initialCalendarState, action: CalendarAc
     case CalendarActionTypes.ViewChanged:
       return { ...state, view: action.payload.newView };
     case CalendarActionTypes.ViewDateChanged:
-      console.log(action.payload.newDate);
       return { ...state, viewDate: action.payload.newDate };
     default:
       return state;
