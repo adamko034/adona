@@ -50,8 +50,9 @@ export class CalendarViewComponent implements OnChanges {
       }
 
       this.activeDayIsOpen = showActiveDay;
-      this.viewDate = date;
-    } else {
+    }
+
+    if (!this.timeService.Comparison.areDatesTheSame(date, this.viewDate)) {
       this.calendarFacade.changeViewDate(date);
     }
   }

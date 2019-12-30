@@ -20,7 +20,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   private viewSubscription: Subscription;
   private viewDateSubsciption: Subscription;
 
-  public view: AdonaCalendarView;
+  public view: AdonaCalendarView = { isList: false, calendarView: CalendarView.Month };
   public viewDate = new Date();
   public events$: Observable<CalendarEvent[]>;
 
@@ -36,7 +36,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.viewDateSubsciption = this.facade.getViewDate().subscribe((viewDate: Date) => (this.viewDate = viewDate));
     this.events$ = this.facade.events$;
 
-    this.facade.changeView({ isList: this.deviceService.isMobile(), calendarView: CalendarView.Month });
+    this.facade.changeView({ isList: this.deviceService.isMobile(), calendarView: this.view.calendarView });
     this.facade.loadMonthEvents(this.viewDate);
     this.facade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate));
     this.facade.loadMonthEvents(this.timeService.Extraction.getNextMonthOf(this.viewDate));

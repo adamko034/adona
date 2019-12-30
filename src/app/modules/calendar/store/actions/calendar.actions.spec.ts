@@ -1,7 +1,10 @@
 import { Update } from '@ngrx/entity';
+import { CalendarView } from 'angular-calendar';
 import { ErrorTestDataBuilder } from 'src/app/core/utils/tests/error-test-data.builder';
 import {
   CalendarActionTypes,
+  CalendarViewChangedAction,
+  CalendarViewDateChangedAction,
   EventCreationErrorAction,
   EventDeleteErrorAction,
   EventDeleteRequestedAction,
@@ -163,6 +166,32 @@ describe('Calendar Actions', () => {
 
       // then
       expect({ ...action }).toEqual({ type: CalendarActionTypes.EventDeleteError, payload: { error } });
+    });
+  });
+
+  describe('View Changed action', () => {
+    it('should create', () => {
+      // when
+      const action = new CalendarViewChangedAction({ newView: { isList: true, calendarView: CalendarView.Month } });
+
+      // then
+      expect({ ...action }).toEqual({
+        type: CalendarActionTypes.ViewChanged,
+        payload: { newView: { isList: true, calendarView: CalendarView.Month } }
+      });
+    });
+  });
+
+  describe('View  Date Changed action', () => {
+    it('should create', () => {
+      // when
+      const action = new CalendarViewDateChangedAction({ newDate: new Date(2020, 2, 2) });
+
+      // then
+      expect({ ...action }).toEqual({
+        type: CalendarActionTypes.ViewDateChanged,
+        payload: { newDate: new Date(2020, 2, 2) }
+      });
     });
   });
 });

@@ -8,12 +8,12 @@ import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calend
 import { CalendarMapper } from '../mappers/calendar.mapper';
 import { AdonaCalendarView } from '../model/adona-calendar-view.model';
 import {
+  CalendarViewChangedAction,
+  CalendarViewDateChangedAction,
   EventDeleteRequestedAction,
   MonthEventsRequestedAction,
   NewEventRequestedAction,
-  UpdateEventRequestedAction,
-  ViewChangedAction,
-  ViewDateChangedAction
+  UpdateEventRequestedAction
 } from './actions/calendar.actions';
 import { CalendarState } from './reducers/calendar.reducer';
 
@@ -57,10 +57,10 @@ export class CalendarFacade {
   }
 
   public changeViewDate(newDate: Date) {
-    this.store.dispatch(new ViewDateChangedAction({ newDate }));
+    this.store.dispatch(new CalendarViewDateChangedAction({ newDate }));
   }
 
   public changeView(newView: AdonaCalendarView) {
-    this.store.dispatch(new ViewChangedAction({ newView }));
+    this.store.dispatch(new CalendarViewChangedAction({ newView }));
   }
 }

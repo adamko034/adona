@@ -10,6 +10,7 @@ import { CalendarService } from 'src/app/modules/calendar/service/calendar.servi
 import {
   CalendarActions,
   CalendarActionTypes,
+  CalendarViewDateChangedAction,
   EventCreationErrorAction,
   EventDeleteErrorAction,
   EventDeleteRequestedAction,
@@ -21,8 +22,7 @@ import {
   MonthEventsRequestedAction,
   NewEventAddedAction,
   NewEventRequestedAction,
-  UpdateEventRequestedAction,
-  ViewDateChangedAction
+  UpdateEventRequestedAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { errors } from 'src/app/shared/constants/errors.constants';
 import { TimeService } from 'src/app/shared/services/time/time.service';
@@ -145,6 +145,6 @@ export class CalendarEffects {
   @Effect()
   public viewDateChanged$: Observable<Action> = this.actions$.pipe(
     ofType<CalendarActions>(CalendarActionTypes.ViewDateChanged),
-    map((action: ViewDateChangedAction) => new MonthEventsRequestedAction({ date: action.payload.newDate }))
+    map((action: CalendarViewDateChangedAction) => new MonthEventsRequestedAction({ date: action.payload.newDate }))
   );
 }
