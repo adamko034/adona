@@ -17,7 +17,7 @@ export class CalendarTitleComponent implements OnInit {
 
   public getCalendarView(): CalendarView {
     if (this.view && !this.view.isList) {
-      return this.view.view;
+      return this.view.calendarView;
     }
 
     return CalendarView.Month;

@@ -20,13 +20,13 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
 
   private monthsLoadedSubscription: Subscription;
 
-  eventsGrouped: EventsGroupedByStartDate[] = [];
-  hidePastEvents = true;
-  startDateFormat = DateFormat.LongDayNameDayNumberLongMonthName;
-  monthNameFormat = DateFormat.LongMonthName;
+  public eventsGrouped: EventsGroupedByStartDate[] = [];
+  public hidePastEvents = true;
+  public startDateFormat = DateFormat.LongDayNameDayNumberLongMonthName;
+  public monthNameFormat = DateFormat.LongMonthName;
 
-  previousDateToLoad: Date;
-  nextDateToLoad: Date;
+  public previousDateToLoad: Date;
+  public nextDateToLoad: Date;
 
   constructor(private calendarFacade: CalendarFacade, public timeService: TimeService) {}
 

@@ -1,32 +1,38 @@
 <div fxLayout fxLayoutGap.gt-xs="10px" fxLayoutGap.xs="2px">
   <div>
-    <button mat-icon-button
+    <button
+      mat-icon-button
       [ngClass.xs]="'mat-icon-small'"
       mwlCalendarPreviousView
-      [view]="view.view"
-      [(viewDate)]="viewDate"
-      (viewDateChange)="onViewDateChanged()">
+      [view]="view.calendarView"
+      [viewDate]="viewDate"
+      (viewDateChange)="onViewDateChanged($event)"
+    >
       <mat-icon>arrow_back</mat-icon>
     </button>
   </div>
   <div>
-    <button mat-icon-button
+    <button
+      mat-icon-button
       [ngClass.xs]="'mat-icon-small'"
       mwlCalendarToday
-      [(viewDate)]="viewDate"
-      (viewDateChange)="onViewDateChanged()">
+      [viewDate]="viewDate"
+      (viewDateChange)="onViewDateChanged($event)"
+    >
       <span fxHide.xs>Today</span>
       <mat-icon fxHide.gt-xs>gps_fixed</mat-icon>
     </button>
   </div>
 
   <div>
-    <button mat-icon-button
+    <button
+      mat-icon-button
       [ngClass.xs]="'mat-icon-small'"
       mwlCalendarNextView
-      [view]="view.view"
-      [(viewDate)]="viewDate"
-      (viewDateChange)="onViewDateChanged()">
+      [view]="view.calendarView"
+      [viewDate]="viewDate"
+      (viewDateChange)="onViewDateChanged($event)"
+    >
       <mat-icon>arrow_forward</mat-icon>
     </button>
   </div>

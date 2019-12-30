@@ -1,6 +1,6 @@
 import { CalendarView } from 'angular-calendar';
-import { CalendarToolbarComponent } from './calendar-toolbar.component';
 import { AdonaCalendarView } from '../../model/adona-calendar-view.model';
+import { CalendarToolbarComponent } from './calendar-toolbar.component';
 
 describe('Calendar Toolbar Component', () => {
   let component: CalendarToolbarComponent;
@@ -33,13 +33,13 @@ describe('Calendar Toolbar Component', () => {
     expect(spy).toHaveBeenCalledWith(newDate);
   });
 
-  [CalendarView.Month, CalendarView.Week, CalendarView.Day].forEach((input) => {
+  [CalendarView.Month, CalendarView.Week, CalendarView.Day].forEach(input => {
     it(`should emit view: ${input.toString()} on view changed`, () => {
       // given
       const spy = spyOn(component.viewChanged, 'emit');
       const emitValue: AdonaCalendarView = {
         isList: false,
-        view: input
+        calendarView: input
       };
 
       // when

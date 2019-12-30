@@ -6,11 +6,14 @@ import { map } from 'rxjs/operators';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
 import { CalendarMapper } from '../mappers/calendar.mapper';
+import { AdonaCalendarView } from '../model/adona-calendar-view.model';
 import {
   EventDeleteRequestedAction,
   MonthEventsRequestedAction,
   NewEventRequestedAction,
-  UpdateEventRequestedAction
+  UpdateEventRequestedAction,
+  ViewChangedAction,
+  ViewDateChangedAction
 } from './actions/calendar.actions';
 import { CalendarState } from './reducers/calendar.reducer';
 
@@ -23,6 +26,14 @@ export class CalendarFacade {
       select(calendarQueries.selectEvents),
       map((events: Event[]) => this.mapper.CalendarEvent.fromEvents(events))
     );
+  }
+
+  public getView(): Observable<AdonaCalendarView> {
+    return this.store.pipe(select(calendarQueries.selectView));
+  }
+
+  public getViewDate(): Observable<Date> {
+    return this.store.pipe(select(calendarQueries.selectViewDate));
   }
 
   public getMonthsLoaded(): Observable<string[]> {
@@ -43,5 +54,13 @@ export class CalendarFacade {
 
   public deleteEvent(event: Event) {
     this.store.dispatch(new EventDeleteRequestedAction({ id: event.id }));
+  }
+
+  public changeViewDate(newDate: Date) {
+    this.store.dispatch(new ViewDateChangedAction({ newDate }));
+  }
+
+  public changeView(newView: AdonaCalendarView) {
+    this.store.dispatch(new ViewChangedAction({ newView }));
   }
 }

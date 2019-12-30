@@ -1,21 +1,39 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CalendarView } from 'angular-calendar';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
+import { TimeService } from 'src/app/shared/services/time/time.service';
+import { CalendarFacade } from '../../../store/calendar.facade';
 
 @Component({
   selector: 'app-calendar-date-switch',
   templateUrl: './calendar-date-switch.component.html',
   styleUrls: ['./calendar-date-switch.component.scss']
 })
-export class CalendarDateSwitchComponent implements OnInit {
+export class CalendarDateSwitchComponent {
   @Input() view: AdonaCalendarView;
   @Input() viewDate: Date;
-  @Output() viewDateChanged = new EventEmitter<Date>();
 
-  constructor() { }
+  constructor(private calendarFacade: CalendarFacade, private timeService: TimeService) {}
 
-  ngOnInit() { }
+  public onViewDateChanged(newDate: Date) {
+    const newViewDate = this.adjustFetchDateForWeekView(newDate);
+    this.calendarFacade.changeViewDate(newViewDate);
+  }
 
-  onViewDateChanged() {
-    this.viewDateChanged.emit(this.viewDate);
+  private adjustFetchDateForWeekView(newDate: Date): Date {
+    if (this.view.calendarView === CalendarView.Week) {
+      const startOfWeek = this.timeService.Extraction.getStartOfWeek(newDate);
+      const endOfWeek = this.timeService.Extraction.getEndOfWeek(newDate);
+
+      if (!this.timeService.Comparison.areDatesInTheSameMonth(this.viewDate, startOfWeek)) {
+        return startOfWeek;
+      }
+
+      if (!this.timeService.Comparison.areDatesInTheSameMonth(this.viewDate, endOfWeek)) {
+        return endOfWeek;
+      }
+    }
+
+    return newDate;
   }
 }

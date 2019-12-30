@@ -3,6 +3,7 @@ import { CalendarDateFormatter, CalendarEvent, CalendarEventTitleFormatter, Cale
 import * as _ from 'lodash';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 import { TimeService } from 'src/app/shared/services/time/time.service';
+import { CalendarFacade } from '../../store/calendar.facade';
 import { CalendarCustomEventTitleFormatter } from '../../utils/calendar-custom-event-title-formatter';
 import { CalendarHourFormatter } from '../../utils/calendar-hour-formatter';
 
@@ -26,13 +27,12 @@ export class CalendarViewComponent implements OnChanges {
   @Input() view: AdonaCalendarView;
   @Input() events: CalendarEvent[];
 
-  @Output() viewDateChanged = new EventEmitter<Date>();
   @Output() eventClicked = new EventEmitter<CalendarEvent>();
 
   public activeDayIsOpen = false;
   public CalendarView = CalendarView;
 
-  constructor(private timeService: TimeService) {}
+  constructor(private timeService: TimeService, private calendarFacade: CalendarFacade) {}
 
   public ngOnChanges() {
     this.activeDayIsOpen = this.eventExistsOnViewDate();
@@ -51,6 +51,8 @@ export class CalendarViewComponent implements OnChanges {
 
       this.activeDayIsOpen = showActiveDay;
       this.viewDate = date;
+    } else {
+      this.calendarFacade.changeViewDate(date);
     }
   }
 
@@ -58,7 +60,7 @@ export class CalendarViewComponent implements OnChanges {
     this.eventClicked.emit(event);
   }
 
-  public eventExistsOnViewDate(): boolean {
+  private eventExistsOnViewDate(): boolean {
     return (
       _.findIndex(this.events, (x: CalendarEvent) =>
         this.timeService.Comparison.isDateBetweenDates(this.viewDate, x.start, x.end)

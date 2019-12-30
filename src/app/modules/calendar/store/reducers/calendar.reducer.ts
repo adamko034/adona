@@ -1,15 +1,21 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
+import { CalendarView } from 'angular-calendar';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarActions, CalendarActionTypes } from 'src/app/modules/calendar/store/actions/calendar.actions';
+import { AdonaCalendarView } from '../../model/adona-calendar-view.model';
 
 export interface CalendarState extends EntityState<Event> {
   monthsLoaded: string[];
+  view: AdonaCalendarView;
+  viewDate: Date;
 }
 
 export const adapter: EntityAdapter<Event> = createEntityAdapter<Event>();
 
 export const initialCalendarState: CalendarState = adapter.getInitialState({
-  monthsLoaded: []
+  monthsLoaded: [],
+  view: { isList: false, calendarView: CalendarView.Month },
+  viewDate: new Date()
 });
 
 export function calendarReducer(state = initialCalendarState, action: CalendarActions): CalendarState {
@@ -25,6 +31,11 @@ export function calendarReducer(state = initialCalendarState, action: CalendarAc
       return adapter.updateOne(action.payload.eventUpdate, { ...state });
     case CalendarActionTypes.EventDeleteSuccess:
       return adapter.removeOne(action.payload.id, { ...state });
+    case CalendarActionTypes.ViewChanged:
+      return { ...state, view: action.payload.newView };
+    case CalendarActionTypes.ViewDateChanged:
+      console.log(action.payload.newDate);
+      return { ...state, viewDate: action.payload.newDate };
     default:
       return state;
   }

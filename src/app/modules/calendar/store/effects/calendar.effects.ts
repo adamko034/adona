@@ -21,7 +21,8 @@ import {
   MonthEventsRequestedAction,
   NewEventAddedAction,
   NewEventRequestedAction,
-  UpdateEventRequestedAction
+  UpdateEventRequestedAction,
+  ViewDateChangedAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { errors } from 'src/app/shared/constants/errors.constants';
 import { TimeService } from 'src/app/shared/services/time/time.service';
@@ -139,5 +140,11 @@ export class CalendarEffects {
       return { message: errors.DEFAULT_API_DELETE_ERROR_MESSAGE, errorObj: action.payload.error.errorObj };
     }),
     map((error: Error) => new ErrorOccuredAction({ error }))
+  );
+
+  @Effect()
+  public viewDateChanged$: Observable<Action> = this.actions$.pipe(
+    ofType<CalendarActions>(CalendarActionTypes.ViewDateChanged),
+    map((action: ViewDateChangedAction) => new MonthEventsRequestedAction({ date: action.payload.newDate }))
   );
 }

@@ -1,6 +1,6 @@
 import { CalendarView } from 'angular-calendar';
 
 export class AdonaCalendarView {
-  public view: CalendarView;
+  public calendarView: CalendarView;
   public isList: boolean;
 }

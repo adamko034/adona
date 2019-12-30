@@ -1,28 +1,25 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { CalendarView } from 'angular-calendar';
 import { Views } from 'src/app/modules/calendar/components/calendar-toolbar/calendar-view-switch/model/calendar-view-switch-views.enum';
-import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
+import { CalendarFacade } from '../../../store/calendar.facade';
 
 @Component({
   selector: 'app-calendar-view-switch',
   templateUrl: './calendar-view-switch.component.html',
   styleUrls: ['./calendar-view-switch.component.scss']
 })
-export class CalendarViewSwitchComponent implements OnInit {
-  @Output() viewChanged = new EventEmitter<AdonaCalendarView>();
-
+export class CalendarViewSwitchComponent {
   public Views = Views;
-  public view = this.Views.Month;
 
-  constructor() {}
+  constructor(private calendarFacade: CalendarFacade) {}
 
-  public ngOnInit() {}
+  public onViewChanged(view: Views) {
+    const newView = {
+      isList: view === Views.List,
+      calendarView: this.convertEnum(view)
+    };
 
-  public setView(newView: Views) {
-    const viewToEmit = newView === Views.List ? this.convertEnum(this.view) : this.convertEnum(newView);
-    this.view = newView;
-
-    this.viewChanged.emit({ view: viewToEmit, isList: newView === this.Views.List });
+    this.calendarFacade.changeView(newView);
   }
 
   private convertEnum(componentView: Views): CalendarView {
