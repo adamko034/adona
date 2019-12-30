@@ -2,6 +2,7 @@ import { Update } from '@ngrx/entity';
 import { Action } from '@ngrx/store';
 import { Error } from 'src/app/core/error/model/error.model';
 import { Event } from 'src/app/modules/calendar/model/event.model';
+import { AdonaCalendarView } from '../../model/adona-calendar-view.model';
 
 export enum CalendarActionTypes {
   MonthEventsRequested = '[Calendar Page] Month Events Requested',
@@ -15,7 +16,9 @@ export enum CalendarActionTypes {
   EventUpdateError = '[Calendar API] Event Updated Error',
   EventDeleteRequested = '[Calendar Page] Event Delete Requested',
   EventDeleteSuccess = '[Calendar API] Event Delete Success',
-  EventDeleteError = '[Calendar API] Event Delete Error'
+  EventDeleteError = '[Calendar API] Event Delete Error',
+  ViewChanged = '[Calendar Page] View Changed',
+  ViewDateChanged = '[Calendar Page] View Date Changed',
 }
 
 export class MonthEventsRequestedAction implements Action {
@@ -90,6 +93,18 @@ export class EventDeleteErrorAction implements Action {
   constructor(public payload: { error: Error }) {}
 }
 
+export class ViewChangedAction implements Action {
+  readonly type = CalendarActionTypes.ViewChanged;
+
+  constructor(public payload: {newView: AdonaCalendarView}) {}
+}
+
+export class ViewDateChangedAction implements Action {
+  readonly type = CalendarActionTypes.ViewDateChanged;
+
+  constructor(public payload: {newDate: Date}){}
+}
+
 export type CalendarActions =
   | EventsLoadedAction
   | MonthEventsRequestedAction
@@ -102,4 +117,6 @@ export type CalendarActions =
   | EventCreationErrorAction
   | EventDeleteRequestedAction
   | EventDeleteSuccessAction
-  | EventDeleteErrorAction;
+  | EventDeleteErrorAction
+  | ViewDateChangedAction
+  | ViewChangedAction;

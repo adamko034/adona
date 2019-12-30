@@ -27,7 +27,7 @@ describe('CalendarViewSwitchComponent', () => {
   ].forEach(input => {
     it(`should set view to ${input.newView.toString()} and emit value`, () => {
       // when
-      component.setView(input.newView);
+      component.onViewChanged(input.newView);
 
       // then
       expect(component.view).toEqual(input.newView);

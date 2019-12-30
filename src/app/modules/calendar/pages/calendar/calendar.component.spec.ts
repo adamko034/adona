@@ -117,11 +117,11 @@ describe('CalendarComponent', () => {
 
   describe('On View Changed', () => {
     it('should change view type journey', () => {
-      const adonaView: AdonaCalendarView = { view: CalendarView.Day, isList: false };
+      const adonaView: AdonaCalendarView = { calendarView: CalendarView.Day, isList: false };
       component.onViewChanged(adonaView);
       expect(component.view).toBe(adonaView);
 
-      adonaView.view = CalendarView.Week;
+      adonaView.calendarView = CalendarView.Week;
       component.onViewChanged(adonaView);
       expect(component.view).toBe(adonaView);
 
@@ -130,7 +130,7 @@ describe('CalendarComponent', () => {
       expect(component.view).toBe(adonaView);
 
       adonaView.isList = false;
-      adonaView.view = CalendarView.Month;
+      adonaView.calendarView = CalendarView.Month;
       component.onViewChanged(adonaView);
       expect(component.view).toBe(adonaView);
     });
@@ -161,7 +161,7 @@ describe('CalendarComponent', () => {
       it('should load for previous month', () => {
         // given
         const currentViewDate = new Date(2019, 10, 8);
-        component.view = { isList: false, view: CalendarView.Week };
+        component.view = { isList: false, calendarView: CalendarView.Week };
         component.viewDate = currentViewDate;
         const newDate = new Date(2019, 10, 1);
         const fetchDate = new Date(2019, 9, 28);
@@ -190,7 +190,7 @@ describe('CalendarComponent', () => {
       it('should load for next month', () => {
         // given
         const currentViewDate = new Date(2020, 0, 23);
-        component.view = { isList: false, view: CalendarView.Week };
+        component.view = { isList: false, calendarView: CalendarView.Week };
         component.viewDate = currentViewDate;
         const newDate = new Date(2020, 0, 30);
         const fetchDate = new Date(2020, 1, 2);

@@ -17,8 +17,10 @@ import { CalendarFacade } from '../../store/calendar.facade';
 })
 export class CalendarComponent implements OnInit, OnDestroy {
   private dialogResultSubscription: Subscription;
+  private viewSubscription: Subscription;
+  private viewDateSubsciption: Subscription;
 
-  public view: AdonaCalendarView = { isList: false, view: CalendarView.Month };
+  public view: AdonaCalendarView;
   public viewDate = new Date();
   public events$: Observable<CalendarEvent[]>;
 
@@ -30,9 +32,11 @@ export class CalendarComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit() {
-    this.view.isList = this.deviceService.isMobile();
-
+    this.viewSubscription = this.facade.getView().subscribe((view: AdonaCalendarView) => (this.view = view));
+    this.viewDateSubsciption = this.facade.getViewDate().subscribe((viewDate: Date) => (this.viewDate = viewDate));
     this.events$ = this.facade.events$;
+
+    this.facade.changeView({ isList: this.deviceService.isMobile(), calendarView: CalendarView.Month });
     this.facade.loadMonthEvents(this.viewDate);
     this.facade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate));
     this.facade.loadMonthEvents(this.timeService.Extraction.getNextMonthOf(this.viewDate));
@@ -42,17 +46,14 @@ export class CalendarComponent implements OnInit, OnDestroy {
     if (this.dialogResultSubscription) {
       this.dialogResultSubscription.unsubscribe();
     }
-  }
 
-  public onViewChanged(adonaCalendarView: AdonaCalendarView) {
-    this.view = adonaCalendarView;
-  }
+    if (this.viewSubscription) {
+      this.viewSubscription.unsubscribe();
+    }
 
-  public onViewDateChanged(newViewDate: Date) {
-    const fetchDate = this.adjustFetchDate(newViewDate);
-    this.viewDate = newViewDate;
-
-    this.facade.loadMonthEvents(fetchDate);
+    if (this.viewDateSubsciption) {
+      this.viewDateSubsciption.unsubscribe();
+    }
   }
 
   public onEventClicked(event?: CalendarEvent) {
@@ -76,21 +77,5 @@ export class CalendarComponent implements OnInit, OnDestroy {
           }
         }
       });
-  }
-
-  private adjustFetchDate(newViewDate: Date): Date {
-    if (this.view.view === CalendarView.Week) {
-      const startOfWeek = this.timeService.Extraction.getStartOfWeek(newViewDate);
-      const endOfWeek = this.timeService.Extraction.getEndOfWeek(newViewDate);
-
-      if (!this.timeService.Comparison.areDatesInTheSameMonth(this.viewDate, startOfWeek)) {
-        return startOfWeek;
-      }
-      if (!this.timeService.Comparison.areDatesInTheSameMonth(this.viewDate, endOfWeek)) {
-        return endOfWeek;
-      }
-    }
-
-    return newViewDate;
   }
 }

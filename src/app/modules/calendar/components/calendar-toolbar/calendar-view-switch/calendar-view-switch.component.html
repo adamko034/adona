@@ -1,6 +1,6 @@
 <div fxLayout fxLayoutGap.gt-xs="10px" fxLayoutGap.xs="5px">
   <div *appMobileHide>
-    <button mat-icon-button [disableRipple]="true" (click)="setView(Views.Month)">
+    <button mat-icon-button [disableRipple]="true" (click)="onViewChanged(Views.Month)">
       <mat-icon
         [ngClass.xs]="'custom-icon-small'"
         [ngClass.gt-xs]="'custom-icon-large'"
@@ -9,7 +9,7 @@
     </button>
   </div>
   <div *appMobileHide>
-    <button mat-icon-button [disableRipple]="true" (click)="setView(Views.Week)">
+    <button mat-icon-button [disableRipple]="true" (click)="onViewChanged(Views.Week)">
       <mat-icon
         [ngClass.xs]="'custom-icon-small'"
         [ngClass.gt-xs]="'custom-icon-large'"
@@ -18,7 +18,7 @@
     </button>
   </div>
   <div>
-    <button mat-icon-button [disableRipple]="true" (click)="setView(Views.Day)">
+    <button mat-icon-button [disableRipple]="true" (click)="onViewChanged(Views.Day)">
       <mat-icon
         [ngClass.xs]="'custom-icon-small'"
         [ngClass.gt-xs]="'custom-icon-large'"
@@ -27,7 +27,7 @@
     </button>
   </div>
   <div>
-    <button mat-icon-button [disableRipple]="true" (click)="setView(Views.List)">
+    <button mat-icon-button [disableRipple]="true" (click)="onViewChanged(Views.List)">
       <mat-icon
         [ngClass.xs]="'custom-icon-small'"
         [ngClass.gt-xs]="'custom-icon-large'"

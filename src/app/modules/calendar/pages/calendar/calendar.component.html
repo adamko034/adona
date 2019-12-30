@@ -1,11 +1,4 @@
-<app-calendar-toolbar
-  (newEventClicked)="onEventClicked()"
-  (viewDateChanged)="onViewDateChanged($event)"
-  (viewChanged)="onViewChanged($event)"
-  [view]="view"
-  [(viewDate)]="viewDate"
-></app-calendar-toolbar>
-<app-error></app-error>
+<app-calendar-toolbar (newEventClicked)="onEventClicked()" [view]="view" [viewDate]="viewDate"></app-calendar-toolbar>
 
 <div class="calendar-view">
   <app-celendar-title class="align-center" [view]="view" [viewDate]="viewDate"></app-celendar-title>
@@ -19,3 +12,5 @@
   >
   </app-calendar-view>
 </div>
+
+<app-error></app-error>
