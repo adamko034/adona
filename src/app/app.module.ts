@@ -15,11 +15,13 @@ import { CoreModule } from './core/core.module';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
 import { NavbarComponent } from './layouts/navbar/navbar.component';
+import { SharedModule } from './shared/shared.module';
 import { CustomSerializer } from './utils/router-store/custom-serializer';
 
 @NgModule({
-  declarations: [ AppComponent, NavbarComponent, ContentLayoutComponent, AuthLayoutComponent ],
+  declarations: [AppComponent, NavbarComponent, ContentLayoutComponent, AuthLayoutComponent],
   imports: [
+    SharedModule,
     BrowserModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
@@ -35,7 +37,7 @@ import { CustomSerializer } from './utils/router-store/custom-serializer';
     MatIconModule,
     StoreRouterConnectingModule.forRoot({ stateKey: 'router', serializer: CustomSerializer })
   ],
-  providers: [ { provide: MAT_DATE_LOCALE, useValue: 'pl-PL' } ],
-  bootstrap: [ AppComponent ]
+  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'pl-PL' }],
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

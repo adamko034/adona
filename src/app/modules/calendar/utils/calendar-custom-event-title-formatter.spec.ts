@@ -51,7 +51,7 @@ describe('Calendar Custom Event Title Formatter', () => {
   });
 
   describe('Start Date and End Date different', () => {
-    it('should display only days if all day is set to true', () => {
+    it('should display all days events', () => {
       // given
       const event: Event = {
         allDay: true,
@@ -67,7 +67,7 @@ describe('Calendar Custom Event Title Formatter', () => {
       const result = formatter.month(event, title);
 
       // then
-      expect(result).toEqual(`(01-11-2019 - 04-11-2019) ${title}`);
+      expect(result).toEqual(`(all day) ${title}`);
     });
 
     it('should display day and time if all day is set to false', () => {

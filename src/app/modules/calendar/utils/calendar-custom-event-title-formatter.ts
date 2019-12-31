@@ -9,18 +9,12 @@ export class CalendarCustomEventTitleFormatter extends CalendarEventTitleFormatt
   }
 
   public month(event: CalendarEvent, title: string): string {
-    if (this.timeService.Comparison.areDatesTheSame(event.start, event.end)) {
-      if (event.allDay) {
-        return `(all day) ${title}`;
-      }
-
-      return `(${this.timeService.Extraction.getTimeString(event.start)} - ${this.timeService.Extraction.getTimeString(
-        event.end
-      )}) ${title}`;
+    if (event.allDay) {
+      return `(all day) ${title}`;
     }
 
-    if (event.allDay) {
-      return `(${this.timeService.Extraction.getDateString(event.start)} - ${this.timeService.Extraction.getDateString(
+    if (this.timeService.Comparison.areDatesTheSame(event.start, event.end)) {
+      return `(${this.timeService.Extraction.getTimeString(event.start)} - ${this.timeService.Extraction.getTimeString(
         event.end
       )}) ${title}`;
     }

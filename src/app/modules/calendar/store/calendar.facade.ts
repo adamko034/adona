@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { CalendarEvent } from 'calendar-utils';
+import * as lodash from 'lodash';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Event } from 'src/app/modules/calendar/model/event.model';
@@ -24,7 +25,8 @@ export class CalendarFacade {
   public get events$(): Observable<CalendarEvent[]> {
     return this.store.pipe(
       select(calendarQueries.selectEvents),
-      map((events: Event[]) => this.mapper.CalendarEvent.fromEvents(events))
+      map((events: Event[]) => this.mapper.CalendarEvent.fromEvents(events)),
+      map(events => lodash.sortBy(events, ['start', 'end', 'title']))
     );
   }
 
