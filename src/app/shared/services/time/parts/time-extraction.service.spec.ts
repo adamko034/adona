@@ -259,4 +259,66 @@ describe('Time Extraction Service', () => {
       });
     });
   });
+
+  describe('Get Days Between', () => {
+    [
+      { date1: new Date(2020, 1, 1), date2: new Date(2020, 1, 2), expected: 1 },
+      { date1: new Date(2020, 1, 1, 14), date2: new Date(2020, 1, 2, 22), expected: 1 },
+      { date1: new Date(2020, 1, 1, 14), date2: new Date(2020, 1, 1, 22), expected: 0 },
+      { date1: new Date(2020, 1, 8), date2: new Date(2020, 1, 6), expected: 2 },
+      { date1: new Date(2020, 1, 8, 22), date2: new Date(2020, 1, 6, 23), expected: 2 }
+    ].forEach(input => {
+      it(`should return ${input.expected} for dates: ${input.date1} and ${input.date2}`, () => {
+        // when & then
+        expect(service.getDaysBetween(input.date1, input.date2)).toEqual(input.expected);
+      });
+    });
+  });
+
+  describe('Is Date Between', () => {
+    [
+      {
+        date: new Date(2020, 1, 1),
+        date1: new Date(2020, 1, 1),
+        date2: new Date(2020, 1, 2),
+        including: true,
+        expected: true
+      },
+      {
+        date: new Date(2020, 0, 1),
+        date1: new Date(2019, 11, 1),
+        date2: new Date(2020, 1, 1),
+        including: true,
+        expected: true
+      },
+      {
+        date: new Date(2020, 1, 1),
+        date1: new Date(2020, 1, 1),
+        date2: new Date(2020, 1, 2),
+        including: false,
+        expected: false
+      },
+      {
+        date: new Date(2020, 1, 2),
+        date1: new Date(2020, 1, 1),
+        date2: new Date(2020, 1, 3),
+        including: false,
+        expected: true
+      },
+      {
+        date: new Date(2020, 1, 10),
+        date1: new Date(2020, 1, 11),
+        date2: new Date(2020, 1, 9),
+        including: false,
+        expected: true
+      }
+    ].forEach(input => {
+      it(`should return ${input.expected} for ${input.date} between ${input.date1} and ${input.date2} including: ${input.including}`, () => {
+        // when & then
+        expect(service.isDateBetweenDates(input.date, input.date1, input.date2, input.including)).toEqual(
+          input.expected
+        );
+      });
+    });
+  });
 });

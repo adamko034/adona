@@ -6,7 +6,7 @@ body {
 }
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
   background-color: #fafafa;
 }
 
@@ -17,12 +17,4 @@ body {
 
 .align-center {
   text-align: center;
-}
-
-.mat-icon-large {
-  transform: scale(1.5);
-}
-
-.mat-icon-small {
-  transform: scale(0.8);
 }

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
-import * as lodash from 'lodash';
 import { from, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { CalendarMapper } from 'src/app/modules/calendar/mappers/calendar.mapper';
@@ -57,8 +56,7 @@ export class CalendarService {
   private pushEventsFromCollection(collection: AngularFirestoreCollection<Event>): Observable<Event[]> {
     return collection.valueChanges({ idField: 'id' }).pipe(
       take(1),
-      map(firebaseEvents => this.mapper.Event.fromFirebaseEvents(firebaseEvents)),
-      map(events => lodash.sortBy(events, ['start', ['end']]))
+      map(firebaseEvents => this.mapper.Event.fromFirebaseEvents(firebaseEvents))
     );
   }
 }

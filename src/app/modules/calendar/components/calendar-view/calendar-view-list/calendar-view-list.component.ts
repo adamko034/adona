@@ -73,6 +73,38 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
     this.eventClicked.emit(event);
   }
 
+  public shouldShowAllDay(event: CalendarEvent, day: Date): boolean {
+    if (event.allDay) {
+      return true;
+    }
+
+    if (!this.timeService.Comparison.areDatesTheSame(event.start, event.end)) {
+      return this.timeService.Extraction.isDateBetweenDates(day, event.start, event.end, false);
+    }
+
+    return false;
+  }
+
+  public getEventStartHour(event: CalendarEvent, day: Date): string {
+    if (!this.timeService.Comparison.areDatesTheSame(event.start, event.end)) {
+      if (this.timeService.Comparison.areDatesTheSame(event.end, day)) {
+        return '--';
+      }
+    }
+
+    return this.timeService.Extraction.getTimeString(event.start);
+  }
+
+  public getEventEndHour(event: CalendarEvent, day: Date) {
+    if (!this.timeService.Comparison.areDatesTheSame(event.start, event.end)) {
+      if (this.timeService.Comparison.areDatesTheSame(event.start, day)) {
+        return '--';
+      }
+    }
+
+    return this.timeService.Extraction.getTimeString(event.end);
+  }
+
   private calculateEventsGrouped() {
     this.eventsGrouped = [];
     const eventsToGroup = [...this.events];
