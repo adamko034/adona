@@ -7,7 +7,7 @@ import { ContentLayoutComponent } from './layouts/content-layout/content-layout.
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/home/calendar',
+    redirectTo: '/home/expenses/d',
     pathMatch: 'full'
   },
   {
@@ -17,13 +17,16 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'calendar',
+        redirectTo: '/home/calendar',
         pathMatch: 'full'
       },
       {
         path: 'calendar',
-        loadChildren: () =>
-          import('./modules/calendar/calendar.module').then(mod => mod.AdonaCalendarModule)
+        loadChildren: () => import('./modules/calendar/calendar.module').then(mod => mod.AdonaCalendarModule)
+      },
+      {
+        path: 'expenses',
+        loadChildren: () => import('./modules/expenses/expenses.module').then(mod => mod.ExpensesModule)
       }
     ]
   },

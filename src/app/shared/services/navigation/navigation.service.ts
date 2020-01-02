@@ -14,4 +14,12 @@ export class NavigationService {
   public toHome() {
     this.router.navigate(['/home/calendar']);
   }
+
+  public toExpensesMobile(params: string = '') {
+    this.router.navigate([`/home/expenses/m/${params}`]);
+  }
+
+  public toExpenses(params: string = '') {
+    this.router.navigate([`/home/expenses/d/${params}`]);
+  }
 }
