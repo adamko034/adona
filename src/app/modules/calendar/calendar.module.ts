@@ -12,6 +12,7 @@ import {
   MatToolbarModule
 } from '@angular/material';
 import { EffectsModule } from '@ngrx/effects';
+import { StoreModule } from '@ngrx/store';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
@@ -29,6 +30,7 @@ import { NewEventDialogComponent } from './components/dialogs/new-event-dialog/n
 import { CalendarMapper } from './mappers/calendar.mapper';
 import { CalendarComponent } from './pages/calendar/calendar.component';
 import { CalendarFacade } from './store/calendar.facade';
+import * as fromReducer from './store/reducers/calendar.reducer';
 
 @NgModule({
   declarations: [
@@ -61,7 +63,8 @@ import { CalendarFacade } from './store/calendar.facade';
     MatButtonModule,
     FlexLayoutModule,
     MatCheckboxModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    StoreModule.forFeature(fromReducer.calendarFeatureKey, fromReducer.calendarReducer)
   ],
   providers: [CalendarService, CalendarFacade, CalendarMapper]
 })

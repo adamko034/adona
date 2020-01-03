@@ -6,6 +6,7 @@ import { MapperService } from 'src/app/core/services/mapper/mapper.service';
 import { AuthState } from 'src/app/core/store/reducers/auth/auth.reducer';
 import { authQueries } from 'src/app/core/store/selectors/auth.selectors';
 import { AuthenticatedAction, LoginAction, LogoutAction } from '../store/actions/auth.actions';
+import { User } from './model/user-model';
 
 @Injectable()
 export class AuthFacade {
@@ -14,6 +15,10 @@ export class AuthFacade {
   public authenticate(firebaseUser: firebase.User) {
     const user = this.mapper.Users.toUser(firebaseUser);
     this.store.dispatch(new AuthenticatedAction(user));
+  }
+
+  public getUser(): Observable<User> {
+    return this.store.select(authQueries.selectUser);
   }
 
   public isLoggedIn(): Observable<boolean> {
