@@ -13,7 +13,7 @@ export const intialState: ExpensesState = adapter.getInitialState();
 
 export const reducers = createReducer(
   intialState,
-  on(actions.expensesLoadedSuccess, (state, action) => adapter.addMany(action.expenses, state))
+  on(actions.expensesLoadSuccess, (state, action) => adapter.addMany(action.expenses, state))
 );
 
 export function reducer(state: ExpensesState | undefined, action: Action) {
