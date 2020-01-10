@@ -1,1 +1,27 @@
-<p>expenses-list works!</p>
+<div class="expenses-container">
+  <mat-list>
+    <mat-list-item
+      (click)="onExpenseSelected(expense)"
+      [ngClass]="{ 'expense-selected': shouldBeSelected(expense) }"
+      class="expense-container"
+      *ngFor="let expense of expenses"
+    >
+      <mat-icon mat-list-icon>folder</mat-icon>
+      <h4 mat-line fxLayoutAlign="space-between center">
+        <span>{{ expense.name }}</span>
+        <mat-icon *ngIf="shouldBeSelected(expense)" mat-list-icon>playlist_add_check</mat-icon>
+        <mat-icon *ngIf="isMobile">arrow_forward</mat-icon>
+      </h4>
+      <span *ngIf="isMobile" mat-line class="text-size-11"
+        >Last updated {{ expense.lastUpdated | dateFormat: daysAgoFormat }} by {{ expense.lastUpdatedBy }}</span
+      >
+
+      <span *ngIf="!isMobile" mat-line class="text-size-11"> Updated by {{ expense.lastUpdatedBy }}</span>
+      <span *ngIf="!isMobile" mat-line class="text-size-11"
+        >{{ expense.lastUpdated | dateFormat: daysAgoFormat }}
+      </span>
+
+      <hr mat-line *ngIf="isMobile" />
+    </mat-list-item>
+  </mat-list>
+</div>

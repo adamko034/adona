@@ -1,3 +1,8 @@
-<p>deskotp works</p>
-<app-expenses-list></app-expenses-list>
-<router-outlet></router-outlet>
+<div fxLayout.gt-xs="row" fxLayoutGap.gt-xs="20px">
+  <div fxFlex.gt-xs="30">
+    <app-expenses-list [isMobile]="false"></app-expenses-list>
+  </div>
+  <div fxFles.gt-xs="70">
+    <app-expenses-content></app-expenses-content>
+  </div>
+</div>

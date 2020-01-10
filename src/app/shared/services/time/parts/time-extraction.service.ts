@@ -88,4 +88,21 @@ export class TimeExtractionService {
 
     return this.getDaysBetween(start, date) >= minDaysBetween && this.getDaysBetween(date, end) >= minDaysBetween;
   }
+
+  public getDaysAgoString(date: Date): string {
+    const daysAgo = Math.abs(
+      moment()
+        .startOf('day')
+        .diff(moment(date).startOf('day'), 'days')
+    );
+
+    switch (daysAgo) {
+      case 0:
+        return 'today';
+      case 1:
+        return 'yesterday';
+      default:
+        return `${daysAgo.toString()} days ago`;
+    }
+  }
 }

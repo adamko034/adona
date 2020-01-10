@@ -6,4 +6,6 @@ export interface ExpenseGroup {
   name: string;
   users: User[];
   expenses?: Expense[];
+  lastUpdatedBy: string;
+  lastUpdated: Date;
 }

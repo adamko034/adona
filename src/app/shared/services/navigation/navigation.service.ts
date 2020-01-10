@@ -19,7 +19,11 @@ export class NavigationService {
     this.router.navigate([`/home/expenses/m/${params}`]);
   }
 
-  public toExpenses(params: string = '') {
+  public toExpensesDesktop(params: string = '') {
     this.router.navigate([`/home/expenses/d/${params}`]);
+  }
+
+  public toExpenseContent(groupId: string) {
+    this.router.navigate([`/home/expenses/d/${groupId}`]);
   }
 }

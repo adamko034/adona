@@ -1,17 +1,14 @@
-import { TestBed } from '@angular/core/testing';
-
-import { NavigationService } from './navigation.service';
 import { Router } from '@angular/router';
+import { NavigationService } from './navigation.service';
 
-describe('NavigationService', () => {
-  const routerSpyObj = jasmine.createSpyObj('Router', ['navigate']);
+fdescribe('NavigationService', () => {
   let navigationService: NavigationService;
-  let routerMock;
+  const routerMock = jasmine.createSpyObj<Router>('Router', ['navigate']);
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [NavigationService, { provide: Router, useValue: routerSpyObj }] });
-    navigationService = TestBed.get(NavigationService);
-    routerMock = TestBed.get(Router);
+    navigationService = new NavigationService(routerMock);
+
+    routerMock.navigate.calls.reset();
   });
 
   it('should navigate to login route', () => {
@@ -31,6 +28,61 @@ describe('NavigationService', () => {
 
     // when
     navigationService.toHome();
+
+    // then
+    expect(routerMock.navigate).toHaveBeenCalledWith([homeRoute]);
+  });
+
+  it('should navigate to expenses mobile page', () => {
+    // given
+    const route = '/home/expenses/m/';
+
+    // when
+    navigationService.toExpensesMobile();
+
+    // then
+    expect(routerMock.navigate).toHaveBeenCalledWith([route]);
+  });
+
+  it('should navigate to expenses mobile page with paramas', () => {
+    // given
+    const route = '/home/expenses/m/2';
+
+    // when
+    navigationService.toExpensesMobile('2');
+
+    // then
+    expect(routerMock.navigate).toHaveBeenCalledWith([route]);
+  });
+
+  it('should navigate to expenses desktop page', () => {
+    // given
+    const route = '/home/expenses/d/';
+
+    // when
+    navigationService.toExpensesDesktop();
+
+    // then
+    expect(routerMock.navigate).toHaveBeenCalledWith([route]);
+  });
+
+  it('should navigate to expenses desktop page with params', () => {
+    // given
+    const route = '/home/expenses/d/2';
+
+    // when
+    navigationService.toExpensesDesktop('2');
+
+    // then
+    expect(routerMock.navigate).toHaveBeenCalledWith([route]);
+  });
+
+  it('should navigate to expenses content page', () => {
+    // given
+    const homeRoute = '/home/expenses/d/1';
+
+    // when
+    navigationService.toExpenseContent('1');
 
     // then
     expect(routerMock.navigate).toHaveBeenCalledWith([homeRoute]);

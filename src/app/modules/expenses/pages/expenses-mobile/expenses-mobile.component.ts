@@ -1,15 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-expenses-mobile',
   templateUrl: './expenses-mobile.component.html',
-  styleUrls: ['./expenses-mobile.component.css']
+  styleUrls: ['./expenses-mobile.component.scss']
 })
-export class ExpensesMobileComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+export class ExpensesMobileComponent {
+  constructor() {}
 }

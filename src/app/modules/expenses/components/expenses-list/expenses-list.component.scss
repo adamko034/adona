@@ -1,0 +1,19 @@
+.expense-container {
+  cursor: pointer;
+  margin: 20px 0;
+
+  hr {
+    margin-top: 5px;
+  }
+}
+
+.expense-container:not(.expense-selected):hover {
+  background-color: #ededed;
+  border-radius: 15px;
+}
+
+.expense-selected {
+  background-color: #b94a48;
+  color: #fff;
+  border-radius: 15px;
+}
