@@ -4,7 +4,7 @@ import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { noop, Observable, of, throwError } from 'rxjs';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
-import { NavigationService } from 'src/app/core/services/navigation/navigation.service';
+import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { MapperService } from '../../services/mapper/mapper.service';
 import { UsersMapper } from '../../services/mapper/parts/mapper.users';

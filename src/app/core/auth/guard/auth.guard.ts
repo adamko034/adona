@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
-import { NavigationService } from 'src/app/core/services/navigation/navigation.service';
+import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
 
 @Injectable({
   providedIn: 'root'

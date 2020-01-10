@@ -1,19 +1,20 @@
-import {CommonModule} from '@angular/common';
-import {HttpClientModule} from '@angular/common/http';
-import {NgModule, Optional, SkipSelf} from '@angular/core';
-import {EffectsModule} from '@ngrx/effects';
-import {StoreModule} from '@ngrx/store';
-import {DeviceDetectorModule} from 'ngx-device-detector';
-import {ErrorEffects} from 'src/app/core/store/effects/error.effects';
-import {SharedModule} from '../shared/shared.module';
-import {AuthFacade} from './auth/auth.facade';
-import {AuthGuard} from './auth/guard/auth.guard';
-import {AuthService} from './auth/services/auth.service';
-import {ErrorFacade} from './error/error.facade';
-import {CustomIconsService} from './services/angular-material/custom-icons/custom-icons.service';
-import {AuthEffects} from './store/effects/auth.effects';
-import {metaReducers, reducers} from './store/reducers';
-
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { NgModule, Optional, SkipSelf } from '@angular/core';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { StoreModule } from '@ngrx/store';
+import { DeviceDetectorModule } from 'ngx-device-detector';
+import { ErrorEffects } from 'src/app/core/store/effects/error.effects';
+import { SharedModule } from '../shared/shared.module';
+import { CustomSerializer } from '../utils/router-store/custom-serializer';
+import { AuthFacade } from './auth/auth.facade';
+import { AuthGuard } from './auth/guard/auth.guard';
+import { AuthService } from './auth/services/auth.service';
+import { ErrorFacade } from './error/error.facade';
+import { CustomIconsService } from './services/angular-material/custom-icons/custom-icons.service';
+import { AuthEffects } from './store/effects/auth.effects';
+import { metaReducers, reducers } from './store/reducers';
 @NgModule({
   declarations: [],
   imports: [
@@ -28,7 +29,8 @@ import {metaReducers, reducers} from './store/reducers';
     }),
     HttpClientModule,
     EffectsModule.forRoot([AuthEffects, ErrorEffects]),
-    DeviceDetectorModule.forRoot()
+    DeviceDetectorModule.forRoot(),
+    StoreRouterConnectingModule.forRoot({ stateKey: 'router', serializer: CustomSerializer })
   ],
   providers: [AuthGuard, AuthService, AuthFacade, ErrorFacade, CustomIconsService]
 })

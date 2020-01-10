@@ -10,6 +10,8 @@ export interface CalendarState extends EntityState<Event> {
   viewDate: Date;
 }
 
+export const calendarFeatureKey = 'calendar';
+
 export const adapter: EntityAdapter<Event> = createEntityAdapter<Event>();
 
 export const initialCalendarState: CalendarState = adapter.getInitialState({
