@@ -9,6 +9,7 @@ import { TimeComparisonService } from 'src/app/shared/services/time/parts/time-c
 import { TimeCreationService } from 'src/app/shared/services/time/parts/time-creation.service';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { TimeManipulationService } from 'src/app/shared/services/time/parts/time-manipulation.service';
+import { RouterFacade } from '../../../core/router/router.facade';
 
 export interface Spies {
   navigationService?: jasmine.SpyObj<NavigationService>;
@@ -17,6 +18,7 @@ export interface Spies {
   expensesService?: jasmine.SpyObj<ExpensesService>;
   authFacade?: jasmine.SpyObj<AuthFacade>;
   timeService?: jasmine.SpyObj<any>;
+  routerFacade?: jasmine.SpyObj<RouterFacade>;
 }
 
 export class SpiesBuilder {
@@ -96,6 +98,12 @@ export class SpiesBuilder {
       Comparison: jasmine.createSpyObj('comparisonService', comparisonMethods),
       Creation: jasmine.createSpyObj('creationService', creationMethdos)
     };
+
+    return this;
+  }
+
+  public withRouterFacade(): SpiesBuilder {
+    this.spies.routerFacade = jasmine.createSpyObj<RouterFacade>('routerFacade', ['getRouteParams']);
 
     return this;
   }

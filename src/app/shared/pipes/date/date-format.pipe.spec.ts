@@ -2,7 +2,7 @@ import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { DateFormat } from '../../services/time/model/date-format.enum';
 import { DateFormatPipe } from './date-format.pipe';
 
-fdescribe('Date Format Pipe', () => {
+describe('Date Format Pipe', () => {
   let pipe: DateFormatPipe;
   const { timeService } = SpiesBuilder.init()
     .withTimeService()
