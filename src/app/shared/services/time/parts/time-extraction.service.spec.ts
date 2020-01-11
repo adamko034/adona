@@ -1,4 +1,5 @@
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
+import { DateTestBuilder } from '../../../../utils/testUtils/builders/date-test.builder';
 import { DateFormat } from '../model/date-format.enum';
 
 describe('Time Extraction Service', () => {
@@ -313,11 +314,44 @@ describe('Time Extraction Service', () => {
         expected: true
       }
     ].forEach(input => {
-      it(`should return ${input.expected} for ${input.date} between ${input.date1} and ${input.date2} including: ${input.including}`, () => {
+      it(`should return ${input.expected} for ${input.date} between ${input.date1}
+        and ${input.date2} including: ${input.including}`, () => {
         // when & then
         expect(service.isDateBetweenDates(input.date, input.date1, input.date2, input.including)).toEqual(
           input.expected
         );
+      });
+    });
+  });
+
+  describe('Get Days Ago String', () => {
+    [
+      { date: DateTestBuilder.today().build(), result: 'today' },
+      {
+        date: DateTestBuilder.today()
+          .addDays(-1)
+          .build(),
+        result: 'yesterday'
+      },
+      {
+        date: DateTestBuilder.today()
+          .addDays(-5)
+          .build(),
+        result: '5 days ago'
+      },
+      {
+        date: DateTestBuilder.today()
+          .addDays(-12)
+          .build(),
+        result: '12 days ago'
+      }
+    ].forEach(input => {
+      it(`should return ${input.result} for date ${input.date}`, () => {
+        // when
+        const result = service.getDaysAgoString(input.date);
+
+        // then
+        expect(result).toEqual(input.result);
       });
     });
   });
