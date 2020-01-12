@@ -7,7 +7,7 @@ import { ContentLayoutComponent } from './layouts/content-layout/content-layout.
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/home/expenses/d',
+    redirectTo: '/home',
     pathMatch: 'full'
   },
   {
@@ -17,8 +17,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: '/home/calendar',
-        pathMatch: 'full'
+        loadChildren: () => import('./modules/home/home.module').then(mod => mod.HomeModule)
       },
       {
         path: 'calendar',

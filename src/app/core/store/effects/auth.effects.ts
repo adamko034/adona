@@ -7,6 +7,7 @@ import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.mode
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { MapperService } from 'src/app/core/services/mapper/mapper.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
+import { UserService } from '../../user/services/user.service';
 import {
   AuthActionTypes,
   AuthenticatedAction,
@@ -22,7 +23,8 @@ export class AuthEffects {
     private actions$: Actions,
     private authService: AuthService,
     private navigationService: NavigationService,
-    private mapperService: MapperService
+    private mapperService: MapperService,
+    private userService: UserService
   ) {}
 
   @Effect()
@@ -45,6 +47,8 @@ export class AuthEffects {
     map((firebaseUser: firebase.User) => {
       if (firebaseUser) {
         const user = this.mapperService.Users.toUser(firebaseUser);
+        this.userService.getUser(firebaseUser.uid).subscribe(newUser => console.log(newUser));
+
         return new AuthenticatedAction(user);
       }
 
