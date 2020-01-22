@@ -35,14 +35,14 @@
               <mat-icon style="vertical-align: text-bottom;">
                 supervisor_account
               </mat-icon>
-              <span>Members:</span>
+              <span style="margin-left: 5px;">Members:</span>
             </div>
             <div *ngFor="let member of members; let i = index">
               <div fxFill class="members-list-member">
                 <div fxFlex="60">
-                  <span>{{ i + 1 }}. {{ member }}</span>
+                  <span>{{ i + 1 }}. {{ formatMemberName(member) }}</span>
                 </div>
-                <span class="members-list-member-remove" *ngIf="member !== 'you'" (click)="removeMember(member)">
+                <span class="members-list-member-remove" *ngIf="!isCurrentUser(member)" (click)="removeMember(member)">
                   <mat-icon>
                     clear
                   </mat-icon>
@@ -76,7 +76,7 @@
           </div>
           <div fxLayout="row" fxLayoutAlign="space-between">
             <button mat-stroked-button (click)="previousStep()">Prev</button>
-            <button mat-stroked-button class="button-stroked-green" (click)="nextStep()">Create</button>
+            <button mat-stroked-button class="button-stroked-green" (click)="save()">Create</button>
           </div>
         </div>
       </form>

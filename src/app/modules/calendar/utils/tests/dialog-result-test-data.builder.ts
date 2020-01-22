@@ -1,8 +1,9 @@
 import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
-import { DialogResult } from '../../../../shared/models/dialog-result.model';
+import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
+import { Event } from '../../model/event.model';
 
 export class DialogResultTestDataBuilder {
-  private dialogResult: DialogResult;
+  private dialogResult: DialogResult<Event>;
 
   private constructor() {
     this.dialogResult = { action: DialogAction.SaveAdd };
@@ -28,7 +29,7 @@ export class DialogResultTestDataBuilder {
     return this;
   }
 
-  public build(): DialogResult {
+  public build(): DialogResult<Event> {
     return this.dialogResult;
   }
 }

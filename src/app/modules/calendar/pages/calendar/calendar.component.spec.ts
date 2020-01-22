@@ -3,10 +3,11 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { of, Subject } from 'rxjs';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
-import { DialogResult } from '../../../../shared/models/dialog-result.model';
+import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
 import { DialogService } from '../../../../shared/services/dialogs/dialog.service';
 import { TimeComparisonService } from '../../../../shared/services/time/parts/time-comparison.service';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
+import { Event } from '../../model/event.model';
 import { CalendarFacade } from '../../store/calendar.facade';
 import { DialogResultTestDataBuilder } from '../../utils/tests/dialog-result-test-data.builder';
 import { EventsTestDataBuilder } from '../../utils/tests/event-test-data.builder';
@@ -180,7 +181,7 @@ describe('CalendarComponent', () => {
     it('should open dialog and add new event', () => {
       // given
       const newEvent = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const dialogResult: DialogResult = DialogResultTestDataBuilder.init()
+      const dialogResult: DialogResult<Event> = DialogResultTestDataBuilder.init()
         .withAction(DialogAction.SaveAdd)
         .withPayload(newEvent)
         .build();
@@ -229,7 +230,7 @@ describe('CalendarComponent', () => {
       // given
       const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
       const updatedEvent = { ...event, title: 'new updated title' };
-      const dialogResult: DialogResult = DialogResultTestDataBuilder.init()
+      const dialogResult: DialogResult<Event> = DialogResultTestDataBuilder.init()
         .withAction(DialogAction.SaveUpdate)
         .withPayload(updatedEvent)
         .build();
@@ -254,7 +255,7 @@ describe('CalendarComponent', () => {
     it('should open dialog to edit mode and delete event', () => {
       // given
       const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const dialogResult: DialogResult = DialogResultTestDataBuilder.init()
+      const dialogResult: DialogResult<Event> = DialogResultTestDataBuilder.init()
         .withAction(DialogAction.Delete)
         .withPayload(event)
         .build();

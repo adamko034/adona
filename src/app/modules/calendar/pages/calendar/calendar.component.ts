@@ -7,10 +7,11 @@ import { TimeService } from 'src/app/shared/services/time/time.service';
 import { AuthFacade } from '../../../../core/auth/auth.facade';
 import { User } from '../../../../core/user/model/user-model';
 import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
-import { DialogResult } from '../../../../shared/models/dialog-result.model';
 import { DialogProperties } from '../../../../shared/services/dialogs/dialog-properties.model';
+import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
 import { DialogService } from '../../../../shared/services/dialogs/dialog.service';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
+import { Event } from '../../model/event.model';
 import { CalendarFacade } from '../../store/calendar.facade';
 
 @Component({
@@ -69,7 +70,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     const props: DialogProperties<CalendarEvent> = { width: '400px', data: event };
     this.dialogResultSubscription = this.dialogService
       .open<CalendarEvent>(NewEventDialogComponent, props)
-      .subscribe((result: DialogResult) => {
+      .subscribe((result: DialogResult<Event>) => {
         if (result && result.payload) {
           switch (result.action) {
             case DialogAction.SaveAdd:
