@@ -3,7 +3,7 @@
   <div mat-dialog-content>
     <div [ngSwitch]="currentStep">
       <form [formGroup]="form">
-        <div *ngSwitchCase="steps.Name">
+        <div *ngSwitchCase="steps.Name" fxLayout="column">
           <span>How should we call your team?</span>
           <mat-form-field fxFill>
             <input matInput id="name" formControlName="name" name="name" />
@@ -11,39 +11,72 @@
             <mat-error *ngIf="form.get('name').hasError('nameExists')">You are already member of such team</mat-error>
           </mat-form-field>
           <div fxLayout="row" fxLayoutAlign="end">
-            <button mat-button (click)="nextStep()">
+            <button mat-stroked-button (click)="nextStep()">
               <span>Next</span>
             </button>
           </div>
         </div>
-        <div *ngSwitchCase="steps.Users">
+        <div *ngSwitchCase="steps.Users" fxLayout="column">
           <span>Who should belong to this team?</span>
-          <div fxLayout>
+          <div fxLayout fxLayoutAlign="space-between">
             <mat-form-field fxFlex="80">
-              <input matInput id="user" placeholder="New member name" formControlName="newUser" name="newUser" />
+              <input matInput formControlName="newUser" name="newUser" #newMemberInput />
               <mat-error *ngIf="form.get('newUser').hasError('required')">Please provide us new member name</mat-error>
               <mat-error *ngIf="form.get('newUser').hasError('nameExists')"
                 >This user is already member of the team</mat-error
               >
             </mat-form-field>
-            <button mat-icon-button fxFlex="20" (click)="addNewMember()">
+            <button mat-icon-button [disableRipple]="true" fxFlex="20" (click)="addNewMember()">
               <mat-icon>add</mat-icon>
             </button>
           </div>
-          <div>
-            <p *ngFor="let member of members">{{ member.name }}</p>
+          <div fxLayout="column">
+            <div *ngIf="members.length > 0" class="members-list-title">
+              <mat-icon style="vertical-align: text-bottom;">
+                supervisor_account
+              </mat-icon>
+              <span>Members:</span>
+            </div>
+            <div *ngFor="let member of members; let i = index">
+              <div fxFill class="members-list-member">
+                <div fxFlex="60">
+                  <span>{{ i + 1 }}. {{ member }}</span>
+                </div>
+                <span class="members-list-member-remove" *ngIf="member !== 'you'" (click)="removeMember(member)">
+                  <mat-icon>
+                    clear
+                  </mat-icon>
+                </span>
+              </div>
+            </div>
           </div>
-
-          <div fxLayout="row" fxLayoutAlign="space-between">
-            <button mat-button (click)="previousStep()">Prev</button>
-            <button mat-button (click)="nextStep()">Next</button>
+          <div class="new-team-dialog-actions" fxLayout="row" fxLayoutAlign="space-between">
+            <button mat-stroked-button (click)="previousStep()">Prev</button>
+            <button mat-stroked-button (click)="nextStep()">Next</button>
           </div>
         </div>
-        <div *ngSwitchCase="steps.Summary">
-          <div>Summary</div>
+        <div *ngSwitchCase="steps.Summary" fxLayout="column" fxLayoutGap="10px">
           <div>
-            <button mat-button (click)="previousStep()">Prev</button>
-            <button mat-button (click)="nextStep()">Create</button>
+            You're about to create team: <br />
+            <span fxLayout="center" class="text-bold">{{ this.form.get('name').value }}</span>
+          </div>
+          <div class="summary-members-list">
+            <span class="members-list-title">Including {{ members.length }} members:</span>
+            <div fxLayout="column">
+              <span
+                class="members-list-member summary-members-list-member"
+                *ngFor="let member of members; let i = index"
+              >
+                <mat-icon style="vertical-align: middle;">
+                  perm_identity
+                </mat-icon>
+                {{ member }}
+              </span>
+            </div>
+          </div>
+          <div fxLayout="row" fxLayoutAlign="space-between">
+            <button mat-stroked-button (click)="previousStep()">Prev</button>
+            <button mat-stroked-button class="button-stroked-green" (click)="nextStep()">Create</button>
           </div>
         </div>
       </form>

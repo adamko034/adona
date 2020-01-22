@@ -25,6 +25,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.userSubscription = this.authFacade.getUser().subscribe((user: User) => {
       this.user = user;
+
+      if (this.user) {
+        this.openNewTeamDialog();
+      }
     });
   }
 
