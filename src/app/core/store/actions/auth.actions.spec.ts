@@ -1,13 +1,6 @@
 import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
-import {
-  AuthActionTypes,
-  AuthenticatedAction,
-  AuthRequestedAction,
-  LoginAction,
-  LogoutAction,
-  NotAuthenitcatedAction
-} from './auth.actions';
+import { authActions, authActionTypes } from './auth.actions';
 
 describe('Auth Actions', () => {
   const credentials: CredentialsLogin = {
@@ -17,29 +10,29 @@ describe('Auth Actions', () => {
 
   it('should create login action', () => {
     // when
-    const action = new LoginAction(credentials);
+    const action = authActions.login({ credentials });
 
     // then
     expect({ ...action }).toEqual({
-      type: AuthActionTypes.Login,
-      payload: credentials
+      type: authActionTypes.login,
+      credentials
     });
   });
 
   it('should create logout action', () => {
     // when
-    const action = new LogoutAction();
+    const action = authActions.logout();
 
     // then
-    expect({ ...action }).toEqual({ type: AuthActionTypes.Logout });
+    expect({ ...action }).toEqual({ type: authActionTypes.logout });
   });
 
-  it('should create get auth action', () => {
+  it('should create auth requested action', () => {
     // when
-    const action = new AuthRequestedAction();
+    const action = authActions.authRequested();
 
     // then
-    expect({ ...action }).toEqual({ type: AuthActionTypes.AuthRequested });
+    expect({ ...action }).toEqual({ type: authActionTypes.authRequested });
   });
 
   it('should create authenicated action', () => {
@@ -47,22 +40,22 @@ describe('Auth Actions', () => {
     const user = new UserTestBuilder().withDefaultData().build();
 
     // when
-    const action = new AuthenticatedAction(user);
+    const action = authActions.authenitcated({ firebaseUser: user });
 
     // then
     expect({ ...action }).toEqual({
-      type: AuthActionTypes.Authenticated,
-      payload: user
+      type: authActionTypes.authenticated,
+      user
     });
   });
 
   it('should create not authenitcated action', () => {
     // when
-    const action = new NotAuthenitcatedAction();
+    const action = authActions.notAuthenticated();
 
     // then
     expect({ ...action }).toEqual({
-      type: AuthActionTypes.NotAuthenticated
+      type: authActionTypes.notAuthenticated
     });
   });
 });

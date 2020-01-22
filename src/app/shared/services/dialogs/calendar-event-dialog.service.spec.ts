@@ -1,9 +1,9 @@
 import { MatDialog } from '@angular/material';
 import { hot } from 'jasmine-marbles';
-import { NewEventDialogComponent } from '../components/dialogs/new-event-dialog/new-event-dialog.component';
-import { DialogResultTestDataBuilder } from '../utils/tests/dialog-result-test-data.builder';
-import { EventsTestDataBuilder } from '../utils/tests/event-test-data.builder';
-import { CalendarEventDialogService } from './calendar-event-dialog.service';
+import { NewEventDialogComponent } from '../../../modules/calendar/components/dialogs/new-event-dialog/new-event-dialog.component';
+import { DialogResultTestDataBuilder } from '../../../modules/calendar/utils/tests/dialog-result-test-data.builder';
+import { EventsTestDataBuilder } from '../../../modules/calendar/utils/tests/event-test-data.builder';
+import { DialogService } from './dialog.service';
 
 describe('Calendar Event Dialog Service', () => {
   const matDialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
@@ -11,11 +11,11 @@ describe('Calendar Event Dialog Service', () => {
     .withCancelResult()
     .build();
 
-  let service: CalendarEventDialogService;
+  let service: DialogService;
   let expectedResult;
 
   beforeEach(() => {
-    service = new CalendarEventDialogService(matDialog);
+    service = new DialogService(matDialog);
 
     matDialog.open.calls.reset();
 

@@ -1,39 +1,33 @@
-import { User } from 'src/app/core/auth/model/user-model';
-import { AuthActions, AuthActionTypes } from '../../actions/auth.actions';
+import { createReducer, on } from '@ngrx/store';
+import { User } from 'src/app/core/user/model/user-model';
+import { authActions } from '../../actions/auth.actions';
 
 export interface AuthState {
-  loggedIn: boolean;
   user: User;
   loginFailed: boolean;
 }
 
-export const initialAuthState: AuthState = {
-  loggedIn: false,
-  user: undefined,
+export const authInitialState: AuthState = {
+  user: null,
   loginFailed: false
 };
 
-export function authReducer(state = initialAuthState, action: AuthActions): AuthState {
-  switch (action.type) {
-    case AuthActionTypes.Authenticated:
-      return {
-        loggedIn: true,
-        loginFailed: false,
-        user: action.payload
-      };
-    case AuthActionTypes.NotAuthenticated:
-      return {
-        loggedIn: false,
-        loginFailed: false,
-        user: undefined
-      };
-    case AuthActionTypes.LoginFailed:
-      return {
-        loggedIn: false,
-        loginFailed: true,
-        user: undefined
-      };
-    default:
-      return state;
-  }
-}
+export const authReducer = createReducer(
+  authInitialState,
+  on(authActions.loginSuccess, (state, action) => ({
+    ...state,
+    user: action.user,
+    loginFailed: false
+  })),
+  on(authActions.logoutSuccess, state => ({
+    ...state,
+    user: null,
+    loginFailed: false
+  })),
+  on(authActions.userFound, (state, action) => ({
+    ...state,
+    user: action.user,
+    loginFailed: false
+  })),
+  on(authActions.loginFailed, state => ({ ...state, loggedIn: false, user: null, loginFailed: true }))
+);

@@ -8,14 +8,7 @@ import { NavigationService } from 'src/app/shared/services/navigation/navigation
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { MapperService } from '../../services/mapper/mapper.service';
 import { UsersMapper } from '../../services/mapper/parts/mapper.users';
-import {
-  AuthenticatedAction,
-  AuthRequestedAction,
-  LoginAction,
-  LoginFailedAction,
-  LogoutAction,
-  NotAuthenitcatedAction
-} from '../actions/auth.actions';
+import { authActions } from '../actions/auth.actions';
 import { AuthEffects } from './auth.effects';
 
 describe('Auth Effects', () => {
@@ -59,8 +52,8 @@ describe('Auth Effects', () => {
       authService.login.and.callFake(() => of(noop));
       navigationService.toHome.and.callFake(() => of(noop));
 
-      const action = new LoginAction({ email: 'test', password: 'testPwd' });
-      const completion = new AuthRequestedAction();
+      const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
+      const completion = authActions.authRequested();
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
 
@@ -74,8 +67,8 @@ describe('Auth Effects', () => {
       // given
       authService.login.and.callFake(() => throwError(new Error()));
 
-      const action = new LoginAction({ email: 'test', password: 'testPwd' });
-      const completion = new LoginFailedAction();
+      const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
+      const completion = authActions.loginFailed();
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
 
@@ -95,10 +88,8 @@ describe('Auth Effects', () => {
       authService.authState$ = of(firebaseLogin);
       mapperService.Users.toUser.and.returnValue(user);
 
-      const action = new AuthRequestedAction();
-      const completion = new AuthenticatedAction(user);
-      actions$ = hot('--a', { a: action });
-      const expected = cold('--b', { b: completion });
+      actions$ = hot('--a', { a: authActions.authRequested() });
+      const expected = cold('--b', { b: authActions.authenitcated({ firebaseUser: user }) });
 
       // when & then
       expect(effects.authRequested).toBeObservable(expected);
@@ -107,11 +98,9 @@ describe('Auth Effects', () => {
     it('should result in Not Authenticated action if user is not logged in', () => {
       // given
       authService.authState$ = of(null);
-      const action = new AuthRequestedAction();
-      const completion = new NotAuthenitcatedAction();
 
-      actions$ = hot('--a', { a: action });
-      const expected = cold('--b', { b: completion });
+      actions$ = hot('--a', { a: authActions.authRequested() });
+      const expected = cold('--b', { b: authActions.notAuthenticated() });
 
       expect(effects.authRequested).toBeObservable(expected);
     });
@@ -123,11 +112,8 @@ describe('Auth Effects', () => {
       authService.logout.and.callFake(() => of(noop));
       navigationService.toLogin.and.callFake(() => of(noop));
 
-      const action = new LogoutAction();
-      const completion = new NotAuthenitcatedAction();
-
-      actions$ = hot('--a', { a: action });
-      const expected = cold('--b', { b: completion });
+      actions$ = hot('--a', { a: authActions.logout() });
+      const expected = cold('--b', { b: authActions.notAuthenticated() });
 
       // when & then
       expect(effects.logOut$).toBeObservable(expected);

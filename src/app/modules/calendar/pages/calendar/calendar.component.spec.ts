@@ -4,9 +4,9 @@ import { of, Subject } from 'rxjs';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
 import { DialogResult } from '../../../../shared/models/dialog-result.model';
+import { DialogService } from '../../../../shared/services/dialogs/dialog.service';
 import { TimeComparisonService } from '../../../../shared/services/time/parts/time-comparison.service';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
-import { CalendarEventDialogService } from '../../service/calendar-event-dialog.service';
 import { CalendarFacade } from '../../store/calendar.facade';
 import { DialogResultTestDataBuilder } from '../../utils/tests/dialog-result-test-data.builder';
 import { EventsTestDataBuilder } from '../../utils/tests/event-test-data.builder';
@@ -23,7 +23,7 @@ describe('CalendarComponent', () => {
     'getViewDate',
     'changeView'
   ]);
-  const dialogService = jasmine.createSpyObj<CalendarEventDialogService>('DialogService', ['open']);
+  const dialogService = jasmine.createSpyObj<DialogService>('DialogService', ['open']);
   const deviceService = jasmine.createSpyObj<DeviceDetectorService>('DeviceService', ['isMobile']);
   const timeService: any = {
     Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', [

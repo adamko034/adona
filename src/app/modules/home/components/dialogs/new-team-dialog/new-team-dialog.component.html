@@ -1,4 +1,52 @@
 <div>
   <h2 mat-dialog-title>New Team</h2>
-  <div mat-dialog-content>dialog works</div>
+  <div mat-dialog-content>
+    <div [ngSwitch]="currentStep">
+      <form [formGroup]="form">
+        <div *ngSwitchCase="steps.Name">
+          <span>How should we call your team?</span>
+          <mat-form-field fxFill>
+            <input matInput id="name" formControlName="name" name="name" />
+            <mat-error *ngIf="form.get('name').hasError('required')">Please provide us your team name</mat-error>
+            <mat-error *ngIf="form.get('name').hasError('nameExists')">You are already member of such team</mat-error>
+          </mat-form-field>
+          <div fxLayout="row" fxLayoutAlign="end">
+            <button mat-button (click)="nextStep()">
+              <span>Next</span>
+            </button>
+          </div>
+        </div>
+        <div *ngSwitchCase="steps.Users">
+          <span>Who should belong to this team?</span>
+          <div fxLayout>
+            <mat-form-field fxFlex="80">
+              <input matInput id="user" placeholder="New member name" formControlName="newUser" name="newUser" />
+              <mat-error *ngIf="form.get('newUser').hasError('required')">Please provide us new member name</mat-error>
+              <mat-error *ngIf="form.get('newUser').hasError('nameExists')"
+                >This user is already member of the team</mat-error
+              >
+            </mat-form-field>
+            <button mat-icon-button fxFlex="20" (click)="addNewMember()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+          <div>
+            <p *ngFor="let member of members">{{ member.name }}</p>
+          </div>
+
+          <div fxLayout="row" fxLayoutAlign="space-between">
+            <button mat-button (click)="previousStep()">Prev</button>
+            <button mat-button (click)="nextStep()">Next</button>
+          </div>
+        </div>
+        <div *ngSwitchCase="steps.Summary">
+          <div>Summary</div>
+          <div>
+            <button mat-button (click)="previousStep()">Prev</button>
+            <button mat-button (click)="nextStep()">Create</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

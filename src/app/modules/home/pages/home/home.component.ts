@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthFacade } from '../../../../core/auth/auth.facade';
-import { User } from '../../../../core/auth/model/user-model';
+import { User } from '../../../../core/user/model/user-model';
+import { UserUtilservice } from '../../../../core/user/services/user-utils.service';
 import { DialogService } from '../../../../shared/services/dialogs/dialog.service';
 import { NewTeamDialogComponent } from '../../components/dialogs/new-team-dialog/new-team-dialog.component';
 
@@ -15,16 +16,16 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public user: User;
 
-  constructor(private authFacade: AuthFacade, private dialogService: DialogService) {}
+  constructor(
+    private authFacade: AuthFacade,
+    private dialogService: DialogService,
+    private userUtilsService: UserUtilservice
+  ) {}
 
   public ngOnInit() {
     this.userSubscription = this.authFacade.getUser().subscribe((user: User) => {
       this.user = user;
     });
-
-    if (!this.userHasTeams()) {
-      this.dialogService.open(NewTeamDialogComponent);
-    }
   }
 
   public ngOnDestroy() {
@@ -33,7 +34,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  public userHasTeams(): boolean {
-    return this.user && this.user.teams && this.user.teams.length > 0;
+  public openNewTeamDialog() {
+    if (!this.userUtilsService.hasTeams(this.user)) {
+      this.dialogService.open(NewTeamDialogComponent, { data: { user: this.user, team: {} } });
+    }
   }
 }

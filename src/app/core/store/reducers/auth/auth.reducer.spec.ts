@@ -1,7 +1,7 @@
-import { User } from 'src/app/core/auth/model/user-model';
+import { User } from 'src/app/core/user/model/user-model';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
-import { AuthenticatedAction, NotAuthenitcatedAction } from '../../actions/auth.actions';
-import { authReducer, initialAuthState } from './auth.reducer';
+import { authActions } from '../../actions/auth.actions';
+import { authInitialState, authReducer } from './auth.reducer';
 
 describe('Auth Reducer', () => {
   let user: User;
@@ -16,10 +16,10 @@ describe('Auth Reducer', () => {
       const action = {} as any;
 
       // when
-      const result = authReducer(initialAuthState, action);
+      const result = authReducer(authInitialState, action);
 
       // then
-      expect(result).toBe(initialAuthState);
+      expect(result).toBe(authInitialState);
     });
 
     it('should return the previous state for unknown action when user is logged in', () => {
@@ -42,17 +42,17 @@ describe('Auth Reducer', () => {
       const result = authReducer(undefined, action);
 
       // then
-      expect(result).toBe(initialAuthState);
+      expect(result).toBe(authInitialState);
     });
   });
 
   describe('authenticated action', () => {
     it('should set logged in and user data', () => {
       // given
-      const action = new AuthenticatedAction(user);
+      const action = authActions.authenitcated({ firebaseUser: user });
 
       // when
-      const result = authReducer(initialAuthState, action);
+      const result = authReducer(authInitialState, action);
 
       // then
       expect(result.loggedIn).toBeTruthy();
@@ -63,10 +63,10 @@ describe('Auth Reducer', () => {
   describe('not authenitcated action', () => {
     it('should unset logged in flag and user is empty', () => {
       // given
-      const action = new NotAuthenitcatedAction();
+      const action = authActions.notAuthenticated();
 
       // when
-      const result = authReducer(initialAuthState, action);
+      const result = authReducer(authInitialState, action);
 
       // then
       expect(result.loggedIn).toBeFalsy();

@@ -12,7 +12,7 @@ export class NavigationService {
   }
 
   public toHome() {
-    this.router.navigate(['/home/calendar']);
+    this.router.navigate(['/home']);
   }
 
   public toExpensesMobile(params: string = '') {

@@ -11,6 +11,7 @@ import {
   MatSelectModule,
   MatSnackBarModule
 } from '@angular/material';
+import { DeviceDetectorModule } from 'ngx-device-detector';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { ErrorComponent, ErrorContentComponent } from './components/error/error.component';
@@ -30,7 +31,8 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     MatInputModule,
     MatDatepickerModule,
     MatSelectModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    DeviceDetectorModule
   ],
   providers: [
     TimeService,

@@ -2,20 +2,13 @@ import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
-import { catchError, map, mapTo, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, mapTo, switchMap, take, tap } from 'rxjs/operators';
 import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
-import { MapperService } from 'src/app/core/services/mapper/mapper.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
+import { User } from '../../user/model/user-model';
 import { UserService } from '../../user/services/user.service';
-import {
-  AuthActionTypes,
-  AuthenticatedAction,
-  AuthRequestedAction,
-  LoginAction,
-  LoginFailedAction,
-  NotAuthenitcatedAction
-} from '../actions/auth.actions';
+import { authActions } from '../actions/auth.actions';
 
 @Injectable()
 export class AuthEffects {
@@ -23,44 +16,33 @@ export class AuthEffects {
     private actions$: Actions,
     private authService: AuthService,
     private navigationService: NavigationService,
-    private mapperService: MapperService,
     private userService: UserService
   ) {}
 
   @Effect()
   logIn$: Observable<Action> = this.actions$.pipe(
-    ofType(AuthActionTypes.Login),
-    map((action: LoginAction) => action.payload),
-    switchMap((credentials: CredentialsLogin) => {
-      return this.authService.login(credentials).pipe(
-        mapTo(new AuthRequestedAction()),
-        tap(() => this.navigationService.toHome()),
-        catchError(() => of(new LoginFailedAction()))
-      );
-    })
+    ofType(authActions.login),
+    map(action => action.credentials),
+    switchMap((credentials: CredentialsLogin) => this.authService.login(credentials)),
+    switchMap(() => this.authService.authState$.pipe(take(1))),
+    switchMap(({ uid }) => this.userService.getUser(uid)),
+    map((user: User) => authActions.loginSuccess({ user })),
+    tap(() => this.navigationService.toHome()),
+    catchError(() => of(authActions.loginFailed()))
   );
 
   @Effect()
-  authRequested: Observable<any> = this.actions$.pipe(
-    ofType(AuthActionTypes.AuthRequested),
-    mergeMap(() => this.authService.authState$),
-    map((firebaseUser: firebase.User) => {
-      if (firebaseUser) {
-        const user = this.mapperService.Users.toUser(firebaseUser);
-        this.userService.getUser(firebaseUser.uid).subscribe(newUser => console.log(newUser));
-
-        return new AuthenticatedAction(user);
-      }
-
-      return new NotAuthenitcatedAction();
-    })
+  findUser$: Observable<Action> = this.actions$.pipe(
+    ofType(authActions.findUser),
+    switchMap(action => this.userService.getUser(action.id)),
+    map((user: User) => authActions.userFound({ user }))
   );
 
   @Effect()
   logOut$: Observable<Action> = this.actions$.pipe(
-    ofType(AuthActionTypes.Logout),
+    ofType(authActions.logout),
     switchMap(() => this.authService.logout()),
-    mapTo(new NotAuthenitcatedAction()),
+    mapTo(authActions.logoutSuccess()),
     tap(() => this.navigationService.toLogin())
   );
 }

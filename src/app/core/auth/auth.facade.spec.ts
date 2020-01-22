@@ -2,13 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold } from 'jasmine-marbles';
-import { LoginAction, LogoutAction, AuthenticatedAction } from '../store/actions/auth.actions';
+import { MapperService } from 'src/app/core/services/mapper/mapper.service';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
+import { authActions } from '../store/actions/auth.actions';
 import { AuthState } from '../store/reducers/auth/auth.reducer';
 import { authQueries } from '../store/selectors/auth.selectors';
 import { AuthFacade } from './auth.facade';
 import { CredentialsLogin } from './model/credentials-login.model';
-import { MapperService } from 'src/app/core/services/mapper/mapper.service';
-import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 
 describe('Auth Facade', () => {
   const mapperSpy = {
@@ -27,10 +27,7 @@ describe('Auth Facade', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        provideMockStore({ initialState: initialAuthState }),
-        { provide: MapperService, useValue: mapperSpy }
-      ]
+      providers: [provideMockStore({ initialState: initialAuthState }), { provide: MapperService, useValue: mapperSpy }]
     });
 
     mapper = TestBed.get<MapperService>(MapperService);
@@ -56,7 +53,7 @@ describe('Auth Facade', () => {
     // then
     expect(mapper.Users.toUser).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith(new AuthenticatedAction(user));
+    expect(spy).toHaveBeenCalledWith(authActions.authenitcated({ firebaseUser: user }));
   });
 
   it('should get is logged in status', () => {
@@ -96,7 +93,7 @@ describe('Auth Facade', () => {
 
     // then
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith(new LoginAction(credentials));
+    expect(spy).toHaveBeenCalledWith(authActions.login({ credentials }));
   });
 
   it('should dispatch Logout Action on logout', () => {
@@ -107,6 +104,6 @@ describe('Auth Facade', () => {
 
     // then
     expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith(new LogoutAction());
+    expect(spy).toHaveBeenCalledWith(authActions.logout());
   });
 });

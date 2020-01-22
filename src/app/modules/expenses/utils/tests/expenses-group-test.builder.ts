@@ -1,5 +1,5 @@
 import { DateTestBuilder } from 'src/app/utils/testUtils/builders/date-test.builder';
-import { User } from '../../../../core/auth/model/user-model';
+import { User } from '../../../../core/user/model/user-model';
 import { UserTestBuilder } from '../../../../utils/testUtils/builders/user-test-builder';
 import { ExpenseGroup } from '../../model/expense-group.model';
 

@@ -1,3 +1,5 @@
+import { UserTeam } from './user-team.model';
+
 export interface User {
   id: string;
   name?: string;
@@ -6,5 +8,5 @@ export interface User {
   email: string;
   phoneNumber?: string;
   photoUrl?: string;
-  teams?: any[];
+  teams?: UserTeam[];
 }

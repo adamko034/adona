@@ -1,5 +1,7 @@
 <app-calendar-toolbar (newEventClicked)="onEventClicked()" [view]="view" [viewDate]="viewDate"></app-calendar-toolbar>
 
+{{ user$ | async | json }}
+
 <div class="calendar-view">
   <app-celendar-title class="align-center" [view]="view" [viewDate]="viewDate"></app-celendar-title>
 

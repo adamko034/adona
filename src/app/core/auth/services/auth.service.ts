@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { User } from 'firebase';
 import * as firebase from 'firebase/app';
 import { from, Observable } from 'rxjs';
 import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
@@ -9,7 +8,7 @@ import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.mode
   providedIn: 'root'
 })
 export class AuthService {
-  readonly authState$: Observable<User | null> = this.fireAuth.authState;
+  readonly authState$: Observable<firebase.User | null> = this.fireAuth.authState;
 
   constructor(private fireAuth: AngularFireAuth) {}
 
