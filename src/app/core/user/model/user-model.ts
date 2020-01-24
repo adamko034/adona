@@ -1,4 +1,4 @@
-import { UserTeam } from './user-team.model';
+import { TeamInUser } from './team-in-user.model';
 
 export interface User {
   id: string;
@@ -8,5 +8,6 @@ export interface User {
   email: string;
   phoneNumber?: string;
   photoUrl?: string;
-  teams?: UserTeam[];
+  defaultTeamId?: string;
+  teams?: { [id: string]: TeamInUser };
 }

@@ -9,7 +9,7 @@ export const authActionTypes = {
   loginSuccess: '[Database API] Login Success',
   logoutSucces: '[Databse API] Logout Success',
   findUser: '[Auth Guard] Find User',
-  userFound: '[Database API] User Found'
+  userChanged: '[Database API] User Changed'
 };
 
 const login = createAction(authActionTypes.login, props<{ credentials: CredentialsLogin }>());
@@ -20,7 +20,7 @@ const logout = createAction(authActionTypes.logout);
 const logoutSuccess = createAction(authActionTypes.logoutSucces);
 
 const findUser = createAction(authActionTypes.findUser, props<{ id: string }>());
-const userFound = createAction(authActionTypes.userFound, props<{ user: User }>());
+const userChanged = createAction(authActionTypes.userChanged, props<{ user: User }>());
 
 export const authActions = {
   login,
@@ -29,5 +29,5 @@ export const authActions = {
   loginSuccess,
   logoutSuccess,
   findUser,
-  userFound
+  userChanged
 };

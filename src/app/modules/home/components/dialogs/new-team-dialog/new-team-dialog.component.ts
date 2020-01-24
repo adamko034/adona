@@ -1,12 +1,11 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { NewTeamRequest } from '../../../../../core/user/model/new-team-request.model';
+import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
+import { TeamMember } from 'src/app/core/team/model/team-member.model';
 import { User } from '../../../../../core/user/model/user-model';
-import { UserUtilservice } from '../../../../../core/user/services/user-utils.service';
 import { DialogResult } from '../../../../../shared/services/dialogs/dialog-result.model';
 import { NewEventDialogComponent } from '../../../../calendar/components/dialogs/new-event-dialog/new-event-dialog.component';
-import { Team } from '../../../model/team.model';
 import { NewTeamDialogStep } from './models/new-team-dialog-step.enum';
 import { NewTeamDialogStepsHelper } from './service/new-team-dialog-steps-helper.service';
 
@@ -23,24 +22,24 @@ export class NewTeamDialogComponent implements OnInit {
   }
 
   public currentStep: NewTeamDialogStep;
-  public members: string[];
+  public members: { [name: string]: TeamMember } = {};
 
   public steps = NewTeamDialogStep;
   public form: FormGroup = new FormGroup({
-    name: new FormControl(this.data.team.name),
+    name: new FormControl(),
+    isDefault: new FormControl(false),
     newUser: new FormControl()
   });
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { user: User; team: Team },
+    @Inject(MAT_DIALOG_DATA) public data: { user: User },
     private dialogRef: MatDialogRef<NewEventDialogComponent>,
-    private stepsService: NewTeamDialogStepsHelper,
-    private userUtils: UserUtilservice
+    private stepsService: NewTeamDialogStepsHelper
   ) {}
 
   public ngOnInit() {
     this.currentStep = this.steps.Name;
-    this.members = [this.data.user.name];
+    this.members[this.data.user.name] = { name: this.data.user.name };
   }
 
   public nextStep() {
@@ -61,14 +60,15 @@ export class NewTeamDialogComponent implements OnInit {
 
   public addNewMember() {
     if (this.validateMemberName()) {
-      this.members.push(this.form.get('newUser').value.trim());
+      const name = this.form.get('newUser').value.trim();
+      this.members[name] = { name };
       this.form.get('newUser').setValue('');
     }
   }
 
   public removeMember(memberName: string) {
     if (memberName.toLocaleLowerCase().trim() !== 'you') {
-      this.members = this.members.filter(member => member !== memberName);
+      delete this.members[memberName];
     }
   }
 
@@ -80,12 +80,22 @@ export class NewTeamDialogComponent implements OnInit {
     return this.isCurrentUser(memberName) ? `${memberName} (you)` : memberName;
   }
 
+  public getMembersCount(): number {
+    return Object.keys(this.members).length;
+  }
+
+  public userHasTeams(): boolean {
+    return this.data.user.teams && Object.keys(this.data.user.teams).length > 0;
+  }
+
   public save() {
     if (this.validateTeamName()) {
       const result: DialogResult<NewTeamRequest> = {
         payload: {
+          default: this.userHasTeams() ? this.form.get('isDefault').value : true,
           name: this.form.get('name').value.trim(),
-          members: this.members.filter(member => !this.isCurrentUser(member))
+          createdBy: this.data.user.name,
+          members: this.members
         }
       };
 
@@ -110,11 +120,6 @@ export class NewTeamDialogComponent implements OnInit {
       return false;
     }
 
-    if (this.members.findIndex(member => member.toLowerCase().trim() === value.toLowerCase().trim()) >= 0) {
-      this.form.get('newUser').setErrors({ nameExists: true });
-      return false;
-    }
-
     return true;
   }
 
@@ -123,11 +128,6 @@ export class NewTeamDialogComponent implements OnInit {
 
     if (!value) {
       this.form.get('name').setErrors({ required: true });
-      return false;
-    }
-
-    if (this.userUtils.belongsToTeam(this.data.user, value)) {
-      this.form.get('name').setErrors({ nameExists: true });
       return false;
     }
 

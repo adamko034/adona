@@ -33,7 +33,8 @@ export class ErrorComponent implements OnInit, OnDestroy {
       if (message) {
         this.snackBar.openFromComponent(ErrorContentComponent, {
           duration: 5 * 1000,
-          data: { message }
+          data: { message },
+          verticalPosition: 'top'
         });
       }
     });

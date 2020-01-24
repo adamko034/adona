@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   MatButtonModule,
+  MatCheckboxModule,
   MatDialogModule,
   MatFormFieldModule,
   MatIconModule,
@@ -29,7 +30,8 @@ import { HomeComponent } from './pages/home/home.component';
     MatFormFieldModule,
     MatInputModule,
     FlexLayoutModule,
-    MatIconModule
+    MatIconModule,
+    MatCheckboxModule
   ],
   entryComponents: [NewTeamDialogComponent]
 })

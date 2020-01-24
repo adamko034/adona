@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
+import { TeamFacade } from 'src/app/core/team/team.facade';
 import { AuthFacade } from '../../../../core/auth/auth.facade';
-import { NewTeamRequest } from '../../../../core/user/model/new-team-request.model';
 import { User } from '../../../../core/user/model/user-model';
-import { UserUtilservice } from '../../../../core/user/services/user-utils.service';
 import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
 import { DialogService } from '../../../../shared/services/dialogs/dialog.service';
 import { NewTeamDialogComponent } from '../../components/dialogs/new-team-dialog/new-team-dialog.component';
@@ -19,11 +19,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public user: User;
 
-  constructor(
-    private authFacade: AuthFacade,
-    private dialogService: DialogService,
-    private userUtilsService: UserUtilservice
-  ) {}
+  constructor(private authFacade: AuthFacade, private dialogService: DialogService, private teamFacade: TeamFacade) {}
 
   public ngOnInit() {
     this.userSubscription = this.authFacade.getUser().subscribe((user: User) => {
@@ -43,10 +39,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public openNewTeamDialog() {
     this.newTeamDialogSubscription = this.dialogService
-      .open(NewTeamDialogComponent, { data: { user: this.user, team: {} } })
+      .open(NewTeamDialogComponent, { data: { user: this.user } })
       .subscribe((result: DialogResult<NewTeamRequest>) => {
         if (result.payload) {
-          console.log('will be dispatching action with request:', result.payload);
+          this.teamFacade.addTeam(result.payload);
         }
       });
   }

@@ -25,7 +25,7 @@ export class AuthEffects {
     map(action => action.credentials),
     switchMap((credentials: CredentialsLogin) => this.authService.login(credentials)),
     switchMap(() => this.authService.authState$.pipe(take(1))),
-    switchMap(({ uid }) => this.userService.getUser(uid)),
+    switchMap(({ uid }) => this.userService.getUser(uid).pipe(take(1))),
     map((user: User) => authActions.loginSuccess({ user })),
     tap(() => this.navigationService.toHome()),
     catchError(() => of(authActions.loginFailed()))
@@ -35,7 +35,7 @@ export class AuthEffects {
   findUser$: Observable<Action> = this.actions$.pipe(
     ofType(authActions.findUser),
     switchMap(action => this.userService.getUser(action.id)),
-    map((user: User) => authActions.userFound({ user }))
+    map((user: User) => authActions.userChanged({ user }))
   );
 
   @Effect()
