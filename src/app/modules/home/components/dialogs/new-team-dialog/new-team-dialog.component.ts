@@ -84,15 +84,10 @@ export class NewTeamDialogComponent implements OnInit {
     return Object.keys(this.members).length;
   }
 
-  public userHasTeams(): boolean {
-    return this.data.user.teams && Object.keys(this.data.user.teams).length > 0;
-  }
-
   public save() {
     if (this.validateTeamName()) {
       const result: DialogResult<NewTeamRequest> = {
         payload: {
-          default: this.userHasTeams() ? this.form.get('isDefault').value : true,
           name: this.form.get('name').value.trim(),
           createdBy: this.data.user.name,
           members: this.members

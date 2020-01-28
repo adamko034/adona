@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .open(ChangeTeamDialogComponent, { data: { user: this.user } })
       .subscribe((result: DialogResult<string>) => {
         if (result && result.payload) {
-          console.log('changing team to ', result.payload);
+          this.teamFacade.changeTeam({ teamId: result.payload, uid: this.user.id });
         }
       });
   }

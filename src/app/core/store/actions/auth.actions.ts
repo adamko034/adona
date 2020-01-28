@@ -9,7 +9,9 @@ export const authActionTypes = {
   loginSuccess: '[Database API] Login Success',
   logoutSucces: '[Databse API] Logout Success',
   findUser: '[Auth Guard] Find User',
-  userChanged: '[Database API] User Changed'
+  userFound: '[Database API] User Found',
+  teamChanged: '[Datebase API] Team Changed',
+  teamAdded: '[Database API] Team Added'
 };
 
 const login = createAction(authActionTypes.login, props<{ credentials: CredentialsLogin }>());
@@ -20,7 +22,10 @@ const logout = createAction(authActionTypes.logout);
 const logoutSuccess = createAction(authActionTypes.logoutSucces);
 
 const findUser = createAction(authActionTypes.findUser, props<{ id: string }>());
-const userChanged = createAction(authActionTypes.userChanged, props<{ user: User }>());
+const userFound = createAction(authActionTypes.userFound, props<{ user: User }>());
+
+const teamChanged = createAction(authActionTypes.teamChanged, props<{ teamId: string }>());
+const teamAdded = createAction(authActionTypes.teamAdded, props<{ id: string; name: string }>());
 
 export const authActions = {
   login,
@@ -29,5 +34,7 @@ export const authActions = {
   loginSuccess,
   logoutSuccess,
   findUser,
-  userChanged
+  userFound,
+  teamChanged,
+  teamAdded
 };

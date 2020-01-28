@@ -34,8 +34,8 @@ export class AuthEffects {
   @Effect()
   findUser$: Observable<Action> = this.actions$.pipe(
     ofType(authActions.findUser),
-    switchMap(action => this.userService.getUser(action.id)),
-    map((user: User) => authActions.userChanged({ user }))
+    switchMap(action => this.userService.getUser(action.id).pipe(take(1))),
+    map((user: User) => authActions.userFound({ user }))
   );
 
   @Effect()

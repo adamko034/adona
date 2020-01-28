@@ -8,6 +8,6 @@ export interface User {
   email: string;
   phoneNumber?: string;
   photoUrl?: string;
-  defaultTeamId?: string;
+  selectedTeamId?: string;
   teams?: { [id: string]: TeamInUser };
 }

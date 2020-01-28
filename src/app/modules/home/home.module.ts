@@ -2,17 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {
-  MatButtonModule,
-  MatCheckboxModule,
-  MatDialogModule,
-  MatFormFieldModule,
-  MatIconModule,
-  MatInputModule,
-  MatSelectModule,
-  MatStepperModule,
-  MatToolbarModule
-} from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, MatListModule, MatSelectModule, MatStepperModule, MatToolbarModule } from '@angular/material';
 import { SharedModule } from '../../shared/shared.module';
 import { ChangeTeamDialogComponent } from './components/dialogs/change-team-dialog/change-team-dialog.component';
 import { NewTeamDialogComponent } from './components/dialogs/new-team-dialog/new-team-dialog.component';
@@ -36,7 +26,8 @@ import { HomeComponent } from './pages/home/home.component';
     MatIconModule,
     MatCheckboxModule,
     MatToolbarModule,
-    MatSelectModule
+    MatSelectModule,
+    MatListModule
   ],
   entryComponents: [NewTeamDialogComponent, ChangeTeamDialogComponent]
 })

@@ -11,10 +11,6 @@
             <mat-error *ngIf="form.get('name').hasError('required')">Please provide us your team name</mat-error>
           </mat-form-field>
         </div>
-
-        <div *ngIf="userHasTeams()">
-          <mat-checkbox formControlName="isDefault" [labelPosition]="'before'">Mark as default group?</mat-checkbox>
-        </div>
         <div fxLayout="row" fxLayoutAlign="end">
           <button mat-stroked-button class="button-stroked-blue" (click)="nextStep()">
             <span>Next</span>

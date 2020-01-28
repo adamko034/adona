@@ -17,7 +17,13 @@ export class UserService {
       .valueChanges()
       .pipe(
         map((user: any) => {
-          return { id: uid, defaultTeamId: user.defaultTeamId, name: user.name, teams: user.teams, email: user.email };
+          return {
+            id: uid,
+            selectedTeamId: user.selectedTeamId,
+            name: user.name,
+            teams: user.teams,
+            email: user.email
+          };
         })
       );
   }

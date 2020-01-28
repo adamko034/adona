@@ -1,0 +1,23 @@
+.teams-list {
+  margin-top: 10px;
+  margin-bottom: 15px;
+  cursor: pointer;
+
+  .teams-list-item {
+    padding: 0 16px;
+    min-height: 48px;
+    max-height: 48px;
+
+    > .teams-list-item-icon {
+      visibility: hidden;
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+
+      & > .teams-list-item-icon {
+        visibility: visible;
+      }
+    }
+  }
+}

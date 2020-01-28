@@ -6,7 +6,7 @@ import { teamActions } from '../../actions/team.actions';
 export interface TeamState {}
 
 const adapter = createEntityAdapter<Team>();
-const teamInitialState = adapter.getInitialState();
+const teamInitialState = adapter.getInitialState({});
 
 export const teamReducer = createReducer(
   teamInitialState,
