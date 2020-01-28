@@ -67,7 +67,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   public onEventClicked(event?: CalendarEvent) {
-    const props: DialogProperties<CalendarEvent> = { width: '400px', data: event };
+    const props: DialogProperties<CalendarEvent> = { data: event };
     this.dialogResultSubscription = this.dialogService
       .open<CalendarEvent>(NewEventDialogComponent, props)
       .subscribe((result: DialogResult<Event>) => {

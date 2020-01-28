@@ -1,0 +1,11 @@
+<mat-toolbar class="toolbar">
+  <mat-toolbar-row
+    [ngClass.xs]="'toolbar-small-padding'"
+    fxLayout
+    fxLayoutGap.gt-xs="50px"
+    fxLayoutAlign.gt-xs="start center"
+    fxLayoutAlign.xs="space-around center"
+  >
+    <ng-content></ng-content>
+  </mat-toolbar-row>
+</mat-toolbar>

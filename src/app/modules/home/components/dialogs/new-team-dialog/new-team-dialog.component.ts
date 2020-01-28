@@ -103,6 +103,10 @@ export class NewTeamDialogComponent implements OnInit {
     }
   }
 
+  public close() {
+    this.dialogRef.close(null);
+  }
+
   private isStepValid() {
     switch (this.currentStep) {
       case this.steps.Name:

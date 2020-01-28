@@ -1,0 +1,11 @@
+<button class="adona-dialog-close" mat-button (click)="close()">x</button>
+<h2 mat-dialog-title>Change Team</h2>
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-select>
+      <mat-option *ngFor="let team of teams | keyvalue" [value]="team.key">
+        {{ team.value.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>

@@ -9,15 +9,18 @@ import {
   MatFormFieldModule,
   MatIconModule,
   MatInputModule,
-  MatStepperModule
+  MatSelectModule,
+  MatStepperModule,
+  MatToolbarModule
 } from '@angular/material';
 import { SharedModule } from '../../shared/shared.module';
+import { ChangeTeamDialogComponent } from './components/dialogs/change-team-dialog/change-team-dialog.component';
 import { NewTeamDialogComponent } from './components/dialogs/new-team-dialog/new-team-dialog.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './pages/home/home.component';
 
 @NgModule({
-  declarations: [HomeComponent, NewTeamDialogComponent],
+  declarations: [HomeComponent, NewTeamDialogComponent, ChangeTeamDialogComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -31,8 +34,10 @@ import { HomeComponent } from './pages/home/home.component';
     MatInputModule,
     FlexLayoutModule,
     MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatToolbarModule,
+    MatSelectModule
   ],
-  entryComponents: [NewTeamDialogComponent]
+  entryComponents: [NewTeamDialogComponent, ChangeTeamDialogComponent]
 })
 export class HomeModule {}

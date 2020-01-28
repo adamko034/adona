@@ -20,6 +20,12 @@ export class DialogService {
       properties.maxWidth = this.getMaxWidth();
     }
 
+    if (properties.data === undefined) {
+      properties.data = null;
+    }
+
+    properties.panelClass = 'adona-dialog';
+
     const dialogRef = this.matDialog.open(component, properties);
     return dialogRef.afterClosed();
   }

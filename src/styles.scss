@@ -30,4 +30,26 @@ body {
 .button-stroked-green {
   color: green;
   border-color: green !important;
+  font-weight: bold;
+}
+
+.button-stroked-blue {
+  color: #3f51b5;
+  border-color: #3f51b5 !important;
+  font-weight: bold;
+}
+
+.cdk-overlay-pane.adona-dialog {
+  position: relative !important;
+}
+
+.adona-dialog-close.mat-button {
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  border-radius: 50%;
+  background-color: #3f51b5;
+  min-width: auto;
+  color: #fff;
+  font-weight: bold;
 }
