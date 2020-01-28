@@ -15,6 +15,7 @@ import { ErrorFacade } from './error/error.facade';
 import { CustomIconsService } from './services/angular-material/custom-icons/custom-icons.service';
 import { AuthEffects } from './store/effects/auth.effects';
 import { TeamEffects } from './store/effects/team.effects';
+import { UserEffects } from './store/effects/user.effects';
 import { metaReducers, reducers } from './store/reducers';
 @NgModule({
   declarations: [],
@@ -29,7 +30,7 @@ import { metaReducers, reducers } from './store/reducers';
       }
     }),
     HttpClientModule,
-    EffectsModule.forRoot([AuthEffects, ErrorEffects, TeamEffects]),
+    EffectsModule.forRoot([AuthEffects, ErrorEffects, TeamEffects, UserEffects]),
     DeviceDetectorModule.forRoot(),
     StoreRouterConnectingModule.forRoot({ stateKey: 'router', serializer: CustomSerializer })
   ],

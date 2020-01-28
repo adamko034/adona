@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
 import { TeamFacade } from 'src/app/core/team/team.facade';
-import { AuthFacade } from '../../../../core/auth/auth.facade';
+import { UserFacade } from 'src/app/core/user/user.facade';
 import { User } from '../../../../core/user/model/user-model';
 import { UserUtilservice } from '../../../../core/user/services/user-utils.service';
 import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
@@ -23,14 +23,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   public user: User;
 
   constructor(
-    private authFacade: AuthFacade,
+    private userFacade: UserFacade,
     private dialogService: DialogService,
     private teamFacade: TeamFacade,
     private userUtils: UserUtilservice
   ) {}
 
   public ngOnInit() {
-    this.userSubscription = this.authFacade.getUser().subscribe((user: User) => {
+    this.userSubscription = this.userFacade.getUser().subscribe((user: User) => {
       this.user = user;
     });
   }

@@ -1,6 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
 import { User } from 'src/app/core/user/model/user-model';
 import { authActions } from '../../actions/auth.actions';
+import { userActions } from '../../actions/user.actions';
 
 export interface AuthState {
   user: User;
@@ -24,16 +25,16 @@ export const authReducer = createReducer(
     user: null,
     loginFailed: false
   })),
-  on(authActions.userFound, (state, action) => ({
+  on(userActions.userFound, (state, action) => ({
     ...state,
     user: action.user
   })),
   on(authActions.loginFailed, state => ({ ...state, loggedIn: false, user: null, loginFailed: true })),
-  on(authActions.teamChanged, (state, action) => ({
+  on(userActions.teamChanged, (state, action) => ({
     ...state,
     user: { ...state.user, selectedTeamId: action.teamId }
   })),
-  on(authActions.teamAdded, (state, action) => ({
+  on(userActions.teamAdded, (state, action) => ({
     ...state,
     user: { ...state.user, teams: { ...state.user.teams, [`${action.id}`]: { name: action.name } } }
   }))

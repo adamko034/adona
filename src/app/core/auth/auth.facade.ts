@@ -5,19 +5,10 @@ import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.mode
 import { AuthState } from 'src/app/core/store/reducers/auth/auth.reducer';
 import { authQueries } from 'src/app/core/store/selectors/auth.selectors';
 import { authActions } from '../store/actions/auth.actions';
-import { User } from '../user/model/user-model';
 
 @Injectable()
 export class AuthFacade {
   constructor(private store: Store<AuthState>) {}
-
-  public getUser(): Observable<User> {
-    return this.store.select(authQueries.selectUser);
-  }
-
-  public findUser(id: string) {
-    return this.store.dispatch(authActions.findUser({ id }));
-  }
 
   public getLoginFailure(): Observable<boolean> {
     return this.store.select(authQueries.selectLoginFailure);

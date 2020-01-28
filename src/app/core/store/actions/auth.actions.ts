@@ -21,20 +21,10 @@ const loginSuccess = createAction(authActionTypes.loginSuccess, props<{ user: Us
 const logout = createAction(authActionTypes.logout);
 const logoutSuccess = createAction(authActionTypes.logoutSucces);
 
-const findUser = createAction(authActionTypes.findUser, props<{ id: string }>());
-const userFound = createAction(authActionTypes.userFound, props<{ user: User }>());
-
-const teamChanged = createAction(authActionTypes.teamChanged, props<{ teamId: string }>());
-const teamAdded = createAction(authActionTypes.teamAdded, props<{ id: string; name: string }>());
-
 export const authActions = {
   login,
   logout,
   loginFailed,
   loginSuccess,
-  logoutSuccess,
-  findUser,
-  userFound,
-  teamChanged,
-  teamAdded
+  logoutSuccess
 };
