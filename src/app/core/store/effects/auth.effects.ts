@@ -6,7 +6,7 @@ import { catchError, map, mapTo, switchMap, take, tap } from 'rxjs/operators';
 import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
-import { User } from '../../user/model/user-model';
+import { User } from '../../user/model/user.model';
 import { UserService } from '../../user/services/user.service';
 import { authActions } from '../actions/auth.actions';
 

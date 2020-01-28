@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
 import { TeamMember } from 'src/app/core/team/model/team-member.model';
-import { User } from '../../../../../core/user/model/user-model';
+import { User } from '../../../../../core/user/model/user.model';
 import { DialogResult } from '../../../../../shared/services/dialogs/dialog-result.model';
 import { NewEventDialogComponent } from '../../../../calendar/components/dialogs/new-event-dialog/new-event-dialog.component';
 import { NewTeamDialogStep } from './models/new-team-dialog-step.enum';
@@ -89,6 +89,7 @@ export class NewTeamDialogComponent implements OnInit {
       const result: DialogResult<NewTeamRequest> = {
         payload: {
           name: this.form.get('name').value.trim(),
+          created: new Date(),
           createdBy: this.data.user.name,
           members: this.members
         }

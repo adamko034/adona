@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
+import * as firebase from 'firebase/app/';
 import { from, Observable } from 'rxjs';
-import { User } from '../../user/model/user-model';
+import { User } from '../../user/model/user.model';
 import { ChangeTeamRequest } from '../model/change-team-request.model';
 import { NewTeamRequest } from '../model/new-team-request.model';
 import { Team } from '../model/team.model';
@@ -15,6 +16,7 @@ export class TeamService {
   public addTeam(request: NewTeamRequest, user: User): Observable<Team> {
     const teamToAdd: Team = {
       id: this.db.createId(),
+      created: request.created,
       createdBy: request.createdBy,
       members: request.members,
       name: request.name
@@ -25,7 +27,11 @@ export class TeamService {
     batch.set(this.db.firestore.collection(this.teamsCollectionName).doc(teamToAdd.id), teamToAdd);
     batch.update(this.db.firestore.collection(this.usersCollectionName).doc(user.id), {
       selectedTeamId: teamToAdd.id,
-      [`teams.${teamToAdd.id}`]: { name: teamToAdd.name }
+      teams: firebase.firestore.FieldValue.arrayUnion({
+        id: teamToAdd.id,
+        name: teamToAdd.name,
+        updated: teamToAdd.created
+      })
     });
 
     return from(batch.commit().then(() => teamToAdd));

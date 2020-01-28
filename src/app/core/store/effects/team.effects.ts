@@ -23,7 +23,7 @@ export class TeamEffects {
       switchMap(([action, user]) => this.teamService.addTeam(action.request, user)),
       switchMap((team: Team) => [
         teamActions.newTeamCreateSuccess({ team }),
-        userActions.teamAdded({ id: team.id, name: team.name }),
+        userActions.teamAdded({ id: team.id, name: team.name, updated: team.created }),
         userActions.teamChanged({ teamId: team.id })
       ]),
       catchError(err => of(teamActions.newTeamCreateFailure({ error: { errorObj: err } })))

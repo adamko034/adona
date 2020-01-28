@@ -3,7 +3,8 @@ import { Subscription } from 'rxjs';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
 import { TeamFacade } from 'src/app/core/team/team.facade';
 import { UserFacade } from 'src/app/core/user/user.facade';
-import { User } from '../../../../core/user/model/user-model';
+import { UserTeam } from '../../../../core/user/model/team-in-user.model';
+import { User } from '../../../../core/user/model/user.model';
 import { UserUtilservice } from '../../../../core/user/services/user-utils.service';
 import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
 import { DialogService } from '../../../../shared/services/dialogs/dialog.service';
@@ -67,6 +68,10 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.teamFacade.changeTeam({ teamId: result.payload, uid: this.user.id });
         }
       });
+  }
+
+  public getSelectedTeam(): UserTeam {
+    return this.userUtils.getSelectedTeam(this.user);
   }
 
   public userHasMultipleTeams() {

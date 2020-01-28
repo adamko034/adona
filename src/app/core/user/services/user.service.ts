@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { User } from '../model/user-model';
+import { UserTeam } from '../model/team-in-user.model';
+import { User } from '../model/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -17,11 +18,19 @@ export class UserService {
       .valueChanges()
       .pipe(
         map((user: any) => {
+          const teams: UserTeam[] = [];
+
+          if (user.teams) {
+            user.teams.forEach(team => {
+              teams.push({ id: team.id, name: team.name, updated: new Date(team.updated.seconds * 1000) });
+            });
+          }
+
           return {
             id: uid,
             selectedTeamId: user.selectedTeamId,
             name: user.name,
-            teams: user.teams,
+            teams,
             email: user.email
           };
         })

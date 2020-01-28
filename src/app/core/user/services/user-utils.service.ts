@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
-import { User } from '../model/user-model';
+import { UserTeam } from '../model/team-in-user.model';
+import { User } from '../model/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserUtilservice {
   public hasMultipleTeams(user: User): boolean {
-    return user && user.teams && this.teamsCount(user) > 1;
+    return user && user.teams && user.teams.length > 1;
   }
 
-  private teamsCount(user: User): number {
+  public getSelectedTeam(user: User): UserTeam {
     if (user && user.teams) {
-      return Object.keys(user.teams).length;
+      return user.teams.find((team: UserTeam) => team.id === user.selectedTeamId);
     }
 
-    return 0;
+    return null;
   }
 }

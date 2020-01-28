@@ -3,13 +3,13 @@ import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
-import { User } from '../../user/model/user-model';
+import { User } from '../../user/model/user.model';
+import { UserService } from '../../user/services/user.service';
 import { userActions } from '../actions/user.actions';
 
 @Injectable()
 export class UserEffects {
-  userService: any;
-  constructor(private actions$: Actions) {}
+  constructor(private actions$: Actions, private userService: UserService) {}
 
   @Effect()
   findUser$: Observable<Action> = this.actions$.pipe(

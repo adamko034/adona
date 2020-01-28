@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { User } from 'src/app/core/user/model/user-model';
+import { User } from 'src/app/core/user/model/user.model';
 import { authActions } from '../../actions/auth.actions';
 import { userActions } from '../../actions/user.actions';
 
@@ -36,6 +36,9 @@ export const authReducer = createReducer(
   })),
   on(userActions.teamAdded, (state, action) => ({
     ...state,
-    user: { ...state.user, teams: { ...state.user.teams, [`${action.id}`]: { name: action.name } } }
+    user: {
+      ...state.user,
+      teams: [...state.user.teams, { id: action.id, updated: action.updated, name: action.name }]
+    }
   }))
 );

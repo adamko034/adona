@@ -5,7 +5,7 @@ import { Observable, Subscription } from 'rxjs';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 import { TimeService } from 'src/app/shared/services/time/time.service';
-import { User } from '../../../../core/user/model/user-model';
+import { User } from '../../../../core/user/model/user.model';
 import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
 import { DialogProperties } from '../../../../shared/services/dialogs/dialog-properties.model';
 import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';

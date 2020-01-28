@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { TeamInUser } from 'src/app/core/user/model/team-in-user.model';
-import { User } from 'src/app/core/user/model/user-model';
+import { UserTeam } from 'src/app/core/user/model/team-in-user.model';
+import { User } from 'src/app/core/user/model/user.model';
 
 @Component({
   selector: 'app-change-team-dialog',
@@ -20,11 +20,11 @@ export class ChangeTeamDialogComponent implements OnInit {
     this.currentTeamId = this.data.user.selectedTeamId;
   }
 
-  public getRecentTeams(): {[id: string]: TeamInUser} {
-    const teams = {... this.data.user.teams};
-
-    delete teams[this.data.user.selectedTeamId];
-    return teams;
+  public getRecentTeams(): UserTeam[] {
+    return [...this.data.user.teams]
+      .filter((team: UserTeam) => team.id !== this.data.user.selectedTeamId)
+      .sort((t1, t2) => +t2.updated - +t1.updated)
+      .slice(0, 3);
   }
 
   public onTeamSelected(teamId: string) {

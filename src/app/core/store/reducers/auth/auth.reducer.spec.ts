@@ -1,4 +1,4 @@
-import { User } from 'src/app/core/user/model/user-model';
+import { User } from 'src/app/core/user/model/user.model';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { authActions } from '../../actions/auth.actions';
 import { authInitialState, authReducer } from './auth.reducer';

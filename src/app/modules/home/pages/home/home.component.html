@@ -11,7 +11,7 @@
       <span fxHide.lt-sm>New Team</span>
     </button>
   </div>
-  <div>
+  <div *ngIf="userHasMultipleTeams()">
     <button
       class="toolbar-button"
       mat-icon-button
@@ -27,4 +27,4 @@
   </div>
 </app-toolbar>
 
-<span>selected team: {{ (user?.teams)[user.selectedTeamId]?.name }}</span>
+<span *ngIf="user && user.teams">selected team: {{ getSelectedTeam()?.name }}</span>
