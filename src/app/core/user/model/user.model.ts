@@ -1,4 +1,4 @@
-import { UserTeam } from './team-in-user.model';
+import { UserTeam } from './user-team.model';
 
 export interface User {
   id: string;

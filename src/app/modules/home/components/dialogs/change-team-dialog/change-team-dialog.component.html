@@ -6,7 +6,7 @@
     <div
       class="teams-list-item"
       fxLayoutAlign="space-between center"
-      *ngFor="let team of getRecentTeams()"
+      *ngFor="let team of recentTeams"
       (click)="onTeamSelected(team.id)"
     >
       <span>{{ team.name }}</span>
@@ -21,7 +21,7 @@
   <span class="text-bold">Select from list:</span>
   <mat-form-field>
     <mat-select (selectionChange)="onTeamSelected($event.value)" [(value)]="currentTeamId">
-      <mat-option *ngFor="let team of data.user.teams" [value]="team.id" [disabled]="isTeamCurrentlySelected(team.id)">
+      <mat-option *ngFor="let team of sortedTeams" [value]="team.id" [disabled]="isTeamCurrentlySelected(team.id)">
         {{ team.name }}
       </mat-option>
     </mat-select>

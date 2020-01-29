@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
 import { TeamFacade } from 'src/app/core/team/team.facade';
 import { UserFacade } from 'src/app/core/user/user.facade';
-import { UserTeam } from '../../../../core/user/model/team-in-user.model';
+import { UserTeam } from '../../../../core/user/model/user-team.model';
 import { User } from '../../../../core/user/model/user.model';
 import { UserUtilservice } from '../../../../core/user/services/user-utils.service';
 import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
