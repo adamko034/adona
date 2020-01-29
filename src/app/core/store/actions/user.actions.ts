@@ -11,7 +11,7 @@ export const userActionTypes = {
 const findUser = createAction(userActionTypes.findUser, props<{ id: string }>());
 const userFound = createAction(userActionTypes.userFound, props<{ user: User }>());
 
-const teamChanged = createAction(userActionTypes.teamChanged, props<{ teamId: string }>());
+const teamChanged = createAction(userActionTypes.teamChanged, props<{ teamId: string; updated: Date }>());
 const teamAdded = createAction(userActionTypes.teamAdded, props<{ id: string; name: string; updated: Date }>());
 
 export const userActions = {

@@ -37,12 +37,20 @@ export class TeamService {
     return from(batch.commit().then(() => teamToAdd));
   }
 
-  public changeTeam(request: ChangeTeamRequest): Observable<string> {
+  public changeTeam(request: ChangeTeamRequest): Observable<ChangeTeamRequest> {
+    const teams = request.user.teams.map(team => {
+      if (team.id === request.teamId) {
+        return { ...team, updated: request.updated };
+      }
+
+      return team;
+    });
+
     const promise = this.db
       .collection(this.usersCollectionName)
-      .doc(request.uid)
-      .update({ selectedTeamId: request.teamId });
+      .doc(request.user.id)
+      .update({ selectedTeamId: request.teamId, teams });
 
-    return from(promise.then(() => request.teamId));
+    return from(promise.then(() => request));
   }
 }

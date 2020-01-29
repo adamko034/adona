@@ -1,4 +1,7 @@
+import { User } from '../../user/model/user.model';
+
 export interface ChangeTeamRequest {
   teamId: string;
-  uid: string;
+  user: User;
+  updated: Date;
 }

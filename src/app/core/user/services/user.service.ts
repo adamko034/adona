@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { FirebaseUtils } from '../../services/firebase-utils/firebase-utils.service';
 import { UserTeam } from '../model/user-team.model';
 import { User } from '../model/user.model';
@@ -17,20 +17,23 @@ export class UserService {
       .collection(this.collectionName)
       .doc(uid)
       .valueChanges()
-      .pipe(map((firebaseUser: any) => this.mapFromFirebase(firebaseUser)));
+      .pipe(
+        take(1),
+        map((firebaseUser: any) => this.mapFromFirebase(firebaseUser, uid))
+      );
   }
 
-  private mapFromFirebase(firebaseUser: any): User {
+  private mapFromFirebase(firebaseUser: any, uid: string): User {
     const teams: UserTeam[] = [];
 
     if (firebaseUser.teams) {
       firebaseUser.teams.forEach(team => {
-        teams.push({ id: team.id, name: team.name, updated: this.firebaseUtils.convertToDate(firebaseUser.updated) });
+        teams.push({ id: team.id, name: team.name, updated: this.firebaseUtils.convertToDate(team.updated) });
       });
     }
 
     return {
-      id: firebaseUser.id,
+      id: uid,
       selectedTeamId: firebaseUser.selectedTeamId,
       name: firebaseUser.name,
       teams,

@@ -24,7 +24,7 @@ export class TeamEffects {
       switchMap((team: Team) => [
         teamActions.newTeamCreateSuccess({ team }),
         userActions.teamAdded({ id: team.id, name: team.name, updated: team.created }),
-        userActions.teamChanged({ teamId: team.id })
+        userActions.teamChanged({ teamId: team.id, updated: team.created })
       ]),
       catchError(err => of(teamActions.newTeamCreateFailure({ error: { errorObj: err } })))
     );
@@ -49,7 +49,9 @@ export class TeamEffects {
       ofType(teamActions.changeTeamRequested),
       map(action => action.request),
       switchMap((request: ChangeTeamRequest) => this.teamService.changeTeam(request)),
-      map((teamId: string) => userActions.teamChanged({ teamId })),
+      map((request: ChangeTeamRequest) =>
+        userActions.teamChanged({ teamId: request.teamId, updated: request.updated })
+      ),
       catchError(err => of(teamActions.changeTeamFailure({ error: { errorObj: err } })))
     );
   });

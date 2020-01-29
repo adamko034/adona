@@ -32,7 +32,17 @@ export const authReducer = createReducer(
   on(authActions.loginFailed, state => ({ ...state, loggedIn: false, user: null, loginFailed: true })),
   on(userActions.teamChanged, (state, action) => ({
     ...state,
-    user: { ...state.user, selectedTeamId: action.teamId }
+    user: {
+      ...state.user,
+      selectedTeamId: action.teamId,
+      teams: state.user.teams.map(team => {
+        if (team.id === action.teamId) {
+          return { ...team, updated: action.updated };
+        }
+
+        return team;
+      })
+    }
   })),
   on(userActions.teamAdded, (state, action) => ({
     ...state,

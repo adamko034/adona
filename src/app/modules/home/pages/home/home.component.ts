@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
 import { TeamFacade } from 'src/app/core/team/team.facade';
 import { UserFacade } from 'src/app/core/user/user.facade';
+import { ChangeTeamRequest } from '../../../../core/team/model/change-team-request.model';
 import { UserTeam } from '../../../../core/user/model/user-team.model';
 import { User } from '../../../../core/user/model/user.model';
 import { UserUtilservice } from '../../../../core/user/services/user-utils.service';
@@ -65,11 +66,16 @@ export class HomeComponent implements OnInit, OnDestroy {
       .open(ChangeTeamDialogComponent, { data: { user: this.user } })
       .subscribe((result: DialogResult<string>) => {
         if (result && result.payload) {
-          this.teamFacade.changeTeam({ teamId: result.payload, uid: this.user.id });
+          const request: ChangeTeamRequest = {
+            teamId: result.payload,
+            user: this.user,
+            updated: new Date()
+          };
+
+          this.teamFacade.changeTeam(request);
         }
       });
   }
-
   public getSelectedTeam(): UserTeam {
     return this.userUtils.getSelectedTeam(this.user);
   }

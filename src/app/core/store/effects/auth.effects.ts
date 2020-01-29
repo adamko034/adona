@@ -25,7 +25,7 @@ export class AuthEffects {
     map(action => action.credentials),
     switchMap((credentials: CredentialsLogin) => this.authService.login(credentials)),
     switchMap(() => this.authService.authState$.pipe(take(1))),
-    switchMap(({ uid }) => this.userService.getUser(uid).pipe(take(1))),
+    switchMap(({ uid }) => this.userService.getUser(uid)),
     map((user: User) => authActions.loginSuccess({ user })),
     tap(() => this.navigationService.toHome()),
     catchError(() => of(authActions.loginFailed()))
