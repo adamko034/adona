@@ -42,7 +42,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.viewDateSubsciption = this.facade.getViewDate().subscribe((viewDate: Date) => (this.viewDate = viewDate));
     this.events$ = this.facade.events$;
 
-    this.userFacade.getUser().subscribe(user => {
+    this.userFacade.selectUser().subscribe(user => {
       if (user) {
         this.facade.changeView({ isList: this.deviceService.isMobile(), calendarView: this.view.calendarView });
         this.facade.loadMonthEvents(this.viewDate);

@@ -12,8 +12,8 @@ export class UserEffects {
   constructor(private actions$: Actions, private userService: UserService) {}
 
   @Effect()
-  findUser$: Observable<Action> = this.actions$.pipe(
-    ofType(userActions.findUser),
+  getUser$: Observable<Action> = this.actions$.pipe(
+    ofType(userActions.getUser),
     switchMap(action => this.userService.getUser(action.id)),
     map((user: User) => userActions.userFound({ user }))
   );

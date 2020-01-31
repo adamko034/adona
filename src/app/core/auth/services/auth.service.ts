@@ -8,9 +8,11 @@ import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.mode
   providedIn: 'root'
 })
 export class AuthService {
-  readonly authState$: Observable<firebase.User | null> = this.fireAuth.authState;
-
   constructor(private fireAuth: AngularFireAuth) {}
+
+  public getAuthState(): Observable<firebase.User> {
+    return this.fireAuth.authState;
+  }
 
   public login(credentials: CredentialsLogin): Observable<firebase.auth.UserCredential> {
     return from(this.fireAuth.auth.signInWithEmailAndPassword(credentials.email, credentials.password));

@@ -14,8 +14,8 @@ export class ExpensesService {
     //   .pipe(take(1));
 
     const users = [
-      { id: 'id1', email: 'aa', displayName: 'adam' },
-      { id: 'id2', email: 'iw', displayName: 'iwona' }
+      { id: 'id1', name: 'adam' },
+      { id: 'id2', name: 'iwona' }
     ];
 
     return of([

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { catchError, concatMap, filter, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { errors } from 'src/app/shared/constants/errors.constants';
 import { Error } from '../../error/model/error.model';
 import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
 import { Team } from '../../team/model/team.model';
 import { TeamService } from '../../team/services/team.service';
+import { TeamFacade } from '../../team/team.facade';
 import { UserFacade } from '../../user/user.facade';
 import { ErrorOccuredAction } from '../actions/error.actions';
 import { teamActions } from '../actions/team.actions';
@@ -14,13 +15,18 @@ import { userActions } from '../actions/user.actions';
 
 @Injectable()
 export class TeamEffects {
-  constructor(private actions$: Actions, private userFacade: UserFacade, private teamService: TeamService) {}
+  constructor(
+    private actions$: Actions,
+    private userFacade: UserFacade,
+    private teamService: TeamService,
+    private teamFacade: TeamFacade
+  ) {}
 
   public newTeamRequested = createEffect(() => {
     return this.actions$.pipe(
       ofType(teamActions.newTeamRequested),
-      withLatestFrom(this.userFacade.getUser()),
-      switchMap(([action, user]) => this.teamService.addTeam(action.request, user)),
+      concatMap(action => of(action).pipe(withLatestFrom(this.userFacade.selectUserId()))),
+      switchMap(([action, uid]) => this.teamService.addTeam(action.request, uid)),
       switchMap((team: Team) => [
         teamActions.newTeamCreateSuccess({ team }),
         userActions.teamAdded({ id: team.id, name: team.name, updated: team.created }),
@@ -67,6 +73,31 @@ export class TeamEffects {
         return error;
       }),
       map((error: Error) => new ErrorOccuredAction({ error }))
+    );
+  });
+
+  public loadTeamRequested = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(teamActions.loadTeamRequested),
+      concatMap(action => of(action).pipe(withLatestFrom(this.teamFacade.selectTeams()))),
+      filter(([action, teams]) => !teams[action.id]),
+      map(([action, teams]) => action.id),
+      switchMap((id: string) => this.teamService.loadTeam(id)),
+      map((team: Team) => teamActions.teamLoadedSuccess({ team })),
+      catchError(err => of(teamActions.teamLoadedFailure({ error: { errorObj: err } })))
+    );
+  });
+
+  public loadSelectedTeamRequested = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(teamActions.loadSelectedTeamRequested),
+      concatMap(action => of(action).pipe(withLatestFrom(this.userFacade.selectUser()))),
+      concatMap(([action, user]) => of(user).pipe(withLatestFrom(this.teamFacade.selectTeams()))),
+      filter(([user, teams]) => !user.selectedTeamId || !teams[user.selectedTeamId]),
+      map(([user, teams]) => user.selectedTeamId),
+      switchMap((id: string) => this.teamService.loadTeam(id)),
+      map((team: Team) => teamActions.teamLoadedSuccess({ team })),
+      catchError(err => of(teamActions.teamLoadedFailure({ error: { errorObj: err } })))
     );
   });
 }

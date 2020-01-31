@@ -8,9 +8,10 @@ import { ChangeTeamDialogComponent } from './components/dialogs/change-team-dial
 import { NewTeamDialogComponent } from './components/dialogs/new-team-dialog/new-team-dialog.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './pages/home/home.component';
+import { HomeToolbarComponent } from './components/home-toolbar/home-toolbar.component';
 
 @NgModule({
-  declarations: [HomeComponent, NewTeamDialogComponent, ChangeTeamDialogComponent],
+  declarations: [HomeComponent, NewTeamDialogComponent, ChangeTeamDialogComponent, HomeToolbarComponent],
   imports: [
     CommonModule,
     SharedModule,

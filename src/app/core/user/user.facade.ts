@@ -10,11 +10,15 @@ import { User } from './model/user.model';
 export class UserFacade {
   constructor(private store: Store<AuthState>) {}
 
-  public getUser(): Observable<User> {
+  public selectUser(): Observable<User> {
     return this.store.select(userQueries.selectUser);
   }
 
-  public findUser(id: string) {
-    return this.store.dispatch(userActions.findUser({ id }));
+  public selectUserId(): Observable<string> {
+    return this.store.select(userQueries.selectUserId);
+  }
+
+  public getUser(id: string) {
+    return this.store.dispatch(userActions.getUser({ id }));
   }
 }

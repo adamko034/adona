@@ -1,16 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
+import { Team } from 'src/app/core/team/model/team.model';
 import { TeamFacade } from 'src/app/core/team/team.facade';
 import { UserFacade } from 'src/app/core/user/user.facade';
-import { ChangeTeamRequest } from '../../../../core/team/model/change-team-request.model';
-import { UserTeam } from '../../../../core/user/model/user-team.model';
 import { User } from '../../../../core/user/model/user.model';
-import { UserUtilservice } from '../../../../core/user/services/user-utils.service';
-import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
-import { DialogService } from '../../../../shared/services/dialogs/dialog.service';
-import { ChangeTeamDialogComponent } from '../../components/dialogs/change-team-dialog/change-team-dialog.component';
-import { NewTeamDialogComponent } from '../../components/dialogs/new-team-dialog/new-team-dialog.component';
 
 @Component({
   selector: 'app-home',
@@ -18,21 +11,20 @@ import { NewTeamDialogComponent } from '../../components/dialogs/new-team-dialog
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit, OnDestroy {
+  private teamSubscription: Subscription;
   private userSubscription: Subscription;
-  private newTeamDialogSubscription: Subscription;
-  private changeTeamDialogSubscription: Subscription;
 
   public user: User;
+  public team: Team;
 
-  constructor(
-    private userFacade: UserFacade,
-    private dialogService: DialogService,
-    private teamFacade: TeamFacade,
-    private userUtils: UserUtilservice
-  ) {}
+  constructor(private userFacade: UserFacade, private teamFacade: TeamFacade) {}
 
   public ngOnInit() {
-    this.userSubscription = this.userFacade.getUser().subscribe((user: User) => {
+    this.teamFacade.loadSelectedTeam();
+    this.teamSubscription = this.teamFacade.selectSelectedTeam().subscribe((team: Team) => {
+      this.team = team;
+    });
+    this.userSubscription = this.userFacade.selectUser().subscribe((user: User) => {
       this.user = user;
     });
   }
@@ -42,45 +34,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.userSubscription.unsubscribe();
     }
 
-    if (this.newTeamDialogSubscription) {
-      this.newTeamDialogSubscription.unsubscribe();
+    if (this.teamSubscription) {
+      this.teamSubscription.unsubscribe();
     }
-
-    if (this.changeTeamDialogSubscription) {
-      this.changeTeamDialogSubscription.unsubscribe();
-    }
-  }
-
-  public openNewTeamDialog() {
-    this.newTeamDialogSubscription = this.dialogService
-      .open(NewTeamDialogComponent, { data: { user: this.user } })
-      .subscribe((result: DialogResult<NewTeamRequest>) => {
-        if (result && result.payload) {
-          this.teamFacade.addTeam(result.payload);
-        }
-      });
-  }
-
-  public openChangeTeamDialog() {
-    this.changeTeamDialogSubscription = this.dialogService
-      .open(ChangeTeamDialogComponent, { data: { user: this.user } })
-      .subscribe((result: DialogResult<string>) => {
-        if (result && result.payload) {
-          const request: ChangeTeamRequest = {
-            teamId: result.payload,
-            user: this.user,
-            updated: new Date()
-          };
-
-          this.teamFacade.changeTeam(request);
-        }
-      });
-  }
-  public getSelectedTeam(): UserTeam {
-    return this.userUtils.getSelectedTeam(this.user);
-  }
-
-  public userHasMultipleTeams() {
-    return this.userUtils.hasMultipleTeams(this.user);
   }
 }

@@ -13,7 +13,7 @@ describe('Time Creation Service', () => {
       const today = new Date();
 
       // when
-      const result = service.getDateTimeFrom(today, 12, 15);
+      const result = service.from(today, 12, 15);
 
       // then
       expect(result instanceof Date).toBeTruthy();
@@ -40,7 +40,7 @@ describe('Time Creation Service', () => {
     ].forEach(input => {
       it(`should get date from ${input.stringValue}`, () => {
         // when
-        const actual = service.getDateTimeFromMonthLoaded(input.stringValue);
+        const actual = service.fromMonthLoaded(input.stringValue);
 
         // then
         expect(actual.getFullYear()).toEqual(input.year);

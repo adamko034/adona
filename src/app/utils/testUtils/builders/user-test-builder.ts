@@ -5,11 +5,8 @@ export class UserTestBuilder {
 
   public withDefaultData(): UserTestBuilder {
     this.user = {
-      displayName: 'testUser',
-      email: 'test@email.com',
       id: '1',
-      phoneNumber: '123',
-      photoUrl: 'url.com'
+      name: 'test name'
     };
 
     return this;
@@ -22,10 +19,7 @@ export class UserTestBuilder {
   public buildFirebaseUser(): any {
     return {
       uid: this.user.id,
-      displayName: this.user.displayName,
-      email: this.user.email,
-      phoneNumber: this.user.phoneNumber,
-      photoURL: this.user.photoUrl
+      name: this.user.name
     };
   }
 }

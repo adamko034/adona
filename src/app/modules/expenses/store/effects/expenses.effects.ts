@@ -16,7 +16,7 @@ export class ExpensesEffects {
   public expensesRequested$ = createEffect(() =>
     this.actions$.pipe(
       ofType(expensesActionsTypes.expensesRequested),
-      concatMap(action => of(action).pipe(withLatestFrom(this.userFacade.getUser()))),
+      concatMap(action => of(action).pipe(withLatestFrom(this.userFacade.selectUser()))),
       switchMap(([action, user]) => this.expensesService.getExpenses(user.id)),
       map((expenses: ExpenseGroup[]) => expensesActions.expensesLoadSuccess({ expenses })),
       catchError(err => of(expensesActions.expensesLoadFailure({ error: { errorObj: err } })))

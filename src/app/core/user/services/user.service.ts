@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { FirebaseUtils } from '../../services/firebase-utils/firebase-utils.service';
+import { TimeService } from 'src/app/shared/services/time/time.service';
+import { UserTeamBuilder } from '../model/builders/user-team.builder';
+import { UserBuilder } from '../model/builders/user.builder';
 import { UserTeam } from '../model/user-team.model';
 import { User } from '../model/user.model';
 
@@ -10,7 +12,7 @@ import { User } from '../model/user.model';
 export class UserService {
   private readonly collectionName: string = 'users';
 
-  constructor(private db: AngularFirestore, private firebaseUtils: FirebaseUtils) {}
+  constructor(private db: AngularFirestore, private timeService: TimeService) {}
 
   public getUser(uid: string): Observable<User> {
     return this.db
@@ -28,16 +30,19 @@ export class UserService {
 
     if (firebaseUser.teams) {
       firebaseUser.teams.forEach(team => {
-        teams.push({ id: team.id, name: team.name, updated: this.firebaseUtils.convertToDate(team.updated) });
+        teams.push(
+          UserTeamBuilder.from(
+            team.id,
+            team.name,
+            this.timeService.Creation.fromFirebaseTimestamp(team.updated)
+          ).build()
+        );
       });
     }
 
-    return {
-      id: uid,
-      selectedTeamId: firebaseUser.selectedTeamId,
-      name: firebaseUser.name,
-      teams,
-      email: firebaseUser.email
-    };
+    return UserBuilder.from(uid, firebaseUser.name)
+      .withSelectedTeamId(firebaseUser.selectedTeamId)
+      .withTeams(teams)
+      .build();
   }
 }

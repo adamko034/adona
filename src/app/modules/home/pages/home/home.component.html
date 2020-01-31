@@ -1,30 +1,11 @@
-<app-toolbar>
-  <div>
-    <button
-      class="toolbar-button"
-      mat-icon-button
-      [disableRipple]="true"
-      onclick="this.blur()"
-      (click)="openNewTeamDialog()"
-    >
-      <mat-icon>add</mat-icon>
-      <span fxHide.lt-sm>New Team</span>
-    </button>
-  </div>
-  <div *ngIf="userHasMultipleTeams()">
-    <button
-      class="toolbar-button"
-      mat-icon-button
-      [disableRipple]="true"
-      onclick="this.blur()"
-      (click)="openChangeTeamDialog()"
-    >
-      <mat-icon>
-        sync_alt
-      </mat-icon>
-      <span fxHide.lt-sm>Change Team</span>
-    </button>
-  </div>
-</app-toolbar>
+<app-home-toolbar [user]="user"></app-home-toolbar>
 
-<span *ngIf="user && user.teams">selected team: {{ getSelectedTeam()?.name }}</span>
+<p *ngIf="team">selected team {{ team.name }}</p>
+<div *ngIf="team">
+  <span>members:</span>
+  <ul>
+    <li *ngFor="let member of team.members | keyvalue">
+      {{ member.key }}
+    </li>
+  </ul>
+</div>
