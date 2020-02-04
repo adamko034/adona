@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
+import { from, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { TimeService } from 'src/app/shared/services/time/time.service';
+import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
 import { UserTeamBuilder } from '../model/builders/user-team.builder';
 import { UserBuilder } from '../model/builders/user.builder';
 import { UserTeam } from '../model/user-team.model';
@@ -14,7 +15,7 @@ export class UserService {
 
   constructor(private db: AngularFirestore, private timeService: TimeService) {}
 
-  public getUser(uid: string): Observable<User> {
+  public loadUser(uid: string): Observable<User> {
     return this.db
       .collection(this.collectionName)
       .doc(uid)
@@ -23,6 +24,23 @@ export class UserService {
         take(1),
         map((firebaseUser: any) => this.mapFromFirebase(firebaseUser, uid))
       );
+  }
+
+  public changeTeam(request: ChangeTeamRequest): Observable<ChangeTeamRequest> {
+    const teams = request.user.teams.map(team => {
+      if (team.id === request.teamId) {
+        return { ...team, updated: request.updated };
+      }
+
+      return team;
+    });
+
+    const promise = this.db
+      .collection(this.collectionName)
+      .doc(request.user.id)
+      .update({ selectedTeamId: request.teamId, teams });
+
+    return from(promise.then(() => request));
   }
 
   private mapFromFirebase(firebaseUser: any, uid: string): User {

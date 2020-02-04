@@ -3,8 +3,12 @@ import { Error } from '../../error/model/error.model';
 export class ErrorTestDataBuilder {
   private error: Error;
 
-  public constructor() {
+  private constructor() {
     this.error = {};
+  }
+
+  public static from(): ErrorTestDataBuilder {
+    return new ErrorTestDataBuilder();
   }
 
   public withMessage(message: string): ErrorTestDataBuilder {

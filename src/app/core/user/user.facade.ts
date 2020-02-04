@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { userActions } from '../store/actions/user.actions';
 import { AuthState } from '../store/reducers/auth/auth.reducer';
 import { userQueries } from '../store/selectors/user.selectors';
+import { ChangeTeamRequest } from '../team/model/change-team-request.model';
 import { User } from './model/user.model';
 
 @Injectable({ providedIn: 'root' })
@@ -18,7 +19,11 @@ export class UserFacade {
     return this.store.select(userQueries.selectUserId);
   }
 
-  public getUser(id: string) {
-    return this.store.dispatch(userActions.getUser({ id }));
+  public loadUser(id: string) {
+    return this.store.dispatch(userActions.loadUserRequested({ id }));
+  }
+
+  public changeTeam(request: ChangeTeamRequest) {
+    this.store.dispatch(userActions.changeTeamRequested({ request }));
   }
 }

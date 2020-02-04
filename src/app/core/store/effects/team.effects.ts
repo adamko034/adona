@@ -4,7 +4,6 @@ import { of } from 'rxjs';
 import { catchError, concatMap, filter, map, switchMap, withLatestFrom } from 'rxjs/operators';
 import { errors } from 'src/app/shared/constants/errors.constants';
 import { Error } from '../../error/model/error.model';
-import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
 import { Team } from '../../team/model/team.model';
 import { TeamService } from '../../team/services/team.service';
 import { TeamFacade } from '../../team/team.facade';
@@ -30,7 +29,7 @@ export class TeamEffects {
       switchMap((team: Team) => [
         teamActions.newTeamCreateSuccess({ team }),
         userActions.teamAdded({ id: team.id, name: team.name, updated: team.created }),
-        userActions.teamChanged({ teamId: team.id, updated: team.created })
+        userActions.changeTeamSuccess({ teamId: team.id, updated: team.created })
       ]),
       catchError(err => of(teamActions.newTeamCreateFailure({ error: { errorObj: err } })))
     );
@@ -50,32 +49,6 @@ export class TeamEffects {
     );
   });
 
-  public changeTeamRequested = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(teamActions.changeTeamRequested),
-      map(action => action.request),
-      switchMap((request: ChangeTeamRequest) => this.teamService.changeTeam(request)),
-      map((request: ChangeTeamRequest) =>
-        userActions.teamChanged({ teamId: request.teamId, updated: request.updated })
-      ),
-      catchError(err => of(teamActions.changeTeamFailure({ error: { errorObj: err } })))
-    );
-  });
-
-  public changeTeamFailure = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(teamActions.changeTeamFailure),
-      map(action => {
-        const error: Error = {
-          errorObj: action.error.errorObj,
-          message: action.error.message ? action.error.message : errors.DEFAULT_API_OTHER_ERROR_MESSAGE
-        };
-        return error;
-      }),
-      map((error: Error) => new ErrorOccuredAction({ error }))
-    );
-  });
-
   public loadTeamRequested = createEffect(() => {
     return this.actions$.pipe(
       ofType(teamActions.loadTeamRequested),
@@ -83,8 +56,8 @@ export class TeamEffects {
       filter(([action, teams]) => !teams[action.id]),
       map(([action, teams]) => action.id),
       switchMap((id: string) => this.teamService.loadTeam(id)),
-      map((team: Team) => teamActions.teamLoadedSuccess({ team })),
-      catchError(err => of(teamActions.teamLoadedFailure({ error: { errorObj: err } })))
+      map((team: Team) => teamActions.loadTeamSuccess({ team })),
+      catchError(err => of(teamActions.loadTeamFailure({ error: { errorObj: err } })))
     );
   });
 
@@ -96,8 +69,8 @@ export class TeamEffects {
       filter(([user, teams]) => !user.selectedTeamId || !teams[user.selectedTeamId]),
       map(([user, teams]) => user.selectedTeamId),
       switchMap((id: string) => this.teamService.loadTeam(id)),
-      map((team: Team) => teamActions.teamLoadedSuccess({ team })),
-      catchError(err => of(teamActions.teamLoadedFailure({ error: { errorObj: err } })))
+      map((team: Team) => teamActions.loadTeamSuccess({ team })),
+      catchError(err => of(teamActions.loadTeamFailure({ error: { errorObj: err } })))
     );
   });
 }

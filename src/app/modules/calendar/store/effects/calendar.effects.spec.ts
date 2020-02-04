@@ -175,7 +175,9 @@ describe('Calendar Effects', () => {
     it('should map to Event Creation Error action', () => {
       // given
       const eventRequest = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      const error = ErrorTestDataBuilder.from()
+        .withDefaultData()
+        .build();
 
       actions$ = hot('-a', { a: new NewEventRequestedAction({ newEvent: eventRequest }) });
       const serviceError = cold('-#|', {}, error);
@@ -195,7 +197,9 @@ describe('Calendar Effects', () => {
   describe('Event Creation Error effect', () => {
     it('should map to Error Occured Action with default message', () => {
       // given
-      const error = new ErrorTestDataBuilder().withErrorObj({ status: 500 }).build();
+      const error = ErrorTestDataBuilder.from()
+        .withErrorObj({ status: 500 })
+        .build();
       const expectedError = { ...error, message: errors.DEFAULT_API_POST_ERROR_MESSAGE };
       actions$ = hot('-a', { a: new EventCreationErrorAction({ error }) });
       const expected = hot('-b', { b: new ErrorOccuredAction({ error: expectedError }) });
@@ -206,7 +210,9 @@ describe('Calendar Effects', () => {
 
     it('should map to Error Occured Action with custom message', () => {
       // given
-      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      const error = ErrorTestDataBuilder.from()
+        .withDefaultData()
+        .build();
       actions$ = hot('-a', { a: new EventCreationErrorAction({ error }) });
       const expected = hot('-b', { b: new ErrorOccuredAction({ error }) });
 
@@ -235,7 +241,9 @@ describe('Calendar Effects', () => {
     it('should return Event Update Error Action when updating fails', () => {
       // given
       const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      const error = ErrorTestDataBuilder.from()
+        .withDefaultData()
+        .build();
 
       actions$ = hot('-a', { a: new UpdateEventRequestedAction({ event }) });
       const expected = cold('--(b|)', {
@@ -255,7 +263,9 @@ describe('Calendar Effects', () => {
   describe('Event Update Error effect', () => {
     it('should map to Event Occured Action with custom message', () => {
       // given
-      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      const error = ErrorTestDataBuilder.from()
+        .withDefaultData()
+        .build();
       actions$ = hot('-a', { a: new EventUpdateErrorAction({ error }) });
       const expected = cold('-b', { b: new ErrorOccuredAction({ error }) });
 
@@ -265,7 +275,9 @@ describe('Calendar Effects', () => {
 
     it('should map to Event Occured Action with default message', () => {
       // given
-      const error = new ErrorTestDataBuilder().withErrorObj({ status: 503 }).build();
+      const error = ErrorTestDataBuilder.from()
+        .withErrorObj({ status: 503 })
+        .build();
       const expectedError = { ...error, message: errors.DEFAULT_API_PUT_ERROR_MESSAGE };
       actions$ = hot('-a', { a: new EventUpdateErrorAction({ error }) });
       const expected = cold('-b', { b: new ErrorOccuredAction({ error: expectedError }) });
@@ -298,7 +310,9 @@ describe('Calendar Effects', () => {
     it('should map to Event Delete Error action ', () => {
       // given
       const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      const error = ErrorTestDataBuilder.from()
+        .withDefaultData()
+        .build();
 
       const action = new EventDeleteRequestedAction({ id: event.id });
       actions$ = hot('--a', { a: action });
@@ -319,7 +333,9 @@ describe('Calendar Effects', () => {
   describe('Event Delete Error effect', () => {
     it('should map to Event Occured Action', () => {
       // given
-      const error = new ErrorTestDataBuilder().withErrorObj({ status: 503 }).build();
+      const error = ErrorTestDataBuilder.from()
+        .withErrorObj({ status: 503 })
+        .build();
       const expectedError = { ...error, message: errors.DEFAULT_API_DELETE_ERROR_MESSAGE };
 
       actions$ = hot('-a', { a: new EventDeleteErrorAction({ error }) });

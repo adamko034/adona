@@ -22,7 +22,9 @@ import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/even
 import { Event } from '../../model/event.model';
 
 describe('Calendar Actions', () => {
-  const error = new ErrorTestDataBuilder().withDefaultData().build();
+  const error = ErrorTestDataBuilder.from()
+    .withDefaultData()
+    .build();
 
   describe('Load Month Events', () => {
     it('should create month events requested action', () => {

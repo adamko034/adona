@@ -1,10 +1,7 @@
-import { TestBed } from '@angular/core/testing';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let authService: AuthService;
-  let fireAuthServiceMock: any;
   const fireAuthSpy: any = {
     auth: jasmine.createSpyObj('auth', {
       signInWithEmailAndPassword: Promise.resolve({}),
@@ -13,18 +10,10 @@ describe('AuthService', () => {
   };
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        AuthService,
-        { provide: AngularFireAuth, useValue: fireAuthSpy }
-      ]
-    });
-
-    authService = TestBed.get(AuthService);
-    fireAuthServiceMock = TestBed.get(AngularFireAuth);
+    authService = new AuthService(fireAuthSpy);
   });
 
-  it('should call fire auth service log in method', () => {
+  it('should call fireauth service login method', () => {
     // given
     const credentials = { email: 'adam', password: 'test' };
 
@@ -32,16 +21,14 @@ describe('AuthService', () => {
     authService.login(credentials);
 
     // then
-    expect(
-      fireAuthServiceMock.auth.signInWithEmailAndPassword
-    ).toHaveBeenCalledWith(credentials.email, credentials.password);
+    expect(fireAuthSpy.auth.signInWithEmailAndPassword).toHaveBeenCalledWith(credentials.email, credentials.password);
   });
 
-  it('should call fire auth service log out method', () => {
+  it('should call fireauth service logout method', () => {
     // when
     authService.logout();
 
     // then
-    expect(fireAuthServiceMock.auth.signOut).toHaveBeenCalledTimes(1);
+    expect(fireAuthSpy.auth.signOut).toHaveBeenCalledTimes(1);
   });
 });

@@ -8,6 +8,8 @@ describe('Auth Actions', () => {
     password: 'test'
   };
 
+  const user = UserTestBuilder.withDefaultData().build();
+
   it('should create login action', () => {
     // when
     const action = authActions.login({ credentials });
@@ -19,6 +21,27 @@ describe('Auth Actions', () => {
     });
   });
 
+  it('should create login success action', () => {
+    // when
+    const action = authActions.loginSuccess({ user });
+
+    // then
+    expect({ ...action }).toEqual({
+      type: authActionTypes.loginSuccess,
+      user
+    });
+  });
+
+  it('should create login failed action', () => {
+    // when
+    const action = authActions.loginFailed();
+
+    // then
+    expect({ ...action }).toEqual({
+      type: authActionTypes.loginFailed
+    });
+  });
+
   it('should create logout action', () => {
     // when
     const action = authActions.logout();
@@ -27,35 +50,11 @@ describe('Auth Actions', () => {
     expect({ ...action }).toEqual({ type: authActionTypes.logout });
   });
 
-  it('should create auth requested action', () => {
+  it('should create logout success action', () => {
     // when
-    const action = authActions.authRequested();
+    const action = authActions.logoutSuccess();
 
     // then
-    expect({ ...action }).toEqual({ type: authActionTypes.authRequested });
-  });
-
-  it('should create authenicated action', () => {
-    // given
-    const user = new UserTestBuilder().withDefaultData().build();
-
-    // when
-    const action = authActions.authenitcated({ firebaseUser: user });
-
-    // then
-    expect({ ...action }).toEqual({
-      type: authActionTypes.authenticated,
-      user
-    });
-  });
-
-  it('should create not authenitcated action', () => {
-    // when
-    const action = authActions.notAuthenticated();
-
-    // then
-    expect({ ...action }).toEqual({
-      type: authActionTypes.notAuthenticated
-    });
+    expect({ ...action }).toEqual({ type: authActionTypes.logoutSucces });
   });
 });

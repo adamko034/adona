@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { teamActions } from '../store/actions/team.actions';
 import { TeamState } from '../store/reducers/team/team.reducer';
 import { teamQueries } from '../store/selectors/team.selectors';
-import { ChangeTeamRequest } from './model/change-team-request.model';
 import { NewTeamRequest } from './model/new-team-request.model';
 import { Team } from './model/team.model';
 
@@ -23,10 +22,6 @@ export class TeamFacade {
 
   public addTeam(request: NewTeamRequest) {
     this.store.dispatch(teamActions.newTeamRequested({ request }));
-  }
-
-  public changeTeam(request: ChangeTeamRequest) {
-    this.store.dispatch(teamActions.changeTeamRequested({ request }));
   }
 
   public selectTeams(): Observable<Dictionary<Team>> {

@@ -5,7 +5,6 @@ import { from, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { TeamBuilder } from '../model/builders/team.builder';
-import { ChangeTeamRequest } from '../model/change-team-request.model';
 import { NewTeamRequest } from '../model/new-team-request.model';
 import { Team } from '../model/team.model';
 
@@ -33,23 +32,6 @@ export class TeamService {
     });
 
     return from(batch.commit().then(() => teamToAdd));
-  }
-
-  public changeTeam(request: ChangeTeamRequest): Observable<ChangeTeamRequest> {
-    const teams = request.user.teams.map(team => {
-      if (team.id === request.teamId) {
-        return { ...team, updated: request.updated };
-      }
-
-      return team;
-    });
-
-    const promise = this.db
-      .collection(this.usersCollectionName)
-      .doc(request.user.id)
-      .update({ selectedTeamId: request.teamId, teams });
-
-    return from(promise.then(() => request));
   }
 
   public loadTeam(id: string): Observable<Team> {

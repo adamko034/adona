@@ -9,6 +9,8 @@ import { TimeComparisonService } from 'src/app/shared/services/time/parts/time-c
 import { TimeCreationService } from 'src/app/shared/services/time/parts/time-creation.service';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { TimeManipulationService } from 'src/app/shared/services/time/parts/time-manipulation.service';
+import { AuthService } from '../../../core/auth/services/auth.service';
+import { UserFacade } from '../../../core/user/user.facade';
 
 export interface Spies {
   navigationService?: jasmine.SpyObj<NavigationService>;
@@ -17,6 +19,8 @@ export interface Spies {
   expensesService?: jasmine.SpyObj<ExpensesService>;
   authFacade?: jasmine.SpyObj<AuthFacade>;
   timeService?: jasmine.SpyObj<any>;
+  authService?: jasmine.SpyObj<AuthService>;
+  userFacade?: jasmine.SpyObj<UserFacade>;
 }
 
 export class SpiesBuilder {
@@ -67,15 +71,19 @@ export class SpiesBuilder {
     return this;
   }
 
+  public withAuthService(): SpiesBuilder {
+    this.spies.authService = jasmine.createSpyObj<AuthService>('authService', ['getAuthState', 'login', 'logout']);
+
+    return this;
+  }
+
+  public withUserFacade(): SpiesBuilder {
+    this.spies.userFacade = jasmine.createSpyObj<UserFacade>('userFacade', ['loadUser', 'selectUser', 'selectUserId']);
+    return this;
+  }
+
   public withAuthFacade(): SpiesBuilder {
-    this.spies.authFacade = jasmine.createSpyObj<AuthFacade>('authFacade', [
-      'authenticate',
-      'getUser',
-      'isLoggedIn',
-      'getLoginFailure',
-      'login',
-      'logout'
-    ]);
+    this.spies.authFacade = jasmine.createSpyObj<AuthFacade>('authFacade', ['getLoginFailure', 'login', 'logout']);
 
     return this;
   }

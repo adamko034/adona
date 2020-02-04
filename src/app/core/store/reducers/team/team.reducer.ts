@@ -11,7 +11,7 @@ const teamInitialState = adapter.getInitialState({});
 export const teamReducer = createReducer(
   teamInitialState,
   on(teamActions.newTeamCreateSuccess, (state, action) => adapter.addOne(action.team, { ...state })),
-  on(teamActions.teamLoadedSuccess, (state, action) => adapter.addOne(action.team, { ...state }))
+  on(teamActions.loadTeamSuccess, (state, action) => adapter.addOne(action.team, { ...state }))
 );
 
 const { selectEntities } = adapter.getSelectors();

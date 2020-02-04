@@ -7,6 +7,7 @@ import { User } from 'src/app/core/user/model/user.model';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { DialogResult } from 'src/app/shared/services/dialogs/dialog-result.model';
 import { DialogService } from 'src/app/shared/services/dialogs/dialog.service';
+import { UserFacade } from '../../../../core/user/user.facade';
 import { ChangeTeamDialogComponent } from '../dialogs/change-team-dialog/change-team-dialog.component';
 import { NewTeamDialogComponent } from '../dialogs/new-team-dialog/new-team-dialog.component';
 
@@ -24,7 +25,8 @@ export class HomeToolbarComponent implements OnInit {
   constructor(
     private dialogService: DialogService,
     private teamFacade: TeamFacade,
-    private userUtils: UserUtilservice
+    private userUtils: UserUtilservice,
+    private userFacade: UserFacade
   ) {}
 
   public ngOnInit() {}
@@ -60,7 +62,7 @@ export class HomeToolbarComponent implements OnInit {
             updated: new Date()
           };
 
-          this.teamFacade.changeTeam(request);
+          this.userFacade.changeTeam(request);
           this.teamFacade.loadTeam(request.teamId);
         }
       });

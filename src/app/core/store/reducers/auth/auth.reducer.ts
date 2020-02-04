@@ -25,12 +25,12 @@ export const authReducer = createReducer(
     user: null,
     loginFailed: false
   })),
-  on(userActions.userFound, (state, action) => ({
+  on(userActions.loadUserSuccess, (state, action) => ({
     ...state,
     user: action.user
   })),
   on(authActions.loginFailed, state => ({ ...state, loggedIn: false, user: null, loginFailed: true })),
-  on(userActions.teamChanged, (state, action) => ({
+  on(userActions.changeTeamSuccess, (state, action) => ({
     ...state,
     user: {
       ...state.user,

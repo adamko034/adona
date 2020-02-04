@@ -3,13 +3,16 @@ import { User } from 'src/app/core/user/model/user.model';
 export class UserTestBuilder {
   private user: User;
 
-  public withDefaultData(): UserTestBuilder {
-    this.user = {
-      id: '1',
-      name: 'test name'
-    };
+  private constructor(id: string, name: string) {
+    this.user = { id, name };
+  }
 
-    return this;
+  public static with(id: string, name: string): UserTestBuilder {
+    return new UserTestBuilder(id, name);
+  }
+
+  public static withDefaultData(): UserTestBuilder {
+    return new UserTestBuilder('1', 'test user');
   }
 
   public build(): User {
