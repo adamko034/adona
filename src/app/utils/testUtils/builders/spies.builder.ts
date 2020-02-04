@@ -1,5 +1,6 @@
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
+import { UserService } from 'src/app/core/user/services/user.service';
 import { ExpensesService } from 'src/app/modules/expenses/services/expenses.service';
 import { ExpensesFacade } from 'src/app/modules/expenses/store/expenses.facade';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
@@ -21,6 +22,7 @@ export interface Spies {
   timeService?: jasmine.SpyObj<any>;
   authService?: jasmine.SpyObj<AuthService>;
   userFacade?: jasmine.SpyObj<UserFacade>;
+  userService?: jasmine.SpyObj<UserService>;
 }
 
 export class SpiesBuilder {
@@ -104,6 +106,12 @@ export class SpiesBuilder {
       Comparison: jasmine.createSpyObj('comparisonService', comparisonMethods),
       Creation: jasmine.createSpyObj('creationService', creationMethdos)
     };
+
+    return this;
+  }
+
+  public withUserService(): SpiesBuilder {
+    this.spies.userService = jasmine.createSpyObj<UserService>('userService', ['loadUser', 'changeTeam']);
 
     return this;
   }

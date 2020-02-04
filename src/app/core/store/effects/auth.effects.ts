@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, Effect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, map, mapTo, switchMap, take, tap } from 'rxjs/operators';
@@ -20,22 +20,30 @@ export class AuthEffects {
   ) {}
 
   @Effect()
-  logIn$: Observable<Action> = this.actions$.pipe(
+  public logIn$: Observable<Action> = this.actions$.pipe(
     ofType(authActions.login),
     map(action => action.credentials),
     switchMap((credentials: CredentialsLogin) => this.authService.login(credentials)),
     switchMap(() => this.authService.getAuthState().pipe(take(1))),
     switchMap(({ uid }) => this.userService.loadUser(uid)),
     map((user: User) => authActions.loginSuccess({ user })),
-    tap(() => this.navigationService.toHome()),
     catchError(() => of(authActions.loginFailed()))
   );
 
+  public logInSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(authActions.loginSuccess),
+        tap(() => this.navigationService.toHome())
+      );
+    },
+    { dispatch: false }
+  );
+
   @Effect()
-  logOut$: Observable<Action> = this.actions$.pipe(
+  public logOut$: Observable<Action> = this.actions$.pipe(
     ofType(authActions.logout),
     switchMap(() => this.authService.logout()),
-    mapTo(authActions.logoutSuccess()),
-    tap(() => this.navigationService.toLogin())
+    mapTo(authActions.logoutSuccess())
   );
 }

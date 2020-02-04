@@ -4,7 +4,7 @@ import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
 import { ErrorTestDataBuilder } from '../../utils/tests/error-test-data.builder';
 import { userActions, userActionTypes } from './user.actions';
 
-fdescribe('User Actions', () => {
+describe('User Actions', () => {
   const user = UserTestBuilder.withDefaultData().build();
 
   describe('Load User', () => {
