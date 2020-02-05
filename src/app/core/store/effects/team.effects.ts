@@ -21,7 +21,7 @@ export class TeamEffects {
     private teamFacade: TeamFacade
   ) {}
 
-  public newTeamRequested = createEffect(() => {
+  public newTeamRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(teamActions.newTeamRequested),
       concatMap(action => of(action).pipe(withLatestFrom(this.userFacade.selectUserId()))),
@@ -35,7 +35,7 @@ export class TeamEffects {
     );
   });
 
-  public newTeamCreateFailure = createEffect(() => {
+  public newTeamCreateFailure$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(teamActions.newTeamCreateFailure),
       map(action => {
@@ -49,7 +49,7 @@ export class TeamEffects {
     );
   });
 
-  public loadTeamRequested = createEffect(() => {
+  public loadTeamRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(teamActions.loadTeamRequested),
       concatMap(action => of(action).pipe(withLatestFrom(this.teamFacade.selectTeams()))),
@@ -61,7 +61,7 @@ export class TeamEffects {
     );
   });
 
-  public loadSelectedTeamRequested = createEffect(() => {
+  public loadSelectedTeamRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(teamActions.loadSelectedTeamRequested),
       concatMap(action => of(action).pipe(withLatestFrom(this.userFacade.selectUser()))),

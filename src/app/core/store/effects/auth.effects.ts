@@ -46,4 +46,14 @@ export class AuthEffects {
     switchMap(() => this.authService.logout()),
     mapTo(authActions.logoutSuccess())
   );
+
+  public logOutSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(authActions.logoutSuccess),
+        tap(() => this.navigationService.toLogin())
+      );
+    },
+    { dispatch: false }
+  );
 }

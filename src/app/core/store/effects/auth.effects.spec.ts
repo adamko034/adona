@@ -11,7 +11,7 @@ import { UserService } from '../../user/services/user.service';
 import { authActions } from '../actions/auth.actions';
 import { AuthEffects } from './auth.effects';
 
-fdescribe('Auth Effects', () => {
+describe('Auth Effects', () => {
   let effects: AuthEffects;
   let actions$: Observable<Action>;
   const user = UserTestBuilder.withDefaultData().build();
@@ -130,11 +130,21 @@ fdescribe('Auth Effects', () => {
       authService.logout.and.returnValue(cold('x', { x: null }));
 
       actions$ = hot('--a', { a: authActions.logout() });
-      const expected = cold('--b', { b: authActions.logoutSuccess });
+      const expected = cold('--b', { b: authActions.logoutSuccess() });
 
       // when & then
       expect(effects.logOut$).toBeObservable(expected);
       expect(authService.logout).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Logout Success', () => {
+    it('should navigate to login page', () => {
+      actions$ = hot('a', { a: authActions.logoutSuccess });
+
+      effects.logOutSuccess$.subscribe(() => {
+        expect(navigationService.toLogin).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });

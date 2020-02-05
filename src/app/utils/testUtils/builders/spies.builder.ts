@@ -11,6 +11,8 @@ import { TimeCreationService } from 'src/app/shared/services/time/parts/time-cre
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { TimeManipulationService } from 'src/app/shared/services/time/parts/time-manipulation.service';
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { TeamService } from '../../../core/team/services/team.service';
+import { TeamFacade } from '../../../core/team/team.facade';
 import { UserFacade } from '../../../core/user/user.facade';
 
 export interface Spies {
@@ -23,6 +25,8 @@ export interface Spies {
   authService?: jasmine.SpyObj<AuthService>;
   userFacade?: jasmine.SpyObj<UserFacade>;
   userService?: jasmine.SpyObj<UserService>;
+  teamFacade?: jasmine.SpyObj<TeamFacade>;
+  teamService?: jasmine.SpyObj<TeamService>;
 }
 
 export class SpiesBuilder {
@@ -86,6 +90,24 @@ export class SpiesBuilder {
 
   public withAuthFacade(): SpiesBuilder {
     this.spies.authFacade = jasmine.createSpyObj<AuthFacade>('authFacade', ['getLoginFailure', 'login', 'logout']);
+
+    return this;
+  }
+
+  public withTeamFacade(): SpiesBuilder {
+    this.spies.teamFacade = jasmine.createSpyObj<TeamFacade>('teamFacade', [
+      'loadSelectedTeam',
+      'loadTeam',
+      'addTeam',
+      'selectTeams',
+      'selectSelectedTeam'
+    ]);
+
+    return this;
+  }
+
+  public withTeamService(): SpiesBuilder {
+    this.spies.teamService = jasmine.createSpyObj<TeamService>('teamService', ['addTeam', 'loadTeam']);
 
     return this;
   }
