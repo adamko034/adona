@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, concatMap, filter, map, switchMap, withLatestFrom } from 'rxjs/operators';
-import { errors } from 'src/app/shared/constants/errors.constants';
-import { Error } from '../../error/model/error.model';
+import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
+import { ErrorEffectService } from '../../services/store/error-effect.service';
 import { Team } from '../../team/model/team.model';
 import { TeamService } from '../../team/services/team.service';
 import { TeamFacade } from '../../team/team.facade';
 import { UserFacade } from '../../user/user.facade';
-import { ErrorOccuredAction } from '../actions/error.actions';
 import { teamActions } from '../actions/team.actions';
 import { userActions } from '../actions/user.actions';
 
@@ -18,7 +17,8 @@ export class TeamEffects {
     private actions$: Actions,
     private userFacade: UserFacade,
     private teamService: TeamService,
-    private teamFacade: TeamFacade
+    private teamFacade: TeamFacade,
+    private errorEffectService: ErrorEffectService
   ) {}
 
   public newTeamRequested$ = createEffect(() => {
@@ -35,19 +35,11 @@ export class TeamEffects {
     );
   });
 
-  public newTeamCreateFailure$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(teamActions.newTeamCreateFailure),
-      map(action => {
-        const error: Error = {
-          errorObj: action.error.errorObj,
-          message: action.error.message ? action.error.message : errors.DEFAULT_API_POST_ERROR_MESSAGE
-        };
-        return error;
-      }),
-      map((error: Error) => new ErrorOccuredAction({ error }))
-    );
-  });
+  public newTeamCreateFailure$ = this.errorEffectService.createFrom(
+    this.actions$,
+    teamActions.newTeamCreateFailure,
+    DefaultErrorType.ApiPost
+  );
 
   public loadTeamRequested$ = createEffect(() => {
     return this.actions$.pipe(
@@ -66,11 +58,17 @@ export class TeamEffects {
       ofType(teamActions.loadSelectedTeamRequested),
       concatMap(action => of(action).pipe(withLatestFrom(this.userFacade.selectUser()))),
       concatMap(([action, user]) => of(user).pipe(withLatestFrom(this.teamFacade.selectTeams()))),
-      filter(([user, teams]) => !user.selectedTeamId || !teams[user.selectedTeamId]),
+      filter(([user, teams]) => !!user.selectedTeamId && !teams[user.selectedTeamId]),
       map(([user, teams]) => user.selectedTeamId),
       switchMap((id: string) => this.teamService.loadTeam(id)),
       map((team: Team) => teamActions.loadTeamSuccess({ team })),
       catchError(err => of(teamActions.loadTeamFailure({ error: { errorObj: err } })))
     );
   });
+
+  public loadTeamFailure$ = this.errorEffectService.createFrom(
+    this.actions$,
+    teamActions.loadTeamFailure,
+    DefaultErrorType.ApiGet
+  );
 }

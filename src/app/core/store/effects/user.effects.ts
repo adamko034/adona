@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { errors } from '../../../shared/constants/errors.constants';
+import { errors } from '../../error/constants/errors.constants';
 import { Error } from '../../error/model/error.model';
 import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
 import { User } from '../../user/model/user.model';

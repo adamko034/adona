@@ -1,5 +1,6 @@
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
+import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { UserService } from 'src/app/core/user/services/user.service';
 import { ExpensesService } from 'src/app/modules/expenses/services/expenses.service';
 import { ExpensesFacade } from 'src/app/modules/expenses/store/expenses.facade';
@@ -27,6 +28,7 @@ export interface Spies {
   userService?: jasmine.SpyObj<UserService>;
   teamFacade?: jasmine.SpyObj<TeamFacade>;
   teamService?: jasmine.SpyObj<TeamService>;
+  errorEffectService?: jasmine.SpyObj<ErrorEffectService>;
 }
 
 export class SpiesBuilder {
@@ -134,6 +136,12 @@ export class SpiesBuilder {
 
   public withUserService(): SpiesBuilder {
     this.spies.userService = jasmine.createSpyObj<UserService>('userService', ['loadUser', 'changeTeam']);
+
+    return this;
+  }
+
+  public withErrorEffectService(): SpiesBuilder {
+    this.spies.errorEffectService = jasmine.createSpyObj<ErrorEffectService>('errorEffectService', ['createFrom']);
 
     return this;
   }

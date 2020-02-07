@@ -4,27 +4,11 @@ import { Update } from '@ngrx/entity';
 import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, filter, map, mapTo, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
+import { errors } from 'src/app/core/error/constants/errors.constants';
 import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
-import {
-  CalendarActions,
-  CalendarActionTypes,
-  CalendarViewDateChangedAction,
-  EventCreationErrorAction,
-  EventDeleteErrorAction,
-  EventDeleteRequestedAction,
-  EventDeleteSuccessAction,
-  EventsLoadedAction,
-  EventsLoadedErrorAction,
-  EventUpdatedAction,
-  EventUpdateErrorAction,
-  MonthEventsRequestedAction,
-  NewEventAddedAction,
-  NewEventRequestedAction,
-  UpdateEventRequestedAction
-} from 'src/app/modules/calendar/store/actions/calendar.actions';
-import { errors } from 'src/app/shared/constants/errors.constants';
+import { CalendarActions, CalendarActionTypes, CalendarViewDateChangedAction, EventCreationErrorAction, EventDeleteErrorAction, EventDeleteRequestedAction, EventDeleteSuccessAction, EventsLoadedAction, EventsLoadedErrorAction, EventUpdatedAction, EventUpdateErrorAction, MonthEventsRequestedAction, NewEventAddedAction, NewEventRequestedAction, UpdateEventRequestedAction } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { Error } from '../../../../core/error/model/error.model';
 import { CalendarFacade } from '../calendar.facade';

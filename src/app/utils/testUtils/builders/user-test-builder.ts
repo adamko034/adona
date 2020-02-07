@@ -15,6 +15,11 @@ export class UserTestBuilder {
     return new UserTestBuilder('1', 'test user');
   }
 
+  public withSelectedTeamId(teamId: string) {
+    this.user.selectedTeamId = teamId;
+    return this;
+  }
+
   public build(): User {
     return this.user;
   }

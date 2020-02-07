@@ -3,6 +3,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { BehaviorSubject, Observable, of } from 'rxjs';
+import { errors } from 'src/app/core/error/constants/errors.constants';
 import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
 import { ErrorTestDataBuilder } from 'src/app/core/utils/tests/error-test-data.builder';
 import { Event } from 'src/app/modules/calendar/model/event.model';
@@ -25,7 +26,6 @@ import {
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
 import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
-import { errors } from 'src/app/shared/constants/errors.constants';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 
