@@ -1,3 +1,4 @@
+import { AngularFirestoreCollection } from '@angular/fire/firestore';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
@@ -29,6 +30,7 @@ export interface Spies {
   teamFacade?: jasmine.SpyObj<TeamFacade>;
   teamService?: jasmine.SpyObj<TeamService>;
   errorEffectService?: jasmine.SpyObj<ErrorEffectService>;
+  angularFirestore?: jasmine.SpyObj<any>;
 }
 
 export class SpiesBuilder {
@@ -142,6 +144,22 @@ export class SpiesBuilder {
 
   public withErrorEffectService(): SpiesBuilder {
     this.spies.errorEffectService = jasmine.createSpyObj<ErrorEffectService>('errorEffectService', ['createFrom']);
+
+    return this;
+  }
+
+  public withAngularFirestore(): SpiesBuilder {
+    this.spies.angularFirestore = {
+      createId: jasmine.createSpy(),
+      collection: jasmine.createSpyObj<AngularFirestoreCollection>('firestoreCollection', [
+        'add',
+        'doc',
+        'valueChanges'
+      ]),
+      firestore: {
+        batch: () => jasmine.createSpyObj<firebase.firestore.WriteBatch>('batch', ['set', 'update', 'delete', 'commit'])
+      }
+    };
 
     return this;
   }

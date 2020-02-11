@@ -1,5 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import { User } from 'src/app/core/user/model/user.model';
+import { UserTeamBuilder } from '../../../user/model/builders/user-team.builder';
 import { authActions } from '../../actions/auth.actions';
 import { userActions } from '../../actions/user.actions';
 
@@ -29,7 +30,7 @@ export const authReducer = createReducer(
     ...state,
     user: action.user
   })),
-  on(authActions.loginFailed, state => ({ ...state, loggedIn: false, user: null, loginFailed: true })),
+  on(authActions.loginFailed, state => ({ ...state, user: null, loginFailed: true })),
   on(userActions.changeTeamSuccess, (state, action) => ({
     ...state,
     user: {
@@ -44,11 +45,16 @@ export const authReducer = createReducer(
       })
     }
   })),
-  on(userActions.teamAdded, (state, action) => ({
-    ...state,
-    user: {
-      ...state.user,
-      teams: [...state.user.teams, { id: action.id, updated: action.updated, name: action.name }]
-    }
-  }))
+  on(userActions.teamAdded, (state, action) => {
+    const teams = state.user.teams ? [...state.user.teams] : [];
+    teams.push(UserTeamBuilder.from(action.id, action.name, action.updated).build());
+
+    return {
+      ...state,
+      user: {
+        ...state.user,
+        teams: [...teams]
+      }
+    };
+  })
 );

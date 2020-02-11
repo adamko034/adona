@@ -23,6 +23,17 @@ describe('User Actions', () => {
         expect({ ...result }).toEqual({ type: userActionTypes.loadUserSuccess, user });
       });
     });
+
+    describe('Load User Failure', () => {
+      it('should create action', () => {
+        const error = ErrorTestDataBuilder.from()
+          .withDefaultData()
+          .build();
+        const result = userActions.loadUserFailure({ error });
+
+        expect({ ...result }).toEqual({ type: userActionTypes.loadUserFailure, error });
+      });
+    });
   });
 
   describe('Change Team', () => {

@@ -6,6 +6,7 @@ import { User } from '../../user/model/user.model';
 export const userActionTypes = {
   loadUserRequested: '[Auth Guard] Load User Requested',
   loadUserSuccess: '[Database API] Load User Success',
+  loadUserFailure: '[Database API] Load User Failure',
 
   changeTeamRequested: '[Change Team Dialog] Change Team Requested',
   changeTeamFailure: '[Database API] Change Team Failure',
@@ -16,6 +17,7 @@ export const userActionTypes = {
 
 const loadUserRequested = createAction(userActionTypes.loadUserRequested, props<{ id: string }>());
 const loadUserSuccess = createAction(userActionTypes.loadUserSuccess, props<{ user: User }>());
+const loadUserFailure = createAction(userActionTypes.loadUserFailure, props<{ error: Error }>());
 
 const changeTeamRequested = createAction(userActionTypes.changeTeamRequested, props<{ request: ChangeTeamRequest }>());
 const changeTeamFailure = createAction(userActionTypes.changeTeamFailure, props<{ error: Error }>());
@@ -26,6 +28,7 @@ const teamAdded = createAction(userActionTypes.teamAdded, props<{ id: string; na
 export const userActions = {
   loadUserRequested,
   loadUserSuccess,
+  loadUserFailure,
   changeTeamRequested,
   changeTeamFailure,
   changeTeamSuccess,

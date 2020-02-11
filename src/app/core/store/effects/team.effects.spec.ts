@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Actions } from '@ngrx/effects';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Dictionary } from '@ngrx/entity';
+import { createAction } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { of } from 'rxjs';
 import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
@@ -217,16 +218,17 @@ fdescribe('Team Effects', () => {
 
   it('should create error effects', () => {
     errorEffectService.createFrom.and.returnValue(of(null));
-    new TeamEffects(actions$, userFacade, teamService, teamFacade, errorEffectService);
+    const actions = new Actions(of(createAction('test action')));
+    new TeamEffects(actions, userFacade, teamService, teamFacade, errorEffectService);
 
     expect(errorEffectService.createFrom).toHaveBeenCalledTimes(2);
     expect(errorEffectService.createFrom).toHaveBeenCalledWith(
-      actions$,
+      actions,
       teamActions.loadTeamFailure,
       DefaultErrorType.ApiGet
     );
     expect(errorEffectService.createFrom).toHaveBeenCalledWith(
-      actions$,
+      actions,
       teamActions.newTeamCreateFailure,
       DefaultErrorType.ApiPost
     );

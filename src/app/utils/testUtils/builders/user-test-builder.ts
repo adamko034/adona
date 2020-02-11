@@ -1,4 +1,5 @@
 import { User } from 'src/app/core/user/model/user.model';
+import { UserTeam } from '../../../core/user/model/user-team.model';
 
 export class UserTestBuilder {
   private user: User;
@@ -13,6 +14,16 @@ export class UserTestBuilder {
 
   public static withDefaultData(): UserTestBuilder {
     return new UserTestBuilder('1', 'test user');
+  }
+
+  public withUserTeam(userTeam: UserTeam): UserTestBuilder {
+    if (!this.user.teams) {
+      this.user.teams = [];
+    }
+
+    this.user.teams.push(userTeam);
+
+    return this;
   }
 
   public withSelectedTeamId(teamId: string) {

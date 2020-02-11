@@ -1,27 +1,30 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { errors } from '../../error/constants/errors.constants';
-import { Error } from '../../error/model/error.model';
+import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
+import { ErrorEffectService } from '../../services/store/error-effect.service';
 import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
 import { User } from '../../user/model/user.model';
 import { UserService } from '../../user/services/user.service';
-import { ErrorOccuredAction } from '../actions/error.actions';
 import { userActions } from '../actions/user.actions';
 
 @Injectable()
 export class UserEffects {
-  constructor(private actions$: Actions, private userService: UserService) {}
+  constructor(
+    private actions$: Actions,
+    private userService: UserService,
+    private errorEffectService: ErrorEffectService
+  ) {}
 
-  public loadUser: Observable<Action> = createEffect(() =>
-    this.actions$.pipe(
+  public loadUserRequested$ = createEffect(() => {
+    return this.actions$.pipe(
       ofType(userActions.loadUserRequested),
       switchMap(action => this.userService.loadUser(action.id)),
-      map((user: User) => userActions.loadUserSuccess({ user }))
-    )
-  );
+      map((user: User) => userActions.loadUserSuccess({ user })),
+      catchError(err => of(userActions.loadUserFailure({ error: { errorObj: err } })))
+    );
+  });
 
   public changeTeamRequested$ = createEffect(() => {
     return this.actions$.pipe(
@@ -35,17 +38,15 @@ export class UserEffects {
     );
   });
 
-  public changeTeamFailure$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(userActions.changeTeamFailure),
-      map(action => {
-        const error: Error = {
-          errorObj: action.error.errorObj,
-          message: action.error.message ? action.error.message : errors.DEFAULT_API_OTHER_ERROR_MESSAGE
-        };
-        return error;
-      }),
-      map((error: Error) => new ErrorOccuredAction({ error }))
-    );
-  });
+  public loadUserFailure$ = this.errorEffectService.createFrom(
+    this.actions$,
+    userActions.loadUserFailure,
+    DefaultErrorType.ApiGet
+  );
+
+  public changeTeamFailure$ = this.errorEffectService.createFrom(
+    this.actions$,
+    userActions.changeTeamFailure,
+    DefaultErrorType.ApiOther
+  );
 }
