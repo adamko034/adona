@@ -13,7 +13,7 @@ import { UserService } from '../../user/services/user.service';
 import { userActions } from '../actions/user.actions';
 import { UserEffects } from './user.effects';
 
-fdescribe('User Effects', () => {
+describe('User Effects', () => {
   let actions$: Actions;
   let effects: UserEffects;
 

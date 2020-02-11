@@ -2,7 +2,7 @@ import { errors } from '../constants/errors.constants';
 import { DefaultErrorType } from '../enum/default-error-type.enum';
 import { DefaultErrorMessageBuilder } from './default-error-message.builder';
 
-fdescribe('Default Error Message Builder', () => {
+describe('Default Error Message Builder', () => {
   [
     {
       type: DefaultErrorType.ApiDelete,

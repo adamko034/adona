@@ -151,13 +151,17 @@ export class SpiesBuilder {
   public withAngularFirestore(): SpiesBuilder {
     this.spies.angularFirestore = {
       createId: jasmine.createSpy(),
-      collection: jasmine.createSpyObj<AngularFirestoreCollection>('firestoreCollection', [
-        'add',
-        'doc',
-        'valueChanges'
-      ]),
+      collection: jasmine.createSpy('collection').and.returnValue({
+        doc: jasmine.createSpy('doc').and.returnValue(jasmine.createSpyObj('doc', ['valueChanges']))
+      }),
       firestore: {
-        batch: () => jasmine.createSpyObj<firebase.firestore.WriteBatch>('batch', ['set', 'update', 'delete', 'commit'])
+        batch: jasmine.createSpy('batch').and.returnValue(
+          jasmine.createSpyObj<firebase.firestore.WriteBatch>('batch', ['set', 'update', 'delete', 'commit'])
+        ),
+        collection: jasmine.createSpy('collection').and.returnValue(
+          jasmine.createSpyObj<AngularFirestoreCollection>('firestoreCollection', ['add', 'doc', 'valueChanges'])
+        ),
+        FieldValue: jasmine.createSpyObj<any>('fieldValue', ['arrayUnion'])
       }
     };
 

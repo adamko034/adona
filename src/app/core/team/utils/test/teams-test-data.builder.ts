@@ -1,7 +1,7 @@
 import { Dictionary } from '@ngrx/entity';
-import { TeamMembersBuilder } from '../../team/model/builders/team-members.builder';
-import { TeamBuilder } from '../../team/model/builders/team.builder';
-import { Team } from '../../team/model/team.model';
+import { TeamMembersBuilder } from '../../model/builders/team-members.builder';
+import { TeamBuilder } from '../../model/builders/team.builder';
+import { Team } from '../../model/team.model';
 
 export class TeamsTestDataBuilder {
   private teams: Dictionary<Team>;

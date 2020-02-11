@@ -1,7 +1,7 @@
 import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
 import { Error } from '../../error/model/error.model';
+import { ErrorTestDataBuilder } from '../../error/utils/test/error-test-data.builder';
 import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
-import { ErrorTestDataBuilder } from '../../utils/tests/error-test-data.builder';
 import { userActions, userActionTypes } from './user.actions';
 
 describe('User Actions', () => {

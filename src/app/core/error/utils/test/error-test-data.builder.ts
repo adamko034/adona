@@ -1,4 +1,4 @@
-import { Error } from '../../error/model/error.model';
+import { Error } from '../../model/error.model';
 
 export class ErrorTestDataBuilder {
   private error: Error;

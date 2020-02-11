@@ -1,6 +1,6 @@
 import { Update } from '@ngrx/entity';
 import { CalendarView } from 'angular-calendar';
-import { ErrorTestDataBuilder } from 'src/app/core/utils/tests/error-test-data.builder';
+import { ErrorTestDataBuilder } from 'src/app/core/error/utils/test/error-test-data.builder';
 import {
   CalendarActionTypes,
   CalendarViewChangedAction,

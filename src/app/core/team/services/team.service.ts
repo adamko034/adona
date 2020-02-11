@@ -14,7 +14,7 @@ export class TeamService {
   private readonly usersCollectionName = 'users';
   constructor(private db: AngularFirestore, private timeService: TimeService) {}
 
-  public addTeam(request: NewTeamRequest, uid: string): Observable<Team> {
+  public addTeam(request: NewTeamRequest, uid: string): Observable<Team | any> {
     const teamToAdd: Team = TeamBuilder.from(this.db.createId(), request.created, request.createdBy, request.name)
       .withMembers(request.members)
       .build();
@@ -31,7 +31,12 @@ export class TeamService {
       })
     });
 
-    return from(batch.commit().then(() => teamToAdd));
+    return from(
+      batch.commit().then(
+        () => teamToAdd,
+        error => new Error(error)
+      )
+    );
   }
 
   public loadTeam(id: string): Observable<Team> {

@@ -1,8 +1,8 @@
+import { ErrorTestDataBuilder } from '../../error/utils/test/error-test-data.builder';
 import { TeamMembersBuilder } from '../../team/model/builders/team-members.builder';
 import { TeamBuilder } from '../../team/model/builders/team.builder';
 import { NewTeamRequest } from '../../team/model/new-team-request.model';
 import { Team } from '../../team/model/team.model';
-import { ErrorTestDataBuilder } from '../../utils/tests/error-test-data.builder';
 import { teamActions, teamActionTypes } from './team.actions';
 
 describe('Team Actions', () => {

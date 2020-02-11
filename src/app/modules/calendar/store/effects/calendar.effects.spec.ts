@@ -4,8 +4,8 @@ import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { errors } from 'src/app/core/error/constants/errors.constants';
+import { ErrorTestDataBuilder } from 'src/app/core/error/utils/test/error-test-data.builder';
 import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
-import { ErrorTestDataBuilder } from 'src/app/core/utils/tests/error-test-data.builder';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import {

@@ -1,6 +1,6 @@
 import { Dictionary } from '@ngrx/entity';
-import { TeamState } from '../../store/reducers/team/team.reducer';
-import { Team } from '../model/team.model';
+import { TeamState } from '../../../store/reducers/team/team.reducer';
+import { Team } from '../../model/team.model';
 
 export class TeamStateTestDataBuilder {
   private teamState: TeamState;

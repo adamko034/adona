@@ -5,7 +5,11 @@ import { User } from '../model/user.model';
 @Injectable({ providedIn: 'root' })
 export class UserUtilservice {
   public hasMultipleTeams(user: User): boolean {
-    return user && user.teams && user.teams.length > 1;
+    if (!user || !user.teams) {
+      return false;
+    }
+
+    return user.teams.length > 1;
   }
 
   public getSelectedTeam(user: User): UserTeam {

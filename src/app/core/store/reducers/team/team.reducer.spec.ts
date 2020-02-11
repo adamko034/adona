@@ -1,10 +1,10 @@
 import { TeamBuilder } from '../../../team/model/builders/team.builder';
-import { TeamStateTestDataBuilder } from '../../../team/utils/team-state-test-data.builder';
-import { TeamsTestDataBuilder } from '../../../utils/tests/teams-test-data.builder';
+import { TeamStateTestDataBuilder } from '../../../team/utils/test/team-state-test-data.builder';
+import { TeamsTestDataBuilder } from '../../../team/utils/test/teams-test-data.builder';
 import { teamActions } from '../../actions/team.actions';
 import { teamReducer, TeamState } from './team.reducer';
 
-fdescribe('Team Reducer', () => {
+describe('Team Reducer', () => {
   const emptyState: TeamState = TeamStateTestDataBuilder.from().build();
 
   describe('On New Team Create Success', () => {

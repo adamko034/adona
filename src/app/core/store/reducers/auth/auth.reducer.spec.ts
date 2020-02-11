@@ -6,7 +6,7 @@ import { authActions } from '../../actions/auth.actions';
 import { userActions } from '../../actions/user.actions';
 import { authInitialState, authReducer } from './auth.reducer';
 
-fdescribe('Auth Reducer', () => {
+describe('Auth Reducer', () => {
   let user: User;
 
   beforeAll(() => {

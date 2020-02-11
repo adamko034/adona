@@ -3,11 +3,11 @@ import { cold, hot } from 'jasmine-marbles';
 import { DefaultErrorMessageBuilder } from '../../error/builders/default-error-message.builder';
 import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
 import { Error } from '../../error/model/error.model';
+import { ErrorTestDataBuilder } from '../../error/utils/test/error-test-data.builder';
 import { ErrorOccuredAction } from '../../store/actions/error.actions';
-import { ErrorTestDataBuilder } from '../../utils/tests/error-test-data.builder';
 import { ErrorEffectService } from './error-effect.service';
 
-fdescribe('Error Effect Service', () => {
+describe('Error Effect Service', () => {
   let service: ErrorEffectService;
 
   beforeEach(() => {
