@@ -8,7 +8,7 @@ import { NewTeamRequest } from '../model/new-team-request.model';
 import { Team } from '../model/team.model';
 import { TeamService } from './team.service';
 
-fdescribe('Team Service', () => {
+describe('Team Service', () => {
   const { angularFirestore, timeService } = SpiesBuilder.init()
     .withAngularFirestore()
     .withTimeService()

@@ -8,7 +8,7 @@ import { errorQueries } from '../store/selectors/error.selectors';
 export class ErrorFacade {
   constructor(private store: Store<ErrorState>) {}
 
-  public getErrors(): Observable<string> {
+  public selectErrors(): Observable<string> {
     return this.store.pipe(select(errorQueries.selectErrorMessage));
   }
 }

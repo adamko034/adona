@@ -22,7 +22,7 @@ import { CalendarState } from './reducers/calendar.reducer';
 export class CalendarFacade {
   constructor(private store: Store<CalendarState>, private mapper: CalendarMapper) {}
 
-  public get events$(): Observable<CalendarEvent[]> {
+  public selectEvents(): Observable<CalendarEvent[]> {
     return this.store.pipe(
       select(calendarQueries.selectEvents),
       map((events: Event[]) => this.mapper.CalendarEvent.fromEvents(events)),
@@ -30,15 +30,15 @@ export class CalendarFacade {
     );
   }
 
-  public getView(): Observable<AdonaCalendarView> {
+  public selectView(): Observable<AdonaCalendarView> {
     return this.store.pipe(select(calendarQueries.selectView));
   }
 
-  public getViewDate(): Observable<Date> {
+  public selectViewDate(): Observable<Date> {
     return this.store.pipe(select(calendarQueries.selectViewDate));
   }
 
-  public getMonthsLoaded(): Observable<string[]> {
+  public selectMonthsLoaded(): Observable<string[]> {
     return this.store.pipe(select(calendarQueries.selectMonthsLoaded));
   }
 

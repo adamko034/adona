@@ -1,3 +1,4 @@
+import { UserTeamBuilder } from 'src/app/core/user/model/builders/user-team.builder';
 import { User } from 'src/app/core/user/model/user.model';
 import { UserTeam } from '../../../core/user/model/user-team.model';
 
@@ -16,18 +17,53 @@ export class UserTestBuilder {
     return new UserTestBuilder('1', 'test user');
   }
 
+  public withDefaultUserTeam(): UserTestBuilder {
+    if (!this.user.teams) {
+      this.user.teams = [];
+    }
+
+    this.user.teams.push(UserTeamBuilder.from('123', 'test team', new Date()).build());
+
+    return this;
+  }
+
+  public withDefaultUserTeams(): UserTestBuilder {
+    if (!this.user.teams) {
+      this.user.teams = [];
+    }
+
+    this.user.teams.push(UserTeamBuilder.from('123', 'test team', new Date()).build());
+    this.user.teams.push(UserTeamBuilder.from('124', 'test team 2', new Date()).build());
+
+    return this;
+  }
+
   public withUserTeam(userTeam: UserTeam): UserTestBuilder {
     if (!this.user.teams) {
       this.user.teams = [];
     }
 
-    this.user.teams.push(userTeam);
+    if (!!userTeam) {
+      this.user.teams.push(userTeam);
+    }
 
     return this;
   }
 
   public withSelectedTeamId(teamId: string) {
     this.user.selectedTeamId = teamId;
+    return this;
+  }
+
+  public withUserTeams(userTeams: UserTeam[]): UserTestBuilder {
+    if (!this.user.teams) {
+      this.user.teams = [];
+    }
+
+    if (!!userTeams) {
+      userTeams.forEach(team => this.user.teams.push(team));
+    }
+
     return this;
   }
 
@@ -38,7 +74,9 @@ export class UserTestBuilder {
   public buildFirebaseUser(): any {
     return {
       uid: this.user.id,
-      name: this.user.name
+      name: this.user.name,
+      teams: !!this.user.teams ? this.user.teams : undefined,
+      selectedTeamId: this.user.selectedTeamId
     };
   }
 }

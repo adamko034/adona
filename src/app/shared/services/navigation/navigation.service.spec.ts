@@ -24,7 +24,7 @@ describe('NavigationService', () => {
 
   it('should navigate to home page', () => {
     // given
-    const homeRoute = '/home/calendar';
+    const homeRoute = '/home';
 
     // when
     navigationService.toHome();

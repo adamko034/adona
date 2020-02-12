@@ -59,7 +59,7 @@ export class UserService {
     }
 
     return UserBuilder.from(uid, firebaseUser.name)
-      .withSelectedTeamId(firebaseUser.selectedTeamId)
+      .withSelectedTeamId(!!firebaseUser.selectedTeamId ? firebaseUser.selectedTeamId : null)
       .withTeams(teams)
       .build();
   }

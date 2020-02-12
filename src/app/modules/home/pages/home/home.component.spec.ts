@@ -1,25 +1,44 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { of, Subject } from 'rxjs';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { HomeComponent } from './home.component';
 
-describe('HomeComponent', () => {
+fdescribe('Home Component', () => {
   let component: HomeComponent;
-  let fixture: ComponentFixture<HomeComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ HomeComponent ]
-    })
-    .compileComponents();
-  }));
+  const { userFacade, teamFacade } = SpiesBuilder.init()
+    .withUserFacade()
+    .withTeamFacade()
+    .build();
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HomeComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    component = new HomeComponent(userFacade, teamFacade);
+
+    teamFacade.selectSelectedTeam.and.returnValue(of(null));
+    userFacade.selectUser.and.returnValue(of(null));
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  describe('On Init', () => {
+    it('should load selected team and subscribe for both: team and user', () => {
+      component.ngOnInit();
+
+      expect(teamFacade.loadSelectedTeam).toHaveBeenCalledTimes(1);
+      expect(userFacade.selectUser).toHaveBeenCalledTimes(1);
+      expect(teamFacade.selectSelectedTeam).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('On Destroy', () => {
+    it('should unsubscribe all subscriptions', () => {
+      (component as any).userSubscription = new Subject();
+      (component as any).teamSubscription = new Subject();
+
+      const userSubscriptionSpy = spyOn((component as any).userSubscription, 'unsubscribe');
+      const teamSubscriptionSpy = spyOn((component as any).teamSubscription, 'unsubscribe');
+
+      component.ngOnDestroy();
+
+      expect(userSubscriptionSpy).toHaveBeenCalledTimes(1);
+      expect(teamSubscriptionSpy).toHaveBeenCalledTimes(1);
+    });
   });
 });

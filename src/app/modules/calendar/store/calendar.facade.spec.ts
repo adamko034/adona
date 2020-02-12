@@ -104,14 +104,14 @@ describe('Calendar Facade', () => {
       const expected = hot('b', { b: months });
 
       // when
-      const result = facade.getMonthsLoaded();
+      const result = facade.selectMonthsLoaded();
 
       // then
       expect(result).toBeObservable(expected);
     });
   });
 
-  describe('Events$ property', () => {
+  describe('Select Events', () => {
     it('should return events', () => {
       // given
       const events = new EventsTestDataBuilder()
@@ -123,7 +123,7 @@ describe('Calendar Facade', () => {
       const expected = hot('b', { b: toCalendarEvents(events) });
 
       // when
-      const result = facade.events$;
+      const result = facade.selectEvents();
 
       // then
       expect(result).toBeObservable(expected);
@@ -169,7 +169,7 @@ describe('Calendar Facade', () => {
       const expected = hot('b', { b: view });
 
       // when
-      const result = facade.getView();
+      const result = facade.selectView();
 
       // then
       expect(result).toBeObservable(expected);
@@ -184,7 +184,7 @@ describe('Calendar Facade', () => {
       const expected = hot('b', { b: newDate });
 
       // when
-      const result = facade.getViewDate();
+      const result = facade.selectViewDate();
 
       // then
       expect(result).toBeObservable(expected);

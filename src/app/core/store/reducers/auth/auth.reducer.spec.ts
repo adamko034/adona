@@ -83,7 +83,7 @@ describe('Auth Reducer', () => {
 
   describe('On Change Team Success', () => {
     it('should change user Selected Team Id and change selected team last updated', () => {
-      const yesterday = DateTestBuilder.today()
+      const yesterday = DateTestBuilder.now()
         .addDays(-1)
         .build();
       const userTeam = UserTeamBuilder.from('321', 'test team 1', new Date()).build();

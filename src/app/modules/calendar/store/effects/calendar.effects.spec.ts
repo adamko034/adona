@@ -26,31 +26,23 @@ import {
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
 import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
-import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 
 describe('Calendar Effects', () => {
   let actions$: Observable<Action>;
   let effects: CalendarEffects;
   let events: Event[];
-  let calendarService: jasmine.SpyObj<CalendarService>;
-  let calendarFacade: jasmine.SpyObj<CalendarFacade>;
+
+  const { calendarService, timeService, calendarFacade } = SpiesBuilder.init()
+    .withCalendarFacade()
+    .withTimeService()
+    .withCalendarService()
+    .build();
 
   let monthsLoaded$;
 
-  const timeService = {
-    Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', ['getYearMonthString'])
-  };
-
   beforeEach(() => {
-    calendarService = jasmine.createSpyObj<CalendarService>('CalendarService', [
-      'getMonthEvents',
-      'addEvent',
-      'updateEvent',
-      'deleteEvent'
-    ]);
-    calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', ['getMonthsLoaded']);
-
     TestBed.configureTestingModule({
       providers: [
         CalendarEffects,
@@ -71,7 +63,7 @@ describe('Calendar Effects', () => {
 
     calendarService.getMonthEvents.and.callFake(() => of(events));
     timeService.Extraction.getYearMonthString.and.returnValue('201901');
-    calendarFacade.getMonthsLoaded.and.returnValue(monthsLoaded$.asObservable());
+    calendarFacade.selectMonthsLoaded.and.returnValue(monthsLoaded$.asObservable());
 
     effects = TestBed.get<CalendarEffects>(CalendarEffects);
     events = new EventsTestDataBuilder()

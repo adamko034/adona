@@ -38,9 +38,9 @@ export class CalendarComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit() {
-    this.viewSubscription = this.facade.getView().subscribe((view: AdonaCalendarView) => (this.view = view));
-    this.viewDateSubsciption = this.facade.getViewDate().subscribe((viewDate: Date) => (this.viewDate = viewDate));
-    this.events$ = this.facade.events$;
+    this.viewSubscription = this.facade.selectView().subscribe((view: AdonaCalendarView) => (this.view = view));
+    this.viewDateSubsciption = this.facade.selectViewDate().subscribe((viewDate: Date) => (this.viewDate = viewDate));
+    this.events$ = this.facade.selectEvents();
 
     this.userFacade.selectUser().subscribe(user => {
       if (user) {

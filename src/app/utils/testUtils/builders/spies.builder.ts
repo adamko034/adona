@@ -1,10 +1,15 @@
 import { AngularFirestoreCollection } from '@angular/fire/firestore';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
+import { ErrorFacade } from 'src/app/core/error/error.facade';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
+import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { UserService } from 'src/app/core/user/services/user.service';
+import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
+import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { ExpensesService } from 'src/app/modules/expenses/services/expenses.service';
 import { ExpensesFacade } from 'src/app/modules/expenses/store/expenses.facade';
+import { DialogService } from 'src/app/shared/services/dialogs/dialog.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
 import { DayHoursService } from 'src/app/shared/services/time/parts/day-hours.service';
 import { HourQuartersService } from 'src/app/shared/services/time/parts/hour-quarters.service';
@@ -31,6 +36,11 @@ export interface Spies {
   teamService?: jasmine.SpyObj<TeamService>;
   errorEffectService?: jasmine.SpyObj<ErrorEffectService>;
   angularFirestore?: jasmine.SpyObj<any>;
+  calendarFacade?: jasmine.SpyObj<CalendarFacade>;
+  dialogService?: jasmine.SpyObj<DialogService>;
+  calendarService?: jasmine.SpyObj<CalendarService>;
+  errorFacade?: jasmine.SpyObj<ErrorFacade>;
+  userUtilsService?: jasmine.SpyObj<UserUtilservice>;
 }
 
 export class SpiesBuilder {
@@ -152,7 +162,7 @@ export class SpiesBuilder {
     this.spies.angularFirestore = {
       createId: jasmine.createSpy(),
       collection: jasmine.createSpy('collection').and.returnValue({
-        doc: jasmine.createSpy('doc').and.returnValue(jasmine.createSpyObj('doc', ['valueChanges']))
+        doc: jasmine.createSpy('doc').and.returnValue(jasmine.createSpyObj('doc', ['valueChanges', 'update']))
       }),
       firestore: {
         batch: jasmine.createSpy('batch').and.returnValue(
@@ -165,6 +175,53 @@ export class SpiesBuilder {
       }
     };
 
+    return this;
+  }
+
+  public withCalendarFacade(): SpiesBuilder {
+    this.spies.calendarFacade = jasmine.createSpyObj<CalendarFacade>('calendarFacade', [
+      'selectEvents',
+      'selectView',
+      'selectViewDate',
+      'selectMonthsLoaded',
+      'addEvent',
+      'updateEvent',
+      'loadMonthEvents',
+      'deleteEvent',
+      'changeViewDate',
+      'changeView'
+    ]);
+
+    return this;
+  }
+
+  public withDialogService(): SpiesBuilder {
+    this.spies.dialogService = jasmine.createSpyObj<DialogService>('dialogService', ['open']);
+    return this;
+  }
+
+  public withCalendarService(): SpiesBuilder {
+    this.spies.calendarService = jasmine.createSpyObj<CalendarService>('calendarService', [
+      'addEvent',
+      'updateEvent',
+      'deleteEvent',
+      'getMonthEvents'
+    ]);
+
+    return this;
+  }
+
+  public withErrorFacade(): SpiesBuilder {
+    this.spies.errorFacade = jasmine.createSpyObj<ErrorFacade>('errorFacade', ['selectErrors']);
+
+    return this;
+  }
+
+  public withUserUtilsService(): SpiesBuilder {
+    this.spies.userUtilsService = jasmine.createSpyObj<UserUtilservice>('userUtilsService', [
+      'getSelectedTeam',
+      'hasMultipleTeams'
+    ]);
     return this;
   }
 

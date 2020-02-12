@@ -32,7 +32,7 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
 
   public ngOnInit() {
     this.monthsLoadedSubscription = this.calendarFacade
-      .getMonthsLoaded()
+      .selectMonthsLoaded()
       .pipe(filter((monthsLoaded: string[]) => monthsLoaded.length !== 0))
       .subscribe((monthsLoaded: string[]) => {
         monthsLoaded = [...monthsLoaded].sort();

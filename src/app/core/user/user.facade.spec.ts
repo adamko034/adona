@@ -9,7 +9,7 @@ import { userQueries } from '../store/selectors/user.selectors';
 import { ChangeTeamRequest } from '../team/model/change-team-request.model';
 import { UserFacade } from './user.facade';
 
-fdescribe('User Facade', () => {
+describe('User Facade', () => {
   let store: MockStore<AuthState>;
   let facade: UserFacade;
   let dispatchSpy;

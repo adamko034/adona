@@ -3,7 +3,7 @@ import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { UserLoadedGuard } from './user-loaded.guard';
 
-fdescribe('User Loaded Guard', () => {
+describe('User Loaded Guard', () => {
   it('should return true only when user is present', () => {
     const { userFacade } = SpiesBuilder.init()
       .withUserFacade()

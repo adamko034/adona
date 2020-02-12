@@ -2,7 +2,7 @@ import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-buil
 import { UserTeamBuilder } from '../model/builders/user-team.builder';
 import { UserUtilservice } from './user-utils.service';
 
-fdescribe('User Utils Service', () => {
+describe('User Utils Service', () => {
   const user = UserTestBuilder.withDefaultData().build();
   let service: UserUtilservice;
 

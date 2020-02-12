@@ -8,7 +8,23 @@ import { errors } from 'src/app/core/error/constants/errors.constants';
 import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
-import { CalendarActions, CalendarActionTypes, CalendarViewDateChangedAction, EventCreationErrorAction, EventDeleteErrorAction, EventDeleteRequestedAction, EventDeleteSuccessAction, EventsLoadedAction, EventsLoadedErrorAction, EventUpdatedAction, EventUpdateErrorAction, MonthEventsRequestedAction, NewEventAddedAction, NewEventRequestedAction, UpdateEventRequestedAction } from 'src/app/modules/calendar/store/actions/calendar.actions';
+import {
+  CalendarActions,
+  CalendarActionTypes,
+  CalendarViewDateChangedAction,
+  EventCreationErrorAction,
+  EventDeleteErrorAction,
+  EventDeleteRequestedAction,
+  EventDeleteSuccessAction,
+  EventsLoadedAction,
+  EventsLoadedErrorAction,
+  EventUpdatedAction,
+  EventUpdateErrorAction,
+  MonthEventsRequestedAction,
+  NewEventAddedAction,
+  NewEventRequestedAction,
+  UpdateEventRequestedAction
+} from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { Error } from '../../../../core/error/model/error.model';
 import { CalendarFacade } from '../calendar.facade';
@@ -26,7 +42,7 @@ export class CalendarEffects {
   public monthEventsRequested$: Observable<Action> = this.actions$.pipe(
     ofType<CalendarActions>(CalendarActionTypes.MonthEventsRequested),
     map((action: MonthEventsRequestedAction) => action.payload.date),
-    withLatestFrom(this.calendarFacade.getMonthsLoaded()),
+    withLatestFrom(this.calendarFacade.selectMonthsLoaded()),
     filter(([date, monthsLoaded]) => {
       const monthYear = this.timeService.Extraction.getYearMonthString(date);
       return monthsLoaded.findIndex(x => x === monthYear) < 0;
