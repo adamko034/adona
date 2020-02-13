@@ -1,4 +1,4 @@
-import { createReducer, on } from '@ngrx/store';
+import { Action, createReducer, on } from '@ngrx/store';
 import { User } from 'src/app/core/user/model/user.model';
 import { UserTeamBuilder } from '../../../user/model/builders/user-team.builder';
 import { authActions } from '../../actions/auth.actions';
@@ -14,7 +14,7 @@ export const authInitialState: AuthState = {
   loginFailed: false
 };
 
-export const authReducer = createReducer(
+const authReducer = createReducer(
   authInitialState,
   on(authActions.loginSuccess, (state, action) => ({
     ...state,
@@ -58,3 +58,7 @@ export const authReducer = createReducer(
     };
   })
 );
+
+export function reducer(state: AuthState | undefined, action: Action) {
+  return authReducer(state, action);
+}
