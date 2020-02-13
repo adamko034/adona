@@ -2,7 +2,7 @@ import { of, Subject } from 'rxjs';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { HomeComponent } from './home.component';
 
-fdescribe('Home Component', () => {
+describe('Home Component', () => {
   let component: HomeComponent;
 
   const { userFacade, teamFacade } = SpiesBuilder.init()

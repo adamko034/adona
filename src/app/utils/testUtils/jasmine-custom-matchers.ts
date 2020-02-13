@@ -1,6 +1,6 @@
 export class JasmineCustomMatchers {
-  public static toHaveBeenCalledTimesWith(spy: any, times: number, params: any) {
+  public static toHaveBeenCalledTimesWith(spy: any, times: number, ...params: any[]) {
     expect(spy).toHaveBeenCalledTimes(times);
-    expect(spy).toHaveBeenCalledWith(params);
+    expect(spy).toHaveBeenCalledWith(...params);
   }
 }

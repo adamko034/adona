@@ -1,6 +1,7 @@
 import { UserTeamBuilder } from 'src/app/core/user/model/builders/user-team.builder';
 import { User } from 'src/app/core/user/model/user.model';
 import { UserTeam } from '../../../core/user/model/user-team.model';
+import { DateTestBuilder } from './date-test.builder';
 
 export class UserTestBuilder {
   private user: User;
@@ -27,13 +28,21 @@ export class UserTestBuilder {
     return this;
   }
 
-  public withDefaultUserTeams(): UserTestBuilder {
+  public withDefaultUserTeams(count: number): UserTestBuilder {
     if (!this.user.teams) {
       this.user.teams = [];
     }
 
-    this.user.teams.push(UserTeamBuilder.from('123', 'test team', new Date()).build());
-    this.user.teams.push(UserTeamBuilder.from('124', 'test team 2', new Date()).build());
+    for (let i = 1; i <= count; i++) {
+      const userTeam = UserTeamBuilder.from(
+        `123${i}`,
+        `test team loop ${i}`,
+        DateTestBuilder.now()
+          .addDays(i * -1)
+          .build()
+      ).build();
+      this.user.teams.push(userTeam);
+    }
 
     return this;
   }

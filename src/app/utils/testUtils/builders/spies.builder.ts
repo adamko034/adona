@@ -1,4 +1,5 @@
 import { AngularFirestoreCollection } from '@angular/fire/firestore';
+import { MatDialogRef } from '@angular/material';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
@@ -41,6 +42,7 @@ export interface Spies {
   calendarService?: jasmine.SpyObj<CalendarService>;
   errorFacade?: jasmine.SpyObj<ErrorFacade>;
   userUtilsService?: jasmine.SpyObj<UserUtilservice>;
+  matDialogRef?: jasmine.SpyObj<MatDialogRef<any>>;
 }
 
 export class SpiesBuilder {
@@ -98,7 +100,12 @@ export class SpiesBuilder {
   }
 
   public withUserFacade(): SpiesBuilder {
-    this.spies.userFacade = jasmine.createSpyObj<UserFacade>('userFacade', ['loadUser', 'selectUser', 'selectUserId']);
+    this.spies.userFacade = jasmine.createSpyObj<UserFacade>('userFacade', [
+      'loadUser',
+      'selectUser',
+      'selectUserId',
+      'changeTeam'
+    ]);
     return this;
   }
 
@@ -222,6 +229,12 @@ export class SpiesBuilder {
       'getSelectedTeam',
       'hasMultipleTeams'
     ]);
+    return this;
+  }
+
+  public withMatDialogRef(): SpiesBuilder {
+    this.spies.matDialogRef = jasmine.createSpyObj('matDialogRef', ['close']);
+
     return this;
   }
 

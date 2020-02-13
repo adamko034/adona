@@ -5,5 +5,10 @@
     "types": []
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["src/test.ts", "src/**/*.spec.ts", "src/app/utils/testUtils/builders/spies.builder.ts"]
+  "exclude": [
+    "src/test.ts",
+    "src/**/*.spec.ts",
+    "src/app/utils/testUtils/builders/spies.builder.ts",
+    "src/app/utils/testUtils/jasmine-custom-matchers.ts"
+  ]
 }
