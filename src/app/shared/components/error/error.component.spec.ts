@@ -1,17 +1,20 @@
 import { of } from 'rxjs';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { ErrorComponent, ErrorContentComponent } from './error.component';
 
 describe('Error Component', () => {
   let component: ErrorComponent;
-  const errorFacade = jasmine.createSpyObj('ErrorFacade', ['getErrors']);
+  const { errorFacade } = SpiesBuilder.init()
+    .withErrorFacade()
+    .build();
   const snackBar = jasmine.createSpyObj('SnackBar', ['openFromComponent']);
 
   beforeEach(() => {
     component = new ErrorComponent(errorFacade, snackBar);
 
-    errorFacade.getErrors.and.callFake(() => of('This is new error'));
+    errorFacade.selectErrors.and.callFake(() => of('This is new error'));
 
-    errorFacade.getErrors.calls.reset();
+    errorFacade.selectErrors.calls.reset();
     snackBar.openFromComponent.calls.reset();
   });
 
@@ -25,7 +28,7 @@ describe('Error Component', () => {
       component.ngOnInit();
 
       // then
-      expect(errorFacade.getErrors).toHaveBeenCalledTimes(1);
+      expect(errorFacade.selectErrors).toHaveBeenCalledTimes(1);
     });
 
     it('should open snack bar if new error occurs', () => {
@@ -38,13 +41,14 @@ describe('Error Component', () => {
         duration: 5 * 1000,
         data: {
           message: 'This is new error'
-        }
+        },
+        verticalPosition: 'top'
       });
     });
 
     it('should not open snack bar if message is null', () => {
       // given
-      errorFacade.getErrors.and.returnValue(of(null));
+      errorFacade.selectErrors.and.returnValue(of(null));
 
       // when
       component.ngOnInit();

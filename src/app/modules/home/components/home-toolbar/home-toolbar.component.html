@@ -1,0 +1,28 @@
+<app-toolbar>
+  <div>
+    <button
+      class="toolbar-button"
+      mat-icon-button
+      [disableRipple]="true"
+      onclick="this.blur()"
+      (click)="openNewTeamDialog()"
+    >
+      <mat-icon>add</mat-icon>
+      <span fxHide.lt-sm>New Team</span>
+    </button>
+  </div>
+  <div *ngIf="userHasMultipleTeams()">
+    <button
+      class="toolbar-button"
+      mat-icon-button
+      [disableRipple]="true"
+      onclick="this.blur()"
+      (click)="openChangeTeamDialog()"
+    >
+      <mat-icon>
+        sync_alt
+      </mat-icon>
+      <span fxHide.lt-sm>Change Team</span>
+    </button>
+  </div>
+</app-toolbar>

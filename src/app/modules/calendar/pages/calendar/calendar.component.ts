@@ -2,12 +2,16 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { Observable, Subscription } from 'rxjs';
+import { UserFacade } from 'src/app/core/user/user.facade';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
 import { TimeService } from 'src/app/shared/services/time/time.service';
+import { User } from '../../../../core/user/model/user.model';
 import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
-import { DialogResult } from '../../../../shared/models/dialog-result.model';
+import { DialogProperties } from '../../../../shared/services/dialogs/dialog-properties.model';
+import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
+import { DialogService } from '../../../../shared/services/dialogs/dialog.service';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
-import { CalendarEventDialogService } from '../../service/calendar-event-dialog.service';
+import { Event } from '../../model/event.model';
 import { CalendarFacade } from '../../store/calendar.facade';
 
 @Component({
@@ -23,23 +27,29 @@ export class CalendarComponent implements OnInit, OnDestroy {
   public view: AdonaCalendarView = { isList: false, calendarView: CalendarView.Month };
   public viewDate = new Date();
   public events$: Observable<CalendarEvent[]>;
+  public user$: Observable<User>;
 
   constructor(
     private facade: CalendarFacade,
     private timeService: TimeService,
     private deviceService: DeviceDetectorService,
-    private dialogService: CalendarEventDialogService
+    private dialogService: DialogService,
+    private userFacade: UserFacade
   ) {}
 
   public ngOnInit() {
-    this.viewSubscription = this.facade.getView().subscribe((view: AdonaCalendarView) => (this.view = view));
-    this.viewDateSubsciption = this.facade.getViewDate().subscribe((viewDate: Date) => (this.viewDate = viewDate));
-    this.events$ = this.facade.events$;
+    this.viewSubscription = this.facade.selectView().subscribe((view: AdonaCalendarView) => (this.view = view));
+    this.viewDateSubsciption = this.facade.selectViewDate().subscribe((viewDate: Date) => (this.viewDate = viewDate));
+    this.events$ = this.facade.selectEvents();
 
-    this.facade.changeView({ isList: this.deviceService.isMobile(), calendarView: this.view.calendarView });
-    this.facade.loadMonthEvents(this.viewDate);
-    this.facade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate));
-    this.facade.loadMonthEvents(this.timeService.Extraction.getNextMonthOf(this.viewDate));
+    this.userFacade.selectUser().subscribe(user => {
+      if (user) {
+        this.facade.changeView({ isList: this.deviceService.isMobile(), calendarView: this.view.calendarView });
+        this.facade.loadMonthEvents(this.viewDate);
+        this.facade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate));
+        this.facade.loadMonthEvents(this.timeService.Extraction.getNextMonthOf(this.viewDate));
+      }
+    });
   }
 
   public ngOnDestroy() {
@@ -57,10 +67,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
   }
 
   public onEventClicked(event?: CalendarEvent) {
-    const props = { width: '400px', data: { event } };
+    const props: DialogProperties<CalendarEvent> = { data: event };
     this.dialogResultSubscription = this.dialogService
-      .open(NewEventDialogComponent, props)
-      .subscribe((result: DialogResult) => {
+      .open<CalendarEvent>(NewEventDialogComponent, props)
+      .subscribe((result: DialogResult<Event>) => {
         if (result && result.payload) {
           switch (result.action) {
             case DialogAction.SaveAdd:

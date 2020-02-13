@@ -1,54 +1,43 @@
 import { CalendarView } from 'angular-calendar';
-import { DeviceDetectorService } from 'ngx-device-detector';
 import { of, Subject } from 'rxjs';
-import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
-import { DialogResult } from '../../../../shared/models/dialog-result.model';
-import { TimeComparisonService } from '../../../../shared/services/time/parts/time-comparison.service';
+import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
-import { CalendarEventDialogService } from '../../service/calendar-event-dialog.service';
-import { CalendarFacade } from '../../store/calendar.facade';
+import { Event } from '../../model/event.model';
 import { DialogResultTestDataBuilder } from '../../utils/tests/dialog-result-test-data.builder';
 import { EventsTestDataBuilder } from '../../utils/tests/event-test-data.builder';
 import { CalendarComponent } from './calendar.component';
 
 describe('CalendarComponent', () => {
+  const user = UserTestBuilder.withDefaultData().build();
   let component: CalendarComponent;
-  const calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', [
-    'loadMonthEvents',
-    'addEvent',
-    'updateEvent',
-    'deleteEvent',
-    'getView',
-    'getViewDate',
-    'changeView'
-  ]);
-  const dialogService = jasmine.createSpyObj<CalendarEventDialogService>('DialogService', ['open']);
-  const deviceService = jasmine.createSpyObj<DeviceDetectorService>('DeviceService', ['isMobile']);
-  const timeService: any = {
-    Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', [
-      'getPreviousMonthOf',
-      'getNextMonthOf',
-      'getStartOfWeek',
-      'getEndOfWeek'
-    ]),
-    Comparison: jasmine.createSpyObj<TimeComparisonService>('TimeComparisonService', ['areDatesInTheSameMonth'])
-  };
+
+  const { calendarFacade, dialogService, deviceDetectorService, timeService, userFacade } = SpiesBuilder.init()
+    .withDeviceDetectorService()
+    .withTimeService()
+    .withCalendarFacade()
+    .withDialogService()
+    .withUserFacade()
+    .build();
 
   beforeEach(() => {
-    component = new CalendarComponent(calendarFacade, timeService, deviceService, dialogService);
+    component = new CalendarComponent(calendarFacade, timeService, deviceDetectorService, dialogService, userFacade);
 
     calendarFacade.loadMonthEvents.calls.reset();
     calendarFacade.addEvent.calls.reset();
     calendarFacade.updateEvent.calls.reset();
     calendarFacade.deleteEvent.calls.reset();
-    calendarFacade.getView.calls.reset();
-    calendarFacade.getViewDate.calls.reset();
+    calendarFacade.selectView.calls.reset();
+    calendarFacade.selectViewDate.calls.reset();
     calendarFacade.changeView.calls.reset();
     dialogService.open.calls.reset();
 
-    calendarFacade.getView.and.returnValue(of({ isList: false, calendarView: CalendarView.Month }));
-    calendarFacade.getViewDate.and.returnValue(of(new Date()));
+    calendarFacade.selectView.and.returnValue(of({ isList: false, calendarView: CalendarView.Month }));
+    calendarFacade.selectViewDate.and.returnValue(of(new Date()));
+
+    userFacade.selectUser.and.returnValue(of(user));
   });
 
   describe('On Init', () => {
@@ -59,7 +48,7 @@ describe('CalendarComponent', () => {
       const nextMonth = new Date(2019, 11, 10);
 
       component.viewDate = viewDate;
-      calendarFacade.getViewDate.and.returnValue(of(viewDate));
+      calendarFacade.selectViewDate.and.returnValue(of(viewDate));
       timeService.Extraction.getPreviousMonthOf.and.returnValue(previousMonth);
       timeService.Extraction.getNextMonthOf.and.returnValue(nextMonth);
 
@@ -67,8 +56,8 @@ describe('CalendarComponent', () => {
       component.ngOnInit();
 
       // then
-      expect(calendarFacade.getView).toHaveBeenCalledTimes(1);
-      expect(calendarFacade.getViewDate).toHaveBeenCalledTimes(1);
+      expect(calendarFacade.selectView).toHaveBeenCalledTimes(1);
+      expect(calendarFacade.selectViewDate).toHaveBeenCalledTimes(1);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(3);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(viewDate);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(previousMonth);
@@ -76,7 +65,7 @@ describe('CalendarComponent', () => {
 
     it('should default to month view on non mobile device', () => {
       // given
-      deviceService.isMobile.and.returnValue(false);
+      deviceDetectorService.isMobile.and.returnValue(false);
 
       // when
       component.ngOnInit();
@@ -88,7 +77,7 @@ describe('CalendarComponent', () => {
 
     it('should default to list view on mobile device', () => {
       // given
-      deviceService.isMobile.and.returnValue(true);
+      deviceDetectorService.isMobile.and.returnValue(true);
 
       // when
       component.ngOnInit();
@@ -180,7 +169,7 @@ describe('CalendarComponent', () => {
     it('should open dialog and add new event', () => {
       // given
       const newEvent = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const dialogResult: DialogResult = DialogResultTestDataBuilder.init()
+      const dialogResult: DialogResult<Event> = DialogResultTestDataBuilder.init()
         .withAction(DialogAction.SaveAdd)
         .withPayload(newEvent)
         .build();
@@ -193,8 +182,7 @@ describe('CalendarComponent', () => {
       // then
       expect(dialogService.open).toHaveBeenCalledTimes(1);
       expect(dialogService.open).toHaveBeenCalledWith(NewEventDialogComponent, {
-        width: '400px',
-        data: { event: undefined }
+        data: undefined
       });
       expect(calendarFacade.addEvent).toHaveBeenCalledTimes(1);
       expect(calendarFacade.updateEvent).toHaveBeenCalledTimes(0);
@@ -217,8 +205,7 @@ describe('CalendarComponent', () => {
       // then
       expect(dialogService.open).toHaveBeenCalledTimes(1);
       expect(dialogService.open).toHaveBeenCalledWith(NewEventDialogComponent, {
-        width: '400px',
-        data: { event: undefined }
+        data: undefined
       });
       expect(calendarFacade.addEvent).not.toHaveBeenCalled();
       expect(calendarFacade.updateEvent).not.toHaveBeenCalled();
@@ -229,7 +216,7 @@ describe('CalendarComponent', () => {
       // given
       const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
       const updatedEvent = { ...event, title: 'new updated title' };
-      const dialogResult: DialogResult = DialogResultTestDataBuilder.init()
+      const dialogResult: DialogResult<Event> = DialogResultTestDataBuilder.init()
         .withAction(DialogAction.SaveUpdate)
         .withPayload(updatedEvent)
         .build();
@@ -242,8 +229,7 @@ describe('CalendarComponent', () => {
       // then
       expect(dialogService.open).toHaveBeenCalledTimes(1);
       expect(dialogService.open).toHaveBeenCalledWith(NewEventDialogComponent, {
-        width: '400px',
-        data: { event }
+        data: event
       });
       expect(calendarFacade.addEvent).toHaveBeenCalledTimes(0);
       expect(calendarFacade.updateEvent).toHaveBeenCalledTimes(1);
@@ -254,7 +240,7 @@ describe('CalendarComponent', () => {
     it('should open dialog to edit mode and delete event', () => {
       // given
       const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const dialogResult: DialogResult = DialogResultTestDataBuilder.init()
+      const dialogResult: DialogResult<Event> = DialogResultTestDataBuilder.init()
         .withAction(DialogAction.Delete)
         .withPayload(event)
         .build();
@@ -267,8 +253,7 @@ describe('CalendarComponent', () => {
       // then
       expect(dialogService.open).toHaveBeenCalledTimes(1);
       expect(dialogService.open).toHaveBeenCalledWith(NewEventDialogComponent, {
-        width: '400px',
-        data: { event }
+        data: event
       });
       expect(calendarFacade.addEvent).toHaveBeenCalledTimes(0);
       expect(calendarFacade.updateEvent).toHaveBeenCalledTimes(0);

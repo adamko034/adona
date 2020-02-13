@@ -3,11 +3,11 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of } from 'rxjs';
+import { errors } from 'src/app/core/error/constants/errors.constants';
+import { ErrorTestDataBuilder } from 'src/app/core/error/utils/test/error-test-data.builder';
 import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
-import { ErrorTestDataBuilder } from 'src/app/core/utils/tests/error-test-data.builder';
-import { errors } from 'src/app/shared/constants/errors.constants';
+import { UserFacade } from 'src/app/core/user/user.facade';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
-import { AuthFacade } from '../../../../core/auth/auth.facade';
 import { UserTestBuilder } from '../../../../utils/testUtils/builders/user-test-builder';
 import { ExpensesService } from '../../services/expenses.service';
 import { ExpensesGroupTestBuilder } from '../../utils/tests/expenses-group-test.builder';
@@ -18,13 +18,13 @@ describe('Expenses Effects', () => {
   let actions$: Observable<Action>;
   let effects: ExpensesEffects;
 
-  const user = new UserTestBuilder().withDefaultData().build();
+  const user = UserTestBuilder.withDefaultData().build();
   const expense = ExpensesGroupTestBuilder.default()
     .withUsers([user])
     .build();
 
-  const { authFacade, expensesService } = SpiesBuilder.init()
-    .withAuthFacade()
+  const { userFacade, expensesService } = SpiesBuilder.init()
+    .withUserFacade()
     .withExpensesService()
     .build();
 
@@ -32,7 +32,7 @@ describe('Expenses Effects', () => {
     TestBed.configureTestingModule({
       providers: [
         ExpensesEffects,
-        { provide: AuthFacade, useValue: authFacade },
+        { provide: UserFacade, useValue: userFacade },
         { provide: ExpensesService, useValue: expensesService },
         provideMockActions(() => actions$)
       ]
@@ -40,10 +40,10 @@ describe('Expenses Effects', () => {
 
     effects = TestBed.get<ExpensesEffects>(ExpensesEffects);
 
-    authFacade.getUser.and.callFake(() => of(user));
+    userFacade.selectUser.and.callFake(() => of(user));
     expensesService.getExpenses.and.returnValue(of([expense]));
 
-    authFacade.getUser.calls.reset();
+    userFacade.selectUser.calls.reset();
     expensesService.getExpenses.calls.reset();
   });
 
@@ -55,7 +55,7 @@ describe('Expenses Effects', () => {
 
       // when & then
       expect(effects.expensesRequested$).toBeObservable(expected);
-      expect(authFacade.getUser).toHaveBeenCalledTimes(1);
+      expect(userFacade.selectUser).toHaveBeenCalledTimes(1);
       expect(expensesService.getExpenses).toHaveBeenCalledTimes(1);
       expect(expensesService.getExpenses).toHaveBeenCalledWith(user.id);
     });
@@ -72,7 +72,7 @@ describe('Expenses Effects', () => {
 
       // when & then
       expect(effects.expensesRequested$).toBeObservable(expected);
-      expect(authFacade.getUser).toHaveBeenCalledTimes(1);
+      expect(userFacade.selectUser).toHaveBeenCalledTimes(1);
       expect(expensesService.getExpenses).toHaveBeenCalledTimes(1);
       expect(expensesService.getExpenses).toHaveBeenCalledWith(user.id);
     });
@@ -81,7 +81,9 @@ describe('Expenses Effects', () => {
   describe('Expenses Loaded Error', () => {
     it('should map to Error Occured Action with custom message', () => {
       // given
-      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      const error = ErrorTestDataBuilder.from()
+        .withDefaultData()
+        .build();
       actions$ = hot('--a', { a: expensesActions.expensesLoadFailure({ error }) });
 
       const expected = cold('--b', { b: new ErrorOccuredAction({ error }) });
@@ -92,7 +94,7 @@ describe('Expenses Effects', () => {
 
     it('should map to Error Occured Action with default message', () => {
       // given
-      const errorSource = new ErrorTestDataBuilder()
+      const errorSource = ErrorTestDataBuilder.from()
         .withDefaultData()
         .withMessage(null)
         .build();

@@ -1,0 +1,11 @@
+<app-home-toolbar [user]="user"></app-home-toolbar>
+
+<p *ngIf="team">selected team {{ team.name }}</p>
+<div *ngIf="team">
+  <span>members:</span>
+  <ul>
+    <li *ngFor="let member of team.members | keyvalue">
+      {{ member.key }}
+    </li>
+  </ul>
+</div>

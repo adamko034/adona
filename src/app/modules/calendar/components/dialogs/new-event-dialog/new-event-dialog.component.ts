@@ -5,7 +5,8 @@ import { CalendarEvent } from 'calendar-utils';
 import { FromToDates } from 'src/app/shared/components/from-to-dates/model/from-to-dates.model';
 import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.validator';
 import { DialogAction } from '../../../../../shared/enum/dialog-action.enum';
-import { DialogResult } from '../../../../../shared/models/dialog-result.model';
+import { DialogResult } from '../../../../../shared/services/dialogs/dialog-result.model';
+import { Event } from '../../../model/event.model';
 
 @Component({
   selector: 'app-new-event-dialog',
@@ -45,18 +46,18 @@ export class NewEventDialogComponent {
   public save() {
     if (this.form.valid) {
       const action = this.editMode ? DialogAction.SaveUpdate : DialogAction.SaveAdd;
-      const result: DialogResult = { action, payload: this.form.value };
+      const result: DialogResult<Event> = { action, payload: this.form.value };
       this.dialogRef.close(result);
     }
   }
 
   public delete() {
-    const result: DialogResult = { action: DialogAction.Delete, payload: this.form.value };
+    const result: DialogResult<Event> = { action: DialogAction.Delete, payload: this.form.value };
     this.dialogRef.close(result);
   }
 
   public cancel() {
-    const result: DialogResult = { action: DialogAction.Cancel };
+    const result: DialogResult<Event> = { action: DialogAction.Cancel };
     this.dialogRef.close(result);
   }
 

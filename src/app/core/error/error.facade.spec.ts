@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { provideMockStore, MockStore } from '@ngrx/store/testing';
-import { ErrorState } from 'src/app/core/store/reducers/error/error.reducer';
 import { Store } from '@ngrx/store';
-import { errorQueries } from 'src/app/core/store/selectors/error.selectors';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold } from 'jasmine-marbles';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
+import { ErrorState } from 'src/app/core/store/reducers/error/error.reducer';
+import { errorQueries } from 'src/app/core/store/selectors/error.selectors';
 
 describe('Error Facade', () => {
   let store: MockStore<ErrorState>;
@@ -28,7 +28,7 @@ describe('Error Facade', () => {
       const expected = cold('a', { a: 'This is error' });
 
       // when
-      const actual = facade.getErrors();
+      const actual = facade.selectErrors();
 
       // then
       expect(actual).toBeObservable(expected);

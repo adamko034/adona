@@ -3,8 +3,9 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { BehaviorSubject, Observable, of } from 'rxjs';
+import { errors } from 'src/app/core/error/constants/errors.constants';
+import { ErrorTestDataBuilder } from 'src/app/core/error/utils/test/error-test-data.builder';
 import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
-import { ErrorTestDataBuilder } from 'src/app/core/utils/tests/error-test-data.builder';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import {
@@ -25,32 +26,23 @@ import {
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
 import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
-import { errors } from 'src/app/shared/constants/errors.constants';
-import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 
 describe('Calendar Effects', () => {
   let actions$: Observable<Action>;
   let effects: CalendarEffects;
   let events: Event[];
-  let calendarService: jasmine.SpyObj<CalendarService>;
-  let calendarFacade: jasmine.SpyObj<CalendarFacade>;
+
+  const { calendarService, timeService, calendarFacade } = SpiesBuilder.init()
+    .withCalendarFacade()
+    .withTimeService()
+    .withCalendarService()
+    .build();
 
   let monthsLoaded$;
 
-  const timeService = {
-    Extraction: jasmine.createSpyObj<TimeExtractionService>('TimeExtractionService', ['getYearMonthString'])
-  };
-
   beforeEach(() => {
-    calendarService = jasmine.createSpyObj<CalendarService>('CalendarService', [
-      'getMonthEvents',
-      'addEvent',
-      'updateEvent',
-      'deleteEvent'
-    ]);
-    calendarFacade = jasmine.createSpyObj<CalendarFacade>('CalendarFacade', ['getMonthsLoaded']);
-
     TestBed.configureTestingModule({
       providers: [
         CalendarEffects,
@@ -71,7 +63,7 @@ describe('Calendar Effects', () => {
 
     calendarService.getMonthEvents.and.callFake(() => of(events));
     timeService.Extraction.getYearMonthString.and.returnValue('201901');
-    calendarFacade.getMonthsLoaded.and.returnValue(monthsLoaded$.asObservable());
+    calendarFacade.selectMonthsLoaded.and.returnValue(monthsLoaded$.asObservable());
 
     effects = TestBed.get<CalendarEffects>(CalendarEffects);
     events = new EventsTestDataBuilder()
@@ -175,7 +167,9 @@ describe('Calendar Effects', () => {
     it('should map to Event Creation Error action', () => {
       // given
       const eventRequest = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      const error = ErrorTestDataBuilder.from()
+        .withDefaultData()
+        .build();
 
       actions$ = hot('-a', { a: new NewEventRequestedAction({ newEvent: eventRequest }) });
       const serviceError = cold('-#|', {}, error);
@@ -195,7 +189,9 @@ describe('Calendar Effects', () => {
   describe('Event Creation Error effect', () => {
     it('should map to Error Occured Action with default message', () => {
       // given
-      const error = new ErrorTestDataBuilder().withErrorObj({ status: 500 }).build();
+      const error = ErrorTestDataBuilder.from()
+        .withErrorObj({ status: 500 })
+        .build();
       const expectedError = { ...error, message: errors.DEFAULT_API_POST_ERROR_MESSAGE };
       actions$ = hot('-a', { a: new EventCreationErrorAction({ error }) });
       const expected = hot('-b', { b: new ErrorOccuredAction({ error: expectedError }) });
@@ -206,7 +202,9 @@ describe('Calendar Effects', () => {
 
     it('should map to Error Occured Action with custom message', () => {
       // given
-      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      const error = ErrorTestDataBuilder.from()
+        .withDefaultData()
+        .build();
       actions$ = hot('-a', { a: new EventCreationErrorAction({ error }) });
       const expected = hot('-b', { b: new ErrorOccuredAction({ error }) });
 
@@ -235,7 +233,9 @@ describe('Calendar Effects', () => {
     it('should return Event Update Error Action when updating fails', () => {
       // given
       const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      const error = ErrorTestDataBuilder.from()
+        .withDefaultData()
+        .build();
 
       actions$ = hot('-a', { a: new UpdateEventRequestedAction({ event }) });
       const expected = cold('--(b|)', {
@@ -255,7 +255,9 @@ describe('Calendar Effects', () => {
   describe('Event Update Error effect', () => {
     it('should map to Event Occured Action with custom message', () => {
       // given
-      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      const error = ErrorTestDataBuilder.from()
+        .withDefaultData()
+        .build();
       actions$ = hot('-a', { a: new EventUpdateErrorAction({ error }) });
       const expected = cold('-b', { b: new ErrorOccuredAction({ error }) });
 
@@ -265,7 +267,9 @@ describe('Calendar Effects', () => {
 
     it('should map to Event Occured Action with default message', () => {
       // given
-      const error = new ErrorTestDataBuilder().withErrorObj({ status: 503 }).build();
+      const error = ErrorTestDataBuilder.from()
+        .withErrorObj({ status: 503 })
+        .build();
       const expectedError = { ...error, message: errors.DEFAULT_API_PUT_ERROR_MESSAGE };
       actions$ = hot('-a', { a: new EventUpdateErrorAction({ error }) });
       const expected = cold('-b', { b: new ErrorOccuredAction({ error: expectedError }) });
@@ -298,7 +302,9 @@ describe('Calendar Effects', () => {
     it('should map to Event Delete Error action ', () => {
       // given
       const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const error = new ErrorTestDataBuilder().withDefaultData().build();
+      const error = ErrorTestDataBuilder.from()
+        .withDefaultData()
+        .build();
 
       const action = new EventDeleteRequestedAction({ id: event.id });
       actions$ = hot('--a', { a: action });
@@ -319,7 +325,9 @@ describe('Calendar Effects', () => {
   describe('Event Delete Error effect', () => {
     it('should map to Event Occured Action', () => {
       // given
-      const error = new ErrorTestDataBuilder().withErrorObj({ status: 503 }).build();
+      const error = ErrorTestDataBuilder.from()
+        .withErrorObj({ status: 503 })
+        .build();
       const expectedError = { ...error, message: errors.DEFAULT_API_DELETE_ERROR_MESSAGE };
 
       actions$ = hot('-a', { a: new EventDeleteErrorAction({ error }) });

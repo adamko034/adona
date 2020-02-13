@@ -1,5 +1,5 @@
 import { DateTestBuilder } from 'src/app/utils/testUtils/builders/date-test.builder';
-import { User } from '../../../../core/auth/model/user-model';
+import { User } from '../../../../core/user/model/user.model';
 import { UserTestBuilder } from '../../../../utils/testUtils/builders/user-test-builder';
 import { ExpenseGroup } from '../../model/expense-group.model';
 
@@ -10,8 +10,8 @@ export class ExpensesGroupTestBuilder {
     this.model = {
       id: 'id1',
       name: 'test expenses',
-      lastUpdated: DateTestBuilder.today().build(),
-      users: [new UserTestBuilder().withDefaultData().build()],
+      lastUpdated: DateTestBuilder.now().build(),
+      users: [UserTestBuilder.withDefaultData().build()],
       lastUpdatedBy: 'testUser'
     };
   }
@@ -36,7 +36,7 @@ export class ExpensesGroupTestBuilder {
   }
 
   public withLastUpdatedDaysAdd(days: number): ExpensesGroupTestBuilder {
-    this.model.lastUpdated = DateTestBuilder.today()
+    this.model.lastUpdated = DateTestBuilder.now()
       .addDays(days)
       .build();
     return this;

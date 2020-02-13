@@ -27,13 +27,14 @@ export class ErrorComponent implements OnInit, OnDestroy {
   constructor(private facade: ErrorFacade, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
-    this.errors$ = this.facade.getErrors();
+    this.errors$ = this.facade.selectErrors();
 
     this.errorsSubscription = this.errors$.subscribe((message: string) => {
       if (message) {
         this.snackBar.openFromComponent(ErrorContentComponent, {
           duration: 5 * 1000,
-          data: { message }
+          data: { message },
+          verticalPosition: 'top'
         });
       }
     });

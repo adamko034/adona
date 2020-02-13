@@ -1,13 +1,6 @@
 import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
-import {
-  AuthActionTypes,
-  AuthenticatedAction,
-  AuthRequestedAction,
-  LoginAction,
-  LogoutAction,
-  NotAuthenitcatedAction
-} from './auth.actions';
+import { authActions, authActionTypes } from './auth.actions';
 
 describe('Auth Actions', () => {
   const credentials: CredentialsLogin = {
@@ -15,54 +8,53 @@ describe('Auth Actions', () => {
     password: 'test'
   };
 
+  const user = UserTestBuilder.withDefaultData().build();
+
   it('should create login action', () => {
     // when
-    const action = new LoginAction(credentials);
+    const action = authActions.login({ credentials });
 
     // then
     expect({ ...action }).toEqual({
-      type: AuthActionTypes.Login,
-      payload: credentials
+      type: authActionTypes.login,
+      credentials
+    });
+  });
+
+  it('should create login success action', () => {
+    // when
+    const action = authActions.loginSuccess({ user });
+
+    // then
+    expect({ ...action }).toEqual({
+      type: authActionTypes.loginSuccess,
+      user
+    });
+  });
+
+  it('should create login failed action', () => {
+    // when
+    const action = authActions.loginFailed();
+
+    // then
+    expect({ ...action }).toEqual({
+      type: authActionTypes.loginFailed
     });
   });
 
   it('should create logout action', () => {
     // when
-    const action = new LogoutAction();
+    const action = authActions.logout();
 
     // then
-    expect({ ...action }).toEqual({ type: AuthActionTypes.Logout });
+    expect({ ...action }).toEqual({ type: authActionTypes.logout });
   });
 
-  it('should create get auth action', () => {
+  it('should create logout success action', () => {
     // when
-    const action = new AuthRequestedAction();
+    const action = authActions.logoutSuccess();
 
     // then
-    expect({ ...action }).toEqual({ type: AuthActionTypes.AuthRequested });
-  });
-
-  it('should create authenicated action', () => {
-    // given
-    const user = new UserTestBuilder().withDefaultData().build();
-
-    // when
-    const action = new AuthenticatedAction(user);
-
-    // then
-    expect({ ...action }).toEqual({
-      type: AuthActionTypes.Authenticated,
-      payload: user
-    });
-  });
-
-  it('should create not authenitcated action', () => {
-    // when
-    const action = new NotAuthenitcatedAction();
-
-    // then
-    expect({ ...action }).toEqual({
-      type: AuthActionTypes.NotAuthenticated
-    });
+    expect({ ...action }).toEqual({ type: authActionTypes.logoutSucces });
   });
 });

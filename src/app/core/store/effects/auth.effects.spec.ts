@@ -2,34 +2,26 @@ import { TestBed } from '@angular/core/testing';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
-import { noop, Observable, of, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
-import { MapperService } from '../../services/mapper/mapper.service';
-import { UsersMapper } from '../../services/mapper/parts/mapper.users';
-import {
-  AuthenticatedAction,
-  AuthRequestedAction,
-  LoginAction,
-  LoginFailedAction,
-  LogoutAction,
-  NotAuthenitcatedAction
-} from '../actions/auth.actions';
+import { UserService } from '../../user/services/user.service';
+import { authActions } from '../actions/auth.actions';
 import { AuthEffects } from './auth.effects';
 
 describe('Auth Effects', () => {
   let effects: AuthEffects;
   let actions$: Observable<Action>;
-  let navigationService;
-  let authService;
-  let mapperService;
+  const user = UserTestBuilder.withDefaultData().build();
+  const firebaseUser = UserTestBuilder.withDefaultData().buildFirebaseUser();
 
-  const navigationServiceSpy = jasmine.createSpyObj('NavigationService', ['toHome', 'toLogin']);
-  const authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'logout', 'authState$']);
-  const mapperServiceSpy = {
-    Users: jasmine.createSpyObj<UsersMapper>('users', ['toUser'])
-  };
+  const { navigationService, authService, userService } = SpiesBuilder.init()
+    .withAuthService()
+    .withNavigationService()
+    .withUserService()
+    .build();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -37,102 +29,122 @@ describe('Auth Effects', () => {
       providers: [
         AuthEffects,
         provideMockActions(() => actions$),
-        { provide: NavigationService, useValue: navigationServiceSpy },
-        { provide: AuthService, useValue: authServiceSpy },
-        { provide: MapperService, useValue: mapperServiceSpy }
+        { provide: NavigationService, useValue: navigationService },
+        { provide: AuthService, useValue: authService },
+        { provide: UserService, useValue: userService }
       ]
     });
 
     effects = TestBed.get<AuthEffects>(AuthEffects);
-    navigationService = TestBed.get<NavigationService>(NavigationService);
-    authService = TestBed.get<AuthService>(AuthService);
-    mapperService = TestBed.get<MapperService>(MapperService);
 
     authService.login.calls.reset();
+    authService.getAuthState.calls.reset();
     navigationService.toHome.calls.reset();
-    mapperService.Users.toUser.calls.reset();
+    userService.loadUser.calls.reset();
   });
 
-  describe('log in effect', () => {
-    it('should call auth service login method, navigate to home page and result GetAuth action ', () => {
+  describe('Log In', () => {
+    it('should login and load user and dispatch Login Success action ', () => {
       // given
-      authService.login.and.callFake(() => of(noop));
-      navigationService.toHome.and.callFake(() => of(noop));
+      authService.login.and.returnValue(cold('x', { x: null }));
+      authService.getAuthState.and.returnValue(cold('x', { x: firebaseUser }));
+      userService.loadUser.and.returnValue(cold('x', { x: user }));
 
-      const action = new LoginAction({ email: 'test', password: 'testPwd' });
-      const completion = new AuthRequestedAction();
-      actions$ = hot('--a', { a: action });
-      const expected = cold('--b', { b: completion });
-
-      // when & then
-      expect(effects.logIn$).toBeObservable(expected);
-      expect(authService.login).toHaveBeenCalled();
-      expect(navigationService.toHome).toHaveBeenCalledTimes(1);
-    });
-
-    it('should return login failure action when login fails', () => {
-      // given
-      authService.login.and.callFake(() => throwError(new Error()));
-
-      const action = new LoginAction({ email: 'test', password: 'testPwd' });
-      const completion = new LoginFailedAction();
+      const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
+      const completion = authActions.loginSuccess({ user });
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
 
       // when & then
       expect(effects.logIn$).toBeObservable(expected);
       expect(authService.login).toHaveBeenCalledTimes(1);
-      expect(navigationService.toHome).toHaveBeenCalledTimes(0);
+      expect(userService.loadUser).toHaveBeenCalledTimes(1);
+      expect(authService.getAuthState).toHaveBeenCalledTimes(1);
     });
-  });
 
-  describe('get auth effect', () => {
-    it('should result in Authenticated action if user is logged in', () => {
+    it('should return login failure action when login fails', () => {
       // given
-      const user = new UserTestBuilder().withDefaultData().build();
-      const firebaseLogin = new UserTestBuilder().withDefaultData().buildFirebaseUser();
+      authService.login.and.returnValue(cold('#'));
 
-      authService.authState$ = of(firebaseLogin);
-      mapperService.Users.toUser.and.returnValue(user);
-
-      const action = new AuthRequestedAction();
-      const completion = new AuthenticatedAction(user);
+      const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
+      const completion = authActions.loginFailed();
       actions$ = hot('--a', { a: action });
-      const expected = cold('--b', { b: completion });
+      const expected = cold('--(b|)', { b: completion });
 
       // when & then
-      expect(effects.authRequested).toBeObservable(expected);
+      expect(effects.logIn$).toBeObservable(expected);
+      expect(authService.login).toHaveBeenCalledTimes(1);
+      expect(authService.getAuthState).toHaveBeenCalledTimes(0);
+      expect(userService.loadUser).not.toHaveBeenCalled();
     });
 
-    it('should result in Not Authenticated action if user is not logged in', () => {
+    it('should return login failure action when getting auth fails', () => {
       // given
-      authService.authState$ = of(null);
-      const action = new AuthRequestedAction();
-      const completion = new NotAuthenitcatedAction();
+      authService.login.and.returnValue(cold('x', { x: null }));
+      authService.getAuthState.and.returnValue(cold('x', { x: firebaseUser }));
+      userService.loadUser.and.returnValue(cold('#'));
 
+      const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
+      const completion = authActions.loginFailed();
       actions$ = hot('--a', { a: action });
-      const expected = cold('--b', { b: completion });
+      const expected = cold('--(b|)', { b: completion });
 
-      expect(effects.authRequested).toBeObservable(expected);
+      // when & then
+      expect(effects.logIn$).toBeObservable(expected);
+      expect(authService.login).toHaveBeenCalledTimes(1);
+      expect(authService.getAuthState).toHaveBeenCalledTimes(1);
+      expect(userService.loadUser).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return login failure action when loading user fails', () => {
+      // given
+      authService.login.and.returnValue(cold('x', { x: null }));
+      authService.getAuthState.and.returnValue(cold('#'));
+
+      const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
+      const completion = authActions.loginFailed();
+      actions$ = hot('--a', { a: action });
+      const expected = cold('--(b|)', { b: completion });
+
+      // when & then
+      expect(effects.logIn$).toBeObservable(expected);
+      expect(authService.login).toHaveBeenCalledTimes(1);
+      expect(authService.getAuthState).toHaveBeenCalledTimes(1);
+      expect(userService.loadUser).not.toHaveBeenCalled();
     });
   });
 
-  describe('log out effect', () => {
-    it('should call auth service logout method, navigate to login page and result in not authenticated action', () => {
+  describe('Log In Success', () => {
+    it('should navigate to home', () => {
+      actions$ = hot('--a', { a: authActions.loginSuccess({ user }) });
+
+      effects.logInSuccess$.subscribe(() => {
+        expect(navigationService.toHome).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe('Log Out', () => {
+    it('should logout user and dispatch Log Out Success action', () => {
       // given
-      authService.logout.and.callFake(() => of(noop));
-      navigationService.toLogin.and.callFake(() => of(noop));
+      authService.logout.and.returnValue(cold('x', { x: null }));
 
-      const action = new LogoutAction();
-      const completion = new NotAuthenitcatedAction();
-
-      actions$ = hot('--a', { a: action });
-      const expected = cold('--b', { b: completion });
+      actions$ = hot('--a', { a: authActions.logout() });
+      const expected = cold('--b', { b: authActions.logoutSuccess() });
 
       // when & then
       expect(effects.logOut$).toBeObservable(expected);
-      expect(navigationService.toLogin).toHaveBeenCalledTimes(1);
       expect(authService.logout).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Logout Success', () => {
+    it('should navigate to login page', () => {
+      actions$ = hot('a', { a: authActions.logoutSuccess });
+
+      effects.logOutSuccess$.subscribe(() => {
+        expect(navigationService.toLogin).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });

@@ -1,0 +1,17 @@
+.toolbar-small-padding {
+  padding-left: 3px;
+  padding-right: 4px;
+}
+
+.toolbar {
+  padding-left: 15px;
+  padding-right: 15px;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 998;
+  background-color: #eaeaea;
+  min-height: 45px;
+  max-height: 45px;
+}

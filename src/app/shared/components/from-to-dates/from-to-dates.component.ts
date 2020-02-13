@@ -130,17 +130,17 @@ export class FromToDatesComponent implements OnInit {
 
   private getStartDateTime(): Date {
     if (this.allDay) {
-      return this.timeService.Creation.getDateTimeFrom(this.startDate, 0, 0);
+      return this.timeService.Creation.from(this.startDate, 0, 0);
     }
-    return this.timeService.Creation.getDateTimeFrom(this.startDate, this.startHour, this.startMinutes);
+    return this.timeService.Creation.from(this.startDate, this.startHour, this.startMinutes);
   }
 
   private getEndDateTime(): Date {
     if (this.allDay) {
-      return this.timeService.Creation.getDateTimeFrom(this.endDate, 23, 59);
+      return this.timeService.Creation.from(this.endDate, 23, 59);
     }
 
-    return this.timeService.Creation.getDateTimeFrom(this.endDate, this.endHour, this.endMinutes);
+    return this.timeService.Creation.from(this.endDate, this.endHour, this.endMinutes);
   }
 
   private isAtLeastOneValueNull(): boolean {

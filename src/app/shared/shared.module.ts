@@ -9,12 +9,15 @@ import {
   MatIconModule,
   MatInputModule,
   MatSelectModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatToolbarModule
 } from '@angular/material';
+import { DeviceDetectorModule } from 'ngx-device-detector';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { ErrorComponent, ErrorContentComponent } from './components/error/error.component';
 import { FromToDatesComponent } from './components/from-to-dates/from-to-dates.component';
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { MobileHideDirective } from './directives/device/mobile-hide.directive';
 import { ResponsiveMatIconDirective } from './directives/device/responsive-mat-icon.directive';
 import { DateFormatPipe } from './pipes/date/date-format.pipe';
@@ -30,7 +33,9 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     MatInputModule,
     MatDatepickerModule,
     MatSelectModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    DeviceDetectorModule,
+    MatToolbarModule
   ],
   providers: [
     TimeService,
@@ -45,9 +50,17 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     FromToDatesComponent,
     DateFormatPipe,
     MobileHideDirective,
-    ResponsiveMatIconDirective
+    ResponsiveMatIconDirective,
+    ToolbarComponent
   ],
-  exports: [ErrorComponent, FromToDatesComponent, DateFormatPipe, MobileHideDirective, ResponsiveMatIconDirective],
+  exports: [
+    ErrorComponent,
+    FromToDatesComponent,
+    DateFormatPipe,
+    MobileHideDirective,
+    ResponsiveMatIconDirective,
+    ToolbarComponent
+  ],
   entryComponents: [ErrorContentComponent]
 })
 export class SharedModule {}

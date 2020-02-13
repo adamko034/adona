@@ -4,6 +4,7 @@ import { Update } from '@ngrx/entity';
 import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, filter, map, mapTo, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
+import { errors } from 'src/app/core/error/constants/errors.constants';
 import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
@@ -24,7 +25,6 @@ import {
   NewEventRequestedAction,
   UpdateEventRequestedAction
 } from 'src/app/modules/calendar/store/actions/calendar.actions';
-import { errors } from 'src/app/shared/constants/errors.constants';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { Error } from '../../../../core/error/model/error.model';
 import { CalendarFacade } from '../calendar.facade';
@@ -42,7 +42,7 @@ export class CalendarEffects {
   public monthEventsRequested$: Observable<Action> = this.actions$.pipe(
     ofType<CalendarActions>(CalendarActionTypes.MonthEventsRequested),
     map((action: MonthEventsRequestedAction) => action.payload.date),
-    withLatestFrom(this.calendarFacade.getMonthsLoaded()),
+    withLatestFrom(this.calendarFacade.selectMonthsLoaded()),
     filter(([date, monthsLoaded]) => {
       const monthYear = this.timeService.Extraction.getYearMonthString(date);
       return monthsLoaded.findIndex(x => x === monthYear) < 0;

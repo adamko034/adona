@@ -32,12 +32,12 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
 
   public ngOnInit() {
     this.monthsLoadedSubscription = this.calendarFacade
-      .getMonthsLoaded()
+      .selectMonthsLoaded()
       .pipe(filter((monthsLoaded: string[]) => monthsLoaded.length !== 0))
       .subscribe((monthsLoaded: string[]) => {
         monthsLoaded = [...monthsLoaded].sort();
-        const minMonth = this.timeService.Creation.getDateTimeFromMonthLoaded(monthsLoaded[0]);
-        const maxMonth = this.timeService.Creation.getDateTimeFromMonthLoaded(monthsLoaded[monthsLoaded.length - 1]);
+        const minMonth = this.timeService.Creation.fromMonthLoaded(monthsLoaded[0]);
+        const maxMonth = this.timeService.Creation.fromMonthLoaded(monthsLoaded[monthsLoaded.length - 1]);
 
         this.previousDateToLoad = this.timeService.Manipulation.addMonths(-1, minMonth);
         this.nextDateToLoad = this.timeService.Manipulation.addMonths(1, maxMonth);

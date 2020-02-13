@@ -7,7 +7,7 @@ export class DateTestBuilder {
     this.date = moment();
   }
 
-  public static today(): DateTestBuilder {
+  public static now(): DateTestBuilder {
     return new DateTestBuilder();
   }
 

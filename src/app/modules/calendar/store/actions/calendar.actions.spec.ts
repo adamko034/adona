@@ -1,6 +1,6 @@
 import { Update } from '@ngrx/entity';
 import { CalendarView } from 'angular-calendar';
-import { ErrorTestDataBuilder } from 'src/app/core/utils/tests/error-test-data.builder';
+import { ErrorTestDataBuilder } from 'src/app/core/error/utils/test/error-test-data.builder';
 import {
   CalendarActionTypes,
   CalendarViewChangedAction,
@@ -22,7 +22,9 @@ import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/even
 import { Event } from '../../model/event.model';
 
 describe('Calendar Actions', () => {
-  const error = new ErrorTestDataBuilder().withDefaultData().build();
+  const error = ErrorTestDataBuilder.from()
+    .withDefaultData()
+    .build();
 
   describe('Load Month Events', () => {
     it('should create month events requested action', () => {

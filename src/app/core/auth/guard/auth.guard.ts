@@ -1,35 +1,38 @@
 import { Injectable } from '@angular/core';
 import { CanActivate } from '@angular/router';
-import { Observable } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
-import { AuthFacade } from 'src/app/core/auth/auth.facade';
+import { Observable, of } from 'rxjs';
+import { catchError, concatMap, map, take, withLatestFrom } from 'rxjs/operators';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
-import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
+import { NavigationService } from '../../../shared/services/navigation/navigation.service';
+import { UserFacade } from '../../user/user.facade';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
   constructor(
-    private facade: AuthFacade,
+    private facade: UserFacade,
     private authService: AuthService,
     private navigationService: NavigationService
-  ) { }
+  ) {}
 
   canActivate(): Observable<boolean> {
-    return this.authService.authState$.pipe(
-      withLatestFrom(this.facade.isLoggedIn()),
-      map(([firebaseUser, isLoggedId]) => {
-        if (firebaseUser) {
-          if (!isLoggedId) {
-            this.facade.authenticate(firebaseUser);
-          }
-
-          return true;
+    return this.authService.getAuthState().pipe(
+      take(1),
+      concatMap(firebaseUser => of(firebaseUser).pipe(withLatestFrom(this.facade.selectUser()))),
+      map(([firebaseUser, user]) => {
+        if (!firebaseUser) {
+          throw new Error();
         }
 
+        if (!user) {
+          return this.facade.loadUser(firebaseUser.uid);
+        }
+      }),
+      map(() => true),
+      catchError(() => {
         this.navigationService.toLogin();
-        return false;
+        return of(false);
       })
     );
   }

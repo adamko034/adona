@@ -1,7 +1,7 @@
 import { Router } from '@angular/router';
 import { NavigationService } from './navigation.service';
 
-fdescribe('NavigationService', () => {
+describe('NavigationService', () => {
   let navigationService: NavigationService;
   const routerMock = jasmine.createSpyObj<Router>('Router', ['navigate']);
 
@@ -24,7 +24,7 @@ fdescribe('NavigationService', () => {
 
   it('should navigate to home page', () => {
     // given
-    const homeRoute = '/home/calendar';
+    const homeRoute = '/home';
 
     // when
     navigationService.toHome();

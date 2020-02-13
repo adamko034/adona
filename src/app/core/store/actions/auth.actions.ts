@@ -1,48 +1,26 @@
-import { Action } from '@ngrx/store';
+import { createAction, props } from '@ngrx/store';
 import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
-import { User } from 'src/app/core/auth/model/user-model';
+import { User } from '../../user/model/user.model';
 
-export enum AuthActionTypes {
-  AuthRequested = '[Page] Auth Requested',
-  Authenticated = '[Authenitcation API] Authenitcated',
-  NotAuthenticated = '[Authenitcation API] Not Authenticated',
-  Login = '[Login Page] Login',
-  Logout = '[Navbar] Logout',
-  LoginFailed = '[Authentication API] Login Failed'
-}
+export const authActionTypes = {
+  login: '[Login Page] Login',
+  logout: '[Navbar] Logout',
+  loginFailed: '[Authentication API] Login Failed',
+  loginSuccess: '[Database API] Login Success',
+  logoutSucces: '[Databse API] Logout Success'
+};
 
-export class LoginAction implements Action {
-  readonly type = AuthActionTypes.Login;
+const login = createAction(authActionTypes.login, props<{ credentials: CredentialsLogin }>());
+const loginFailed = createAction(authActionTypes.loginFailed);
+const loginSuccess = createAction(authActionTypes.loginSuccess, props<{ user: User }>());
 
-  constructor(public payload: CredentialsLogin) {}
-}
+const logout = createAction(authActionTypes.logout);
+const logoutSuccess = createAction(authActionTypes.logoutSucces);
 
-export class LogoutAction implements Action {
-  readonly type = AuthActionTypes.Logout;
-}
-
-export class LoginFailedAction implements Action {
-  readonly type = AuthActionTypes.LoginFailed;
-}
-
-export class AuthRequestedAction implements Action {
-  readonly type = AuthActionTypes.AuthRequested;
-}
-
-export class AuthenticatedAction implements Action {
-  readonly type = AuthActionTypes.Authenticated;
-
-  constructor(public payload: User) {}
-}
-
-export class NotAuthenitcatedAction implements Action {
-  readonly type = AuthActionTypes.NotAuthenticated;
-}
-
-export type AuthActions =
-  | AuthRequestedAction
-  | AuthenticatedAction
-  | NotAuthenitcatedAction
-  | LoginAction
-  | LogoutAction
-  | LoginFailedAction;
+export const authActions = {
+  login,
+  logout,
+  loginFailed,
+  loginSuccess,
+  logoutSuccess
+};

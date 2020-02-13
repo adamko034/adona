@@ -1,13 +1,16 @@
-import { User } from 'src/app/core/auth/model/user-model';
+import { User } from 'src/app/core/user/model/user.model';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
-import { AuthenticatedAction, NotAuthenitcatedAction } from '../../actions/auth.actions';
-import { authReducer, initialAuthState } from './auth.reducer';
+import { DateTestBuilder } from '../../../../utils/testUtils/builders/date-test.builder';
+import { UserTeamBuilder } from '../../../user/model/builders/user-team.builder';
+import { authActions } from '../../actions/auth.actions';
+import { userActions } from '../../actions/user.actions';
+import { authInitialState, authReducer } from './auth.reducer';
 
 describe('Auth Reducer', () => {
   let user: User;
 
   beforeAll(() => {
-    user = new UserTestBuilder().withDefaultData().build();
+    user = UserTestBuilder.withDefaultData().build();
   });
 
   describe('an incorrect action', () => {
@@ -16,10 +19,10 @@ describe('Auth Reducer', () => {
       const action = {} as any;
 
       // when
-      const result = authReducer(initialAuthState, action);
+      const result = authReducer(authInitialState, action);
 
       // then
-      expect(result).toBe(initialAuthState);
+      expect(result).toBe(authInitialState);
     });
 
     it('should return the previous state for unknown action when user is logged in', () => {
@@ -42,35 +45,109 @@ describe('Auth Reducer', () => {
       const result = authReducer(undefined, action);
 
       // then
-      expect(result).toBe(initialAuthState);
+      expect(result).toBe(authInitialState);
     });
   });
 
-  describe('authenticated action', () => {
-    it('should set logged in and user data', () => {
-      // given
-      const action = new AuthenticatedAction(user);
+  describe('On Login Success', () => {
+    it('should set user and login failed to false', () => {
+      const result = authReducer({ user: null, loginFailed: true }, authActions.loginSuccess({ user }));
 
-      // when
-      const result = authReducer(initialAuthState, action);
-
-      // then
-      expect(result.loggedIn).toBeTruthy();
-      expect(result.user).toBe(user);
+      expect({ ...result }).toEqual({ user, loginFailed: false });
     });
   });
 
-  describe('not authenitcated action', () => {
-    it('should unset logged in flag and user is empty', () => {
-      // given
-      const action = new NotAuthenitcatedAction();
+  describe('On Logout Success', () => {
+    it('should set user to null and login failed to false', () => {
+      const result = authReducer({ user, loginFailed: true }, authActions.logoutSuccess());
 
-      // when
-      const result = authReducer(initialAuthState, action);
+      expect({ ...result }).toEqual({ user: null, loginFailed: false });
+    });
+  });
 
-      // then
-      expect(result.loggedIn).toBeFalsy();
-      expect(result.user).toBeFalsy();
+  describe('On Load User Success', () => {
+    it('should set user', () => {
+      const result = authReducer({ user: null, loginFailed: true }, userActions.loadUserSuccess({ user }));
+
+      expect({ ...result }).toEqual({ user, loginFailed: true });
+    });
+  });
+
+  describe('On Login Failed', () => {
+    it('should set user to null and login failed to true', () => {
+      const result = authReducer({ user, loginFailed: false }, authActions.loginFailed());
+
+      expect({ ...result }).toEqual({ user: null, loginFailed: true });
+    });
+  });
+
+  describe('On Change Team Success', () => {
+    it('should change user Selected Team Id and change selected team last updated', () => {
+      const yesterday = DateTestBuilder.now()
+        .addDays(-1)
+        .build();
+      const userTeam = UserTeamBuilder.from('321', 'test team 1', new Date()).build();
+      const userTeamToChange = UserTeamBuilder.from('123', 'test team', yesterday).build();
+      const now = new Date();
+      const userToChange = UserTestBuilder.withDefaultData()
+        .withSelectedTeamId('321')
+        .withUserTeam(userTeam)
+        .withUserTeam(userTeamToChange)
+        .build();
+      const userTeamExpected = UserTeamBuilder.from(userTeamToChange.id, userTeamToChange.name, now).build();
+
+      const result = authReducer(
+        { user: userToChange, loginFailed: false },
+        userActions.changeTeamSuccess({ teamId: userTeamToChange.id, updated: now })
+      );
+
+      expect({ ...result }).toEqual({
+        loginFailed: false,
+        user: {
+          id: userToChange.id,
+          name: userToChange.name,
+          selectedTeamId: '123',
+          teams: [userTeam, userTeamExpected]
+        }
+      });
+    });
+  });
+
+  describe('On Team Added', () => {
+    it('should add team to user when user does not have team assigned', () => {
+      const newTeam = UserTeamBuilder.from('123', 'test team', new Date()).build();
+      const result = authReducer(
+        { user, loginFailed: false },
+        userActions.teamAdded({ id: newTeam.id, name: newTeam.name, updated: newTeam.updated })
+      );
+
+      expect({ ...result }).toEqual({
+        loginFailed: false,
+        user: {
+          ...user,
+          teams: [newTeam]
+        }
+      });
+    });
+
+    it('should add team to user when user has teams', () => {
+      const userToChange = UserTestBuilder.withDefaultData()
+        .withUserTeam(UserTeamBuilder.from('321', 'team', new Date()).build())
+        .build();
+      2;
+      const newTeam = UserTeamBuilder.from('123', 'test team', new Date()).build();
+      const result = authReducer(
+        { user: userToChange, loginFailed: false },
+        userActions.teamAdded({ id: newTeam.id, name: newTeam.name, updated: newTeam.updated })
+      );
+
+      expect({ ...result }).toEqual({
+        loginFailed: false,
+        user: {
+          ...userToChange,
+          teams: [...userToChange.teams, newTeam]
+        }
+      });
     });
   });
 });

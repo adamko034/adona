@@ -1,24 +1,24 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './core/auth/guard/auth.guard';
+import { UserLoadedGuard } from './core/user/guard/user-loaded.guard';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/home/expenses/d',
+    redirectTo: '/home',
     pathMatch: 'full'
   },
   {
     path: 'home',
     component: ContentLayoutComponent,
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, UserLoadedGuard],
     children: [
       {
         path: '',
-        redirectTo: '/home/calendar',
-        pathMatch: 'full'
+        loadChildren: () => import('./modules/home/home.module').then(mod => mod.HomeModule)
       },
       {
         path: 'calendar',
