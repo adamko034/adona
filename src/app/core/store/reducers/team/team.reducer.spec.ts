@@ -2,10 +2,10 @@ import { TeamBuilder } from '../../../team/model/builders/team.builder';
 import { TeamStateTestDataBuilder } from '../../../team/utils/test/team-state-test-data.builder';
 import { TeamsTestDataBuilder } from '../../../team/utils/test/teams-test-data.builder';
 import { teamActions } from '../../actions/team.actions';
-import { teamReducer, TeamState } from './team.reducer';
+import * as fromReducer from './team.reducer';
 
 describe('Team Reducer', () => {
-  const emptyState: TeamState = TeamStateTestDataBuilder.from().build();
+  const emptyState: fromReducer.TeamState = TeamStateTestDataBuilder.from().build();
 
   describe('On New Team Create Success', () => {
     it('should add team to the state', () => {
@@ -14,7 +14,7 @@ describe('Team Reducer', () => {
         .withTeam(team)
         .build();
 
-      const result = teamReducer(emptyState, teamActions.newTeamCreateSuccess({ team }));
+      const result = fromReducer.reducer(emptyState, teamActions.newTeamCreateSuccess({ team }));
 
       expect(result).toEqual(expected);
     });
@@ -32,7 +32,7 @@ describe('Team Reducer', () => {
         .withTeam(team)
         .build();
 
-      const result = teamReducer(currentState, teamActions.loadTeamSuccess({ team }));
+      const result = fromReducer.reducer(currentState, teamActions.loadTeamSuccess({ team }));
 
       expect(result).toEqual(expected);
     });
