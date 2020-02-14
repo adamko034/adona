@@ -4,10 +4,11 @@ import { DateTestBuilder } from '../../../../utils/testUtils/builders/date-test.
 import { UserTeamBuilder } from '../../../user/model/builders/user-team.builder';
 import { authActions } from '../../actions/auth.actions';
 import { userActions } from '../../actions/user.actions';
-import { authInitialState, authReducer } from './auth.reducer';
+import * as fromReducer from './auth.reducer';
 
 describe('Auth Reducer', () => {
   let user: User;
+  const { reducer, authInitialState } = fromReducer;
 
   beforeAll(() => {
     user = UserTestBuilder.withDefaultData().build();
@@ -19,7 +20,7 @@ describe('Auth Reducer', () => {
       const action = {} as any;
 
       // when
-      const result = authReducer(authInitialState, action);
+      const result = reducer(authInitialState, action);
 
       // then
       expect(result).toBe(authInitialState);
@@ -31,7 +32,7 @@ describe('Auth Reducer', () => {
       const previousState = { loggedIn: true, user, loginFailed: false };
 
       // when
-      const result = authReducer(previousState, action);
+      const result = reducer(previousState, action);
 
       // then
       expect(result).toBe(previousState);
@@ -42,7 +43,7 @@ describe('Auth Reducer', () => {
       const action = {} as any;
 
       // when
-      const result = authReducer(undefined, action);
+      const result = reducer(undefined, action);
 
       // then
       expect(result).toBe(authInitialState);
@@ -51,7 +52,7 @@ describe('Auth Reducer', () => {
 
   describe('On Login Success', () => {
     it('should set user and login failed to false', () => {
-      const result = authReducer({ user: null, loginFailed: true }, authActions.loginSuccess({ user }));
+      const result = reducer({ user: null, loginFailed: true }, authActions.loginSuccess({ user }));
 
       expect({ ...result }).toEqual({ user, loginFailed: false });
     });
@@ -59,7 +60,7 @@ describe('Auth Reducer', () => {
 
   describe('On Logout Success', () => {
     it('should set user to null and login failed to false', () => {
-      const result = authReducer({ user, loginFailed: true }, authActions.logoutSuccess());
+      const result = reducer({ user, loginFailed: true }, authActions.logoutSuccess());
 
       expect({ ...result }).toEqual({ user: null, loginFailed: false });
     });
@@ -67,7 +68,7 @@ describe('Auth Reducer', () => {
 
   describe('On Load User Success', () => {
     it('should set user', () => {
-      const result = authReducer({ user: null, loginFailed: true }, userActions.loadUserSuccess({ user }));
+      const result = reducer({ user: null, loginFailed: true }, userActions.loadUserSuccess({ user }));
 
       expect({ ...result }).toEqual({ user, loginFailed: true });
     });
@@ -75,7 +76,7 @@ describe('Auth Reducer', () => {
 
   describe('On Login Failed', () => {
     it('should set user to null and login failed to true', () => {
-      const result = authReducer({ user, loginFailed: false }, authActions.loginFailed());
+      const result = reducer({ user, loginFailed: false }, authActions.loginFailed());
 
       expect({ ...result }).toEqual({ user: null, loginFailed: true });
     });
@@ -96,7 +97,7 @@ describe('Auth Reducer', () => {
         .build();
       const userTeamExpected = UserTeamBuilder.from(userTeamToChange.id, userTeamToChange.name, now).build();
 
-      const result = authReducer(
+      const result = reducer(
         { user: userToChange, loginFailed: false },
         userActions.changeTeamSuccess({ teamId: userTeamToChange.id, updated: now })
       );
@@ -116,7 +117,7 @@ describe('Auth Reducer', () => {
   describe('On Team Added', () => {
     it('should add team to user when user does not have team assigned', () => {
       const newTeam = UserTeamBuilder.from('123', 'test team', new Date()).build();
-      const result = authReducer(
+      const result = reducer(
         { user, loginFailed: false },
         userActions.teamAdded({ id: newTeam.id, name: newTeam.name, updated: newTeam.updated })
       );
@@ -136,7 +137,7 @@ describe('Auth Reducer', () => {
         .build();
       2;
       const newTeam = UserTeamBuilder.from('123', 'test team', new Date()).build();
-      const result = authReducer(
+      const result = reducer(
         { user: userToChange, loginFailed: false },
         userActions.teamAdded({ id: newTeam.id, name: newTeam.name, updated: newTeam.updated })
       );
