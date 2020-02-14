@@ -1,7 +1,37 @@
-.no-padding {
-  padding: 0;
-}
+.side-nav-container {
+  position: absolute;
+  top: 40px;
+  bottom: 0;
+  left: 0;
+  right: 0;
 
-#footer {
-  min-height: 30px;
+  .side-nav {
+    background-color: #f4f5f7;
+    padding: 15px;
+
+    .team {
+      font-size: larger;
+    }
+
+    .navigation {
+      margin-top: 40px;
+
+      .navigation-item {
+        min-width: 200px;
+      }
+    }
+
+    .section-title {
+      font-size: smaller;
+      color: #6b778c;
+    }
+  }
+
+  .no-padding {
+    padding: 0;
+  }
+
+  #footer {
+    min-height: 30px;
+  }
 }

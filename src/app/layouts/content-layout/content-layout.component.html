@@ -1,8 +1,30 @@
 <div class="app-container">
-  <app-navbar></app-navbar>
-  <div class="container-fluid no-padding">
-    <router-outlet></router-outlet>
-  </div>
-  <div id="footer"></div>
+  <app-navbar (toogleSidenav)="sideNav.toggle()"></app-navbar>
+  <mat-sidenav-container autosize class="side-nav-container">
+    <mat-sidenav #sideNav mode="side" [autoFocus]="false" class="side-nav" fxLayout="column center">
+      <div class="team" *ngIf="team">
+        {{ team?.name }}
+      </div>
+      <div class="navigation" fxLayout="column start" fxLayoutGap="10">
+        <span class="section-title">NAVITAGION</span>
+        <mat-nav-list>
+          <a mat-list-item class="navigation-item">
+            <mat-icon matListIcon>perm_contact_calendar</mat-icon>
+            Calendar
+          </a>
+          <a mat-list-item class="navigation-item">
+            <mat-icon matListIcon>attach_money</mat-icon>
+            Expenses
+          </a>
+        </mat-nav-list>
+      </div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <div class="container-fluid no-padding">
+        <router-outlet></router-outlet>
+      </div>
+      <div id="footer"></div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>
 <app-error></app-error>

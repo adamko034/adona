@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AuthFacade } from '../../core/auth/auth.facade';
 
 @Component({
@@ -7,11 +7,17 @@ import { AuthFacade } from '../../core/auth/auth.facade';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
+  @Output() toogleSidenav = new EventEmitter<void>();
+
   constructor(private authFacade: AuthFacade) {}
 
   ngOnInit() {}
 
   public logout() {
     this.authFacade.logout();
+  }
+
+  public emitToogleSidenav() {
+    this.toogleSidenav.emit();
   }
 }
