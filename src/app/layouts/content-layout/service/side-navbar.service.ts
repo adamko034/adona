@@ -10,6 +10,16 @@ export class SideNavbarService {
     this.deviceDetector.isMobile() ? this.prepareSideNavForMobile(sideNav) : this.prepareSideNavForDesktop(sideNav);
   }
 
+  public toggleSideNav(sideNav: MatSidenav) {
+    sideNav.opened ? sideNav.close() : sideNav.open();
+  }
+
+  public closeIfMobile(sideNav: MatSidenav) {
+    if (this.deviceDetector.isMobile() && sideNav.opened) {
+      sideNav.close();
+    }
+  }
+
   private prepareSideNavForMobile(sideNav: MatSidenav) {
     sideNav.close();
     sideNav.mode = 'over';

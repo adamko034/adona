@@ -1,18 +1,12 @@
-.side-nav-container-mobile {
-  top: 40px;
-}
-
-.side-nav-container-desktop {
-  top: 60px;
-}
-
 .side-nav-container {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
+  top: 0;
 
   .side-nav {
+    height: 100%;
     background-color: #32373d;
     color: rgba(255, 255, 255, 0.4);
     padding-top: 10px;
@@ -23,10 +17,13 @@
       color: rgba(255, 255, 255, 0.6);
     }
 
+    .navigation-item-expanded {
+      min-width: 200px;
+      max-width: 200px;
+    }
+
     .navigation-item {
       cursor: pointer;
-      min-width: 250px;
-      max-width: 250px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       background-color: #32373d;
 
@@ -46,28 +43,21 @@
       }
     }
 
-    // .team {
-    //   font-size: larger;
-    // }
+    .side-nav-expander {
+      margin-bottom: 15px;
+      margin-right: 10px;
 
-    // .navigation {
-    //   margin-top: 40px;
+      .mat-icon {
+        transform: scale(2);
 
-    //   .navigation-item {
-    //     min-width: 200px;
-    //   }
-
-    //   .navigation-item-current {
-    //     background: #fff;
-    //   }
-    // }
+        &:hover {
+          color: #fff;
+        }
+      }
+    }
   }
+}
 
-  .no-padding {
-    padding: 0;
-  }
-
-  #footer {
-    min-height: 30px;
-  }
+.adona-content {
+  margin-top: 20px;
 }

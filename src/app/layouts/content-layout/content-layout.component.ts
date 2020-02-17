@@ -15,12 +15,13 @@ import { SideNavbarService } from './service/side-navbar.service';
 export class ContentLayoutComponent implements OnInit, OnDestroy {
   private teamSubscription: Subscription;
   private currentRouteSubscription: Subscription;
-  public currentRoute: string;
 
   @ViewChild('sideNav', { static: true })
   public sideNav: MatSidenav;
   public team: Team;
   public routes: Route[];
+  public currentRoute: string;
+  public isExpanded = true;
 
   constructor(
     private sideNavbarService: SideNavbarService,
@@ -47,5 +48,13 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
     if (this.currentRouteSubscription) {
       this.currentRouteSubscription.unsubscribe();
     }
+  }
+
+  public onToggleSideNav() {
+    this.sideNavbarService.toggleSideNav(this.sideNav);
+  }
+
+  public onNavigationLinkClicked() {
+    this.sideNavbarService.closeIfMobile(this.sideNav);
   }
 }

@@ -1,19 +1,39 @@
-import { AuthFacade } from '../../core/auth/auth.facade';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { NavbarComponent } from './navbar.component';
 
-describe('NavbarComponent', () => {
+describe('Navbar Component', () => {
   let component: NavbarComponent;
-  const authFacade = jasmine.createSpyObj<AuthFacade>('AuthFacade', ['logout']);
+  const { authFacade, deviceDetectorService } = SpiesBuilder.init()
+    .withAuthFacade()
+    .withDeviceDetectorService()
+    .build();
 
   beforeEach(() => {
-    component = new NavbarComponent(authFacade);
+    component = new NavbarComponent(authFacade, deviceDetectorService);
   });
 
-  it('should call facade on logout', () => {
-    // when
-    component.logout();
+  describe('Logout', () => {
+    it('should call facade on logout', () => {
+      component.logout();
 
-    // then
-    expect(authFacade.logout).toHaveBeenCalledTimes(1);
+      expect(authFacade.logout).toHaveBeenCalledTimes(1);
+    });
   });
+
+  describe('Is Mobile', () => {
+    it('should call Device Detector Service', () => {
+      component.isMobile();
+
+      expect(deviceDetectorService.isMobile).toHaveBeenCalledTimes(1);
+    })
+  })
+
+  describe('On Toggle Side Nav', () => {
+    it('should emit value', () => {
+      const spy = spyOn(component.toggleSideNav, 'emit');
+      component.onToggleSideNav();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+    })
+  })
 });
