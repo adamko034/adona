@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "ng serve --open",
     "build": "ng build",
-    "test": "ng test",
+    "test": "ng test --browsers=Chrome",
+    "test-travis": "ng test -- --watch=false --no-progress --browsers=ChromeHeadlessNoSandbox",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "prod": "ng build --prod"

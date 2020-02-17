@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { AuthFacade } from '../../core/auth/auth.facade';
 
 @Component({
@@ -7,11 +8,21 @@ import { AuthFacade } from '../../core/auth/auth.facade';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
-  constructor(private authFacade: AuthFacade) {}
+  @Output() toggleSideNav = new EventEmitter<void>();
 
-  ngOnInit() {}
+  constructor(private authFacade: AuthFacade, private deviceDetector: DeviceDetectorService) {}
+
+  public ngOnInit() {}
 
   public logout() {
     this.authFacade.logout();
+  }
+
+  public isMobile() {
+    return this.deviceDetector.isMobile();
+  }
+
+  public onToggleSideNav() {
+    this.toggleSideNav.emit();
   }
 }

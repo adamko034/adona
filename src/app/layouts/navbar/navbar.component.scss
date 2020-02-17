@@ -1,4 +1,14 @@
-.toolbar-small {
-  min-height: 40px;
-  max-height: 40px;
+.toolbar {
+  padding: 0 15px;
+  min-height: 50px;
+  max-height: 50px;
+
+  .title {
+    font-family: 'Allerta Stencil';
+    font-size: 25px;
+  }
+}
+
+.toolbar-mobile {
+  padding: 0 !important;
 }

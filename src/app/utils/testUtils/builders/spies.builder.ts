@@ -3,9 +3,11 @@ import { MatDialogRef } from '@angular/material';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
+import { RouterFacade } from 'src/app/core/router/router.facade';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { UserService } from 'src/app/core/user/services/user.service';
+import { SideNavbarService } from 'src/app/layouts/content-layout/service/side-navbar.service';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { ExpensesService } from 'src/app/modules/expenses/services/expenses.service';
@@ -43,6 +45,8 @@ export interface Spies {
   errorFacade?: jasmine.SpyObj<ErrorFacade>;
   userUtilsService?: jasmine.SpyObj<UserUtilservice>;
   matDialogRef?: jasmine.SpyObj<MatDialogRef<any>>;
+  routerFacade?: jasmine.SpyObj<RouterFacade>;
+  sideNavbarService?: jasmine.SpyObj<SideNavbarService>;
 }
 
 export class SpiesBuilder {
@@ -234,6 +238,26 @@ export class SpiesBuilder {
 
   public withMatDialogRef(): SpiesBuilder {
     this.spies.matDialogRef = jasmine.createSpyObj('matDialogRef', ['close']);
+
+    return this;
+  }
+
+  public withSideNavbarService(): SpiesBuilder {
+    this.spies.sideNavbarService = jasmine.createSpyObj('sideNavbarService', [
+      'init',
+      'closeIfMobile',
+      'toggleSideNav'
+    ]);
+
+    return this;
+  }
+
+  public withRouterFacade(): SpiesBuilder {
+    this.spies.routerFacade = jasmine.createSpyObj('routerFacade', [
+      'getRouteParams',
+      'selectCurrentRute',
+      'selectAdonaRoutes'
+    ]);
 
     return this;
   }

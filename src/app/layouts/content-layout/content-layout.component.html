@@ -1,8 +1,52 @@
 <div class="app-container">
-  <app-navbar></app-navbar>
-  <div class="container-fluid no-padding">
-    <router-outlet></router-outlet>
-  </div>
-  <div id="footer"></div>
+  <mat-sidenav-container
+    autosize
+    class="side-nav-container"
+    [ngClass.lt-lg]="'side-nav-container-mobile'"
+    [ngClass.gt-md]="'side-nav-container-desktop'"
+  >
+    <mat-sidenav #sideNav [autoFocus]="false">
+      <div class="side-nav" fxLayout="column" fxLayoutAlign="space-between end">
+        <div>
+          <span *ngIf="isExpanded" class="section-title">NAVITAGION</span>
+
+          <div
+            *ngFor="let route of routes"
+            class="navigation-item"
+            [ngClass]="{ 'navigation-item-expanded': isExpanded }"
+            fxLayout
+          >
+            <a
+              [routerLink]="route.url"
+              [ngClass]="{ 'navigation-item-current': route.url === currentRoute }"
+              class="navigation-item-link"
+              fxFill
+              fxLayout="row"
+              fxLayoutAlign="start center"
+              (click)="onNavigationLinkClicked()"
+            >
+              <mat-icon fxFlex="25">{{ route.icon }}</mat-icon>
+              <span fxFlex="65" *ngIf="isExpanded">{{ route.name }}</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="side-nav-expander">
+          <button mat-icon-button *ngIf="isExpanded" (click)="isExpanded = !isExpanded">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <button mat-icon-button *ngIf="!isExpanded" (click)="isExpanded = !isExpanded">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <div class="container-fluid">
+        <app-navbar (toggleSideNav)="onToggleSideNav()"></app-navbar>
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>
 <app-error></app-error>
