@@ -1,30 +1,66 @@
+.side-nav-container-mobile {
+  top: 40px;
+}
+
+.side-nav-container-desktop {
+  top: 60px;
+}
+
 .side-nav-container {
   position: absolute;
-  top: 40px;
   bottom: 0;
   left: 0;
   right: 0;
 
   .side-nav {
-    background-color: #f4f5f7;
-    padding: 15px;
+    background-color: #32373d;
+    color: rgba(255, 255, 255, 0.4);
+    padding-top: 10px;
 
-    .team {
-      font-size: larger;
+    .section-title {
+      padding-left: 10px;
+      font-size: smaller;
+      color: rgba(255, 255, 255, 0.6);
     }
 
-    .navigation {
-      margin-top: 40px;
+    .navigation-item {
+      cursor: pointer;
+      min-width: 250px;
+      max-width: 250px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      background-color: #32373d;
 
-      .navigation-item {
-        min-width: 200px;
+      &:hover {
+        background-color: #3f51b5;
+        color: #fff;
+      }
+
+      .navigation-item-link {
+        padding: 15px 30px;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .navigation-item-current {
+        color: #fff;
       }
     }
 
-    .section-title {
-      font-size: smaller;
-      color: #6b778c;
-    }
+    // .team {
+    //   font-size: larger;
+    // }
+
+    // .navigation {
+    //   margin-top: 40px;
+
+    //   .navigation-item {
+    //     min-width: 200px;
+    //   }
+
+    //   .navigation-item-current {
+    //     background: #fff;
+    //   }
+    // }
   }
 
   .no-padding {

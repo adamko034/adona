@@ -3,6 +3,8 @@ import { MatSidenav } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { Team } from 'src/app/core/team/model/team.model';
 import { TeamFacade } from 'src/app/core/team/team.facade';
+import { Route } from '../../core/router/model/route.model';
+import { RouterFacade } from '../../core/router/router.facade';
 import { SideNavbarService } from './service/side-navbar.service';
 
 @Component({
@@ -12,23 +14,38 @@ import { SideNavbarService } from './service/side-navbar.service';
 })
 export class ContentLayoutComponent implements OnInit, OnDestroy {
   private teamSubscription: Subscription;
+  private currentRouteSubscription: Subscription;
+  public currentRoute: string;
 
   @ViewChild('sideNav', { static: true })
   public sideNav: MatSidenav;
   public team: Team;
+  public routes: Route[];
 
-  constructor(private sideNavbarService: SideNavbarService, private teamFacade: TeamFacade) {}
+  constructor(
+    private sideNavbarService: SideNavbarService,
+    private teamFacade: TeamFacade,
+    private routerFacade: RouterFacade
+  ) {}
 
   public ngOnInit() {
     this.teamSubscription = this.teamFacade.selectSelectedTeam().subscribe((selectedTeam: Team) => {
       this.team = selectedTeam;
     });
+    this.currentRouteSubscription = this.routerFacade.selectCurrentRute().subscribe(route => {
+      this.currentRoute = route;
+    });
     this.sideNavbarService.init(this.sideNav);
+    this.routes = this.routerFacade.selectAdonaRoutes();
   }
 
   public ngOnDestroy() {
     if (this.teamSubscription) {
       this.teamSubscription.unsubscribe();
+    }
+
+    if (this.currentRouteSubscription) {
+      this.currentRouteSubscription.unsubscribe();
     }
   }
 }
