@@ -43,10 +43,14 @@ body {
   position: relative !important;
 }
 
+.adona-link {
+  text-decoration: none;
+}
+
 .adona-dialog-close.mat-button {
-  position: absolute;
-  top: -15px;
-  right: -10px;
+  float: right;
+  top: -20px;
+  right: -20px;
   border-radius: 50%;
   background-color: #3f51b5;
   min-width: auto;

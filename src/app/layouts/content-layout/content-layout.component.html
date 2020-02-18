@@ -6,32 +6,52 @@
     [ngClass.gt-md]="'side-nav-container-desktop'"
   >
     <mat-sidenav #sideNav [autoFocus]="false">
-      <div class="side-nav" fxLayout="column" fxLayoutAlign="space-between end">
+      <div
+        class="side-nav"
+        [ngClass]="{ 'side-nav-expanded': isExpanded }"
+        fxLayout="column"
+        fxLayoutAlign="space-between"
+      >
         <div>
-          <span *ngIf="isExpanded" class="section-title">NAVITAGION</span>
+          <div class="team">
+            <a [routerLink]="'/home'" class="adona-link">{{ team?.name }}</a>
+          </div>
+          <div class="section">
+            <span *ngIf="isExpanded" class="title">NAVITAGION</span>
 
-          <div
-            *ngFor="let route of routes"
-            class="navigation-item"
-            [ngClass]="{ 'navigation-item-expanded': isExpanded }"
-            fxLayout
-          >
-            <a
-              [routerLink]="route.url"
-              [ngClass]="{ 'navigation-item-current': route.url === currentRoute }"
-              class="navigation-item-link"
-              fxFill
-              fxLayout="row"
-              fxLayoutAlign="start center"
-              (click)="onNavigationLinkClicked()"
-            >
-              <mat-icon fxFlex="25">{{ route.icon }}</mat-icon>
-              <span fxFlex="65" *ngIf="isExpanded">{{ route.name }}</span>
-            </a>
+            <div *ngFor="let route of routes" class="navigation-item" fxLayout>
+              <a
+                [routerLink]="route.url"
+                [ngClass]="{ 'navigation-item-current': route.url === currentRoute }"
+                class="navigation-item-link"
+                fxFill
+                fxLayout="row"
+                fxLayoutAlign="start center"
+                (click)="onNavigationLinkClicked()"
+              >
+                <mat-icon fxFlex="25">{{ route.icon }}</mat-icon>
+                <span fxFlex="65" *ngIf="isExpanded">{{ route.name }}</span>
+              </a>
+            </div>
+          </div>
+          <div class="section">
+            <span *ngIf="isExpanded" class="title">QUICK ACTIONS</span>
+            <div class="navigation-item" fxLayout>
+              <a
+                class="navigation-item-link"
+                fxFill
+                fxLayout="row"
+                fxLayoutAlign="start center"
+                (click)="openChangeTeamDialog()"
+              >
+                <mat-icon fxFlex="25">sync_alt</mat-icon>
+                <span fxFlex="65" *ngIf="isExpanded">Change team</span>
+              </a>
+            </div>
           </div>
         </div>
 
-        <div class="side-nav-expander">
+        <div fxLayout="row" fxLayoutAlign="end center" class="expander">
           <button mat-icon-button *ngIf="isExpanded" (click)="isExpanded = !isExpanded">
             <mat-icon>chevron_left</mat-icon>
           </button>

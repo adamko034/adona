@@ -5,7 +5,7 @@ import { DialogResult } from 'src/app/shared/services/dialogs/dialog-result.mode
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
-import { ChangeTeamDialogComponent } from '../dialogs/change-team-dialog/change-team-dialog.component';
+import { ChangeTeamDialogComponent } from '../../../../shared/components/dialogs/change-team-dialog/change-team-dialog.component';
 import { NewTeamDialogComponent } from '../dialogs/new-team-dialog/new-team-dialog.component';
 import { HomeToolbarComponent } from './home-toolbar.component';
 

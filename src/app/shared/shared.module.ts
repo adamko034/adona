@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
 import {
+  MatButtonModule,
   MatCheckboxModule,
   MatDatepickerModule,
   MatFormFieldModule,
@@ -15,6 +16,7 @@ import {
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
+import { ChangeTeamDialogComponent } from './components/dialogs/change-team-dialog/change-team-dialog.component';
 import { ErrorComponent, ErrorContentComponent } from './components/error/error.component';
 import { FromToDatesComponent } from './components/from-to-dates/from-to-dates.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
@@ -35,7 +37,8 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     MatSelectModule,
     FlexLayoutModule,
     DeviceDetectorModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatButtonModule
   ],
   providers: [
     TimeService,
@@ -51,7 +54,8 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     DateFormatPipe,
     MobileHideDirective,
     ResponsiveMatIconDirective,
-    ToolbarComponent
+    ToolbarComponent,
+    ChangeTeamDialogComponent
   ],
   exports: [
     ErrorComponent,
@@ -59,8 +63,9 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     DateFormatPipe,
     MobileHideDirective,
     ResponsiveMatIconDirective,
-    ToolbarComponent
+    ToolbarComponent,
+    ChangeTeamDialogComponent
   ],
-  entryComponents: [ErrorContentComponent]
+  entryComponents: [ErrorContentComponent, ChangeTeamDialogComponent]
 })
 export class SharedModule {}

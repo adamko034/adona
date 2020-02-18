@@ -5,45 +5,57 @@
   right: 0;
   top: 0;
 
+  .side-nav-expanded {
+    min-width: 200px;
+    max-width: 200px;
+  }
+
   .side-nav {
     height: 100%;
     background-color: #32373d;
     color: rgba(255, 255, 255, 0.4);
-    padding-top: 10px;
 
-    .section-title {
-      padding-left: 10px;
-      font-size: smaller;
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    .navigation-item-expanded {
-      min-width: 200px;
-      max-width: 200px;
-    }
-
-    .navigation-item {
-      cursor: pointer;
+    .team {
+      padding: 20px 10px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 200;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      background-color: #32373d;
+    }
 
-      &:hover {
-        background-color: #3f51b5;
-        color: #fff;
+    .section {
+      margin-top: 20px;
+      font-size: 15px;
+
+      .title {
+        padding-left: 10px;
+        font-size: smaller;
+        color: rgba(255, 255, 255, 0.6);
       }
 
-      .navigation-item-link {
-        padding: 15px 30px;
-        text-decoration: none;
-        color: inherit;
-      }
+      .navigation-item {
+        cursor: pointer;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        background-color: #32373d;
 
-      .navigation-item-current {
-        color: #fff;
+        &:hover {
+          background-color: #3f51b5;
+          color: #fff;
+        }
+
+        .navigation-item-link {
+          padding: 15px 20px;
+          text-decoration: none;
+          color: inherit;
+        }
+
+        .navigation-item-current {
+          color: #fff;
+        }
       }
     }
 
-    .side-nav-expander {
+    .expander {
       margin-bottom: 15px;
       margin-right: 10px;
 

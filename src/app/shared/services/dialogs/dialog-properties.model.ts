@@ -3,4 +3,5 @@ export interface DialogProperties<T> {
   maxWidth?: string;
   panelClass?: string;
   data?: T;
+  autoFocus?: boolean;
 }
