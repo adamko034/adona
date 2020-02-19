@@ -20,12 +20,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { HeaderComponent } from './layouts/content-layout/components/header/header.component';
 import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
-import { NavbarComponent } from './layouts/navbar/navbar.component';
 import { SharedModule } from './shared/shared.module';
+import { SideNavComponent } from './layouts/content-layout/components/side-nav/side-nav.component';
 
 @NgModule({
-  declarations: [AppComponent, NavbarComponent, ContentLayoutComponent, AuthLayoutComponent],
+  declarations: [AppComponent, HeaderComponent, ContentLayoutComponent, AuthLayoutComponent, SideNavComponent],
   imports: [
     SharedModule,
     BrowserModule,

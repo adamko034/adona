@@ -1,13 +1,13 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { AuthFacade } from '../../core/auth/auth.facade';
+import { AuthFacade } from '../../../../core/auth/auth.facade';
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss']
 })
-export class NavbarComponent implements OnInit {
+export class HeaderComponent implements OnInit {
   @Output() toggleSideNav = new EventEmitter<void>();
 
   constructor(private authFacade: AuthFacade, private deviceDetector: DeviceDetectorService) {}

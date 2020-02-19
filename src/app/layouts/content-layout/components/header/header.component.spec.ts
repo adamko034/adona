@@ -1,15 +1,15 @@
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
-import { NavbarComponent } from './navbar.component';
+import { HeaderComponent } from './header.component';
 
-describe('Navbar Component', () => {
-  let component: NavbarComponent;
+describe('Header Component', () => {
+  let component: HeaderComponent;
   const { authFacade, deviceDetectorService } = SpiesBuilder.init()
     .withAuthFacade()
     .withDeviceDetectorService()
     .build();
 
   beforeEach(() => {
-    component = new NavbarComponent(authFacade, deviceDetectorService);
+    component = new HeaderComponent(authFacade, deviceDetectorService);
   });
 
   describe('Logout', () => {
@@ -25,8 +25,8 @@ describe('Navbar Component', () => {
       component.isMobile();
 
       expect(deviceDetectorService.isMobile).toHaveBeenCalledTimes(1);
-    })
-  })
+    });
+  });
 
   describe('On Toggle Side Nav', () => {
     it('should emit value', () => {
@@ -34,6 +34,6 @@ describe('Navbar Component', () => {
       component.onToggleSideNav();
 
       expect(spy).toHaveBeenCalledTimes(1);
-    })
-  })
+    });
+  });
 });
