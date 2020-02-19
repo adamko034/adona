@@ -13,9 +13,18 @@
         fxLayoutAlign="space-between"
       >
         <div>
-          <div class="team">
-            <a [routerLink]="'/home'" class="adona-link">{{ team?.name }}</a>
+          <div *ngIf="shouldShowTeamSection()" class="team" fxLayout="column">
+            <a *ngIf="isExpanded" [routerLink]="'/home'" class="link-expanded" fxLayout="column">
+              <span>{{ team?.name }}</span>
+              <div class="members">
+                <span>{{ teamMembersText }}</span>
+              </div></a
+            >
+            <a *ngIf="!isExpanded" [routerLink]="'/home'" class="link-icon">
+              <mat-icon>supervisor_account</mat-icon>
+            </a>
           </div>
+
           <div class="section">
             <span *ngIf="isExpanded" class="title">NAVITAGION</span>
 
@@ -34,9 +43,9 @@
               </a>
             </div>
           </div>
-          <div class="section">
+          <div *ngIf="shouldShowQuickActions()" class="section">
             <span *ngIf="isExpanded" class="title">QUICK ACTIONS</span>
-            <div class="navigation-item" fxLayout>
+            <div *ngIf="shouldShowChangeTeamAction()" class="navigation-item" fxLayout>
               <a
                 class="navigation-item-link"
                 fxFill

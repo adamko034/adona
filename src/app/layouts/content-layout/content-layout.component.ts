@@ -8,6 +8,8 @@ import { UserFacade } from 'src/app/core/user/user.facade';
 import { SharedDialogsService } from 'src/app/shared/services/dialogs/shared-dialogs.service';
 import { Route } from '../../core/router/model/route.model';
 import { RouterFacade } from '../../core/router/router.facade';
+import { TeamUtilsService } from '../../core/team/services/team-utils.service';
+import { UserUtilservice } from '../../core/user/services/user-utils.service';
 import { SideNavbarService } from './service/side-navbar.service';
 
 @Component({
@@ -28,18 +30,22 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
   public routes: Route[];
   public currentRoute: string;
   public isExpanded = true;
+  public teamMembersText = '';
 
   constructor(
     private sideNavbarService: SideNavbarService,
     private teamFacade: TeamFacade,
     private routerFacade: RouterFacade,
     private userFacade: UserFacade,
-    private sharedDialogsService: SharedDialogsService
+    private sharedDialogsService: SharedDialogsService,
+    private teamUtilsService: TeamUtilsService,
+    private userUtilsService: UserUtilservice
   ) {}
 
   public ngOnInit() {
     this.teamSubscription = this.teamFacade.selectSelectedTeam().subscribe((selectedTeam: Team) => {
       this.team = selectedTeam;
+      this.setTeamMembersText();
     });
     this.currentRouteSubscription = this.routerFacade.selectCurrentRute().subscribe(route => {
       this.currentRoute = route;
@@ -81,5 +87,42 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
     this.changeTeamSubscription = this.sharedDialogsService
       .changeTeam(this.user)
       .subscribe(() => this.sideNavbarService.closeIfMobile(this.sideNav));
+  }
+
+  public shouldShowChangeTeamAction(): boolean {
+    return this.userUtilsService.hasMultipleTeams(this.user);
+  }
+
+  public shouldShowQuickActions(): boolean {
+    return this.shouldShowChangeTeamAction();
+  }
+
+  public shouldShowTeamSection(): boolean {
+    return !!this.team;
+  }
+
+  private setTeamMembersText() {
+    const membersCount = this.teamUtilsService.getMembersCount(this.team);
+    const maxTextChars = 28;
+    let text = '';
+
+    if (this.team && this.team.members) {
+      let namesUsedCount = 0;
+      for (const key in this.team.members) {
+        const name = this.team.members[key].name;
+        text += name + ', ';
+        namesUsedCount += 1;
+
+        if (text.length >= maxTextChars) break;
+      }
+
+      text = text.slice(0, -2);
+
+      if (namesUsedCount < membersCount) {
+        text += ` and ${membersCount - namesUsedCount} more...`;
+      }
+    }
+
+    this.teamMembersText = text;
   }
 }

@@ -16,11 +16,34 @@
     color: rgba(255, 255, 255, 0.4);
 
     .team {
-      padding: 20px 10px;
-      color: #fff;
-      font-size: 20px;
-      font-weight: 200;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+      .link-expanded {
+        padding-top: 5px;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 15px;
+        word-wrap: break-word;
+        font-size: 20px;
+        font-weight: 200;
+        color: #fff;
+        text-decoration: none;
+
+        .members {
+          color: rgba(255, 255, 255, 0.4);
+          font-size: 11px;
+        }
+      }
+
+      .link-icon {
+        padding: 15px 20px;
+        color: #fff;
+
+        &:hover {
+          background-color: #3f51b5;
+          color: #fff;
+        }
+      }
     }
 
     .section {
