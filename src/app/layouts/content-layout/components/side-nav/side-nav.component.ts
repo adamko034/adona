@@ -1,5 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { MatSidenav } from '@angular/material';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Route } from 'src/app/core/router/model/route.model';
 import { RouterFacade } from 'src/app/core/router/router.facade';
@@ -8,51 +7,35 @@ import { TeamUtilsService } from 'src/app/core/team/services/team-utils.service'
 import { User } from 'src/app/core/user/model/user.model';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { SharedDialogsService } from 'src/app/shared/services/dialogs/shared-dialogs.service';
-import { SideNavbarService } from '../../service/side-navbar.service';
+import { GuiFacade } from '../../../../core/gui/gui.facade';
 
 @Component({
   selector: 'app-side-nav',
   templateUrl: './side-nav.component.html',
   styleUrls: ['./side-nav.component.scss']
 })
-export class SideNavComponent implements OnInit, OnChanges, OnDestroy {
+export class SideNavComponent implements OnInit, OnDestroy {
   @Input() team: Team;
   @Input() user: User;
   @Input() currentRoute: string;
-  @Input() showSideNav: boolean;
 
   private changeTeamSubscription: Subscription;
 
-  @ViewChild('sideNav', { static: true })
-  public sideNav: MatSidenav;
-
-  public isExpanded = true;
   public teamMembersText = '';
   public routes: Route[];
+  public isExpanded = true;
 
   constructor(
     private routerFacade: RouterFacade,
     private teamUtilsService: TeamUtilsService,
-    private sideNavbarService: SideNavbarService,
     private userUtilsService: UserUtilservice,
-    private sharedDialogsService: SharedDialogsService
+    private sharedDialogsService: SharedDialogsService,
+    private guiFacade: GuiFacade
   ) {}
 
   public ngOnInit() {
     this.routes = this.routerFacade.selectAdonaRoutes();
-
-    this.sideNavbarService.init(this.sideNav);
-  }
-
-  public ngOnChanges(changes: SimpleChanges) {
-    if (!!changes.team.currentValue && changes.team.currentValue !== changes.team.previousValue) {
-      console.log('ng on changes, has team');
-      this.setTeamMembersText();
-    }
-
-    if (!!changes.showSideNav && changes.showSideNav.currentValue !== changes.showSideNav.previousValue) {
-      this.sideNavbarService.toggleSideNav(this.sideNav);
-    }
+    this.setTeamMembersText();
   }
 
   public ngOnDestroy() {
@@ -66,7 +49,7 @@ export class SideNavComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public onNavigationLinkClicked() {
-    this.sideNavbarService.closeIfMobile(this.sideNav);
+    this.guiFacade.toggleSideNavbarIfMobile();
   }
 
   public shouldShowChangeTeamAction(): boolean {
@@ -78,9 +61,10 @@ export class SideNavComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public openChangeTeamDialog() {
-    this.changeTeamSubscription = this.sharedDialogsService
-      .changeTeam(this.user)
-      .subscribe(() => this.sideNavbarService.closeIfMobile(this.sideNav));
+    this.changeTeamSubscription = this.sharedDialogsService.changeTeam(this.user).subscribe(() => {
+      this.setTeamMembersText();
+      this.guiFacade.toggleSideNavbarIfMobile();
+    });
   }
 
   private setTeamMembersText() {

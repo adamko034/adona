@@ -1,6 +1,7 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { AuthFacade } from '../../../../core/auth/auth.facade';
+import { GuiFacade } from '../../../../core/gui/gui.facade';
 
 @Component({
   selector: 'app-header',
@@ -8,9 +9,11 @@ import { AuthFacade } from '../../../../core/auth/auth.facade';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
-  @Output() toggleSideNav = new EventEmitter<void>();
-
-  constructor(private authFacade: AuthFacade, private deviceDetector: DeviceDetectorService) {}
+  constructor(
+    private authFacade: AuthFacade,
+    private deviceDetector: DeviceDetectorService,
+    private guiFacade: GuiFacade
+  ) {}
 
   public ngOnInit() {}
 
@@ -23,6 +26,6 @@ export class HeaderComponent implements OnInit {
   }
 
   public onToggleSideNav() {
-    this.toggleSideNav.emit();
+    this.guiFacade.toggleSideNavbar();
   }
 }

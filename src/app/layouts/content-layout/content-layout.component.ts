@@ -1,9 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { Team } from 'src/app/core/team/model/team.model';
 import { TeamFacade } from 'src/app/core/team/team.facade';
 import { User } from 'src/app/core/user/model/user.model';
 import { UserFacade } from 'src/app/core/user/user.facade';
+import { GuiFacade } from '../../core/gui/gui.facade';
+import { SideNavbarOptions } from '../../core/gui/model/side-navbar-options.model';
 import { RouterFacade } from '../../core/router/router.facade';
 
 @Component({
@@ -15,15 +18,24 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
   private teamSubscription: Subscription;
   private currentRouteSubscription: Subscription;
   private userSubscription: Subscription;
+  private sideNavbarOptionsSubscription: Subscription;
+
+  @ViewChild('sideNav', { static: true })
+  public sideNav: MatSidenav;
 
   public user: User;
   public team: Team;
   public currentRoute: string;
-  public showSideNav: boolean;
 
-  constructor(private teamFacade: TeamFacade, private routerFacade: RouterFacade, private userFacade: UserFacade) {}
+  constructor(
+    private teamFacade: TeamFacade,
+    private routerFacade: RouterFacade,
+    private userFacade: UserFacade,
+    private guiFacade: GuiFacade
+  ) {}
 
   public ngOnInit() {
+    this.guiFacade.initSideNavbar();
     this.teamSubscription = this.teamFacade.selectSelectedTeam().subscribe((selectedTeam: Team) => {
       this.team = selectedTeam;
     });
@@ -33,6 +45,14 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
     this.userSubscription = this.userFacade.selectUser().subscribe((user: User) => {
       this.user = user;
     });
+    this.sideNavbarOptionsSubscription = this.guiFacade
+      .selectSideNavbarOptions()
+      .subscribe((options: SideNavbarOptions) => {
+        if (options) {
+          this.sideNav.mode = options.mode;
+          options.opened ? this.sideNav.open() : this.sideNav.close();
+        }
+      });
   }
 
   public ngOnDestroy() {
@@ -47,9 +67,9 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
     if (this.userSubscription) {
       this.userSubscription.unsubscribe();
     }
-  }
 
-  public onToggleSideNav() {
-    this.showSideNav = !this.showSideNav;
+    if (this.sideNavbarOptionsSubscription) {
+      this.sideNavbarOptionsSubscription.unsubscribe();
+    }
   }
 }
