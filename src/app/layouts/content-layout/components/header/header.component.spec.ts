@@ -3,13 +3,14 @@ import { HeaderComponent } from './header.component';
 
 describe('Header Component', () => {
   let component: HeaderComponent;
-  const { authFacade, deviceDetectorService } = SpiesBuilder.init()
+  const { authFacade, deviceDetectorService, guiFacade } = SpiesBuilder.init()
     .withAuthFacade()
     .withDeviceDetectorService()
+    .withGuiFacade()
     .build();
 
   beforeEach(() => {
-    component = new HeaderComponent(authFacade, deviceDetectorService);
+    component = new HeaderComponent(authFacade, deviceDetectorService, guiFacade);
   });
 
   describe('Logout', () => {
@@ -29,11 +30,10 @@ describe('Header Component', () => {
   });
 
   describe('On Toggle Side Nav', () => {
-    it('should emit value', () => {
-      const spy = spyOn(component.toggleSideNav, 'emit');
+    it('should call gui facade', () => {
       component.onToggleSideNav();
 
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(guiFacade.toggleSideNavbar).toHaveBeenCalledTimes(1);
     });
   });
 });

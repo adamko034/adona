@@ -10,7 +10,7 @@ import { guiQueries } from '../store/selectors/gui.selectors';
 import { GuiFacade } from './gui.facade';
 import { SideNavbarOptionsBuilder } from './model/builders/side-navbar-options.builder';
 
-fdescribe('Gui Facade', () => {
+describe('Gui Facade', () => {
   let facade: GuiFacade;
   let store: MockStore<GuiState>;
 
@@ -28,11 +28,13 @@ fdescribe('Gui Facade', () => {
   });
 
   describe('Select Side Navbar Options', () => {
-    const options = SideNavbarOptionsBuilder.from(true, 'push').build();
+    it('should return observable of Side Navbar Options', () => {
+      const options = SideNavbarOptionsBuilder.from(true, 'push').build();
 
-    store.overrideSelector(guiQueries.selectSideNavbarOptions, options);
+      store.overrideSelector(guiQueries.selectSideNavbarOptions, options);
 
-    expect(facade.selectSideNavbarOptions()).toBeObservable(cold('x', { x: options }));
+      expect(facade.selectSideNavbarOptions()).toBeObservable(cold('x', { x: options }));
+    });
   });
 
   describe('Init Side Navbar', () => {
@@ -56,7 +58,7 @@ fdescribe('Gui Facade', () => {
   });
 
   describe('Toogle Side Navbar', () => {
-    it('should dispatch aciont', () => {
+    it('should dispatch action', () => {
       const dispatchSpy = spyOn(store, 'dispatch');
       facade.toggleSideNavbar();
 
@@ -68,6 +70,8 @@ fdescribe('Gui Facade', () => {
     [true, false].forEach(isMobile => {
       it(`should ${isMobile ? '' : ' not '} dispatch Toogle Side Navbar action`, () => {
         const dispatchSpy = spyOn(store, 'dispatch');
+        dispatchSpy.calls.reset();
+
         deviceDetectorService.isMobile.and.returnValue(isMobile);
 
         facade.toggleSideNavbarIfMobile();

@@ -3,16 +3,17 @@ import { MatDialogRef } from '@angular/material';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
+import { GuiFacade } from 'src/app/core/gui/gui.facade';
 import { RouterFacade } from 'src/app/core/router/router.facade';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { UserService } from 'src/app/core/user/services/user.service';
-import { SideNavbarService } from 'src/app/layouts/content-layout/service/side-navbar.service';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { ExpensesService } from 'src/app/modules/expenses/services/expenses.service';
 import { ExpensesFacade } from 'src/app/modules/expenses/store/expenses.facade';
 import { DialogService } from 'src/app/shared/services/dialogs/dialog.service';
+import { SharedDialogsService } from 'src/app/shared/services/dialogs/shared-dialogs.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
 import { DayHoursService } from 'src/app/shared/services/time/parts/day-hours.service';
 import { HourQuartersService } from 'src/app/shared/services/time/parts/hour-quarters.service';
@@ -46,7 +47,8 @@ export interface Spies {
   userUtilsService?: jasmine.SpyObj<UserUtilservice>;
   matDialogRef?: jasmine.SpyObj<MatDialogRef<any>>;
   routerFacade?: jasmine.SpyObj<RouterFacade>;
-  sideNavbarService?: jasmine.SpyObj<SideNavbarService>;
+  guiFacade?: jasmine.SpyObj<GuiFacade>;
+  sharedDialogService?: jasmine.SpyObj<SharedDialogsService>;
 }
 
 export class SpiesBuilder {
@@ -242,11 +244,12 @@ export class SpiesBuilder {
     return this;
   }
 
-  public withSideNavbarService(): SpiesBuilder {
-    this.spies.sideNavbarService = jasmine.createSpyObj('sideNavbarService', [
-      'init',
-      'closeIfMobile',
-      'toggleSideNav'
+  public withGuiFacade(): SpiesBuilder {
+    this.spies.guiFacade = jasmine.createSpyObj<GuiFacade>('guiFacade', [
+      'selectSideNavbarOptions',
+      'initSideNavbar',
+      'toggleSideNavbar',
+      'toggleSideNavbarIfMobile'
     ]);
 
     return this;
@@ -258,6 +261,12 @@ export class SpiesBuilder {
       'selectCurrentRute',
       'selectAdonaRoutes'
     ]);
+
+    return this;
+  }
+
+  public withSharedDialogService(): SpiesBuilder {
+    this.spies.sharedDialogService = jasmine.createSpyObj<SharedDialogsService>('sharedDialogService', ['changeTeam']);
 
     return this;
   }

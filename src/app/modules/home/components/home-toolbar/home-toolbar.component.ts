@@ -24,7 +24,7 @@ export class HomeToolbarComponent implements OnInit {
     private dialogService: DialogService,
     private teamFacade: TeamFacade,
     private userUtils: UserUtilservice,
-    private sharedDialoService: SharedDialogsService
+    private sharedDialogService: SharedDialogsService
   ) {}
 
   public ngOnInit() {}
@@ -50,10 +50,10 @@ export class HomeToolbarComponent implements OnInit {
   }
 
   public openChangeTeamDialog() {
-    this.changeTeamDialogSubscription = this.sharedDialoService.changeTeam(this.user).subscribe();
+    this.changeTeamDialogSubscription = this.sharedDialogService.changeTeam(this.user).subscribe();
   }
 
-  public userHasMultipleTeams() {
+  public userHasMultipleTeams(): boolean {
     return this.userUtils.hasMultipleTeams(this.user);
   }
 }
