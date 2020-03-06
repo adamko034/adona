@@ -29,7 +29,8 @@ script:
   - npm run prod
 
 deploy:
-  skip_cleanup: true
+  cleanup: true
   provider: firebase
+  edge: true
   token:
     secure: $FIREBASE_TOKEN
