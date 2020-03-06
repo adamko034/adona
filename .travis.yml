@@ -1,28 +1,28 @@
 notifications:
   email:
     recipients:
-    - adamko034@outlook.com
+      - adamko034@outlook.com
     on_success: always
     on_failure: always
 language: node_js
 node_js:
-- '11'
+  - '11'
 addons:
   chrome: stable
 cache:
   directories:
-  - "./node-modules"
+    - './node-modules'
 branches:
   only:
-  - master
+    - master
 before_script:
-- npm install -g @angular/cli
+  - npm install -g @angular/cli
 script:
-- npm install
-- npm run test-travis
-- npm run prod
+  - npm install
+  - npm run test-travis
+  - npm run prod
 deploy:
-  cleanup: true
+  skip_cleanup: true
   provider: firebase
   edge: true
   token:
