@@ -1,0 +1,58 @@
+<div class="side-nav" [ngClass]="{ 'side-nav-expanded': isExpanded }" fxLayout="column" fxLayoutAlign="space-between">
+  <div>
+    <div *ngIf="!!team" class="team" fxLayout="column">
+      <a *ngIf="isExpanded" [routerLink]="'/home'" class="link-expanded" fxLayout="column">
+        <span>{{ team?.name }}</span>
+        <div class="members">
+          <span>{{ teamMembersText }}</span>
+        </div></a
+      >
+      <a *ngIf="!isExpanded" [routerLink]="'/home'" class="link-icon">
+        <mat-icon>supervisor_account</mat-icon>
+      </a>
+    </div>
+
+    <div class="section">
+      <span *ngIf="isExpanded" class="title">NAVITAGION</span>
+
+      <div *ngFor="let route of routes" class="navigation-item" fxLayout>
+        <a
+          [routerLink]="route.url"
+          [ngClass]="{ 'navigation-item-current': route.url === currentRoute }"
+          class="navigation-item-link"
+          fxFill
+          fxLayout="row"
+          fxLayoutAlign="start center"
+          (click)="onNavigationLinkClicked()"
+        >
+          <mat-icon fxFlex="25">{{ route.icon }}</mat-icon>
+          <span fxFlex="65" *ngIf="isExpanded">{{ route.name }}</span>
+        </a>
+      </div>
+    </div>
+    <div *ngIf="shouldShowQuickActions()" class="section">
+      <span *ngIf="isExpanded" class="title">QUICK ACTIONS</span>
+      <div *ngIf="shouldShowChangeTeamAction()" class="navigation-item" fxLayout>
+        <a
+          class="navigation-item-link"
+          fxFill
+          fxLayout="row"
+          fxLayoutAlign="start center"
+          (click)="openChangeTeamDialog()"
+        >
+          <mat-icon fxFlex="25">sync_alt</mat-icon>
+          <span fxFlex="65" *ngIf="isExpanded">Change team</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div fxLayout="row" fxLayoutAlign="end center" class="expander">
+    <button mat-icon-button *ngIf="isExpanded" (click)="toggleExpand()">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <button mat-icon-button *ngIf="!isExpanded" (click)="toggleExpand()">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+</div>

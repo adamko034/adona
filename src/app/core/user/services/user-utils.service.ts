@@ -12,6 +12,14 @@ export class UserUtilservice {
     return user.teams.length > 1;
   }
 
+  public hasTeams(user: User): boolean {
+    if (!user || !user.teams) {
+      return false;
+    }
+
+    return user.teams.length >= 1;
+  }
+
   public getSelectedTeam(user: User): UserTeam {
     if (user && user.teams) {
       return user.teams.find((team: UserTeam) => team.id === user.selectedTeamId);

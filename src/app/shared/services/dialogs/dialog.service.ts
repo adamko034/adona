@@ -24,6 +24,10 @@ export class DialogService {
       properties.data = null;
     }
 
+    if (properties.autoFocus === undefined) {
+      properties.autoFocus = false;
+    }
+
     properties.panelClass = 'adona-dialog';
 
     const dialogRef = this.matDialog.open(component, properties);

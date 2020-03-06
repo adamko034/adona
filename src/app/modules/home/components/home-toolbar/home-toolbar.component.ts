@@ -1,14 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-request.model';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
 import { TeamFacade } from 'src/app/core/team/team.facade';
 import { User } from 'src/app/core/user/model/user.model';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { DialogResult } from 'src/app/shared/services/dialogs/dialog-result.model';
 import { DialogService } from 'src/app/shared/services/dialogs/dialog.service';
-import { UserFacade } from '../../../../core/user/user.facade';
-import { ChangeTeamDialogComponent } from '../dialogs/change-team-dialog/change-team-dialog.component';
+import { SharedDialogsService } from 'src/app/shared/services/dialogs/shared-dialogs.service';
 import { NewTeamDialogComponent } from '../dialogs/new-team-dialog/new-team-dialog.component';
 
 @Component({
@@ -26,7 +24,7 @@ export class HomeToolbarComponent implements OnInit {
     private dialogService: DialogService,
     private teamFacade: TeamFacade,
     private userUtils: UserUtilservice,
-    private userFacade: UserFacade
+    private sharedDialogService: SharedDialogsService
   ) {}
 
   public ngOnInit() {}
@@ -52,23 +50,10 @@ export class HomeToolbarComponent implements OnInit {
   }
 
   public openChangeTeamDialog() {
-    this.changeTeamDialogSubscription = this.dialogService
-      .open(ChangeTeamDialogComponent, { data: { user: this.user } })
-      .subscribe((result: DialogResult<string>) => {
-        if (result && result.payload) {
-          const request: ChangeTeamRequest = {
-            teamId: result.payload,
-            user: this.user,
-            updated: new Date()
-          };
-
-          this.userFacade.changeTeam(request);
-          this.teamFacade.loadTeam(request.teamId);
-        }
-      });
+    this.changeTeamDialogSubscription = this.sharedDialogService.changeTeam(this.user).subscribe();
   }
 
-  public userHasMultipleTeams() {
+  public userHasMultipleTeams(): boolean {
     return this.userUtils.hasMultipleTeams(this.user);
   }
 }
