@@ -4,33 +4,29 @@ notifications:
       - adamko034@outlook.com
     on_success: always
     on_failure: always
-
 language: node_js
 node_js:
   - '11'
-
 addons:
   chrome: stable
-
 cache:
   directories:
-    - ./node-modules
-
+    - './node-modules'
 branches:
   only:
     - master
-
 before_script:
   - npm install -g @angular/cli
-
 script:
   - npm install
   - npm run test-travis
   - npm run prod
-
 deploy:
   cleanup: true
   provider: firebase
   edge: true
   token:
-    secure: $FIREBASE_TOKEN
+    secure: '$FIREBASE_TOKEN'
+env:
+  global:
+    secure: 'wOSA/DBPEsAEISI04wAZ+j0IkMhtrbonpGeg84uToRsVbA6Y1nteI3tocQyRPTof5n+fm0UVlLSe44SYmSoEULPLhp19ZnFl6WOSZFPVDHdYQPLgYQU4yn6kwGcURRCCGtjfzQztR6y7/SM4Wi+pZeWjpFd/umCpPxK+p2/6NarYtYOhu8tLCch2z4kWvHRnh+wAer5P7VzHjj02YMqQ9OasFSnay/PxXhx2oVlMZ2Jy7ZhKd8IhLsSlj/3Xe/7VxPbYsQs8mCmd+2ca3xAwCrg/kdJ9cfcXOF/OmFBNanXSvf+ELhdWhUxPDFeYcCrsgzX9tunGdkRkH02+rF1zRv86a425nKj9+cZwo/W2ZaMgnZwCnLZI6T2FeLhhedMZcK4RRmkDTIiu+th39+BRe81sTzMu/g2p9hWsPXSeBZaxaVtIiS7p56FRguNjvQiGKpW2Widk58j2Ya45KQ5UbEgV8LH3PSpkPHW111gYJI/zWe7aesDgeOqYGL/hqJ7U1LF1xudfUk75QJvG0dqwP6+9XUE1GGsOcwgz4ACQ4jdvb5rKPA9VZ8YiT2eZfhZIPPrd8nLx+joRDxJPIVs6ccLiGQwo9ckGr28kF6PPtCY9dcoKGSYgfGkyu3+atgYH/hwpj9GBgnqJyJHIdBfEwftxwD08XmSab7tU2dGA+o4='
