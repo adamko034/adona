@@ -22,6 +22,7 @@ import { TimeCreationService } from 'src/app/shared/services/time/parts/time-cre
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { TimeManipulationService } from 'src/app/shared/services/time/parts/time-manipulation.service';
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { TeamUtilsService } from '../../../core/team/services/team-utils.service';
 import { TeamService } from '../../../core/team/services/team.service';
 import { TeamFacade } from '../../../core/team/team.facade';
 import { UserFacade } from '../../../core/user/user.facade';
@@ -49,6 +50,7 @@ export interface Spies {
   routerFacade?: jasmine.SpyObj<RouterFacade>;
   guiFacade?: jasmine.SpyObj<GuiFacade>;
   sharedDialogService?: jasmine.SpyObj<SharedDialogsService>;
+  teamUtilsService?: jasmine.SpyObj<TeamUtilsService>;
 }
 
 export class SpiesBuilder {
@@ -267,6 +269,12 @@ export class SpiesBuilder {
 
   public withSharedDialogService(): SpiesBuilder {
     this.spies.sharedDialogService = jasmine.createSpyObj<SharedDialogsService>('sharedDialogService', ['changeTeam']);
+
+    return this;
+  }
+
+  public withTeamUtilsService(): SpiesBuilder {
+    this.spies.teamUtilsService = jasmine.createSpyObj<TeamUtilsService>('teamUtilsService', ['getMembersCount']);
 
     return this;
   }

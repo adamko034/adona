@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Route } from 'src/app/core/router/model/route.model';
 import { RouterFacade } from 'src/app/core/router/router.facade';
@@ -14,7 +14,7 @@ import { GuiFacade } from '../../../../core/gui/gui.facade';
   templateUrl: './side-nav.component.html',
   styleUrls: ['./side-nav.component.scss']
 })
-export class SideNavComponent implements OnInit, OnDestroy {
+export class SideNavComponent implements OnInit, OnDestroy, OnChanges {
   @Input() team: Team;
   @Input() user: User;
   @Input() currentRoute: string;
@@ -36,6 +36,12 @@ export class SideNavComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.routes = this.routerFacade.selectAdonaRoutes();
     this.setTeamMembersText();
+  }
+
+  public ngOnChanges(changes: SimpleChanges) {
+    if (changes.team && changes.team.currentValue !== changes.team.previousValue) {
+      this.setTeamMembersText();
+    }
   }
 
   public ngOnDestroy() {
@@ -62,7 +68,6 @@ export class SideNavComponent implements OnInit, OnDestroy {
 
   public openChangeTeamDialog() {
     this.changeTeamSubscription = this.sharedDialogsService.changeTeam(this.user).subscribe(() => {
-      this.setTeamMembersText();
       this.guiFacade.toggleSideNavbarIfMobile();
     });
   }
