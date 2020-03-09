@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { DayHoursService } from 'src/app/shared/services/time/parts/day-hours.service';
-import { HourQuartersService } from './parts/hour-quarters.service';
-import { TimeManipulationService } from 'src/app/shared/services/time/parts/time-manipulation.service';
 import { TimeComparisonService } from 'src/app/shared/services/time/parts/time-comparison.service';
 import { TimeCreationService } from 'src/app/shared/services/time/parts/time-creation.service';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
+import { TimeManipulationService } from 'src/app/shared/services/time/parts/time-manipulation.service';
+import { HourQuartersService } from './parts/hour-quarters.service';
 
 @Injectable()
 export class TimeService {

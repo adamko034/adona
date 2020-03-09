@@ -51,26 +51,26 @@ describe('Auth Reducer', () => {
   });
 
   describe('On Login Success', () => {
-    it('should set user and login failed to false', () => {
+    it('should set user and login failed to null', () => {
       const result = reducer({ user: null, loginFailed: true }, authActions.loginSuccess({ user }));
 
-      expect({ ...result }).toEqual({ user, loginFailed: false });
+      expect({ ...result }).toEqual({ user, loginFailed: null });
     });
   });
 
   describe('On Logout Success', () => {
-    it('should set user to null and login failed to false', () => {
+    it('should set user to null and login failed to null', () => {
       const result = reducer({ user, loginFailed: true }, authActions.logoutSuccess());
 
-      expect({ ...result }).toEqual({ user: null, loginFailed: false });
+      expect({ ...result }).toEqual({ user: null, loginFailed: null });
     });
   });
 
   describe('On Load User Success', () => {
     it('should set user', () => {
-      const result = reducer({ user: null, loginFailed: true }, userActions.loadUserSuccess({ user }));
+      const result = reducer({ user: null, loginFailed: false }, userActions.loadUserSuccess({ user }));
 
-      expect({ ...result }).toEqual({ user, loginFailed: true });
+      expect({ ...result }).toEqual({ user, loginFailed: false });
     });
   });
 
@@ -79,6 +79,14 @@ describe('Auth Reducer', () => {
       const result = reducer({ user, loginFailed: false }, authActions.loginFailed());
 
       expect({ ...result }).toEqual({ user: null, loginFailed: true });
+    });
+  });
+
+  describe('On Login Clear Error', () => {
+    it('should set user and login failed to null', () => {
+      const result = reducer({ user, loginFailed: true }, authActions.loginClearError());
+
+      expect({ ...result }).toEqual({ user: null, loginFailed: null });
     });
   });
 
@@ -108,7 +116,8 @@ describe('Auth Reducer', () => {
           id: userToChange.id,
           name: userToChange.name,
           selectedTeamId: '123',
-          teams: [userTeam, userTeamExpected]
+          teams: [userTeam, userTeamExpected],
+          email: userToChange.email
         }
       });
     });

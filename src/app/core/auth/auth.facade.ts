@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
+import { Credentials } from 'src/app/core/auth/model/credentials.model';
 import { AuthState } from 'src/app/core/store/reducers/auth/auth.reducer';
 import { authQueries } from 'src/app/core/store/selectors/auth.selectors';
 import { authActions } from '../store/actions/auth.actions';
@@ -10,11 +10,12 @@ import { authActions } from '../store/actions/auth.actions';
 export class AuthFacade {
   constructor(private store: Store<AuthState>) {}
 
-  public getLoginFailure(): Observable<boolean> {
+  public selectLoginFailure(): Observable<boolean> {
     return this.store.select(authQueries.selectLoginFailure);
   }
 
-  public login(credentials: CredentialsLogin) {
+  public login(credentials: Credentials) {
+    this.store.dispatch(authActions.loginClearError());
     this.store.dispatch(authActions.login({ credentials }));
   }
 

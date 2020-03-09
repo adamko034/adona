@@ -1,5 +1,5 @@
 import { AngularFirestoreCollection } from '@angular/fire/firestore';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
@@ -8,6 +8,9 @@ import { RouterFacade } from 'src/app/core/router/router.facade';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { UserService } from 'src/app/core/user/services/user.service';
+import { RegistrationFacade } from 'src/app/modules/auth/facade/registration-facade';
+import { EmailConfirmationService } from 'src/app/modules/auth/services/email-confirmation.service';
+import { RegistrationErrorService } from 'src/app/modules/auth/services/registration-error.service';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { ExpensesService } from 'src/app/modules/expenses/services/expenses.service';
@@ -51,6 +54,9 @@ export interface Spies {
   guiFacade?: jasmine.SpyObj<GuiFacade>;
   sharedDialogService?: jasmine.SpyObj<SharedDialogsService>;
   teamUtilsService?: jasmine.SpyObj<TeamUtilsService>;
+  registrationFacade?: jasmine.SpyObj<RegistrationFacade>;
+  registrationErrorService?: jasmine.SpyObj<RegistrationErrorService>;
+  emailConfirmationService?: jasmine.SpyObj<EmailConfirmationService>;
 }
 
 export class SpiesBuilder {
@@ -69,7 +75,8 @@ export class SpiesBuilder {
       'toHome',
       'toExpensesMobile',
       'toExpensesDesktop',
-      'toExpenseContent'
+      'toExpenseContent',
+      'toVerifyEmail'
     ]);
 
     return this;
@@ -102,7 +109,12 @@ export class SpiesBuilder {
   }
 
   public withAuthService(): SpiesBuilder {
-    this.spies.authService = jasmine.createSpyObj<AuthService>('authService', ['getAuthState', 'login', 'logout']);
+    this.spies.authService = jasmine.createSpyObj<AuthService>('authService', [
+      'getAuthState',
+      'login',
+      'logout',
+      'register'
+    ]);
 
     return this;
   }
@@ -118,7 +130,7 @@ export class SpiesBuilder {
   }
 
   public withAuthFacade(): SpiesBuilder {
-    this.spies.authFacade = jasmine.createSpyObj<AuthFacade>('authFacade', ['getLoginFailure', 'login', 'logout']);
+    this.spies.authFacade = jasmine.createSpyObj<AuthFacade>('authFacade', ['selectLoginFailure', 'login', 'logout']);
 
     return this;
   }
@@ -162,7 +174,7 @@ export class SpiesBuilder {
   }
 
   public withUserService(): SpiesBuilder {
-    this.spies.userService = jasmine.createSpyObj<UserService>('userService', ['loadUser', 'changeTeam']);
+    this.spies.userService = jasmine.createSpyObj<UserService>('userService', ['loadUser', 'changeTeam', 'createUser']);
 
     return this;
   }
@@ -177,7 +189,7 @@ export class SpiesBuilder {
     this.spies.angularFirestore = {
       createId: jasmine.createSpy(),
       collection: jasmine.createSpy('collection').and.returnValue({
-        doc: jasmine.createSpy('doc').and.returnValue(jasmine.createSpyObj('doc', ['valueChanges', 'update']))
+        doc: jasmine.createSpy('doc').and.returnValue(jasmine.createSpyObj('doc', ['valueChanges', 'update', 'set']))
       }),
       firestore: {
         batch: jasmine.createSpy('batch').and.returnValue(
@@ -235,7 +247,8 @@ export class SpiesBuilder {
   public withUserUtilsService(): SpiesBuilder {
     this.spies.userUtilsService = jasmine.createSpyObj<UserUtilservice>('userUtilsService', [
       'getSelectedTeam',
-      'hasMultipleTeams'
+      'hasMultipleTeams',
+      'extractUsernameFromEmail'
     ]);
     return this;
   }
@@ -276,6 +289,35 @@ export class SpiesBuilder {
   public withTeamUtilsService(): SpiesBuilder {
     this.spies.teamUtilsService = jasmine.createSpyObj<TeamUtilsService>('teamUtilsService', ['getMembersCount']);
 
+    return this;
+  }
+
+  public withRegistrationFacade(): SpiesBuilder {
+    this.spies.registrationFacade = jasmine.createSpyObj<RegistrationFacade>('registrationFacade', [
+      'register',
+      'resendEmailConfirmationLink',
+      'selectRegistrationError',
+      'pushFormInvalidError',
+      'pushPasswordsDoNotMatchError',
+      'clearRegistrationErrors'
+    ]);
+
+    return this;
+  }
+
+  public withRegistrationErrorService(): SpiesBuilder {
+    this.spies.registrationErrorService = jasmine.createSpyObj<RegistrationErrorService>('registrationErrorService', [
+      'push',
+      'selectErrors'
+    ]);
+    return this;
+  }
+
+  public withEmailConfirmationService(): SpiesBuilder {
+    this.spies.emailConfirmationService = jasmine.createSpyObj<EmailConfirmationService>('emailConfirmationService', [
+      'send',
+      'sendUsingAuthorizedUser'
+    ]);
     return this;
   }
 

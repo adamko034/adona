@@ -15,6 +15,15 @@ export class UserService {
 
   constructor(private db: AngularFirestore, private timeService: TimeService) {}
 
+  public createUser(user: User): Observable<void> {
+    return from(
+      this.db
+        .collection(this.collectionName)
+        .doc(user.id)
+        .set(user)
+    );
+  }
+
   public loadUser(uid: string): Observable<User> {
     return this.db
       .collection(this.collectionName)
@@ -58,7 +67,8 @@ export class UserService {
       });
     }
 
-    return UserBuilder.from(uid, firebaseUser.name)
+    return UserBuilder.from(uid, firebaseUser.email, firebaseUser.name)
+      .withName(firebaseUser.name)
       .withSelectedTeamId(!!firebaseUser.selectedTeamId ? firebaseUser.selectedTeamId : null)
       .withTeams(teams)
       .build();

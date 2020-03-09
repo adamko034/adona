@@ -1,4 +1,4 @@
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { hot } from 'jasmine-marbles';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { NewEventDialogComponent } from '../../../modules/calendar/components/dialogs/new-event-dialog/new-event-dialog.component';

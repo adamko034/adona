@@ -1,9 +1,9 @@
-import { CredentialsLogin } from 'src/app/core/auth/model/credentials-login.model';
+import { Credentials } from 'src/app/core/auth/model/credentials.model';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { authActions, authActionTypes } from './auth.actions';
 
 describe('Auth Actions', () => {
-  const credentials: CredentialsLogin = {
+  const credentials: Credentials = {
     email: 'test@test.com',
     password: 'test'
   };
@@ -18,6 +18,16 @@ describe('Auth Actions', () => {
     expect({ ...action }).toEqual({
       type: authActionTypes.login,
       credentials
+    });
+  });
+
+  it('should create Login Clear Error action', () => {
+    // when
+    const action = authActions.loginClearError();
+
+    // then
+    expect({ ...action }).toEqual({
+      type: authActionTypes.loginClearError
     });
   });
 
@@ -56,5 +66,10 @@ describe('Auth Actions', () => {
 
     // then
     expect({ ...action }).toEqual({ type: authActionTypes.logoutSucces });
+  });
+
+  it('should create email not verified action', () => {
+    const action = authActions.emailNotVerified();
+    expect({ ...action }).toEqual({ type: authActionTypes.emailNotVerified });
   });
 });

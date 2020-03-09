@@ -1,6 +1,6 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
 import { TeamMember } from 'src/app/core/team/model/team-member.model';
 import { User } from '../../../../../core/user/model/user.model';
@@ -17,7 +17,7 @@ import { NewTeamDialogStepsHelper } from './service/new-team-dialog-steps-helper
 export class NewTeamDialogComponent implements OnInit {
   private newMemberInputRef: ElementRef;
 
-  @ViewChild('newMemberInput', { static: false }) set controlElRef(elementRef: ElementRef) {
+  @ViewChild('newMemberInput') set controlElRef(elementRef: ElementRef) {
     this.newMemberInputRef = elementRef;
   }
 

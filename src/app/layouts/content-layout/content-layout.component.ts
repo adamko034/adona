@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Subscription } from 'rxjs';
 import { Team } from 'src/app/core/team/model/team.model';
 import { TeamFacade } from 'src/app/core/team/team.facade';

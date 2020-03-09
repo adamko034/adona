@@ -6,4 +6,10 @@ export class JasmineCustomMatchers {
       expect(spy).toHaveBeenCalledWith(...params);
     }
   }
+
+  public static toBeFalsy(...values: any[]) {
+    values.forEach(value => {
+      expect(value).toBeFalsy();
+    });
+  }
 }

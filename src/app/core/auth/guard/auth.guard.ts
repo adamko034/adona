@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
       take(1),
       concatMap(firebaseUser => of(firebaseUser).pipe(withLatestFrom(this.facade.selectUser()))),
       map(([firebaseUser, user]) => {
-        if (!firebaseUser) {
+        if (!firebaseUser || !firebaseUser.emailVerified) {
           throw new Error();
         }
 

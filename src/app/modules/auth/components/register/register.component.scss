@@ -1,0 +1,19 @@
+@import 'form';
+
+.register-button {
+  width: 100%;
+}
+
+.passwords-error {
+  color: red;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.form-field-password {
+  margin-bottom: 0px;
+}
+
+.password-strenght {
+  margin-bottom: 15px;
+}

@@ -78,4 +78,20 @@ describe('User Utils Service', () => {
       });
     });
   });
+
+  describe('Extract Username From Email', () => {
+    ['test@test.com', 'test-123@emai.com'].forEach(input => {
+      it(`should return username from ${input}`, () => {
+        expect(service.extractUsernameFromEmail(input)).toEqual(input.split('@')[0]);
+      });
+    });
+
+    it('should handle empty email', () => {
+      expect(service.extractUsernameFromEmail('')).toEqual('');
+    });
+
+    it('should handle null email', () => {
+      expect(service.extractUsernameFromEmail(null)).toEqual('');
+    });
+  });
 });

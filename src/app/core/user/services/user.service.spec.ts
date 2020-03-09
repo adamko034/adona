@@ -129,4 +129,24 @@ describe('User Service', () => {
       });
     });
   });
+
+  describe('Create User', () => {
+    it('should call firebase and create new record', done => {
+      const user = UserTestBuilder.withDefaultData().build();
+      angularFirestore
+        .collection()
+        .doc()
+        .set.and.returnValue(Promise.resolve());
+      angularFirestore.collection().doc.calls.reset();
+      angularFirestore.collection.calls.reset();
+
+      service.createUser(user).subscribe(() => {
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection, 1, 'users');
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc, 1, user.id);
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc().set, 1, user);
+
+        done();
+      });
+    });
+  });
 });

@@ -61,3 +61,29 @@ body {
 .cal-month-view .cal-header {
   font-weight: 400;
 }
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 50px white inset; /* Change the color to your own background color */
+  -webkit-text-fill-color: #333;
+}
+
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 50px white inset; /*your box-shadow*/
+  -webkit-text-fill-color: #333;
+}
+
+mat-password-strength
+  mat-progress-bar.mat-progress-bar.mat-primary
+  > div.mat-progress-bar-primary.mat-progress-bar-fill.mat-progress-bar-element::after {
+  background-color: green;
+}
+
+mat-password-strength
+  mat-progress-bar.mat-progress-bar.mat-primary
+  > div.mat-progress-bar-secondary.mat-progress-bar-fill.mat-progress-bar-element::after {
+  background-color: green;
+}
+
+mat-password-strength-info > mat-card > mat-card-content > div.info-row > mat-icon.mat-icon.mat-primary {
+  color: green;
+}
