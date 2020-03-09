@@ -38,7 +38,7 @@ describe('Auth Facade', () => {
     expect(actual$).toBeObservable(expected);
   });
 
-  it('should dispatch Login Action on login', () => {
+  it('should dispatch both Login Clear Error and Login actions on login', () => {
     // given
     const credentials: CredentialsLogin = {
       email: 'jon@example.com',
@@ -51,7 +51,8 @@ describe('Auth Facade', () => {
     facade.login(credentials);
 
     // then
-    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledWith(authActions.loginClearError());
     expect(spy).toHaveBeenCalledWith(authActions.login({ credentials }));
   });
 

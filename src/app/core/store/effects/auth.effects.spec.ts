@@ -69,7 +69,7 @@ describe('Auth Effects', () => {
       const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
       const completion = authActions.loginFailed();
       actions$ = hot('--a', { a: action });
-      const expected = cold('--(b|)', { b: completion });
+      const expected = cold('--b', { b: completion });
 
       // when & then
       expect(effects.logIn$).toBeObservable(expected);
@@ -87,7 +87,7 @@ describe('Auth Effects', () => {
       const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
       const completion = authActions.loginFailed();
       actions$ = hot('--a', { a: action });
-      const expected = cold('--(b|)', { b: completion });
+      const expected = cold('--b', { b: completion });
 
       // when & then
       expect(effects.logIn$).toBeObservable(expected);
@@ -104,7 +104,7 @@ describe('Auth Effects', () => {
       const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
       const completion = authActions.loginFailed();
       actions$ = hot('--a', { a: action });
-      const expected = cold('--(b|)', { b: completion });
+      const expected = cold('--b', { b: completion });
 
       // when & then
       expect(effects.logIn$).toBeObservable(expected);

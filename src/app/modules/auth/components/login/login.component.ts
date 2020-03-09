@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AuthFacade } from '../../../../core/auth/auth.facade';
 
 @Component({
@@ -8,20 +8,37 @@ import { AuthFacade } from '../../../../core/auth/auth.facade';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
-  public loginFailure$: Observable<boolean>;
+export class LoginComponent implements OnInit, OnDestroy {
+  private loginFailureSubscription: Subscription;
+
   public loginForm = new FormGroup({
     email: new FormControl('', [Validators.email, Validators.required]),
     password: new FormControl('', Validators.required)
   });
+  public showError: boolean;
+  public showSpinner: boolean;
 
-  constructor(private authFacade: AuthFacade) {
-    this.loginFailure$ = authFacade.getLoginFailure();
+  constructor(private authFacade: AuthFacade) {}
+
+  public ngOnInit() {
+    this.showError = false;
+    this.showSpinner = false;
+
+    this.loginFailureSubscription = this.authFacade.getLoginFailure().subscribe(isLoginError => {
+      this.showError = isLoginError;
+      this.showSpinner = !isLoginError;
+    });
   }
 
-  ngOnInit() {}
+  public ngOnDestroy() {
+    if (this.loginFailureSubscription != null) {
+      this.loginFailureSubscription.unsubscribe();
+    }
+  }
 
   public login() {
+    this.showSpinner = true;
+    this.showError = false;
     this.authFacade.login(this.loginForm.value);
   }
 

@@ -82,6 +82,14 @@ describe('Auth Reducer', () => {
     });
   });
 
+  describe('On Login Clear Error', () => {
+    it('should set user to null and login failed to false', () => {
+      const result = reducer({ user, loginFailed: true }, authActions.loginClearError());
+
+      expect({ ...result }).toEqual({ user: null, loginFailed: false });
+    });
+  });
+
   describe('On Change Team Success', () => {
     it('should change user Selected Team Id and change selected team last updated', () => {
       const yesterday = DateTestBuilder.now()

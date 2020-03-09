@@ -21,6 +21,16 @@ describe('Auth Actions', () => {
     });
   });
 
+  it('should create Login Clear Error action', () => {
+    // when
+    const action = authActions.loginClearError();
+
+    // then
+    expect({ ...action }).toEqual({
+      type: authActionTypes.loginClearError
+    });
+  });
+
   it('should create login success action', () => {
     // when
     const action = authActions.loginSuccess({ user });

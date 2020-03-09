@@ -31,6 +31,7 @@ const authReducer = createReducer(
     user: action.user
   })),
   on(authActions.loginFailed, state => ({ ...state, user: null, loginFailed: true })),
+  on(authActions.loginClearError, state => ({ ...state, user: null, loginFailed: false })),
   on(userActions.changeTeamSuccess, (state, action) => ({
     ...state,
     user: {

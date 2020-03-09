@@ -1,12 +1,18 @@
+import { of, Subject } from 'rxjs';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
 
-  const authFacade = jasmine.createSpyObj('AuthFacade', ['login', 'getLoginFailure']);
+  const { authFacade } = SpiesBuilder.init()
+    .withAuthFacade()
+    .build();
 
   beforeEach(() => {
     component = new LoginComponent(authFacade);
+
+    authFacade.getLoginFailure.calls.reset();
   });
 
   it('should default to empty credentials', () => {
@@ -21,6 +27,7 @@ describe('LoginComponent', () => {
 
     // then
     expect(authFacade.login).toHaveBeenCalledTimes(1);
+    expect(component.showSpinner).toBeTruthy();
   });
 
   describe('validations', () => {
@@ -63,6 +70,31 @@ describe('LoginComponent', () => {
 
       // then
       expect(component.passwordEmpty()).toBeFalsy();
+    });
+  });
+
+  describe('On Init', () => {
+    it('should init to default on subscribe to failures', () => {
+      authFacade.getLoginFailure.and.returnValue(new Subject());
+
+      component.ngOnInit();
+
+      expect(authFacade.getLoginFailure).toHaveBeenCalledTimes(1);
+      expect(component.showError).toBeFalsy();
+      expect(component.showSpinner).toBeFalsy();
+    });
+  });
+
+  describe('Get Login Failure subscription', () => {
+    [true, false].forEach(isLoginFailure => {
+      it(`should change flag if login failure is: ${isLoginFailure}`, () => {
+        authFacade.getLoginFailure.and.returnValue(of(isLoginFailure));
+
+        component.ngOnInit();
+
+        expect(component.showError).toEqual(isLoginFailure);
+        expect(component.showSpinner).toEqual(!isLoginFailure);
+      });
     });
   });
 });

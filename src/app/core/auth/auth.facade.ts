@@ -15,6 +15,7 @@ export class AuthFacade {
   }
 
   public login(credentials: CredentialsLogin) {
+    this.store.dispatch(authActions.loginClearError());
     this.store.dispatch(authActions.login({ credentials }));
   }
 

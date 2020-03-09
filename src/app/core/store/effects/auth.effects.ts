@@ -23,11 +23,14 @@ export class AuthEffects {
   public logIn$: Observable<Action> = this.actions$.pipe(
     ofType(authActions.login),
     map(action => action.credentials),
-    switchMap((credentials: CredentialsLogin) => this.authService.login(credentials)),
-    switchMap(() => this.authService.getAuthState().pipe(take(1))),
-    switchMap(({ uid }) => this.userService.loadUser(uid)),
-    map((user: User) => authActions.loginSuccess({ user })),
-    catchError(() => of(authActions.loginFailed()))
+    switchMap((credentials: CredentialsLogin) =>
+      this.authService.login(credentials).pipe(
+        switchMap(() => this.authService.getAuthState().pipe(take(1))),
+        switchMap(({ uid }) => this.userService.loadUser(uid)),
+        map((user: User) => authActions.loginSuccess({ user })),
+        catchError(() => of(authActions.loginFailed()))
+      )
+    )
   );
 
   public logInSuccess$ = createEffect(
