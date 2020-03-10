@@ -11,7 +11,7 @@ export interface AuthState {
 
 export const authInitialState: AuthState = {
   user: null,
-  loginFailed: false
+  loginFailed: null
 };
 
 const authReducer = createReducer(
@@ -19,19 +19,19 @@ const authReducer = createReducer(
   on(authActions.loginSuccess, (state, action) => ({
     ...state,
     user: action.user,
-    loginFailed: false
+    loginFailed: null
   })),
   on(authActions.logoutSuccess, state => ({
     ...state,
     user: null,
-    loginFailed: false
+    loginFailed: null
   })),
   on(userActions.loadUserSuccess, (state, action) => ({
     ...state,
     user: action.user
   })),
   on(authActions.loginFailed, state => ({ ...state, user: null, loginFailed: true })),
-  on(authActions.loginClearError, state => ({ ...state, user: null, loginFailed: false })),
+  on(authActions.loginClearError, state => ({ ...state, user: null, loginFailed: null })),
   on(userActions.changeTeamSuccess, (state, action) => ({
     ...state,
     user: {

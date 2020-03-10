@@ -5,6 +5,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import {
   MatButtonModule,
+  MatCardModule,
   MatIconModule,
   MatListModule,
   MatMenuModule,
@@ -21,9 +22,9 @@ import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { HeaderComponent } from './layouts/content-layout/components/header/header.component';
+import { SideNavComponent } from './layouts/content-layout/components/side-nav/side-nav.component';
 import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
 import { SharedModule } from './shared/shared.module';
-import { SideNavComponent } from './layouts/content-layout/components/side-nav/side-nav.component';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, ContentLayoutComponent, AuthLayoutComponent, SideNavComponent],
@@ -43,7 +44,8 @@ import { SideNavComponent } from './layouts/content-layout/components/side-nav/s
     MatMenuModule,
     MatIconModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    MatCardModule
   ],
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'pl-PL' }],
   bootstrap: [AppComponent]

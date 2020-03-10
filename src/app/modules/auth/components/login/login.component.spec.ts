@@ -28,6 +28,7 @@ describe('LoginComponent', () => {
     // then
     expect(authFacade.login).toHaveBeenCalledTimes(1);
     expect(component.showSpinner).toBeTruthy();
+    expect(component.showError).toBeFalsy();
   });
 
   describe('validations', () => {
@@ -83,18 +84,37 @@ describe('LoginComponent', () => {
       expect(component.showError).toBeFalsy();
       expect(component.showSpinner).toBeFalsy();
     });
+
+    describe('Get Login Failure subscription', () => {
+      [true, false, null].forEach(isLoginFailure => {
+        it(`should change flags if login failure is: ${isLoginFailure}`, () => {
+          component.showError = false;
+          component.showSpinner = false;
+
+          authFacade.getLoginFailure.and.returnValue(of(isLoginFailure));
+
+          component.ngOnInit();
+
+          if (isLoginFailure == null) {
+            expect(component.showError).toEqual(false);
+            expect(component.showSpinner).toEqual(false);
+            return;
+          }
+
+          expect(component.showError).toEqual(isLoginFailure);
+          expect(component.showSpinner).toEqual(!isLoginFailure);
+        });
+      });
+    });
   });
 
-  describe('Get Login Failure subscription', () => {
-    [true, false].forEach(isLoginFailure => {
-      it(`should change flag if login failure is: ${isLoginFailure}`, () => {
-        authFacade.getLoginFailure.and.returnValue(of(isLoginFailure));
+  describe('On Destroy', () => {
+    it('should unsubscribe from subscriptions', () => {
+      (component as any).loginFailureSubscription = new Subject();
+      const spy = spyOn((component as any).loginFailureSubscription, 'unsubscribe');
 
-        component.ngOnInit();
-
-        expect(component.showError).toEqual(isLoginFailure);
-        expect(component.showSpinner).toEqual(!isLoginFailure);
-      });
+      component.ngOnDestroy();
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });
