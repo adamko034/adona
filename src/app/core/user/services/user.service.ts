@@ -58,7 +58,7 @@ export class UserService {
       });
     }
 
-    return UserBuilder.from(uid, firebaseUser.name)
+    return UserBuilder.from(uid, firebaseUser.name, firebaseUser.email)
       .withSelectedTeamId(!!firebaseUser.selectedTeamId ? firebaseUser.selectedTeamId : null)
       .withTeams(teams)
       .build();

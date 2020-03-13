@@ -11,6 +11,10 @@ export class NavigationService {
     this.router.navigate(['/login']);
   }
 
+  public toVerifyEmail() {
+    this.router.navigate(['/login/verifyEmail']);
+  }
+
   public toHome() {
     this.router.navigate(['/home']);
   }

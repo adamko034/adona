@@ -16,7 +16,7 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.currentRouteSubscription = this.routerFacade.selectCurrentRute().subscribe((route: string) => {
-      this.title = route.includes('register') ? 'Register' : 'Login';
+      this.title = this.getTitle(route);
     });
   }
 
@@ -24,5 +24,15 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
     if (this.currentRouteSubscription) {
       this.currentRouteSubscription.unsubscribe();
     }
+  }
+
+  private getTitle(route: string): string {
+    if (route.toLowerCase().includes('register')) {
+      return 'Register';
+    } else if (route.toLowerCase().includes('verifyemail')) {
+      return 'Email Verification';
+    }
+
+    return 'Login';
   }
 }

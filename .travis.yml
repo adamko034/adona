@@ -11,7 +11,7 @@ addons:
   chrome: stable
 cache:
   directories:
-    - './node-modules'
+    - './node_modules'
 branches:
   only:
     - master

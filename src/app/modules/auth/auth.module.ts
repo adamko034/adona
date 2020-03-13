@@ -9,9 +9,10 @@ import { MatInputModule } from '@angular/material/input';
 import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
+import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
 
 @NgModule({
-  declarations: [LoginComponent, RegisterComponent],
+  declarations: [LoginComponent, RegisterComponent, VerifyEmailComponent],
   imports: [
     CommonModule,
     AuthRoutingModule,

@@ -8,7 +8,8 @@ export const authActionTypes = {
   loginFailed: '[Authentication API] Login Failed',
   loginClearError: '[Login Page] Login Clear Error',
   loginSuccess: '[Database API] Login Success',
-  logoutSucces: '[Databse API] Logout Success'
+  logoutSucces: '[Databse API] Logout Success',
+  emailNotVerified: '[Datbase API] Email Not Verified'
 };
 
 const login = createAction(authActionTypes.login, props<{ credentials: CredentialsLogin }>());
@@ -19,11 +20,14 @@ const loginClearError = createAction(authActionTypes.loginClearError);
 const logout = createAction(authActionTypes.logout);
 const logoutSuccess = createAction(authActionTypes.logoutSucces);
 
+const emailNotVerified = createAction(authActionTypes.emailNotVerified);
+
 export const authActions = {
   login,
   logout,
   loginFailed,
   loginClearError,
   loginSuccess,
-  logoutSuccess
+  logoutSuccess,
+  emailNotVerified
 };

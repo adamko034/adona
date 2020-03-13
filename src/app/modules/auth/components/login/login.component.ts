@@ -25,7 +25,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.showSpinner = false;
 
     this.loginFailureSubscription = this.authFacade.getLoginFailure().subscribe(isLoginError => {
-      console.log('changes: ', isLoginError);
       if (isLoginError != null) {
         this.showError = isLoginError;
         this.showSpinner = !isLoginError;

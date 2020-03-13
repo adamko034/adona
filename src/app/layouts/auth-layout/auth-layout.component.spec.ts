@@ -18,7 +18,8 @@ describe('Auth Layout Component', () => {
   describe('On Init', () => {
     [
       { route: '/login', expected: 'Login' },
-      { route: '/login/register', expected: 'Register' }
+      { route: '/login/register', expected: 'Register' },
+      { route: '/login/verifyEmail', expected: 'Email Verification' }
     ].forEach(input => {
       it(`should set title to ${input.expected} for route: ${input.route}`, () => {
         routerFacade.selectCurrentRute.and.returnValue(of(input.route));
