@@ -2,6 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold } from 'jasmine-marbles';
+import { of } from 'rxjs';
+import { SpiesBuilder } from '../../utils/testUtils/builders/spies.builder';
+import { UserTestBuilder } from '../../utils/testUtils/builders/user-test-builder';
 import { authActions } from '../store/actions/auth.actions';
 import { AuthState } from '../store/reducers/auth/auth.reducer';
 import { authQueries } from '../store/selectors/auth.selectors';
@@ -17,13 +20,17 @@ describe('Auth Facade', () => {
   let store: MockStore<AuthState>;
   let facade: AuthFacade;
 
+  const { authService } = SpiesBuilder.init()
+    .withAuthService()
+    .build();
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [provideMockStore({ initialState: initialAuthState })]
     });
     store = TestBed.get<Store<AuthState>>(Store);
 
-    facade = new AuthFacade(store);
+    facade = new AuthFacade(store, authService);
   });
 
   it('should get login failure status', () => {
@@ -65,5 +72,26 @@ describe('Auth Facade', () => {
     // then
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith(authActions.logout());
+  });
+
+  describe('Send Email Confirmation Link', () => {
+    it('should send email if auth state is set', () => {
+      const firebaseUser = UserTestBuilder.withDefaultData().buildFirebaseUser();
+      const sendEmailSpy = spyOn(firebaseUser, 'sendEmailVerification');
+
+      authService.getAuthState.and.returnValue(of(firebaseUser));
+
+      facade.sendEmailConfirmationLink().subscribe();
+
+      expect(sendEmailSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw error if auth state is not set', () => {
+      authService.getAuthState.and.returnValue(of(null));
+
+      const result = facade.sendEmailConfirmationLink();
+
+      expect(result).toBeObservable(cold('#', null, new Error('Auth not set')));
+    });
   });
 });

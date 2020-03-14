@@ -116,7 +116,8 @@ describe('Auth Reducer', () => {
           id: userToChange.id,
           name: userToChange.name,
           selectedTeamId: '123',
-          teams: [userTeam, userTeamExpected]
+          teams: [userTeam, userTeamExpected],
+          email: userToChange.email
         }
       });
     });

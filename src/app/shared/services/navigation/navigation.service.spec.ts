@@ -33,6 +33,17 @@ describe('NavigationService', () => {
     expect(routerMock.navigate).toHaveBeenCalledWith([homeRoute]);
   });
 
+  it('should navigate to Verify Email page', () => {
+    // given
+    const route = '/login/verifyEmail';
+
+    // when
+    navigationService.toVerifyEmail();
+
+    // then
+    expect(routerMock.navigate).toHaveBeenCalledWith([route]);
+  });
+
   it('should navigate to expenses mobile page', () => {
     // given
     const route = '/home/expenses/m/';

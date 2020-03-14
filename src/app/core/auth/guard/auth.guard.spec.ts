@@ -4,7 +4,7 @@ import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
 import { AuthGuard } from './auth.guard';
 
-describe('AuthGuard', () => {
+describe('Auth Guard', () => {
   const { authService, navigationService, userFacade } = SpiesBuilder.init()
     .withUserFacade()
     .withNavigationService()
@@ -25,6 +25,25 @@ describe('AuthGuard', () => {
   it('should return false and redirect to login page if firebase auth state returns null', () => {
     // given
     authService.getAuthState.and.returnValue(hot('a', { a: null }));
+    userFacade.selectUser.and.returnValue(of(null));
+
+    // when
+    const result: Observable<boolean> = guard.canActivate();
+
+    // then
+    expect(result).toBeObservable(cold('(c|)', { c: false }));
+    expect(userFacade.selectUser).toHaveBeenCalledTimes(1);
+    expect(navigationService.toLogin).toHaveBeenCalledTimes(1);
+    expect(authService.getAuthState).toHaveBeenCalledTimes(1);
+    expect(userFacade.loadUser).not.toHaveBeenCalled();
+  });
+
+  it('should return false and redirect to login page if firebase auth state is set but email not verified', () => {
+    // given
+    const firebaseUser = UserTestBuilder.withDefaultData().buildFirebaseUser();
+    firebaseUser.emailVerified = false;
+
+    authService.getAuthState.and.returnValue(hot('a', { a: firebaseUser }));
     userFacade.selectUser.and.returnValue(of(null));
 
     // when

@@ -67,4 +67,9 @@ describe('Auth Actions', () => {
     // then
     expect({ ...action }).toEqual({ type: authActionTypes.logoutSucces });
   });
+
+  it('should create email not verified action', () => {
+    const action = authActions.emailNotVerified();
+    expect({ ...action }).toEqual({ type: authActionTypes.emailNotVerified });
+  });
 });

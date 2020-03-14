@@ -46,8 +46,7 @@ describe('Auth Effects', () => {
   describe('Log In', () => {
     it('should login and load user and dispatch Login Success action ', () => {
       // given
-      authService.login.and.returnValue(cold('x', { x: null }));
-      authService.getAuthState.and.returnValue(cold('x', { x: firebaseUser }));
+      authService.login.and.returnValue(cold('x', { x: { user: firebaseUser } }));
       userService.loadUser.and.returnValue(cold('x', { x: user }));
 
       const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
@@ -59,7 +58,6 @@ describe('Auth Effects', () => {
       expect(effects.logIn$).toBeObservable(expected);
       expect(authService.login).toHaveBeenCalledTimes(1);
       expect(userService.loadUser).toHaveBeenCalledTimes(1);
-      expect(authService.getAuthState).toHaveBeenCalledTimes(1);
     });
 
     it('should return login failure action when login fails', () => {
@@ -74,14 +72,12 @@ describe('Auth Effects', () => {
       // when & then
       expect(effects.logIn$).toBeObservable(expected);
       expect(authService.login).toHaveBeenCalledTimes(1);
-      expect(authService.getAuthState).toHaveBeenCalledTimes(0);
       expect(userService.loadUser).not.toHaveBeenCalled();
     });
 
-    it('should return login failure action when getting auth fails', () => {
+    it('should return login failure action when loading user fails', () => {
       // given
-      authService.login.and.returnValue(cold('x', { x: null }));
-      authService.getAuthState.and.returnValue(cold('x', { x: firebaseUser }));
+      authService.login.and.returnValue(cold('x', { x: { user: firebaseUser } }));
       userService.loadUser.and.returnValue(cold('#'));
 
       const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
@@ -92,25 +88,23 @@ describe('Auth Effects', () => {
       // when & then
       expect(effects.logIn$).toBeObservable(expected);
       expect(authService.login).toHaveBeenCalledTimes(1);
-      expect(authService.getAuthState).toHaveBeenCalledTimes(1);
       expect(userService.loadUser).toHaveBeenCalledTimes(1);
     });
 
-    it('should return login failure action when loading user fails', () => {
+    it('should return Email Not Verified action when user has not verified their email', () => {
       // given
-      authService.login.and.returnValue(cold('x', { x: null }));
-      authService.getAuthState.and.returnValue(cold('#'));
+      const firebaseUserNotVerfied = { ...firebaseUser, emailVerified: false };
+      authService.login.and.returnValue(cold('x', { x: { user: firebaseUserNotVerfied } }));
 
       const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
-      const completion = authActions.loginFailed();
+      const completion = authActions.emailNotVerified();
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
 
       // when & then
       expect(effects.logIn$).toBeObservable(expected);
       expect(authService.login).toHaveBeenCalledTimes(1);
-      expect(authService.getAuthState).toHaveBeenCalledTimes(1);
-      expect(userService.loadUser).not.toHaveBeenCalled();
+      expect(userService.loadUser).toHaveBeenCalledTimes(0);
     });
   });
 
@@ -144,6 +138,16 @@ describe('Auth Effects', () => {
 
       effects.logOutSuccess$.subscribe(() => {
         expect(navigationService.toLogin).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe('Email Not Verified', () => {
+    it('should navigate to Verify Email page', () => {
+      actions$ = hot('--a', { a: authActions.emailNotVerified() });
+
+      effects.emailNotVerified$.subscribe(() => {
+        expect(navigationService.toVerifyEmail).toHaveBeenCalledTimes(1);
       });
     });
   });

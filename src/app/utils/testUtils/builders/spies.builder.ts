@@ -69,7 +69,8 @@ export class SpiesBuilder {
       'toHome',
       'toExpensesMobile',
       'toExpensesDesktop',
-      'toExpenseContent'
+      'toExpenseContent',
+      'toVerifyEmail'
     ]);
 
     return this;
@@ -118,7 +119,12 @@ export class SpiesBuilder {
   }
 
   public withAuthFacade(): SpiesBuilder {
-    this.spies.authFacade = jasmine.createSpyObj<AuthFacade>('authFacade', ['getLoginFailure', 'login', 'logout']);
+    this.spies.authFacade = jasmine.createSpyObj<AuthFacade>('authFacade', [
+      'getLoginFailure',
+      'login',
+      'logout',
+      'sendEmailConfirmationLink'
+    ]);
 
     return this;
   }

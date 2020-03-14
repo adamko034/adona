@@ -17,9 +17,15 @@ export class AuthFacade {
   }
 
   public sendEmailConfirmationLink(): Observable<void> {
-    return this.authService
-      .getAuthState()
-      .pipe(mergeMap((firebaseUser: firebase.User) => firebaseUser.sendEmailVerification()));
+    return this.authService.getAuthState().pipe(
+      mergeMap((firebaseUser: firebase.User) => {
+        if (!firebaseUser) {
+          throw new Error('Auth not set');
+        }
+
+        return firebaseUser.sendEmailVerification();
+      })
+    );
   }
 
   public login(credentials: CredentialsLogin) {

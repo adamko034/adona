@@ -1,25 +1,64 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { of, Subject, throwError } from 'rxjs';
+import { SpiesBuilder } from '../../../../utils/testUtils/builders/spies.builder';
 import { VerifyEmailComponent } from './verify-email.component';
 
-describe('VerifyEmailComponent', () => {
+describe('Verify Email Component', () => {
   let component: VerifyEmailComponent;
-  let fixture: ComponentFixture<VerifyEmailComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ VerifyEmailComponent ]
-    })
-    .compileComponents();
-  }));
+  const { authFacade } = SpiesBuilder.init()
+    .withAuthFacade()
+    .build();
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(VerifyEmailComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    component = new VerifyEmailComponent(authFacade);
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  describe('Constructor', () => {
+    it('should default flags to false', () => {
+      expect(component.showError).toBeFalsy();
+      expect(component.showLoader).toBeFalsy();
+      expect(component.emailSent).toBeFalsy();
+    });
+  });
+
+  describe('On Init', () => {
+    it('should default flags to false', () => {
+      expect(component.showError).toBeFalsy();
+      expect(component.showLoader).toBeFalsy();
+      expect(component.emailSent).toBeFalsy();
+    });
+  });
+
+  describe('On Destroy', () => {
+    it('should unsubscribe from subscriptions', () => {
+      (component as any).emailSentSubscription = new Subject();
+      const spy = spyOn((component as any).emailSentSubscription, 'unsubscribe');
+
+      component.ngOnDestroy();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Resend Confirmation Link', () => {
+    it('should set flags if email has been sent', () => {
+      authFacade.sendEmailConfirmationLink.and.returnValue(of(null));
+
+      component.resendConfirmationLink();
+
+      expect(component.showLoader).toBeFalsy();
+      expect(component.showError).toBeFalsy();
+      expect(component.emailSent).toBeTruthy();
+    });
+
+    it('should set flags if email has not been sent', () => {
+      authFacade.sendEmailConfirmationLink.and.returnValue(throwError('err'));
+
+      component.resendConfirmationLink();
+
+      expect(component.showLoader).toBeFalsy();
+      expect(component.showError).toBeTruthy();
+      expect(component.emailSent).toBeFalsy();
+    });
   });
 });

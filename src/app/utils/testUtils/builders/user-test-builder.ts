@@ -85,7 +85,10 @@ export class UserTestBuilder {
       uid: this.user.id,
       name: this.user.name,
       teams: !!this.user.teams ? this.user.teams : undefined,
-      selectedTeamId: this.user.selectedTeamId
+      selectedTeamId: this.user.selectedTeamId,
+      emailVerified: true,
+      email: this.user.email,
+      sendEmailVerification: () => {}
     };
   }
 }
