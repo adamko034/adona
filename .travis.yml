@@ -6,7 +6,7 @@ notifications:
     on_failure: always
 language: node_js
 node_js:
-  - '11'
+  - '12'
 addons:
   chrome: stable
 cache:
