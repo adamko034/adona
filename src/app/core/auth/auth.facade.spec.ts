@@ -6,7 +6,7 @@ import { authActions } from '../store/actions/auth.actions';
 import { AuthState } from '../store/reducers/auth/auth.reducer';
 import { authQueries } from '../store/selectors/auth.selectors';
 import { AuthFacade } from './auth.facade';
-import { CredentialsLogin } from './model/credentials-login.model';
+import { Credentials } from './model/credentials.model';
 
 describe('Auth Facade', () => {
   const initialAuthState: AuthState = {
@@ -32,15 +32,15 @@ describe('Auth Facade', () => {
     const expected = cold('a', { a: true });
 
     // when
-    const actual$ = facade.getLoginFailure();
+    const actual$ = facade.selectLoginFailure();
 
     // then
     expect(actual$).toBeObservable(expected);
   });
 
-  it('should dispatch Login Action on login', () => {
+  it('should dispatch both Login Clear Error and Login actions on login', () => {
     // given
-    const credentials: CredentialsLogin = {
+    const credentials: Credentials = {
       email: 'jon@example.com',
       password: 'Password-01'
     };
@@ -51,7 +51,8 @@ describe('Auth Facade', () => {
     facade.login(credentials);
 
     // then
-    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledWith(authActions.loginClearError());
     expect(spy).toHaveBeenCalledWith(authActions.login({ credentials }));
   });
 

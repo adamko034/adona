@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CalendarEvent } from 'calendar-utils';
 import { FromToDates } from 'src/app/shared/components/from-to-dates/model/from-to-dates.model';
 import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.validator';

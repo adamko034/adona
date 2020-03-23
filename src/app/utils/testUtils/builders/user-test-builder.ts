@@ -7,7 +7,7 @@ export class UserTestBuilder {
   private user: User;
 
   private constructor(id: string, name: string) {
-    this.user = { id, name };
+    this.user = { id, name, email: 'test-user@example.com' };
   }
 
   public static with(id: string, name: string): UserTestBuilder {
@@ -15,7 +15,7 @@ export class UserTestBuilder {
   }
 
   public static withDefaultData(): UserTestBuilder {
-    return new UserTestBuilder('1', 'test user');
+    return new UserTestBuilder('1', 'test-user');
   }
 
   public withDefaultUserTeam(): UserTestBuilder {
@@ -83,9 +83,13 @@ export class UserTestBuilder {
   public buildFirebaseUser(): any {
     return {
       uid: this.user.id,
-      name: this.user.name,
+      displayName: this.user.name,
       teams: !!this.user.teams ? this.user.teams : undefined,
-      selectedTeamId: this.user.selectedTeamId
+      selectedTeamId: this.user.selectedTeamId,
+      emailVerified: true,
+      email: this.user.email,
+      sendEmailVerification: jasmine.createSpy('sendEmailVerification'),
+      updateProfile: jasmine.createSpy('updateProfile')
     };
   }
 }

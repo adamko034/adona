@@ -1,3 +1,4 @@
+import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { ScrollService } from './scroll.service';
 
 describe('Scroll Service', () => {
@@ -40,7 +41,7 @@ describe('Scroll Service', () => {
 
   it('should scroll to element if it has been found', () => {
     // given
-    const htmlElem = { scrollIntoView: () => { } };
+    const htmlElem = { scrollIntoView: () => {} };
     const htmlElemSpy = spyOn(htmlElem, 'scrollIntoView');
 
     documentMock.getElementById.withArgs('someId').and.returnValue(htmlElem as any);
@@ -49,14 +50,9 @@ describe('Scroll Service', () => {
     service.scrollToElement('someId', 100);
 
     // then
-    expect(htmlElemSpy).toHaveBeenCalledTimes(1);
-    expect(htmlElemSpy).toHaveBeenCalledWith(true);
-
-    expect(documentMock.getElementById).toHaveBeenCalledTimes(1);
-    expect(documentMock.getElementById).toHaveBeenCalledWith('someId');
-
-    expect(windowMock.scrollBy).toHaveBeenCalledTimes(1);
-    expect(windowMock.scrollBy).toHaveBeenCalledWith(0, 100);
+    JasmineCustomMatchers.toHaveBeenCalledTimesWith(htmlElemSpy, 1, true);
+    JasmineCustomMatchers.toHaveBeenCalledTimesWith(documentMock.getElementById, 1, 'someId');
+    JasmineCustomMatchers.toHaveBeenCalledTimesWith(windowMock.scrollBy, 1, 0, 100);
   });
 
   it('should not scroll to element if it has not been found', () => {

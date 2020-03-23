@@ -1,9 +1,9 @@
-import { TimeService } from 'src/app/shared/services/time/time.service';
-import { TimeComparisonService } from 'src/app/shared/services/time/parts/time-comparison.service';
-import { TimeCreationService } from 'src/app/shared/services/time/parts/time-creation.service';
 import { DayHoursService } from 'src/app/shared/services/time/parts/day-hours.service';
 import { HourQuartersService } from 'src/app/shared/services/time/parts/hour-quarters.service';
+import { TimeComparisonService } from 'src/app/shared/services/time/parts/time-comparison.service';
+import { TimeCreationService } from 'src/app/shared/services/time/parts/time-creation.service';
 import { TimeManipulationService } from 'src/app/shared/services/time/parts/time-manipulation.service';
+import { TimeService } from 'src/app/shared/services/time/time.service';
 
 describe('Time Service', () => {
   it('should create part services', () => {

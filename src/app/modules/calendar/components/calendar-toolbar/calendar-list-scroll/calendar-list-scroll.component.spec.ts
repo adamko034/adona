@@ -2,10 +2,13 @@ import { ScrollService } from 'src/app/shared/services/scroll/scroll.service';
 import { CalendarConstants } from '../../../utils/calendar-constants';
 import { CalendarListScrollComponent } from './calendar-list-scroll.component';
 
-
 describe('CalendarListScrollComponent', () => {
   let component: CalendarListScrollComponent;
-  const service: ScrollService = jasmine.createSpyObj<ScrollService>('scrollService', ['scrollToTop', 'scrollToBottom', 'scrollToElement']);
+  const service: ScrollService = jasmine.createSpyObj<ScrollService>('scrollService', [
+    'scrollToTop',
+    'scrollToBottom',
+    'scrollToElement'
+  ]);
 
   beforeEach(() => {
     component = new CalendarListScrollComponent(service);

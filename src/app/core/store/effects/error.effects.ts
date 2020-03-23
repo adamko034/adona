@@ -1,12 +1,8 @@
 import { Injectable } from '@angular/core';
-import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
-import { Effect, Actions, ofType } from '@ngrx/effects';
-import {
-  ErrorActions,
-  ErrorActionTypes,
-  ErrorOccuredAction
-} from 'src/app/core/store/actions/error.actions';
+import { Actions, Effect, ofType } from '@ngrx/effects';
 import { tap } from 'rxjs/operators';
+import { ErrorActions, ErrorActionTypes, ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
+import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 
 @Injectable()
 export class ErrorEffects {
@@ -17,7 +13,7 @@ export class ErrorEffects {
     ofType<ErrorActions>(ErrorActionTypes.ErrorOccured),
     tap((action: ErrorOccuredAction) => {
       if (this.environmentService.isDev()) {
-        console.log(action.payload.error);
+        console.error(action.payload.error);
       }
     })
   );

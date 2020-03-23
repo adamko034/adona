@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CalendarModule, CalendarView, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import * as moment from 'moment';
@@ -9,7 +9,7 @@ describe('Celendar Title Component', () => {
   let fixture: ComponentFixture<CalendarTitleComponent>;
   let h3: HTMLElement;
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [CalendarTitleComponent],
       imports: [
@@ -19,7 +19,7 @@ describe('Celendar Title Component', () => {
         })
       ]
     }).compileComponents();
-  }));
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CalendarTitleComponent);

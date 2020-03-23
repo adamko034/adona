@@ -1,12 +1,18 @@
+import { of, Subject } from 'rxjs';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
 
-  const authFacade = jasmine.createSpyObj('AuthFacade', ['login', 'getLoginFailure']);
+  const { authFacade } = SpiesBuilder.init()
+    .withAuthFacade()
+    .build();
 
   beforeEach(() => {
     component = new LoginComponent(authFacade);
+
+    authFacade.selectLoginFailure.calls.reset();
   });
 
   it('should default to empty credentials', () => {
@@ -21,6 +27,8 @@ describe('LoginComponent', () => {
 
     // then
     expect(authFacade.login).toHaveBeenCalledTimes(1);
+    expect(component.showSpinner).toBeTruthy();
+    expect(component.showError).toBeFalsy();
   });
 
   describe('validations', () => {
@@ -63,6 +71,50 @@ describe('LoginComponent', () => {
 
       // then
       expect(component.passwordEmpty()).toBeFalsy();
+    });
+  });
+
+  describe('On Init', () => {
+    it('should init to default on subscribe to failures', () => {
+      authFacade.selectLoginFailure.and.returnValue(new Subject());
+
+      component.ngOnInit();
+
+      expect(authFacade.selectLoginFailure).toHaveBeenCalledTimes(1);
+      expect(component.showError).toBeFalsy();
+      expect(component.showSpinner).toBeFalsy();
+    });
+
+    describe('Get Login Failure subscription', () => {
+      [true, false, null].forEach(isLoginFailure => {
+        it(`should change flags if login failure is: ${isLoginFailure}`, () => {
+          component.showError = false;
+          component.showSpinner = false;
+
+          authFacade.selectLoginFailure.and.returnValue(of(isLoginFailure));
+
+          component.ngOnInit();
+
+          if (isLoginFailure == null) {
+            expect(component.showError).toEqual(false);
+            expect(component.showSpinner).toEqual(false);
+            return;
+          }
+
+          expect(component.showError).toEqual(isLoginFailure);
+          expect(component.showSpinner).toEqual(!isLoginFailure);
+        });
+      });
+    });
+  });
+
+  describe('On Destroy', () => {
+    it('should unsubscribe from subscriptions', () => {
+      (component as any).loginFailureSubscription = new Subject();
+      const spy = spyOn((component as any).loginFailureSubscription, 'unsubscribe');
+
+      component.ngOnDestroy();
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });

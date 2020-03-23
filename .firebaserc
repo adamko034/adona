@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "adona-73208"
+    "prod": "adona-73208",
+    "test": "adona-test"
   }
 }

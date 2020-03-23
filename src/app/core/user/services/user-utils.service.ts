@@ -27,4 +27,18 @@ export class UserUtilservice {
 
     return null;
   }
+
+  public extractUsernameFromEmail(email: string): string {
+    if (!email) {
+      return '';
+    }
+
+    const matches = email.match(/^([^@]*)@/);
+
+    if (!matches) {
+      return '';
+    }
+
+    return matches[1];
+  }
 }
