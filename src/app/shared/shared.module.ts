@@ -11,12 +11,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { RouterModule } from '@angular/router';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { ChangeTeamDialogComponent } from './components/dialogs/change-team-dialog/change-team-dialog.component';
 import { ErrorComponent, ErrorContentComponent } from './components/error/error.component';
 import { FromToDatesComponent } from './components/from-to-dates/from-to-dates.component';
+import { TabsVerticalComponent } from './components/tabs-vertical/tabs-vertical.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { MobileHideDirective } from './directives/device/mobile-hide.directive';
 import { ResponsiveMatIconDirective } from './directives/device/responsive-mat-icon.directive';
@@ -36,7 +38,8 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     FlexLayoutModule,
     DeviceDetectorModule,
     MatToolbarModule,
-    MatButtonModule
+    MatButtonModule,
+    RouterModule
   ],
   providers: [
     TimeService,
@@ -53,7 +56,8 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     MobileHideDirective,
     ResponsiveMatIconDirective,
     ToolbarComponent,
-    ChangeTeamDialogComponent
+    ChangeTeamDialogComponent,
+    TabsVerticalComponent
   ],
   exports: [
     ErrorComponent,
@@ -62,7 +66,8 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     MobileHideDirective,
     ResponsiveMatIconDirective,
     ToolbarComponent,
-    ChangeTeamDialogComponent
+    ChangeTeamDialogComponent,
+    TabsVerticalComponent
   ],
   entryComponents: [ErrorContentComponent, ChangeTeamDialogComponent]
 })

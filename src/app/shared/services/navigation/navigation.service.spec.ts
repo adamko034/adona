@@ -46,7 +46,7 @@ describe('NavigationService', () => {
 
   it('should navigate to expenses mobile page', () => {
     // given
-    const route = '/home/expenses/m/';
+    const route = '/expenses/m/';
 
     // when
     navigationService.toExpensesMobile();
@@ -57,7 +57,7 @@ describe('NavigationService', () => {
 
   it('should navigate to expenses mobile page with paramas', () => {
     // given
-    const route = '/home/expenses/m/2';
+    const route = '/expenses/m/2';
 
     // when
     navigationService.toExpensesMobile('2');
@@ -68,7 +68,7 @@ describe('NavigationService', () => {
 
   it('should navigate to expenses desktop page', () => {
     // given
-    const route = '/home/expenses/d/';
+    const route = '/expenses/d/';
 
     // when
     navigationService.toExpensesDesktop();
@@ -79,7 +79,7 @@ describe('NavigationService', () => {
 
   it('should navigate to expenses desktop page with params', () => {
     // given
-    const route = '/home/expenses/d/2';
+    const route = '/expenses/d/2';
 
     // when
     navigationService.toExpensesDesktop('2');
@@ -90,7 +90,7 @@ describe('NavigationService', () => {
 
   it('should navigate to expenses content page', () => {
     // given
-    const homeRoute = '/home/expenses/d/1';
+    const homeRoute = '/expenses/d/1';
 
     // when
     navigationService.toExpenseContent('1');

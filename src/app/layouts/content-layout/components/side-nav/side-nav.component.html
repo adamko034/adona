@@ -18,7 +18,7 @@
       <div *ngFor="let route of routes" class="navigation-item" fxLayout>
         <a
           [routerLink]="route.url"
-          [ngClass]="{ 'navigation-item-current': route.url === currentRoute }"
+          [ngClass]="{ 'navigation-item-current': currentRoute.includes(route.url) }"
           class="navigation-item-link"
           fxFill
           fxLayout="row"
@@ -26,7 +26,7 @@
           (click)="onNavigationLinkClicked()"
         >
           <mat-icon fxFlex="25">{{ route.icon }}</mat-icon>
-          <span fxFlex="65" *ngIf="isExpanded">{{ route.name }}</span>
+          <span fxFlex="75" *ngIf="isExpanded">{{ route.name }}</span>
         </a>
       </div>
     </div>

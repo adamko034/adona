@@ -12,12 +12,12 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'home',
+    path: '',
     component: ContentLayoutComponent,
     canActivate: [AuthGuard, UserLoadedGuard],
     children: [
       {
-        path: '',
+        path: 'home',
         loadChildren: () => import('./modules/home/home.module').then(mod => mod.HomeModule)
       },
       {
@@ -27,6 +27,10 @@ const routes: Routes = [
       {
         path: 'expenses',
         loadChildren: () => import('./modules/expenses/expenses.module').then(mod => mod.ExpensesModule)
+      },
+      {
+        path: 'settings',
+        loadChildren: () => import('./modules/settings/settings.module').then(mod => mod.SettingsModule)
       }
     ]
   },

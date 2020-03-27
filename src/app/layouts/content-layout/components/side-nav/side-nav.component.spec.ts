@@ -23,8 +23,8 @@ describe('Side Nav Compoment', () => {
   describe('Ng On Init', () => {
     it('should set routes and team members text', () => {
       const routes: Route[] = [
-        { icon: 'test', name: 'test', url: 'test url' },
-        { icon: 'test 2', name: 'test 2', url: 'test 2 url' }
+        { id: 1, icon: 'test', name: 'test', url: 'test url' },
+        { id: 2, icon: 'test 2', name: 'test 2', url: 'test 2 url' }
       ];
       routerFacade.selectAdonaRoutes.and.returnValue(routes);
 

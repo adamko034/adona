@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Params } from '@angular/router';
 import { RouterReducerState } from '@ngrx/router-store';
 import { select, Store } from '@ngrx/store';
+import { sortBy } from 'lodash';
 import { Observable } from 'rxjs';
+import { routes, settingsRoutes } from 'src/app/core/router/constants/routes.constants';
 import { routerQueries } from '../store/selectors/router.selectors';
-import { routes } from './constants/routes.constants';
 import { Route } from './model/route.model';
 
 @Injectable({ providedIn: 'root' })
@@ -20,6 +21,10 @@ export class RouterFacade {
   }
 
   public selectAdonaRoutes(): Route[] {
-    return routes;
+    return sortBy(routes, 'id');
+  }
+
+  public selectSettingsRoutes(): Route[] {
+    return sortBy(settingsRoutes, 'id');
   }
 }

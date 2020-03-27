@@ -12,10 +12,10 @@
       <mat-icon appResponsiveMatIcon>person_outline</mat-icon>
     </button>
     <mat-menu #userMenu="matMenu">
-      <button mat-menu-item>
+      <a mat-menu-item routerLink="settings">
         <mat-icon appResponsiveMatIcon>settings</mat-icon>
         <span>Settings</span>
-      </button>
+      </a>
       <button mat-menu-item (click)="logout()">
         <mat-icon appResponsiveMatIcon>exit_to_app</mat-icon>
         <span>Logout</span>

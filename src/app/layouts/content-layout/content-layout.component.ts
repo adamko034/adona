@@ -36,6 +36,8 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.guiFacade.initSideNavbar();
+    this.teamFacade.loadSelectedTeam();
+
     this.teamSubscription = this.teamFacade.selectSelectedTeam().subscribe((selectedTeam: Team) => {
       this.team = selectedTeam;
     });

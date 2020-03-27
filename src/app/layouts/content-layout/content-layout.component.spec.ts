@@ -17,6 +17,7 @@ describe('Content Layout Component', () => {
     component = new ContentLayoutComponent(teamFacade, routerFacade, userFacade, guiFacade);
 
     teamFacade.selectSelectedTeam.calls.reset();
+    teamFacade.loadSelectedTeam.calls.reset();
     routerFacade.selectCurrentRute.calls.reset();
     userFacade.selectUser.calls.reset();
     guiFacade.initSideNavbar.calls.reset();
@@ -36,6 +37,7 @@ describe('Content Layout Component', () => {
       expect(routerFacade.selectCurrentRute).toHaveBeenCalledTimes(1);
       expect(guiFacade.initSideNavbar).toHaveBeenCalledTimes(1);
       expect(guiFacade.selectSideNavbarOptions).toHaveBeenCalledTimes(1);
+      expect(teamFacade.loadSelectedTeam).toHaveBeenCalledTimes(1);
     });
 
     [true, false].forEach(isMobile => {
