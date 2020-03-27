@@ -20,14 +20,14 @@ export class NavigationService {
   }
 
   public toExpensesMobile(params: string = '') {
-    this.router.navigate([`/home/expenses/m/${params}`]);
+    this.router.navigate([`/expenses/m/${params}`]);
   }
 
   public toExpensesDesktop(params: string = '') {
-    this.router.navigate([`/home/expenses/d/${params}`]);
+    this.router.navigate([`/expenses/d/${params}`]);
   }
 
   public toExpenseContent(groupId: string) {
-    this.router.navigate([`/home/expenses/d/${groupId}`]);
+    this.router.navigate([`/expenses/d/${groupId}`]);
   }
 }

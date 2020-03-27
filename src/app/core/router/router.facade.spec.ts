@@ -32,4 +32,11 @@ describe('Router Facade', () => {
       expect(result).toBeObservable(expected);
     });
   });
+
+  describe('Select Current Route', () => {
+    it('should return current route', () => {
+      store.overrideSelector(routerQueries.selectCurrentRoute, 'testUrl');
+      expect(facade.selectCurrentRute()).toBeObservable(cold('a', { a: 'testUrl' }));
+    });
+  });
 });

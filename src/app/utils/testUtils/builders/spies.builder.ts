@@ -274,7 +274,8 @@ export class SpiesBuilder {
     this.spies.routerFacade = jasmine.createSpyObj('routerFacade', [
       'getRouteParams',
       'selectCurrentRute',
-      'selectAdonaRoutes'
+      'selectAdonaRoutes',
+      'selectSettingsRoutes'
     ]);
 
     return this;

@@ -18,10 +18,9 @@ describe('Home Component', () => {
   });
 
   describe('On Init', () => {
-    it('should load selected team and subscribe for both: team and user', () => {
+    it('should subscribe for both team and user', () => {
       component.ngOnInit();
 
-      expect(teamFacade.loadSelectedTeam).toHaveBeenCalledTimes(1);
       expect(userFacade.selectUser).toHaveBeenCalledTimes(1);
       expect(teamFacade.selectSelectedTeam).toHaveBeenCalledTimes(1);
     });

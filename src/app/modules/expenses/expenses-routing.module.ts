@@ -8,7 +8,7 @@ import { ExpensesMobileComponent } from './pages/expenses-mobile/expenses-mobile
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/home/expenses/d',
+    redirectTo: '/expenses/d',
     pathMatch: 'full'
   },
   {

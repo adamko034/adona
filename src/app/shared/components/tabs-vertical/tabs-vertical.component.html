@@ -1,0 +1,16 @@
+<div class="tabs-container" fxLayout="row">
+  <div class="tabs" ngClass.lt-sm="tabs-mobile" fxLayout="column">
+    <div
+      class="tab"
+      *ngFor="let route of routes"
+      [ngClass]="{ active: route.url === (currentRoute$ | async) }"
+      [routerLink]="route.url"
+    >
+      <mat-icon>{{ route.icon }}</mat-icon>
+      <span fxHide.lt-sm>{{ route.name }}</span>
+    </div>
+  </div>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

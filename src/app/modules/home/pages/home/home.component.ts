@@ -20,7 +20,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(private userFacade: UserFacade, private teamFacade: TeamFacade) {}
 
   public ngOnInit() {
-    this.teamFacade.loadSelectedTeam();
     this.teamSubscription = this.teamFacade.selectSelectedTeam().subscribe((team: Team) => {
       this.team = team;
     });
