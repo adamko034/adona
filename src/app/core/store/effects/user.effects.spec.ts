@@ -4,6 +4,10 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { createAction } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { of } from 'rxjs';
+import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
+import { GuiFacade } from 'src/app/core/gui/gui.facade';
+import { guiActions } from 'src/app/core/store/actions/gui.actions';
+import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
 import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
@@ -19,9 +23,10 @@ describe('User Effects', () => {
 
   const user = UserTestBuilder.withDefaultData().build();
 
-  const { userService, errorEffectService } = SpiesBuilder.init()
+  const { userService, errorEffectService, guiFacade } = SpiesBuilder.init()
     .withUserService()
     .withErrorEffectService()
+    .withGuiFacade()
     .build();
 
   beforeEach(() => {
@@ -30,7 +35,11 @@ describe('User Effects', () => {
         UserEffects,
         provideMockActions(() => actions$),
         { provide: UserService, useValue: userService },
-        { provide: ErrorEffectService, useValue: errorEffectService }
+        { provide: ErrorEffectService, useValue: errorEffectService },
+        {
+          provide: GuiFacade,
+          useValue: guiFacade
+        }
       ]
     });
 
@@ -38,6 +47,8 @@ describe('User Effects', () => {
 
     userService.loadUser.calls.reset();
     userService.changeTeam.calls.reset();
+    userService.updateName.calls.reset();
+    guiFacade.startApiRequest.calls.reset();
   });
 
   describe('Load User Requested', () => {
@@ -102,15 +113,44 @@ describe('User Effects', () => {
     });
   });
 
+  describe('Update Name Requested', () => {
+    it('should call service and dispatch actions', () => {
+      actions$ = hot('--a', { a: userActions.updateNameRequested({ id: '1', newName: 'exampleUser' }) });
+      userService.updateName.and.returnValue(cold('a', { a: 'exampleUser' }));
+
+      expect(effects.updateNameRequested$).toBeObservable(
+        cold('--(ab)', { a: guiActions.requestSuccess(), b: userActions.updateNameSuccess({ newName: 'exampleUser' }) })
+      );
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.updateName, 1, '1', 'exampleUser');
+      expect(guiFacade.startApiRequest).toHaveBeenCalledTimes(1);
+    });
+
+    it('should dispatch Update Name Failure when service fails', () => {
+      actions$ = hot('--a', { a: userActions.updateNameRequested({ id: '1', newName: 'exampleUser' }) });
+      userService.updateName.and.returnValue(cold('#', null, { code: 500 }));
+
+      const expectedError = ErrorBuilder.from()
+        .withErrorObject({ code: 500 })
+        .build();
+
+      expect(effects.updateNameRequested$).toBeObservable(
+        cold('--a', { a: userActions.updateNameFailure({ error: expectedError }) })
+      );
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.updateName, 1, '1', 'exampleUser');
+      expect(guiFacade.startApiRequest).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it('should create failure effects', () => {
     errorEffectService.createFrom.and.returnValue(of(null));
     errorEffectService.createFrom.calls.reset();
 
     const actions = new Actions(of(createAction('test action')));
 
-    new UserEffects(actions, userService, errorEffectService);
+    new UserEffects(actions, userService, errorEffectService, guiFacade);
 
-    expect(errorEffectService.createFrom).toHaveBeenCalledTimes(2);
+    expect(errorEffectService.createFrom).toHaveBeenCalledTimes(3);
     expect(errorEffectService.createFrom).toHaveBeenCalledWith(
       actions,
       userActions.loadUserFailure,
@@ -119,6 +159,11 @@ describe('User Effects', () => {
     expect(errorEffectService.createFrom).toHaveBeenCalledWith(
       actions,
       userActions.changeTeamFailure,
+      DefaultErrorType.ApiOther
+    );
+    expect(errorEffectService.createFrom).toHaveBeenCalledWith(
+      actions,
+      userActions.updateNameFailure,
       DefaultErrorType.ApiOther
     );
   });

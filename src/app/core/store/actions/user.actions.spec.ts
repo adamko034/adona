@@ -95,4 +95,31 @@ describe('User Actions', () => {
       });
     });
   });
+
+  describe('Update Name', () => {
+    it('should create Update Name Requested action', () => {
+      expect({ ...userActions.updateNameRequested({ id: '1', newName: 'newTest' }) }).toEqual({
+        type: userActionTypes.updateNameRequested,
+        id: '1',
+        newName: 'newTest'
+      });
+    });
+
+    it('should create Update Name Success action', () => {
+      expect({ ...userActions.updateNameSuccess({ newName: 'newTest' }) }).toEqual({
+        type: userActionTypes.updateNameSuccess,
+        newName: 'newTest'
+      });
+    });
+
+    it('should create Update Name Failure action', () => {
+      const error = ErrorTestDataBuilder.from()
+        .withDefaultData()
+        .build();
+      expect({ ...userActions.updateNameFailure({ error }) }).toEqual({
+        type: userActionTypes.updateNameFailure,
+        error
+      });
+    });
+  });
 });

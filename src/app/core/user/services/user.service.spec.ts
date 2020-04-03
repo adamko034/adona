@@ -149,4 +149,27 @@ describe('User Service', () => {
       });
     });
   });
+
+  describe('Update Name', () => {
+    it("should update user's name and return observable", () => {
+      const id = '1';
+      const newName = 'example';
+
+      angularFirestore
+        .collection()
+        .doc()
+        .update.and.returnValue(Promise.resolve());
+      angularFirestore
+        .collection()
+        .doc()
+        .update.calls.reset();
+      angularFirestore.collection().doc.calls.reset();
+      angularFirestore.collection.calls.reset();
+
+      service.updateName(id, newName).subscribe(name => expect(name).toEqual(newName));
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection, 1, 'users');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc, 1, '1');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc().update, 1, { name: newName });
+    });
+  });
 });

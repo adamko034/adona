@@ -27,14 +27,11 @@ describe('Team Reducer', () => {
       const currentState = TeamStateTestDataBuilder.from()
         .withTeams(TeamsTestDataBuilder.withDefaultData().build())
         .build();
-      const expected = TeamStateTestDataBuilder.from()
-        .withTeams(TeamsTestDataBuilder.withDefaultData().build())
-        .withTeam(team)
-        .build();
 
       const result = fromReducer.reducer(currentState, teamActions.loadTeamSuccess({ team }));
 
-      expect(result).toEqual(expected);
+      expect(result.ids.length).toEqual(currentState.ids.length + 1);
+      expect(result.ids.findIndex(x => x === team.id) >= 0).toBeTrue();
     });
   });
 });

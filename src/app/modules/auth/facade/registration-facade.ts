@@ -22,7 +22,9 @@ export class RegistrationFacade {
   public register(credentials: Credentials): Observable<boolean> {
     return this.authService.register(credentials).pipe(
       switchMap((firebaseUser: firebase.User) => {
-        const user = UserBuilder.from(firebaseUser.uid, firebaseUser.email, firebaseUser.displayName).build();
+        const user = UserBuilder.from(firebaseUser.uid, firebaseUser.email, firebaseUser.displayName)
+          .withDefaultPhotoUrl()
+          .build();
 
         return this.userService.createUser(user).pipe(mapTo(firebaseUser));
       }),

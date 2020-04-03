@@ -36,7 +36,6 @@ body {
 .button-stroked-blue {
   color: #3f51b5;
   border-color: #3f51b5 !important;
-  font-weight: bold;
 }
 
 .cdk-overlay-pane.adona-dialog {
@@ -86,4 +85,10 @@ mat-password-strength
 
 mat-password-strength-info > mat-card > mat-card-content > div.info-row > mat-icon.mat-icon.mat-primary {
   color: green;
+}
+
+.text-overflow {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

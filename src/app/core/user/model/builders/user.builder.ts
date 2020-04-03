@@ -27,6 +27,16 @@ export class UserBuilder {
     return this;
   }
 
+  public withPhotoUrl(photoUrl: string): UserBuilder {
+    this.user.photoUrl = photoUrl;
+    return this;
+  }
+
+  public withDefaultPhotoUrl(): UserBuilder {
+    this.user.photoUrl = '/assets/images/user.png';
+    return this;
+  }
+
   public build(): User {
     return this.user;
   }

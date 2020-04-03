@@ -7,7 +7,7 @@ export class UserTestBuilder {
   private user: User;
 
   private constructor(id: string, name: string) {
-    this.user = { id, name, email: 'test-user@example.com' };
+    this.user = { id, name, email: 'test-user@example.com', photoUrl: 'testUrl' };
   }
 
   public static with(id: string, name: string): UserTestBuilder {
@@ -88,6 +88,7 @@ export class UserTestBuilder {
       selectedTeamId: this.user.selectedTeamId,
       emailVerified: true,
       email: this.user.email,
+      photoUrl: this.user.photoUrl,
       sendEmailVerification: jasmine.createSpy('sendEmailVerification'),
       updateProfile: jasmine.createSpy('updateProfile')
     };

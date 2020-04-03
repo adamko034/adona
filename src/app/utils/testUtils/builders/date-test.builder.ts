@@ -16,6 +16,11 @@ export class DateTestBuilder {
     return this;
   }
 
+  public addSeconds(amount: number): DateTestBuilder {
+    this.date.add(amount, 'seconds');
+    return this;
+  }
+
   public build(): Date {
     return this.date.toDate();
   }

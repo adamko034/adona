@@ -26,7 +26,7 @@ describe('Router Facade', () => {
       const expected = cold('a', { a: { id: '123' } });
 
       // when
-      const result = facade.getRouteParams();
+      const result = facade.selectRouteParams();
 
       // then
       expect(result).toBeObservable(expected);

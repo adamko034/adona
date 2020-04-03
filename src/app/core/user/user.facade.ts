@@ -26,4 +26,8 @@ export class UserFacade {
   public changeTeam(request: ChangeTeamRequest) {
     this.store.dispatch(userActions.changeTeamRequested({ request }));
   }
+
+  public updateName(id: string, newName: string): void {
+    this.store.dispatch(userActions.updateNameRequested({ id, newName }));
+  }
 }

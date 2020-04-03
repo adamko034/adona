@@ -84,7 +84,9 @@ describe('Registration Facade', () => {
   describe('Register', () => {
     const firebaseUser = UserTestBuilder.withDefaultData().buildFirebaseUser();
     const credentials = CredentialsBuilder.from(firebaseUser.email, 'test').build();
-    const user = UserBuilder.from(firebaseUser.uid, firebaseUser.email, firebaseUser.displayName).build();
+    const user = UserBuilder.from(firebaseUser.uid, firebaseUser.email, firebaseUser.displayName)
+      .withDefaultPhotoUrl()
+      .build();
 
     beforeEach(() => {
       authService.register.calls.reset();

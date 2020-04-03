@@ -57,6 +57,9 @@ const authReducer = createReducer(
         teams: [...teams]
       }
     };
+  }),
+  on(userActions.updateNameSuccess, (state, action) => {
+    return { ...state, user: { ...state.user, name: action.newName } };
   })
 );
 

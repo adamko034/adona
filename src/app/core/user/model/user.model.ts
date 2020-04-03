@@ -6,4 +6,5 @@ export interface User {
   name: string;
   selectedTeamId?: string;
   teams?: UserTeam[];
+  photoUrl?: string;
 }

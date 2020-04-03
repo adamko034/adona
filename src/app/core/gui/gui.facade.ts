@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { Observable } from 'rxjs';
+import { BackendState } from 'src/app/core/gui/model/backend-state/backend-state.model';
 import { guiActions } from '../store/actions/gui.actions';
 import { GuiState } from '../store/reducers/gui/gui.reducer';
 import { guiQueries } from '../store/selectors/gui.selectors';
@@ -16,7 +17,11 @@ export class GuiFacade {
     return this.store.pipe(select(guiQueries.selectSideNavbarOptions));
   }
 
-  public initSideNavbar() {
+  public selectBackendState(): Observable<BackendState> {
+    return this.store.pipe(select(guiQueries.selectBackendState));
+  }
+
+  public initSideNavbar(): void {
     const options = this.deviceDetector.isMobile()
       ? SideNavbarOptionsBuilder.forMobile().build()
       : SideNavbarOptionsBuilder.forDesktop().build();
@@ -24,13 +29,25 @@ export class GuiFacade {
     this.store.dispatch(guiActions.initSideNavbar({ options }));
   }
 
-  public toggleSideNavbar() {
+  public toggleSideNavbar(): void {
     this.store.dispatch(guiActions.toggleSideNavbar());
   }
 
-  public toggleSideNavbarIfMobile() {
+  public toggleSideNavbarIfMobile(): void {
     if (this.deviceDetector.isMobile()) {
       this.toggleSideNavbar();
     }
+  }
+
+  public startApiRequest(): void {
+    this.store.dispatch(guiActions.requestLoading());
+  }
+
+  public apiRequestSuccess(): void {
+    this.store.dispatch(guiActions.requestSuccess());
+  }
+
+  public apiRequestFailed(): void {
+    this.store.dispatch(guiActions.requestFailure());
   }
 }

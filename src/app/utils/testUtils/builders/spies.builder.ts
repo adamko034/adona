@@ -124,7 +124,8 @@ export class SpiesBuilder {
       'loadUser',
       'selectUser',
       'selectUserId',
-      'changeTeam'
+      'changeTeam',
+      'updateName'
     ]);
     return this;
   }
@@ -174,7 +175,12 @@ export class SpiesBuilder {
   }
 
   public withUserService(): SpiesBuilder {
-    this.spies.userService = jasmine.createSpyObj<UserService>('userService', ['loadUser', 'changeTeam', 'createUser']);
+    this.spies.userService = jasmine.createSpyObj<UserService>('userService', [
+      'loadUser',
+      'changeTeam',
+      'createUser',
+      'updateName'
+    ]);
 
     return this;
   }
@@ -264,7 +270,11 @@ export class SpiesBuilder {
       'selectSideNavbarOptions',
       'initSideNavbar',
       'toggleSideNavbar',
-      'toggleSideNavbarIfMobile'
+      'toggleSideNavbarIfMobile',
+      'selectBackendState',
+      'startApiRequest',
+      'apiRequestSuccess',
+      'apiRequestFailed'
     ]);
 
     return this;

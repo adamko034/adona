@@ -26,6 +26,11 @@
       }
     }
 
+    .tab-rest {
+      height: 100%;
+      border-right: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
     .active {
       border-right: none;
       font-weight: 500;
@@ -42,6 +47,11 @@
   }
 
   .content {
-    padding: 0 20px;
+    padding: 0 20px 0 30px;
+    width: 100%;
+
+    &-mobile {
+      padding: 0 20px !important;
+    }
   }
 }

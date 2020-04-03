@@ -12,7 +12,7 @@ import { Route } from './model/route.model';
 export class RouterFacade {
   constructor(private store: Store<RouterReducerState>) {}
 
-  public getRouteParams(): Observable<Params> {
+  public selectRouteParams(): Observable<Params> {
     return this.store.pipe(select(routerQueries.selectRouteParams));
   }
 
