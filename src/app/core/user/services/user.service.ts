@@ -52,6 +52,15 @@ export class UserService {
     return from(promise.then(() => request));
   }
 
+  public updateName(uid: string, newName: string): Observable<string> {
+    const promise = this.db
+      .collection(this.collectionName)
+      .doc(uid)
+      .update({ name: newName });
+
+    return from(promise.then(() => newName));
+  }
+
   private mapFromFirebase(firebaseUser: any, uid: string): User {
     const teams: UserTeam[] = [];
 
@@ -71,6 +80,7 @@ export class UserService {
       .withName(firebaseUser.name)
       .withSelectedTeamId(!!firebaseUser.selectedTeamId ? firebaseUser.selectedTeamId : null)
       .withTeams(teams)
+      .withPhotoUrl(firebaseUser.photoUrl)
       .build();
   }
 }

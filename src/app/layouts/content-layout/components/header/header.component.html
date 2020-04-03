@@ -7,12 +7,14 @@
   <span class="title">
     ADONA
   </span>
-  <div>
-    <button mat-icon-button [matMenuTriggerFor]="userMenu">
-      <mat-icon appResponsiveMatIcon>person_outline</mat-icon>
-    </button>
+  <div class="user-menu" [ngClass.lt-sm]="'user-menu-mobile'">
+    <div [matMenuTriggerFor]="userMenu" fxLayoutAlign="center center" fxLayoutGap="5px">
+      <img class="image" [src]="user.photoUrl" />
+      <span [ngClass.lt-sm]="'text-overflow'">{{ user.name }}</span>
+      <mat-icon>keyboard_arrow_down</mat-icon>
+    </div>
     <mat-menu #userMenu="matMenu">
-      <a mat-menu-item routerLink="settings">
+      <a mat-menu-item routerLink="/settings">
         <mat-icon appResponsiveMatIcon>settings</mat-icon>
         <span>Settings</span>
       </a>

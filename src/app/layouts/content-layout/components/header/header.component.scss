@@ -10,11 +10,35 @@
     font-size: 25px;
   }
 
-  a {
-    text-decoration: none;
+  .user-menu {
+    padding: 5px 7px;
+    cursor: pointer;
+    font-size: smaller;
+
+    &:hover {
+      border-radius: 10px;
+      background-color: rgba(0, 0, 0, 0.06);
+    }
+
+    &-mobile {
+      max-width: 200px;
+    }
+
+    .image {
+      height: 30px;
+      border-radius: 50%;
+    }
   }
 }
 
 .toolbar-mobile {
   padding: 0 !important;
+}
+
+a {
+  text-decoration: none;
+
+  &:hover {
+    color: rgba(0, 0, 0, 0.87);
+  }
 }

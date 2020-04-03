@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { EffectsModule } from '@ngrx/effects';
-import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { NavigationActionTiming, StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { ErrorEffects } from 'src/app/core/store/effects/error.effects';
+import { CustomSerializer } from 'src/app/utils/router-store/custom-serializer';
 import { SharedModule } from '../shared/shared.module';
-import { CustomSerializer } from '../utils/router-store/custom-serializer';
 import { AuthFacade } from './auth/auth.facade';
 import { AuthGuard } from './auth/guard/auth.guard';
 import { AuthService } from './auth/services/auth.service';
@@ -32,7 +32,11 @@ import { metaReducers, reducers } from './store/reducers';
     HttpClientModule,
     EffectsModule.forRoot([AuthEffects, ErrorEffects, TeamEffects, UserEffects]),
     DeviceDetectorModule.forRoot(),
-    StoreRouterConnectingModule.forRoot({ stateKey: 'router', serializer: CustomSerializer })
+    StoreRouterConnectingModule.forRoot({
+      stateKey: 'router',
+      navigationActionTiming: NavigationActionTiming.PostActivation,
+      serializer: CustomSerializer
+    })
   ],
   providers: [AuthGuard, AuthService, AuthFacade, ErrorFacade, CustomIconsService]
 })

@@ -12,7 +12,11 @@ export const userActionTypes = {
   changeTeamFailure: '[Database API] Change Team Failure',
   changeTeamSuccess: '[Datebase API] Change Team Success',
 
-  teamAdded: '[Database API] Team Added'
+  teamAdded: '[Database API] Team Added',
+
+  updateNameRequested: '[Settings Page] Update Name Requested',
+  updateNameSuccess: '[Database API] Update Name Success',
+  updateNameFailure: '[Database API] Update Name Failure'
 };
 
 const loadUserRequested = createAction(userActionTypes.loadUserRequested, props<{ id: string }>());
@@ -25,6 +29,10 @@ const changeTeamSuccess = createAction(userActionTypes.changeTeamSuccess, props<
 
 const teamAdded = createAction(userActionTypes.teamAdded, props<{ id: string; name: string; updated: Date }>());
 
+const updateNameRequested = createAction(userActionTypes.updateNameRequested, props<{ id: string; newName: string }>());
+const updateNameSuccess = createAction(userActionTypes.updateNameSuccess, props<{ newName: string }>());
+const updateNameFailure = createAction(userActionTypes.updateNameFailure, props<{ error: Error }>());
+
 export const userActions = {
   loadUserRequested,
   loadUserSuccess,
@@ -32,5 +40,8 @@ export const userActions = {
   changeTeamRequested,
   changeTeamFailure,
   changeTeamSuccess,
-  teamAdded
+  teamAdded,
+  updateNameRequested,
+  updateNameSuccess,
+  updateNameFailure
 };

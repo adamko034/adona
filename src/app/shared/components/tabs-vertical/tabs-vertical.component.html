@@ -9,8 +9,9 @@
       <mat-icon>{{ route.icon }}</mat-icon>
       <span fxHide.lt-sm>{{ route.name }}</span>
     </div>
+    <div class="tab-rest"></div>
   </div>
-  <div class="content">
+  <div ngClass.lt-sm="content-mobile" class="content">
     <router-outlet></router-outlet>
   </div>
 </div>

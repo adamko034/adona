@@ -2,6 +2,10 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { TimeService } from '../../services/time/time.service';
 
 export class CustomValidators {
+  static singleWord(control: FormControl) {
+    return control.value.toString().includes(' ') ? { singleWord: { valid: false } } : null;
+  }
+
   static requiredValue(control: FormControl) {
     return control.value.trim() !== '' ? null : { requiredValue: { valid: false } };
   }

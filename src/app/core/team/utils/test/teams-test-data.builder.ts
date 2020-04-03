@@ -1,4 +1,5 @@
 import { Dictionary } from '@ngrx/entity';
+import { DateTestBuilder } from 'src/app/utils/testUtils/builders/date-test.builder';
 import { TeamMembersBuilder } from '../../model/builders/team-members.builder';
 import { TeamBuilder } from '../../model/builders/team.builder';
 import { Team } from '../../model/team.model';
@@ -8,14 +9,28 @@ export class TeamsTestDataBuilder {
 
   private constructor() {
     this.teams = {
-      123: TeamBuilder.from('123', new Date(), 'test user', 'new team')
+      123: TeamBuilder.from(
+        '123',
+        DateTestBuilder.now()
+          .addSeconds(-10)
+          .build(),
+        'test user',
+        'new team'
+      )
         .withMembers(
           TeamMembersBuilder.from()
             .withMember('test user')
             .build()
         )
         .build(),
-      124: TeamBuilder.from('124', new Date(), 'test user 2', 'team 2')
+      124: TeamBuilder.from(
+        '124',
+        DateTestBuilder.now()
+          .addSeconds(-30)
+          .build(),
+        'test user 2',
+        'team 2'
+      )
         .withMembers(
           TeamMembersBuilder.from()
             .withMember('test user 2')

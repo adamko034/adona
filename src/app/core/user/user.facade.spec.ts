@@ -3,7 +3,8 @@ import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold } from 'jasmine-marbles';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
-import { userActions } from '../store/actions/user.actions';
+import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
+import { userActions, userActionTypes } from '../store/actions/user.actions';
 import { AuthState } from '../store/reducers/auth/auth.reducer';
 import { userQueries } from '../store/selectors/user.selectors';
 import { ChangeTeamRequest } from '../team/model/change-team-request.model';
@@ -68,6 +69,18 @@ describe('User Facade', () => {
 
       expect(dispatchSpy).toHaveBeenCalledTimes(1);
       expect(dispatchSpy).toHaveBeenCalledWith(userActions.changeTeamRequested({ request }));
+    });
+  });
+
+  describe('Update Name', () => {
+    it('should dispatch Update Name Requested action', () => {
+      facade.updateName('1', 'example');
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, {
+        id: '1',
+        newName: 'example',
+        type: userActionTypes.updateNameRequested
+      });
     });
   });
 });

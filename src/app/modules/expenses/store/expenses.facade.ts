@@ -33,7 +33,7 @@ export class ExpensesFacade {
   }
 
   public getExpensesGroupFromRouteParams(): Observable<ExpenseGroup> {
-    return this.routerFacade.getRouteParams().pipe(
+    return this.routerFacade.selectRouteParams().pipe(
       map((params: Params) => params.id),
       switchMap((id: string) => this.store.pipe(select(expensesQueries.selectExpensesById, { id })))
     );

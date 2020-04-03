@@ -41,4 +41,25 @@ describe('Custom Validators', () => {
       });
     });
   });
+
+  describe('Single Word', () => {
+    [
+      { value: ' ', valid: false },
+      { value: ' aa ', valid: false },
+      { value: ' aaa', valid: false },
+      { value: 'aaa', valid: true },
+      { value: 'aa a', valid: false },
+      { value: 'aaa123', valid: true },
+      { value: 'aaa_123', valid: true }
+    ].forEach(input => {
+      it(`should be ${input.valid ? '' : 'not'} be valid for control value: ${input.value}`, () => {
+        const control = new FormControl();
+        control.setValue(input.value);
+
+        const expected = input.valid ? null : { singleWord: { valid: false } };
+
+        expect(CustomValidators.singleWord(control)).toEqual(expected);
+      });
+    });
+  });
 });

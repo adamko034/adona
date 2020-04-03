@@ -3,13 +3,18 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable } from 'rxjs';
+import { GuiFacade } from 'src/app/core/gui/gui.facade';
 import { ErrorEffects } from 'src/app/core/store/effects/error.effects';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { ErrorOccuredAction } from '../actions/error.actions';
 
 describe('Error Effects', () => {
   let actions$: Observable<Action>;
   let effects: ErrorEffects;
+  const { guiFacade } = SpiesBuilder.init()
+    .withGuiFacade()
+    .build();
   const environmentService = jasmine.createSpyObj<EnvironmentService>('environmentService', ['isDev']);
 
   beforeEach(() => {
@@ -17,6 +22,7 @@ describe('Error Effects', () => {
       providers: [
         ErrorEffects,
         { provide: EnvironmentService, useValue: environmentService },
+        { provide: GuiFacade, useValue: guiFacade },
         provideMockActions(() => actions$)
       ]
     });
@@ -25,17 +31,20 @@ describe('Error Effects', () => {
   });
 
   describe('Error Occured effect', () => {
-    it('should log message', () => {
+    it('should log message and map to Api Request Failed', () => {
       // given
       environmentService.isDev.and.returnValue(true);
 
       const action = new ErrorOccuredAction({ error: { message: 'this is message' } });
       actions$ = hot('-a', { a: action });
-      const expected = cold('-b', { b: action });
+      const expected = cold('-b', { b: guiFacade.apiRequestFailed() });
+
+      guiFacade.apiRequestFailed.calls.reset();
 
       // when & then
       expect(effects.errorOccured$).toBeObservable(expected);
       expect(environmentService.isDev).toHaveBeenCalledTimes(1);
+      expect(guiFacade.apiRequestFailed).toHaveBeenCalledTimes(1);
     });
   });
 });

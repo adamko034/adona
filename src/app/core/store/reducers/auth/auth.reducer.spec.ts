@@ -113,11 +113,9 @@ describe('Auth Reducer', () => {
       expect({ ...result }).toEqual({
         loginFailed: false,
         user: {
-          id: userToChange.id,
-          name: userToChange.name,
+          ...userToChange,
           selectedTeamId: '123',
-          teams: [userTeam, userTeamExpected],
-          email: userToChange.email
+          teams: [userTeam, userTeamExpected]
         }
       });
     });
@@ -158,6 +156,19 @@ describe('Auth Reducer', () => {
           teams: [...userToChange.teams, newTeam]
         }
       });
+    });
+  });
+
+  describe('On Update Name Success', () => {
+    it("should change user's name", () => {
+      const currentState: fromReducer.AuthState = {
+        loginFailed: false,
+        user: UserTestBuilder.withDefaultData().build()
+      };
+
+      const result = reducer(currentState, userActions.updateNameSuccess({ newName: 'exampleUser' }));
+
+      expect(result).toEqual({ ...currentState, user: { ...currentState.user, name: 'exampleUser' } });
     });
   });
 });
