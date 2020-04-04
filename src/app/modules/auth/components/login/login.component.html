@@ -39,6 +39,10 @@
     </div>
   </form>
   <div class="actions">
+    <span>Forgot your password?</span>
+    <a [routerLink]="'/login/resetPassword'" [queryParams]="{ email: loginForm.get('email').value }">Reset it</a>
+  </div>
+  <div class="actions">
     <span>Don't have an account, yet?</span>
     <a [routerLink]="'/login/register'">Register</a>
   </div>

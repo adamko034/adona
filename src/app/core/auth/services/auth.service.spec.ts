@@ -14,7 +14,9 @@ describe('AuthService', () => {
     auth: jasmine.createSpyObj('auth', {
       signInWithEmailAndPassword: Promise.resolve({}),
       signOut: Promise.resolve(),
-      createUserWithEmailAndPassword: Promise.resolve(firebaseUserCredential)
+      createUserWithEmailAndPassword: Promise.resolve(firebaseUserCredential),
+      sendPasswordResetEmail: Promise.resolve(),
+      confirmPasswordReset: Promise.resolve()
     })
   };
   const { userUtilsService } = SpiesBuilder.init()
@@ -69,6 +71,22 @@ describe('AuthService', () => {
 
         done();
       });
+    });
+  });
+
+  describe('Send Password Reset Email', () => {
+    it('should send firebase auth email', () => {
+      authService.sendPasswordResetEmail('example@ex.com').subscribe();
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(fireAuthSpy.auth.sendPasswordResetEmail, 1, 'example@ex.com');
+    });
+  });
+
+  describe('Confirm Password Reset', () => {
+    it('should call confirm password reset using firebase auth', () => {
+      authService.confirmPasswordReset('123', 'newPassword');
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(fireAuthSpy.auth.confirmPasswordReset, 1, '123', 'newPassword');
     });
   });
 });

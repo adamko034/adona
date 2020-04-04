@@ -1,17 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { map, tap } from 'rxjs/operators';
-import { GuiFacade } from 'src/app/core/gui/gui.facade';
+import { tap } from 'rxjs/operators';
 import { ErrorActions, ErrorActionTypes, ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 
 @Injectable()
 export class ErrorEffects {
-  constructor(
-    private actions$: Actions,
-    private environmentService: EnvironmentService,
-    private guiFacade: GuiFacade
-  ) {}
+  constructor(private actions$: Actions, private environmentService: EnvironmentService) {}
 
   @Effect()
   errorOccured$ = this.actions$.pipe(
@@ -20,7 +15,6 @@ export class ErrorEffects {
       if (this.environmentService.isDev()) {
         console.error(action.payload.error);
       }
-    }),
-    map(() => this.guiFacade.apiRequestFailed())
+    })
   );
 }

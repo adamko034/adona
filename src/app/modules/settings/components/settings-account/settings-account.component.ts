@@ -1,8 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { GuiFacade } from 'src/app/core/gui/gui.facade';
-import { BackendState } from 'src/app/core/gui/model/backend-state/backend-state.model';
 import { User } from 'src/app/core/user/model/user.model';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.validator';
@@ -14,14 +12,13 @@ import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.v
 })
 export class SettingsAccountComponent implements OnInit, OnDestroy {
   private userSubscription: Subscription;
-  private requestStateSubscription: Subscription;
 
   public user: User;
   public isError: boolean;
 
   public newName = new FormControl('', [CustomValidators.requiredValue, CustomValidators.singleWord]);
 
-  constructor(private userFacade: UserFacade, private guiFacade: GuiFacade) {}
+  constructor(private userFacade: UserFacade) {}
 
   public ngOnInit(): void {
     this.userSubscription = this.userFacade.selectUser().subscribe((user: User) => {
@@ -31,24 +28,20 @@ export class SettingsAccountComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.requestStateSubscription = this.guiFacade.selectBackendState().subscribe((backendState: BackendState) => {
-      if (backendState && backendState.failure) {
-        this.newName.setErrors({ backend: { valid: false } });
-      }
+    // this.requestStateSubscription = this.guiFacade.selectBackendState().subscribe((backendState: BackendState) => {
+    //   if (backendState && backendState.failure) {
+    //     this.newName.setErrors({ backend: { valid: false } });
+    //   }
 
-      if (backendState && backendState.success) {
-        this.newName.setErrors(null);
-      }
-    });
+    //   if (backendState && backendState.success) {
+    //     this.newName.setErrors(null);
+    //   }
+    // });
   }
 
   public ngOnDestroy(): void {
     if (this.userSubscription) {
       this.userSubscription.unsubscribe();
-    }
-
-    if (this.requestStateSubscription) {
-      this.requestStateSubscription.unsubscribe();
     }
   }
 

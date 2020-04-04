@@ -33,4 +33,12 @@ export class AuthService {
         })
     );
   }
+
+  public sendPasswordResetEmail(email: string): Observable<void> {
+    return from(this.fireAuth.auth.sendPasswordResetEmail(email));
+  }
+
+  public confirmPasswordReset(code: string, newPassword: string): Observable<void> {
+    return from(this.fireAuth.auth.confirmPasswordReset(code, newPassword));
+  }
 }

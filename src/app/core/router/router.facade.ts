@@ -20,6 +20,10 @@ export class RouterFacade {
     return this.store.pipe(select(routerQueries.selectCurrentRoute));
   }
 
+  public selectRouteQueryParams(): Observable<Params> {
+    return this.store.pipe(select(routerQueries.selectRouteQueryParams));
+  }
+
   public selectAdonaRoutes(): Route[] {
     return sortBy(routes, 'id');
   }

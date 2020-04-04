@@ -39,4 +39,11 @@ describe('Router Facade', () => {
       expect(facade.selectCurrentRute()).toBeObservable(cold('a', { a: 'testUrl' }));
     });
   });
+
+  describe('Select Route Query Params', () => {
+    it('should return params from store', () => {
+      store.overrideSelector(routerQueries.selectRouteQueryParams, { testNumber: 1 });
+      expect(facade.selectRouteQueryParams()).toBeObservable(cold('a', { a: { testNumber: 1 } }));
+    });
+  });
 });

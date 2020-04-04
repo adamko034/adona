@@ -8,19 +8,14 @@ export const guiActionTypes = {
 
   requestLoading: '[Page] Request Loading',
   requestSuccess: '[Database API] Request Success',
-  requestFailure: '[Database API] Request Failure'
+  requestFailure: '[Database API] Request Failure',
+  requestFailureWithErrorCode: '[Database API] Request Failure With Error Code'
 };
 
 const initSideNavbar = createAction(guiActionTypes.initSideNavbar, props<{ options: SideNavbarOptions }>());
 const toggleSideNavbar = createAction(guiActionTypes.toggleSideNavbar);
-const requestLoading = createAction(guiActionTypes.requestLoading);
-const requestSuccess = createAction(guiActionTypes.requestSuccess);
-const requestFailure = createAction(guiActionTypes.requestFailure);
 
 export const guiActions = {
   initSideNavbar,
-  toggleSideNavbar,
-  requestFailure,
-  requestLoading,
-  requestSuccess
+  toggleSideNavbar
 };

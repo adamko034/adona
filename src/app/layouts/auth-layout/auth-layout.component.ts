@@ -31,6 +31,10 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
       return 'Register';
     } else if (route.toLowerCase().includes('verifyemail')) {
       return 'Email Verification';
+    } else if (route.toLowerCase().includes('login/resetpassword')) {
+      return 'Forgotten Password';
+    } else if (route.toLowerCase().includes('login/changepassword')) {
+      return 'Change Password';
     }
 
     return 'Login';

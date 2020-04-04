@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold } from 'jasmine-marbles';
-import { BackendStateBuilder } from 'src/app/core/gui/model/backend-state/backend-state.builder';
 import { SpiesBuilder } from '../../utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from '../../utils/testUtils/jasmine-custom-matchers';
 import { guiActions } from '../store/actions/gui.actions';
@@ -79,44 +78,6 @@ describe('Gui Facade', () => {
 
         JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, isMobile ? 1 : 0, guiActions.toggleSideNavbar());
       });
-    });
-  });
-
-  describe('Select Backend State', () => {
-    it('should return backend state', () => {
-      store.overrideSelector(guiQueries.selectBackendState, BackendStateBuilder.loading());
-
-      expect(facade.selectBackendState()).toBeObservable(cold('x', { x: BackendStateBuilder.loading() }));
-    });
-  });
-
-  describe('Start Api Request', () => {
-    it('should dispatch Request Loading action', () => {
-      const dispatchSpy = spyOn(store, 'dispatch');
-
-      facade.startApiRequest();
-
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, guiActions.requestLoading());
-    });
-  });
-
-  describe('Api Request Success', () => {
-    it('should dispatch Request Success action', () => {
-      const dispatchSpy = spyOn(store, 'dispatch');
-
-      facade.apiRequestSuccess();
-
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, guiActions.requestSuccess());
-    });
-  });
-
-  describe('Start Api Request', () => {
-    it('should dispatch Request Loading action', () => {
-      const dispatchSpy = spyOn(store, 'dispatch');
-
-      facade.apiRequestFailed();
-
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, guiActions.requestFailure());
     });
   });
 });
