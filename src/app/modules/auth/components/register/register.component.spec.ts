@@ -6,8 +6,6 @@ import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 
 describe('Register Component', () => {
-  const confirmPasswordField = 'confirmPassword';
-
   let component: RegisterComponent;
 
   const { registrationFacade, navigationService } = SpiesBuilder.init()
@@ -26,13 +24,7 @@ describe('Register Component', () => {
     it('should set default values', () => {
       component = new RegisterComponent(registrationFacade, navigationService);
 
-      JasmineCustomMatchers.toBeFalsy(
-        component.showConfirmPassword,
-        component.showPassword,
-        component.errorMessage,
-        component.showSpinner,
-        component.isStrengthPassword
-      );
+      JasmineCustomMatchers.toBeFalsy(component.errorMessage, component.showSpinner);
 
       expect(component.form.value).toEqual({ email: '', password: '', confirmPassword: '' });
     });
@@ -181,40 +173,6 @@ describe('Register Component', () => {
         CredentialsBuilder.from('example@example.com', 'test').build()
       );
       expect(navigationService.toVerifyEmail).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('On Password Changed', () => {
-    it('should clear Confirm Password errors', () => {
-      component.form
-        .get(confirmPasswordField)
-        .setErrors({ [registrationErrorCodes.passwordsDoNotMatch]: { valid: false } });
-
-      component.onPasswordChanged();
-
-      expect(component.form.get(confirmPasswordField).errors).toBeFalsy();
-    });
-
-    it('should not clear Confirm Password', () => {
-      component.form
-        .get(confirmPasswordField)
-        .setErrors({ [registrationErrorCodes.passwordInvalid]: { valid: false } });
-
-      component.onPasswordChanged();
-
-      expect(component.form.get(confirmPasswordField).errors).toEqual({
-        [registrationErrorCodes.passwordInvalid]: { valid: false }
-      });
-    });
-  });
-
-  describe('On Password Strength Changed', () => {
-    [10, 70, 80, 100].forEach((strength: number) => {
-      it(`should set Is Strenght Password to ${strength > 80} if strenght = ${strength}`, () => {
-        component.onPasswordStrengthChanged(strength);
-
-        expect(component.isStrengthPassword).toEqual(strength > 80);
-      });
     });
   });
 });

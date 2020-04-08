@@ -11,6 +11,7 @@ import { UserService } from 'src/app/core/user/services/user.service';
 import { RegistrationFacade } from 'src/app/modules/auth/facade/registration-facade';
 import { EmailConfirmationService } from 'src/app/modules/auth/services/email-confirmation.service';
 import { RegistrationErrorService } from 'src/app/modules/auth/services/registration-error.service';
+import { ResetPasswordService } from 'src/app/modules/auth/services/reset-password/reset-password.service';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { ExpensesService } from 'src/app/modules/expenses/services/expenses.service';
@@ -57,6 +58,7 @@ export interface Spies {
   registrationFacade?: jasmine.SpyObj<RegistrationFacade>;
   registrationErrorService?: jasmine.SpyObj<RegistrationErrorService>;
   emailConfirmationService?: jasmine.SpyObj<EmailConfirmationService>;
+  resetPasswordService?: jasmine.SpyObj<ResetPasswordService>;
 }
 
 export class SpiesBuilder {
@@ -113,7 +115,9 @@ export class SpiesBuilder {
       'getAuthState',
       'login',
       'logout',
-      'register'
+      'register',
+      'sendPasswordResetEmail',
+      'confirmPasswordReset'
     ]);
 
     return this;
@@ -270,11 +274,7 @@ export class SpiesBuilder {
       'selectSideNavbarOptions',
       'initSideNavbar',
       'toggleSideNavbar',
-      'toggleSideNavbarIfMobile',
-      'selectBackendState',
-      'startApiRequest',
-      'apiRequestSuccess',
-      'apiRequestFailed'
+      'toggleSideNavbarIfMobile'
     ]);
 
     return this;
@@ -285,7 +285,8 @@ export class SpiesBuilder {
       'getRouteParams',
       'selectCurrentRute',
       'selectAdonaRoutes',
-      'selectSettingsRoutes'
+      'selectSettingsRoutes',
+      'selectRouteQueryParams'
     ]);
 
     return this;
@@ -329,6 +330,15 @@ export class SpiesBuilder {
       'send',
       'sendUsingAuthorizedUser'
     ]);
+    return this;
+  }
+
+  public withResetPasswordService(): SpiesBuilder {
+    this.spies.resetPasswordService = jasmine.createSpyObj<ResetPasswordService>('resetPasswordService', [
+      'sendPasswordResetEmail',
+      'confirmPasswordReset'
+    ]);
+
     return this;
   }
 

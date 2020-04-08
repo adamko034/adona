@@ -5,8 +5,6 @@ import { createAction } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { of } from 'rxjs';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
-import { GuiFacade } from 'src/app/core/gui/gui.facade';
-import { guiActions } from 'src/app/core/store/actions/gui.actions';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
@@ -23,10 +21,9 @@ describe('User Effects', () => {
 
   const user = UserTestBuilder.withDefaultData().build();
 
-  const { userService, errorEffectService, guiFacade } = SpiesBuilder.init()
+  const { userService, errorEffectService } = SpiesBuilder.init()
     .withUserService()
     .withErrorEffectService()
-    .withGuiFacade()
     .build();
 
   beforeEach(() => {
@@ -35,11 +32,7 @@ describe('User Effects', () => {
         UserEffects,
         provideMockActions(() => actions$),
         { provide: UserService, useValue: userService },
-        { provide: ErrorEffectService, useValue: errorEffectService },
-        {
-          provide: GuiFacade,
-          useValue: guiFacade
-        }
+        { provide: ErrorEffectService, useValue: errorEffectService }
       ]
     });
 
@@ -48,7 +41,6 @@ describe('User Effects', () => {
     userService.loadUser.calls.reset();
     userService.changeTeam.calls.reset();
     userService.updateName.calls.reset();
-    guiFacade.startApiRequest.calls.reset();
   });
 
   describe('Load User Requested', () => {
@@ -119,11 +111,10 @@ describe('User Effects', () => {
       userService.updateName.and.returnValue(cold('a', { a: 'exampleUser' }));
 
       expect(effects.updateNameRequested$).toBeObservable(
-        cold('--(ab)', { a: guiActions.requestSuccess(), b: userActions.updateNameSuccess({ newName: 'exampleUser' }) })
+        cold('--b', { b: userActions.updateNameSuccess({ newName: 'exampleUser' }) })
       );
 
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.updateName, 1, '1', 'exampleUser');
-      expect(guiFacade.startApiRequest).toHaveBeenCalledTimes(1);
     });
 
     it('should dispatch Update Name Failure when service fails', () => {
@@ -138,7 +129,6 @@ describe('User Effects', () => {
         cold('--a', { a: userActions.updateNameFailure({ error: expectedError }) })
       );
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.updateName, 1, '1', 'exampleUser');
-      expect(guiFacade.startApiRequest).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -148,7 +138,7 @@ describe('User Effects', () => {
 
     const actions = new Actions(of(createAction('test action')));
 
-    new UserEffects(actions, userService, errorEffectService, guiFacade);
+    new UserEffects(actions, userService, errorEffectService);
 
     expect(errorEffectService.createFrom).toHaveBeenCalledTimes(3);
     expect(errorEffectService.createFrom).toHaveBeenCalledWith(

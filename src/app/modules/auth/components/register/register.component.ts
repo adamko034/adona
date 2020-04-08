@@ -18,10 +18,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   private registrationErrorSubscription: Subscription;
 
   public errorMessage: string;
-  public isStrengthPassword = false;
   public showSpinner = false;
-  public showPassword = false;
-  public showConfirmPassword = false;
 
   public form: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.email, CustomValidators.requiredValue]),
@@ -56,16 +53,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
     if (this.registrationErrorSubscription) {
       this.registrationErrorSubscription.unsubscribe();
     }
-  }
-
-  public onPasswordChanged(): void {
-    if (this.form.get('confirmPassword').hasError(registrationErrorCodes.passwordsDoNotMatch)) {
-      this.form.get('confirmPassword').setErrors(null);
-    }
-  }
-
-  public onPasswordStrengthChanged(strength: number): void {
-    this.isStrengthPassword = strength > 80;
   }
 
   public register(): void {

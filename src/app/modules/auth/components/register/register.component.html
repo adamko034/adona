@@ -8,59 +8,16 @@
       <mat-error *ngIf="form.get('email').hasError('requiredValue')">Email is <strong>required</strong></mat-error>
       <mat-error *ngIf="form.get('email').hasError('emailExists')">Email already exists</mat-error>
     </mat-form-field>
-    <mat-form-field class="form-field form-field-password" [formGroup]="form">
-      <input
-        matInput
-        [type]="showPassword ? 'text' : 'password'"
-        placeholder="Password"
-        formControlName="password"
-        tabindex="2"
-        (input)="onPasswordChanged()"
-      />
-      <mat-icon matSuffix (click)="showPassword = !showPassword">{{
-        showPassword ? 'visibility' : 'visibility_off'
-      }}</mat-icon>
-      <mat-error *ngIf="form.get('password').hasError('requiredValue')"
-        >Password is <strong>required</strong></mat-error
-      >
-    </mat-form-field>
 
-    <div class="password-strenght">
-      <mat-password-strength
-        (onStrengthChanged)="onPasswordStrengthChanged($event)"
-        #passwordStrength
-        [password]="form.get('password').value"
-      >
-      </mat-password-strength>
-      <mat-password-strength-info
-        [passwordComponent]="passwordStrength"
-        lowerCaseCriteriaMsg="at least one lower case character"
-        upperCaseCriteriaMsg="at least one upper case character"
-        digitsCriteriaMsg="at least one digit"
-        specialCharsCriteriaMsg="at least one special character"
-        minCharsCriteriaMsg="at least 8 characters"
-      ></mat-password-strength-info>
-    </div>
-
-    <mat-form-field class="form-field" [formGroup]="form">
-      <input
-        matInput
-        [type]="showConfirmPassword ? 'text' : 'password'"
-        placeholder="Confirm password"
-        formControlName="confirmPassword"
-        tabindex="3"
-      />
-      <mat-icon matSuffix (click)="showConfirmPassword = !showConfirmPassword">
-        {{ showConfirmPassword ? 'visibility' : 'visibility_off' }}
-      </mat-icon>
-      <mat-error *ngIf="form.get('confirmPassword').hasError('requiredValue')"
-        >Confirmation Password is <strong>required</strong></mat-error
-      >
-    </mat-form-field>
+    <app-new-password
+      [passwordControlName]="'password'"
+      [repeatPasswordControlName]="'confirmPassword'"
+      [form]="form"
+    ></app-new-password>
 
     <button
       *ngIf="!showSpinner"
-      [disabled]="form.invalid || !isStrengthPassword"
+      [disabled]="form.invalid"
       type="submit"
       class="form-button register-button"
       mat-stroked-button

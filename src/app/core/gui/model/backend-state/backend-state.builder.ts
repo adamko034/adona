@@ -9,8 +9,10 @@ export class BackendStateBuilder {
     return this.createBackendState(true, false, false);
   }
 
-  public static failure(): BackendState {
-    return this.createBackendState(false, true, false);
+  public static failure(errorCode?: string): BackendState {
+    const state = this.createBackendState(false, true, false);
+
+    return errorCode ? { ...state, errorCode } : state;
   }
 
   private static createBackendState(success: boolean, failure: boolean, loading: boolean): BackendState {

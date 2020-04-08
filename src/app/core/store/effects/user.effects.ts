@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
-import { GuiFacade } from 'src/app/core/gui/gui.facade';
-import { guiActions } from 'src/app/core/store/actions/gui.actions';
 import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
 import { ErrorEffectService } from '../../services/store/error-effect.service';
 import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
@@ -17,8 +15,7 @@ export class UserEffects {
   constructor(
     private actions$: Actions,
     private userService: UserService,
-    private errorEffectService: ErrorEffectService,
-    private guiFacade: GuiFacade
+    private errorEffectService: ErrorEffectService
   ) {}
 
   public loadUserRequested$ = createEffect(() => {
@@ -57,10 +54,9 @@ export class UserEffects {
   public updateNameRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(userActions.updateNameRequested),
-      tap(() => this.guiFacade.startApiRequest()),
       switchMap(action =>
         this.userService.updateName(action.id, action.newName).pipe(
-          switchMap((newName: string) => [guiActions.requestSuccess(), userActions.updateNameSuccess({ newName })]),
+          map((newName: string) => userActions.updateNameSuccess({ newName })),
           catchError(err =>
             of(
               userActions.updateNameFailure({

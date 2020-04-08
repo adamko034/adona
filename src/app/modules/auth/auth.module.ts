@@ -9,13 +9,23 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { NewPasswordComponent } from 'src/app/modules/auth/components/new-password/new-password.component';
 import { AuthRoutingModule } from './auth-routing.module';
+import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
 
 @NgModule({
-  declarations: [LoginComponent, RegisterComponent, VerifyEmailComponent],
+  declarations: [
+    LoginComponent,
+    RegisterComponent,
+    VerifyEmailComponent,
+    ResetPasswordComponent,
+    ChangePasswordComponent,
+    NewPasswordComponent
+  ],
   imports: [
     CommonModule,
     AuthRoutingModule,
