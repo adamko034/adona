@@ -1,10 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { CredentialsBuilder } from 'src/app/core/auth/model/builder/credentials.builder';
 import { registrationErrorCodes } from 'src/app/modules/auth/constants/registration-error-messages.constants';
 import { RegistrationFacade } from 'src/app/modules/auth/facade/registration-facade';
 import { RegistrationError } from 'src/app/modules/auth/models/registration/registration-error.model';
+import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
 import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.validator';
 
@@ -14,8 +16,7 @@ import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.v
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-  private registrationSubscription: Subscription;
-  private registrationErrorSubscription: Subscription;
+  private destroyed$: Subject<void>;
 
   public errorMessage: string;
   public showSpinner = false;
@@ -26,11 +27,18 @@ export class RegisterComponent implements OnInit, OnDestroy {
     confirmPassword: new FormControl('', [CustomValidators.requiredValue])
   });
 
-  constructor(private registrationFacade: RegistrationFacade, private navigationService: NavigationService) {}
+  constructor(
+    private registrationFacade: RegistrationFacade,
+    private navigationService: NavigationService,
+    private unsubscriberService: UnsubscriberService
+  ) {
+    this.destroyed$ = this.unsubscriberService.create();
+  }
 
   public ngOnInit(): void {
-    this.registrationErrorSubscription = this.registrationFacade
+    this.registrationFacade
       .selectRegistrationError()
+      .pipe(takeUntil(this.destroyed$))
       .subscribe((error: RegistrationError) => {
         this.showSpinner = false;
 
@@ -46,13 +54,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    if (this.registrationSubscription) {
-      this.registrationSubscription.unsubscribe();
-    }
-
-    if (this.registrationErrorSubscription) {
-      this.registrationErrorSubscription.unsubscribe();
-    }
+    this.unsubscriberService.complete(this.destroyed$);
   }
 
   public register(): void {
@@ -72,9 +74,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
     const email = this.form.get('email').value;
     const password = this.form.get('password').value;
 
-    this.registrationSubscription = this.registrationFacade
+    this.registrationFacade
       .register(CredentialsBuilder.from(email, password).build())
-      .subscribe(success => {
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((success) => {
         if (success) {
           this.showSpinner = false;
           this.navigationService.toVerifyEmail();

@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { User } from 'src/app/core/user/model/user.model';
 import { UserFacade } from 'src/app/core/user/user.facade';
+import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
 import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.validator';
 
 @Component({
@@ -11,22 +13,27 @@ import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.v
   styleUrls: ['./settings-account.component.scss']
 })
 export class SettingsAccountComponent implements OnInit, OnDestroy {
-  private userSubscription: Subscription;
+  private destroyed$: Subject<void>;
 
   public user: User;
   public isError: boolean;
 
   public newName = new FormControl('', [CustomValidators.requiredValue, CustomValidators.singleWord]);
 
-  constructor(private userFacade: UserFacade) {}
+  constructor(private userFacade: UserFacade, private unsubscriberService: UnsubscriberService) {
+    this.destroyed$ = this.unsubscriberService.create();
+  }
 
   public ngOnInit(): void {
-    this.userSubscription = this.userFacade.selectUser().subscribe((user: User) => {
-      if (user) {
-        this.user = user;
-        this.newName.setValue(user.name);
-      }
-    });
+    this.userFacade
+      .selectUser()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((user: User) => {
+        if (user) {
+          this.user = user;
+          this.newName.setValue(user.name);
+        }
+      });
 
     // this.requestStateSubscription = this.guiFacade.selectBackendState().subscribe((backendState: BackendState) => {
     //   if (backendState && backendState.failure) {
@@ -40,9 +47,7 @@ export class SettingsAccountComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    if (this.userSubscription) {
-      this.userSubscription.unsubscribe();
-    }
+    this.unsubscriberService.complete(this.destroyed$);
   }
 
   public onNameChanged(): void {

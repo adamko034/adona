@@ -1,22 +1,29 @@
 import { of } from 'rxjs';
 import { BackendStateBuilder } from 'src/app/core/gui/model/backend-state/backend-state.builder';
-import { ChangePasswordComponent } from 'src/app/modules/auth/components/change-password/change-password.component';
+import { ChangePasswordComponent } from 'src/app/modules/auth/pages/change-password/change-password.component';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 
 describe('Change Password Component', () => {
   let component: ChangePasswordComponent;
 
-  const { routerFacade, resetPasswordService } = SpiesBuilder.init()
-    .withRouterFacade()
-    .withResetPasswordService()
-    .build();
+  const {
+    routerFacade,
+    registrationFacade,
+    unsubscriberService
+  } = SpiesBuilder.init().withRouterFacade().withRegistrationFacade().withUnsubscriberService().build();
 
   beforeEach(() => {
-    component = new ChangePasswordComponent(routerFacade, resetPasswordService);
+    component = new ChangePasswordComponent(routerFacade, registrationFacade, unsubscriberService);
 
-    resetPasswordService.confirmPasswordReset.calls.reset();
+    registrationFacade.confirmPasswordReset.calls.reset();
     routerFacade.selectRouteQueryParams.calls.reset();
+  });
+
+  describe('Constructor', () => {
+    it('should create unsubscriber', () => {
+      expect(unsubscriberService.create).toHaveBeenCalled();
+    });
   });
 
   describe('On Init', () => {
@@ -29,7 +36,7 @@ describe('Change Password Component', () => {
     });
 
     describe('Route Query Params subscription', () => {
-      [null, { test: 'test' }, { oobCode: 'code' }].forEach(params => {
+      [null, { test: 'test' }, { oobCode: 'code' }].forEach((params) => {
         it(`should store oob code if query params is: ${JSON.stringify(params)}`, () => {
           (component as any).confirmPasswordResetCode = null;
           routerFacade.selectRouteQueryParams.and.returnValue(of(params));
@@ -45,13 +52,9 @@ describe('Change Password Component', () => {
 
   describe('On Destroy', () => {
     it('should complete unsubscriber', () => {
-      const nextSpy = spyOn((component as any).unsubscribe$, 'next');
-      const completeSpy = spyOn((component as any).unsubscribe$, 'complete');
-
       component.ngOnDestroy();
 
-      expect(nextSpy).toHaveBeenCalledTimes(1);
-      expect(completeSpy).toHaveBeenCalledTimes(1);
+      expect(unsubscriberService.complete).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -62,7 +65,7 @@ describe('Change Password Component', () => {
 
       component.changePassword();
 
-      expect(resetPasswordService.confirmPasswordReset).not.toHaveBeenCalled();
+      expect(registrationFacade.confirmPasswordReset).not.toHaveBeenCalled();
       expect(component.backendState).toEqual(null);
     });
 
@@ -71,11 +74,11 @@ describe('Change Password Component', () => {
       component.form.get('repeatPassword').setValue('pass1');
       (component as any).confirmPasswordResetCode = 'test';
 
-      resetPasswordService.confirmPasswordReset.and.returnValue(of(BackendStateBuilder.success()));
+      registrationFacade.confirmPasswordReset.and.returnValue(of(BackendStateBuilder.success()));
 
       component.changePassword();
 
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(resetPasswordService.confirmPasswordReset, 1, 'test', 'pass1');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(registrationFacade.confirmPasswordReset, 1, 'test', 'pass1');
       expect(component.backendState).toEqual(BackendStateBuilder.success());
     });
   });
@@ -87,7 +90,7 @@ describe('Change Password Component', () => {
       expect(component.isComponentValidUsage()).toBeTrue();
     });
 
-    [null, undefined, ''].forEach(code => {
+    [null, undefined, ''].forEach((code) => {
       it(`should return false if code is: ${code}`, () => {
         (component as any).confirmPasswordResetCode = code;
 

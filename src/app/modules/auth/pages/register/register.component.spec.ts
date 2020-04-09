@@ -1,20 +1,21 @@
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { CredentialsBuilder } from 'src/app/core/auth/model/builder/credentials.builder';
-import { RegisterComponent } from 'src/app/modules/auth/components/register/register.component';
 import { registrationErrorCodes } from 'src/app/modules/auth/constants/registration-error-messages.constants';
+import { RegisterComponent } from 'src/app/modules/auth/pages/register/register.component';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 
 describe('Register Component', () => {
   let component: RegisterComponent;
 
-  const { registrationFacade, navigationService } = SpiesBuilder.init()
-    .withRegistrationFacade()
-    .withNavigationService()
-    .build();
+  const {
+    registrationFacade,
+    navigationService,
+    unsubscriberService
+  } = SpiesBuilder.init().withRegistrationFacade().withUnsubscriberService().withNavigationService().build();
 
   beforeEach(() => {
-    component = new RegisterComponent(registrationFacade, navigationService);
+    component = new RegisterComponent(registrationFacade, navigationService, unsubscriberService);
 
     registrationFacade.selectRegistrationError.calls.reset();
     registrationFacade.clearRegistrationErrors.calls.reset();
@@ -22,8 +23,7 @@ describe('Register Component', () => {
 
   describe('Constructor', () => {
     it('should set default values', () => {
-      component = new RegisterComponent(registrationFacade, navigationService);
-
+      expect(unsubscriberService.create).toHaveBeenCalled();
       JasmineCustomMatchers.toBeFalsy(component.errorMessage, component.showSpinner);
 
       expect(component.form.value).toEqual({ email: '', password: '', confirmPassword: '' });
@@ -91,16 +91,9 @@ describe('Register Component', () => {
 
   describe('On Destroy', () => {
     it('should unsubscribe from all subscriptions', () => {
-      (component as any).registrationSubscription = new Subject();
-      (component as any).registrationErrorSubscription = new Subject();
-
-      const registrationSpy = spyOn((component as any).registrationSubscription, 'unsubscribe');
-      const registrationErrorSpy = spyOn((component as any).registrationErrorSubscription, 'unsubscribe');
-
       component.ngOnDestroy();
 
-      expect(registrationSpy).toHaveBeenCalledTimes(1);
-      expect(registrationErrorSpy).toHaveBeenCalledTimes(1);
+      expect(unsubscriberService.complete).toHaveBeenCalledTimes(1);
     });
   });
 

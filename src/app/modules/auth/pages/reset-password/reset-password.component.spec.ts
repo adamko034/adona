@@ -1,23 +1,30 @@
 import { cold } from 'jasmine-marbles';
 import { of } from 'rxjs';
 import { BackendStateBuilder } from 'src/app/core/gui/model/backend-state/backend-state.builder';
-import { ResetPasswordComponent } from 'src/app/modules/auth/components/reset-password/reset-password.component';
+import { ResetPasswordComponent } from 'src/app/modules/auth/pages/reset-password/reset-password.component';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 
 describe('Reset Password Component', () => {
   let component: ResetPasswordComponent;
 
-  const { resetPasswordService, routerFacade } = SpiesBuilder.init()
-    .withRouterFacade()
-    .withResetPasswordService()
-    .build();
+  const {
+    registrationFacade,
+    routerFacade,
+    unsubscriberService
+  } = SpiesBuilder.init().withRouterFacade().withRegistrationFacade().withUnsubscriberService().build();
 
   beforeEach(() => {
-    component = new ResetPasswordComponent(routerFacade, resetPasswordService);
+    component = new ResetPasswordComponent(routerFacade, registrationFacade, unsubscriberService);
 
     routerFacade.selectRouteQueryParams.calls.reset();
-    resetPasswordService.sendPasswordResetEmail.calls.reset();
+    registrationFacade.sendPasswordResetEmail.calls.reset();
+  });
+
+  describe('Constructor', () => {
+    it('should create unsubscriber', () => {
+      expect(unsubscriberService.create).toHaveBeenCalled();
+    });
   });
 
   describe('On Init', () => {
@@ -34,7 +41,7 @@ describe('Reset Password Component', () => {
         { params: null, valueSet: false },
         { params: { test: 1 }, valueSet: false },
         { params: { email: 'test@example.com' }, valueSet: true }
-      ].forEach(input => {
+      ].forEach((input) => {
         it(`should ${input.valueSet ? '' : 'not'} set email for params: ${input.params}`, () => {
           routerFacade.selectRouteQueryParams.and.returnValue(of(input.params));
 
@@ -49,13 +56,9 @@ describe('Reset Password Component', () => {
 
   describe('On Destroy', () => {
     it('should complete unsubscriber', () => {
-      const nextSpy = spyOn((component as any).unsubscribe$, 'next');
-      const completeSpy = spyOn((component as any).unsubscribe$, 'complete');
-
       component.ngOnDestroy();
 
-      expect(nextSpy).toHaveBeenCalledTimes(1);
-      expect(completeSpy).toHaveBeenCalledTimes(1);
+      expect(unsubscriberService.complete).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -66,17 +69,17 @@ describe('Reset Password Component', () => {
 
       component.resetPassword();
 
-      expect(resetPasswordService.sendPasswordResetEmail).not.toHaveBeenCalled();
+      expect(registrationFacade.sendPasswordResetEmail).not.toHaveBeenCalled();
       expect(component.backendState).toEqual(null);
     });
 
     it('should reset password', () => {
       component.emailFormControl.setValue('test@ex.com');
-      resetPasswordService.sendPasswordResetEmail.and.returnValue(of(BackendStateBuilder.success()));
+      registrationFacade.sendPasswordResetEmail.and.returnValue(of(BackendStateBuilder.success()));
 
       component.resetPassword();
 
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(resetPasswordService.sendPasswordResetEmail, 1, 'test@ex.com');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(registrationFacade.sendPasswordResetEmail, 1, 'test@ex.com');
       expect(component.backendState).toEqual(BackendStateBuilder.success());
     });
 
@@ -87,18 +90,14 @@ describe('Reset Password Component', () => {
         { backendState: BackendStateBuilder.failure() },
         { backendState: BackendStateBuilder.failure('unkownErrorCode') },
         { backendState: null }
-      ].forEach(input => {
+      ].forEach((input) => {
         it('should not set control error if backend state failure is not auth error', () => {
           component.emailFormControl.setValue('test@ex.com');
-          resetPasswordService.sendPasswordResetEmail.and.returnValue(of(input.backendState));
+          registrationFacade.sendPasswordResetEmail.and.returnValue(of(input.backendState));
 
           component.resetPassword();
 
-          JasmineCustomMatchers.toHaveBeenCalledTimesWith(
-            resetPasswordService.sendPasswordResetEmail,
-            1,
-            'test@ex.com'
-          );
+          JasmineCustomMatchers.toHaveBeenCalledTimesWith(registrationFacade.sendPasswordResetEmail, 1, 'test@ex.com');
           expect(component.backendState).toEqual(input.backendState);
           expect(component.emailFormControl.hasError('userNotFound')).toEqual(false);
         });
@@ -106,13 +105,13 @@ describe('Reset Password Component', () => {
 
       it('should set control error if backend state failure is not auth error', () => {
         component.emailFormControl.setValue('test@ex.com');
-        resetPasswordService.sendPasswordResetEmail.and.returnValue(
+        registrationFacade.sendPasswordResetEmail.and.returnValue(
           of(BackendStateBuilder.failure('auth/user-not-found'))
         );
 
         component.resetPassword();
 
-        JasmineCustomMatchers.toHaveBeenCalledTimesWith(resetPasswordService.sendPasswordResetEmail, 1, 'test@ex.com');
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(registrationFacade.sendPasswordResetEmail, 1, 'test@ex.com');
         expect(component.backendState).toEqual(BackendStateBuilder.failure('auth/user-not-found'));
         expect(component.emailFormControl.hasError('userNotFound')).toEqual(true);
       });

@@ -1,6 +1,7 @@
 import { AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { Subject } from 'rxjs';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
@@ -18,6 +19,7 @@ import { ExpensesService } from 'src/app/modules/expenses/services/expenses.serv
 import { ExpensesFacade } from 'src/app/modules/expenses/store/expenses.facade';
 import { DialogService } from 'src/app/shared/services/dialogs/dialog.service';
 import { SharedDialogsService } from 'src/app/shared/services/dialogs/shared-dialogs.service';
+import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
 import { DayHoursService } from 'src/app/shared/services/time/parts/day-hours.service';
 import { HourQuartersService } from 'src/app/shared/services/time/parts/hour-quarters.service';
@@ -59,6 +61,7 @@ export interface Spies {
   registrationErrorService?: jasmine.SpyObj<RegistrationErrorService>;
   emailConfirmationService?: jasmine.SpyObj<EmailConfirmationService>;
   resetPasswordService?: jasmine.SpyObj<ResetPasswordService>;
+  unsubscriberService?: jasmine.SpyObj<UnsubscriberService>;
 }
 
 export class SpiesBuilder {
@@ -311,7 +314,9 @@ export class SpiesBuilder {
       'selectRegistrationError',
       'pushFormInvalidError',
       'pushPasswordsDoNotMatchError',
-      'clearRegistrationErrors'
+      'clearRegistrationErrors',
+      'confirmPasswordReset',
+      'sendPasswordResetEmail'
     ]);
 
     return this;
@@ -342,11 +347,21 @@ export class SpiesBuilder {
     return this;
   }
 
+  public withUnsubscriberService(): SpiesBuilder {
+    this.spies.unsubscriberService = jasmine.createSpyObj<UnsubscriberService>('unsubscriberService', [
+      'create',
+      'complete'
+    ]);
+
+    this.spies.unsubscriberService.create.and.returnValue(new Subject<void>());
+    return this;
+  }
+
   private getMethodsOf(obj): string[] {
     const methods: string[] = [];
 
     const obj2 = Reflect.getPrototypeOf(obj);
-    Reflect.ownKeys(obj2).forEach(k => {
+    Reflect.ownKeys(obj2).forEach((k) => {
       if (k.toString() !== 'constructor') {
         methods.push(k.toString());
       }

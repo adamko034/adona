@@ -5,14 +5,18 @@ import { LoginComponent } from './login.component';
 describe('LoginComponent', () => {
   let component: LoginComponent;
 
-  const { authFacade } = SpiesBuilder.init()
-    .withAuthFacade()
-    .build();
+  const { authFacade, unsubscriberService } = SpiesBuilder.init().withAuthFacade().withUnsubscriberService().build();
 
   beforeEach(() => {
-    component = new LoginComponent(authFacade);
+    component = new LoginComponent(authFacade, unsubscriberService);
 
     authFacade.selectLoginFailure.calls.reset();
+  });
+
+  describe('Constructor', () => {
+    it('should create unsubscriber', () => {
+      expect(unsubscriberService.create).toHaveBeenCalled();
+    });
   });
 
   it('should default to empty credentials', () => {
@@ -86,7 +90,7 @@ describe('LoginComponent', () => {
     });
 
     describe('Get Login Failure subscription', () => {
-      [true, false, null].forEach(isLoginFailure => {
+      [true, false, null].forEach((isLoginFailure) => {
         it(`should change flags if login failure is: ${isLoginFailure}`, () => {
           component.showError = false;
           component.showSpinner = false;
@@ -110,11 +114,8 @@ describe('LoginComponent', () => {
 
   describe('On Destroy', () => {
     it('should unsubscribe from subscriptions', () => {
-      (component as any).loginFailureSubscription = new Subject();
-      const spy = spyOn((component as any).loginFailureSubscription, 'unsubscribe');
-
       component.ngOnDestroy();
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(unsubscriberService.complete).toHaveBeenCalledTimes(1);
     });
   });
 });

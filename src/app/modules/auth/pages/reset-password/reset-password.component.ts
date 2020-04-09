@@ -5,7 +5,8 @@ import { takeUntil } from 'rxjs/operators';
 import { BackendStateBuilder } from 'src/app/core/gui/model/backend-state/backend-state.builder';
 import { BackendState } from 'src/app/core/gui/model/backend-state/backend-state.model';
 import { RouterFacade } from 'src/app/core/router/router.facade';
-import { ResetPasswordService } from 'src/app/modules/auth/services/reset-password/reset-password.service';
+import { RegistrationFacade } from 'src/app/modules/auth/facade/registration-facade';
+import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
 import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.validator';
 
 @Component({
@@ -14,18 +15,24 @@ import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.v
   styleUrls: ['./reset-password.component.scss']
 })
 export class ResetPasswordComponent implements OnInit, OnDestroy {
-  private unsubscribe$ = new Subject();
+  private destroyed$: Subject<void>;
 
   public backendState: BackendState;
   public emailFormControl = new FormControl('', [Validators.email, CustomValidators.requiredValue]);
 
-  constructor(private routerFacade: RouterFacade, private resetPasswordService: ResetPasswordService) {}
+  constructor(
+    private routerFacade: RouterFacade,
+    private registrationFacade: RegistrationFacade,
+    private unsubscriberService: UnsubscriberService
+  ) {
+    this.destroyed$ = this.unsubscriberService.create();
+  }
 
   public ngOnInit(): void {
     this.routerFacade
       .selectRouteQueryParams()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(params => {
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((params) => {
         if (params && params.email) {
           this.emailFormControl.setValue(params.email);
         }
@@ -33,17 +40,16 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
+    this.unsubscriberService.complete(this.destroyed$);
   }
 
   public resetPassword(): void {
     if (this.emailFormControl.valid) {
       this.backendState = BackendStateBuilder.loading();
 
-      this.resetPasswordService
+      this.registrationFacade
         .sendPasswordResetEmail(this.emailFormControl.value)
-        .pipe(takeUntil(this.unsubscribe$))
+        .pipe(takeUntil(this.destroyed$))
         .subscribe((backendState: BackendState) => {
           this.backendState = backendState;
           this.setEmailControlErrorOnApiFailure();

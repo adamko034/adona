@@ -10,7 +10,7 @@ export class NewPasswordComponent implements OnInit {
   @Input() form: FormGroup;
   @Input() passwordControlName: string;
   @Input() repeatPasswordControlName: string;
-  @Input() passwordInputPlaceholder?: string = 'Password';
+  @Input() passwordInputPlaceholder? = 'Password';
 
   public showPassword = false;
   public showConfirmPassword = false;
