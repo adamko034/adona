@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
 import { AuthFacade } from '../../../../core/auth/auth.facade';
 
 @Component({
@@ -9,7 +11,7 @@ import { AuthFacade } from '../../../../core/auth/auth.facade';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  private loginFailureSubscription: Subscription;
+  private destroyed$: Subject<void>;
 
   public loginForm = new FormGroup({
     email: new FormControl('', [Validators.email, Validators.required]),
@@ -18,24 +20,27 @@ export class LoginComponent implements OnInit, OnDestroy {
   public showError: boolean;
   public showSpinner: boolean;
 
-  constructor(private authFacade: AuthFacade) {}
+  constructor(private authFacade: AuthFacade, private unsubscriberService: UnsubscriberService) {
+    this.destroyed$ = this.unsubscriberService.create();
+  }
 
   public ngOnInit() {
     this.showError = false;
     this.showSpinner = false;
 
-    this.loginFailureSubscription = this.authFacade.selectLoginFailure().subscribe(isLoginError => {
-      if (isLoginError != null) {
-        this.showError = isLoginError;
-        this.showSpinner = !isLoginError;
-      }
-    });
+    this.authFacade
+      .selectLoginFailure()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((isLoginError) => {
+        if (isLoginError != null) {
+          this.showError = isLoginError;
+          this.showSpinner = !isLoginError;
+        }
+      });
   }
 
   public ngOnDestroy() {
-    if (this.loginFailureSubscription != null) {
-      this.loginFailureSubscription.unsubscribe();
-    }
+    this.unsubscriberService.complete(this.destroyed$);
   }
 
   public login() {

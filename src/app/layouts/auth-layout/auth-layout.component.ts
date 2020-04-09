@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { RouterFacade } from 'src/app/core/router/router.facade';
+import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
 
 @Component({
   selector: 'app-auth-layout',
@@ -8,22 +10,25 @@ import { RouterFacade } from 'src/app/core/router/router.facade';
   styleUrls: ['./auth-layout.component.scss']
 })
 export class AuthLayoutComponent implements OnInit, OnDestroy {
-  private currentRouteSubscription: Subscription;
+  private destroyed$: Subject<void>;
 
   public title: string;
 
-  constructor(private routerFacade: RouterFacade) {}
+  constructor(private routerFacade: RouterFacade, private unsubscriberService: UnsubscriberService) {
+    this.destroyed$ = this.unsubscriberService.create();
+  }
 
   public ngOnInit() {
-    this.currentRouteSubscription = this.routerFacade.selectCurrentRute().subscribe((route: string) => {
-      this.title = this.getTitle(route);
-    });
+    this.routerFacade
+      .selectCurrentRute()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((route: string) => {
+        this.title = this.getTitle(route);
+      });
   }
 
   public ngOnDestroy() {
-    if (this.currentRouteSubscription) {
-      this.currentRouteSubscription.unsubscribe();
-    }
+    this.unsubscriberService.complete(this.destroyed$);
   }
 
   private getTitle(route: string): string {

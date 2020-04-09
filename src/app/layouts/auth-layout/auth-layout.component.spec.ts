@@ -1,18 +1,25 @@
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { AuthLayoutComponent } from './auth-layout.component';
 
 describe('Auth Layout Component', () => {
   let component: AuthLayoutComponent;
 
-  const { routerFacade } = SpiesBuilder.init()
-    .withRouterFacade()
-    .build();
+  const {
+    routerFacade,
+    unsubscriberService
+  } = SpiesBuilder.init().withRouterFacade().withUnsubscriberService().build();
 
   beforeEach(() => {
-    component = new AuthLayoutComponent(routerFacade);
+    component = new AuthLayoutComponent(routerFacade, unsubscriberService);
 
     routerFacade.selectCurrentRute.calls.reset();
+  });
+
+  describe('Constructor', () => {
+    it('should create unsubscriber', () => {
+      expect(unsubscriberService.create).toHaveBeenCalled();
+    });
   });
 
   describe('On Init', () => {
@@ -22,7 +29,7 @@ describe('Auth Layout Component', () => {
       { route: '/login/verifyEmail', expected: 'Email Verification' },
       { route: '/login/resetPassword', expected: 'Forgotten Password' },
       { route: '/login/changePassword', expected: 'Change Password' }
-    ].forEach(input => {
+    ].forEach((input) => {
       it(`should set title to ${input.expected} for route: ${input.route}`, () => {
         routerFacade.selectCurrentRute.and.returnValue(of(input.route));
 
@@ -36,12 +43,9 @@ describe('Auth Layout Component', () => {
 
   describe('On Destroy', () => {
     it('should unsubscribe from subscriptions', () => {
-      (component as any).currentRouteSubscription = new Subject();
-      const spy = spyOn((component as any).currentRouteSubscription, 'unsubscribe');
-
       component.ngOnDestroy();
 
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(unsubscriberService.complete).toHaveBeenCalledTimes(1);
     });
   });
 });

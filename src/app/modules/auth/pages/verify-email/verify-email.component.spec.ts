@@ -1,4 +1,4 @@
-import { of, Subject, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { SpiesBuilder } from '../../../../utils/testUtils/builders/spies.builder';
 import { VerifyEmailComponent } from './verify-email.component';
@@ -6,15 +6,20 @@ import { VerifyEmailComponent } from './verify-email.component';
 describe('Verify Email Component', () => {
   let component: VerifyEmailComponent;
 
-  const { registrationFacade } = SpiesBuilder.init()
-    .withRegistrationFacade()
-    .build();
+  const {
+    registrationFacade,
+    unsubscriberService
+  } = SpiesBuilder.init().withRegistrationFacade().withUnsubscriberService().build();
 
   beforeEach(() => {
-    component = new VerifyEmailComponent(registrationFacade);
+    component = new VerifyEmailComponent(registrationFacade, unsubscriberService);
   });
 
   describe('Constructor', () => {
+    it('should create unsubscriber', () => {
+      expect(unsubscriberService.create).toHaveBeenCalled();
+    });
+
     it('should default flags to false', () => {
       JasmineCustomMatchers.toBeFalsy(component.showError, component.showLoader, component.emailSent);
     });
@@ -28,12 +33,9 @@ describe('Verify Email Component', () => {
 
   describe('On Destroy', () => {
     it('should unsubscribe from subscriptions', () => {
-      (component as any).emailSentSubscription = new Subject();
-      const spy = spyOn((component as any).emailSentSubscription, 'unsubscribe');
-
       component.ngOnDestroy();
 
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(unsubscriberService.complete).toHaveBeenCalledTimes(1);
     });
   });
 

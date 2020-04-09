@@ -11,15 +11,28 @@ import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-ma
 describe('Registration Facade', () => {
   let facade: RegistrationFacade;
 
-  const { authService, userService, registrationErrorService, emailConfirmationService } = SpiesBuilder.init()
+  const {
+    authService,
+    userService,
+    registrationErrorService,
+    emailConfirmationService,
+    resetPasswordService
+  } = SpiesBuilder.init()
     .withAuthService()
     .withUserService()
     .withRegistrationErrorService()
     .withEmailConfirmationService()
+    .withResetPasswordService()
     .build();
 
   beforeEach(() => {
-    facade = new RegistrationFacade(authService, userService, registrationErrorService, emailConfirmationService);
+    facade = new RegistrationFacade(
+      authService,
+      userService,
+      registrationErrorService,
+      emailConfirmationService,
+      resetPasswordService
+    );
 
     registrationErrorService.push.calls.reset();
   });
@@ -175,6 +188,31 @@ describe('Registration Facade', () => {
         expect(result).toBeObservable(cold('a', { a: true }));
         JasmineCustomMatchers.toHaveBeenCalledTimesWith(registrationErrorService.push, 1, 'test');
       });
+    });
+  });
+
+  describe('Confirm Password Reset', () => {
+    it('should call service', () => {
+      facade.confirmPasswordReset('code1', 'newPassword123');
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+        resetPasswordService.confirmPasswordReset,
+        1,
+        'code1',
+        'newPassword123'
+      );
+    });
+  });
+
+  describe('Send Password Reset Email', () => {
+    it('should call service', () => {
+      facade.sendPasswordResetEmail('user@example.com');
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+        resetPasswordService.sendPasswordResetEmail,
+        1,
+        'user@example.com'
+      );
     });
   });
 });

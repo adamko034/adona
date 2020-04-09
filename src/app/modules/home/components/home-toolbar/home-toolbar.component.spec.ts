@@ -1,4 +1,4 @@
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
 import { DialogResult } from 'src/app/shared/services/dialogs/dialog-result.model';
@@ -13,15 +13,28 @@ describe('Home Toolbar Component', () => {
 
   const user = UserTestBuilder.withDefaultData().build();
 
-  const { dialogService, teamFacade, userUtilsService, sharedDialogService } = SpiesBuilder.init()
+  const {
+    dialogService,
+    teamFacade,
+    userUtilsService,
+    sharedDialogService,
+    unsubscriberService
+  } = SpiesBuilder.init()
     .withDialogService()
     .withTeamFacade()
     .withSharedDialogService()
     .withUserUtilsService()
+    .withUnsubscriberService()
     .build();
 
   beforeEach(() => {
-    component = new HomeToolbarComponent(dialogService, teamFacade, userUtilsService, sharedDialogService);
+    component = new HomeToolbarComponent(
+      dialogService,
+      teamFacade,
+      userUtilsService,
+      sharedDialogService,
+      unsubscriberService
+    );
     component.user = user;
 
     userUtilsService.hasMultipleTeams.calls.reset();
@@ -30,23 +43,22 @@ describe('Home Toolbar Component', () => {
     teamFacade.loadTeam.calls.reset();
   });
 
+  describe('Constructor', () => {
+    it('should create unsubscriber', () => {
+      expect(unsubscriberService.create).toHaveBeenCalled();
+    });
+  });
+
   describe('On Destroy', () => {
     it('should unsubscribe from all subscriptions', () => {
-      (component as any).newTeamDialogSubscription = new Subject();
-      (component as any).changeTeamDialogSubscription = new Subject();
-
-      const newTeamSpy = spyOn((component as any).newTeamDialogSubscription, 'unsubscribe');
-      const changeTeamSpy = spyOn((component as any).changeTeamDialogSubscription, 'unsubscribe');
-
       component.ngOnDestroy();
 
-      expect(newTeamSpy).toHaveBeenCalledTimes(1);
-      expect(changeTeamSpy).toHaveBeenCalledTimes(1);
+      expect(unsubscriberService.complete).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('User Has Multiple Teams', () => {
-    [true, false].forEach(input => {
+    [true, false].forEach((input) => {
       it(`should return ${input}`, () => {
         userUtilsService.hasMultipleTeams.and.returnValue(input);
         component.user = UserTestBuilder.withDefaultData().build();
@@ -63,9 +75,7 @@ describe('Home Toolbar Component', () => {
         payload: {
           created: new Date(),
           createdBy: user.name,
-          members: TeamMembersBuilder.from()
-            .withMember(user.name)
-            .build(),
+          members: TeamMembersBuilder.from().withMember(user.name).build(),
           name: 'new team test name'
         }
       };
@@ -75,7 +85,7 @@ describe('Home Toolbar Component', () => {
       component.openNewTeamDialog();
 
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(dialogService.open, 1, NewTeamDialogComponent, {
-        data: { user: user }
+        data: { user }
       });
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamFacade.addTeam, 1, result.payload);
     });
@@ -88,7 +98,7 @@ describe('Home Toolbar Component', () => {
       component.openNewTeamDialog();
 
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(dialogService.open, 1, NewTeamDialogComponent, {
-        data: { user: user }
+        data: { user }
       });
       expect(teamFacade.addTeam).not.toHaveBeenCalled();
     });
@@ -103,7 +113,7 @@ describe('Home Toolbar Component', () => {
       component.openNewTeamDialog();
 
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(dialogService.open, 1, NewTeamDialogComponent, {
-        data: { user: user }
+        data: { user }
       });
       expect(teamFacade.addTeam).not.toHaveBeenCalled();
     });

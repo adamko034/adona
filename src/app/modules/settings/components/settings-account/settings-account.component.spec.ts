@@ -1,5 +1,5 @@
 import { cold } from 'jasmine-marbles';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { SettingsAccountComponent } from 'src/app/modules/settings/components/settings-account/settings-account.component';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
@@ -8,15 +8,19 @@ import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-ma
 describe('Settings Account Component', () => {
   let component: SettingsAccountComponent;
 
-  const { userFacade } = SpiesBuilder.init()
-    .withUserFacade()
-    .build();
+  const { userFacade, unsubscriberService } = SpiesBuilder.init().withUserFacade().withUnsubscriberService().build();
 
   beforeEach(() => {
-    component = new SettingsAccountComponent(userFacade);
+    component = new SettingsAccountComponent(userFacade, unsubscriberService);
 
     userFacade.selectUser.calls.reset();
     userFacade.updateName.calls.reset();
+  });
+
+  describe('Constructor', () => {
+    it('should create unsubscriber', () => {
+      expect(unsubscriberService.create).toHaveBeenCalled();
+    });
   });
 
   describe('On Init', () => {
@@ -46,12 +50,9 @@ describe('Settings Account Component', () => {
 
   describe('On Destroy', () => {
     it('should unsubscribe for all subscriptions', () => {
-      (component as any).userSubscription = new Subject();
-      const userSubscriptionSpy = spyOn((component as any).userSubscription, 'unsubscribe');
-
       component.ngOnDestroy();
 
-      expect(userSubscriptionSpy).toHaveBeenCalledTimes(1);
+      expect(unsubscriberService.complete).toHaveBeenCalledTimes(1);
     });
   });
 
