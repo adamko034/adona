@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ChangePasswordComponent } from 'src/app/modules/auth/components/change-password/change-password.component';
-import { ResetPasswordComponent } from 'src/app/modules/auth/components/reset-password/reset-password.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { VerifyEmailComponent } from './components/verify-email/verify-email.component';
+import { ChangePasswordComponent } from 'src/app/modules/auth/pages/change-password/change-password.component';
+import { LoginComponent } from 'src/app/modules/auth/pages/login/login.component';
+import { RegisterComponent } from 'src/app/modules/auth/pages/register/register.component';
+import { ResetPasswordComponent } from 'src/app/modules/auth/pages/reset-password/reset-password.component';
+import { VerifyEmailComponent } from 'src/app/modules/auth/pages/verify-email/verify-email.component';
 import { UserEmailVerifiedGuard } from './guards/user-email-verified.guard';
 
 const routes: Routes = [
