@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { BackendStateBuilder } from 'src/app/core/gui/model/backend-state/backend-state.builder';
-import { BackendState } from 'src/app/core/gui/model/backend-state/backend-state.model';
+import { ApiRequestStateBuilder } from 'src/app/core/gui/model/backend-state/api-request-state.builder';
+import { ApiRequestState } from 'src/app/core/gui/model/backend-state/api-request-state.model';
 import { RouterFacade } from 'src/app/core/router/router.facade';
 import { RegistrationFacade } from 'src/app/modules/auth/facade/registration-facade';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
@@ -23,7 +23,7 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     repeatPassword: new FormControl('', CustomValidators.requiredValue)
   });
 
-  public backendState: BackendState;
+  public apiRequestState: ApiRequestState;
 
   constructor(
     private routerFacade: RouterFacade,
@@ -50,11 +50,11 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
 
   public changePassword(): void {
     if (this.form.valid) {
-      this.backendState = BackendStateBuilder.loading();
+      this.apiRequestState = ApiRequestStateBuilder.start();
       this.registrationFacade
         .confirmPasswordReset(this.confirmPasswordResetCode, this.form.get('password').value)
         .pipe(takeUntil(this.destroyed$))
-        .subscribe((backendState: BackendState) => (this.backendState = backendState));
+        .subscribe((apiRequestState: ApiRequestState) => (this.apiRequestState = apiRequestState));
     }
   }
 

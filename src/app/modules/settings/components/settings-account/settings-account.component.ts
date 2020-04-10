@@ -35,12 +35,12 @@ export class SettingsAccountComponent implements OnInit, OnDestroy {
         }
       });
 
-    // this.requestStateSubscription = this.guiFacade.selectBackendState().subscribe((backendState: BackendState) => {
-    //   if (backendState && backendState.failure) {
+    // this.requestStateSubscription = this.guiFacade.selectBackendState().subscribe((apiRequestState: BackendState) => {
+    //   if (apiRequestState && apiRequestState.failure) {
     //     this.newName.setErrors({ backend: { valid: false } });
     //   }
 
-    //   if (backendState && backendState.success) {
+    //   if (apiRequestState && apiRequestState.success) {
     //     this.newName.setErrors(null);
     //   }
     // });

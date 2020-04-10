@@ -313,7 +313,6 @@ export class SpiesBuilder {
       'resendEmailConfirmationLink',
       'selectRegistrationError',
       'pushFormInvalidError',
-      'pushPasswordsDoNotMatchError',
       'clearRegistrationErrors',
       'confirmPasswordReset',
       'sendPasswordResetEmail'

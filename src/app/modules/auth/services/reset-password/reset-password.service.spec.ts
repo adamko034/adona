@@ -1,14 +1,12 @@
 import { cold } from 'jasmine-marbles';
-import { BackendStateBuilder } from 'src/app/core/gui/model/backend-state/backend-state.builder';
+import { ApiRequestStateBuilder } from 'src/app/core/gui/model/backend-state/api-request-state.builder';
 import { ResetPasswordService } from 'src/app/modules/auth/services/reset-password/reset-password.service';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 
 describe('Reset Password Service', () => {
   let service: ResetPasswordService;
 
-  const { authService } = SpiesBuilder.init()
-    .withAuthService()
-    .build();
+  const { authService } = SpiesBuilder.init().withAuthService().build();
   const email = 'test@example.com';
 
   beforeEach(() => {
@@ -21,7 +19,9 @@ describe('Reset Password Service', () => {
     it('should reset password', () => {
       authService.sendPasswordResetEmail.and.returnValue(cold('aaa', { a: null }));
 
-      expect(service.sendPasswordResetEmail(email)).toBeObservable(cold('(a|)', { a: BackendStateBuilder.success() }));
+      expect(service.sendPasswordResetEmail(email)).toBeObservable(
+        cold('(a|)', { a: ApiRequestStateBuilder.success() })
+      );
       expect(authService.sendPasswordResetEmail).toHaveBeenCalledTimes(1);
     });
 
@@ -29,7 +29,7 @@ describe('Reset Password Service', () => {
       authService.sendPasswordResetEmail.and.returnValue(cold('---#', null, { code: 'auth/user-not-found' }));
 
       expect(service.sendPasswordResetEmail(email)).toBeObservable(
-        cold('---(a|)', { a: BackendStateBuilder.failure('auth/user-not-found') })
+        cold('---(a|)', { a: ApiRequestStateBuilder.fail('auth/user-not-found') })
       );
       expect(authService.sendPasswordResetEmail).toHaveBeenCalledTimes(1);
     });

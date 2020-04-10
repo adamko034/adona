@@ -73,19 +73,6 @@ describe('Register Component', () => {
         expect(component.errorMessage).toEqual('email exampleUser@email exists');
         expect(component.form.get('email').hasError(registrationErrorCodes.emailExists));
       });
-
-      it('should handle Passwords Do Not Match error', () => {
-        registrationFacade.selectRegistrationError.and.returnValue(
-          of({ code: registrationErrorCodes.passwordsDoNotMatch, message: 'passwords do not match' })
-        );
-        component.form.get('confirmPassword').setErrors(null);
-        component.ngOnInit();
-
-        expect(registrationFacade.selectRegistrationError).toHaveBeenCalledTimes(1);
-        expect(component.showSpinner).toEqual(false);
-        expect(component.errorMessage).toEqual('passwords do not match');
-        expect(component.form.get('confirmPassword').hasError(registrationErrorCodes.passwordsDoNotMatch));
-      });
     });
   });
 
@@ -101,7 +88,6 @@ describe('Register Component', () => {
     beforeEach(() => {
       registrationFacade.register.calls.reset();
       registrationFacade.pushFormInvalidError.calls.reset();
-      registrationFacade.pushPasswordsDoNotMatchError.calls.reset();
       navigationService.toVerifyEmail.calls.reset();
 
       component.showSpinner = false;
@@ -115,19 +101,6 @@ describe('Register Component', () => {
 
       expect(registrationFacade.clearRegistrationErrors).toHaveBeenCalledTimes(1);
       expect(registrationFacade.pushFormInvalidError).toHaveBeenCalledTimes(1);
-      expect(registrationFacade.register).not.toHaveBeenCalled();
-      expect(component.showSpinner).toBeFalse();
-    });
-
-    it('should push Passwords Do Not Match error and not register the user', () => {
-      component.form.get('password').setValue('test');
-      component.form.get('confirmPassword').setValue('test2');
-      component.form.get('email').setValue('example@example.com');
-
-      component.register();
-
-      expect(registrationFacade.clearRegistrationErrors).toHaveBeenCalledTimes(1);
-      expect(registrationFacade.pushPasswordsDoNotMatchError).toHaveBeenCalledTimes(1);
       expect(registrationFacade.register).not.toHaveBeenCalled();
       expect(component.showSpinner).toBeFalse();
     });

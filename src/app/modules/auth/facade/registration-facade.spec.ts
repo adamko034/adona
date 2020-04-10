@@ -74,18 +74,6 @@ describe('Registration Facade', () => {
     });
   });
 
-  describe('Push Password Do Not Match Error', () => {
-    it('should call service', () => {
-      facade.pushPasswordsDoNotMatchError();
-
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(
-        registrationErrorService.push,
-        1,
-        registrationErrorCodes.passwordsDoNotMatch
-      );
-    });
-  });
-
   describe('Clear Registration Error', () => {
     it('should push null', () => {
       facade.clearRegistrationErrors();

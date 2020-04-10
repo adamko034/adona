@@ -1,6 +1,6 @@
 import { cold } from 'jasmine-marbles';
 import { of } from 'rxjs';
-import { BackendStateBuilder } from 'src/app/core/gui/model/backend-state/backend-state.builder';
+import { ApiRequestStateBuilder } from 'src/app/core/gui/model/backend-state/api-request-state.builder';
 import { ResetPasswordComponent } from 'src/app/modules/auth/pages/reset-password/reset-password.component';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
@@ -64,41 +64,41 @@ describe('Reset Password Component', () => {
 
   describe('Reset Password', () => {
     it('should not reset password if Email control is not valid', () => {
-      component.backendState = null;
+      component.apiRequestState = null;
       component.emailFormControl.setValue('test');
 
       component.resetPassword();
 
       expect(registrationFacade.sendPasswordResetEmail).not.toHaveBeenCalled();
-      expect(component.backendState).toEqual(null);
+      expect(component.apiRequestState).toEqual(null);
     });
 
     it('should reset password', () => {
       component.emailFormControl.setValue('test@ex.com');
-      registrationFacade.sendPasswordResetEmail.and.returnValue(of(BackendStateBuilder.success()));
+      registrationFacade.sendPasswordResetEmail.and.returnValue(of(ApiRequestStateBuilder.success()));
 
       component.resetPassword();
 
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(registrationFacade.sendPasswordResetEmail, 1, 'test@ex.com');
-      expect(component.backendState).toEqual(BackendStateBuilder.success());
+      expect(component.apiRequestState).toEqual(ApiRequestStateBuilder.success());
     });
 
     describe('Handle Firebase errors', () => {
       [
-        { backendState: BackendStateBuilder.loading() },
-        { backendState: BackendStateBuilder.success() },
-        { backendState: BackendStateBuilder.failure() },
-        { backendState: BackendStateBuilder.failure('unkownErrorCode') },
-        { backendState: null }
+        { apiRequestState: ApiRequestStateBuilder.start() },
+        { apiRequestState: ApiRequestStateBuilder.success() },
+        { apiRequestState: ApiRequestStateBuilder.fail() },
+        { apiRequestState: ApiRequestStateBuilder.fail('unkownErrorCode') },
+        { apiRequestState: null }
       ].forEach((input) => {
         it('should not set control error if backend state failure is not auth error', () => {
           component.emailFormControl.setValue('test@ex.com');
-          registrationFacade.sendPasswordResetEmail.and.returnValue(of(input.backendState));
+          registrationFacade.sendPasswordResetEmail.and.returnValue(of(input.apiRequestState));
 
           component.resetPassword();
 
           JasmineCustomMatchers.toHaveBeenCalledTimesWith(registrationFacade.sendPasswordResetEmail, 1, 'test@ex.com');
-          expect(component.backendState).toEqual(input.backendState);
+          expect(component.apiRequestState).toEqual(input.apiRequestState);
           expect(component.emailFormControl.hasError('userNotFound')).toEqual(false);
         });
       });
@@ -106,13 +106,13 @@ describe('Reset Password Component', () => {
       it('should set control error if backend state failure is not auth error', () => {
         component.emailFormControl.setValue('test@ex.com');
         registrationFacade.sendPasswordResetEmail.and.returnValue(
-          of(BackendStateBuilder.failure('auth/user-not-found'))
+          of(ApiRequestStateBuilder.fail('auth/user-not-found'))
         );
 
         component.resetPassword();
 
         JasmineCustomMatchers.toHaveBeenCalledTimesWith(registrationFacade.sendPasswordResetEmail, 1, 'test@ex.com');
-        expect(component.backendState).toEqual(BackendStateBuilder.failure('auth/user-not-found'));
+        expect(component.apiRequestState).toEqual(ApiRequestStateBuilder.fail('auth/user-not-found'));
         expect(component.emailFormControl.hasError('userNotFound')).toEqual(true);
       });
     });

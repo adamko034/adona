@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { BackendStateBuilder } from 'src/app/core/gui/model/backend-state/backend-state.builder';
+import { ApiRequestStateBuilder } from 'src/app/core/gui/model/backend-state/api-request-state.builder';
 import { ChangePasswordComponent } from 'src/app/modules/auth/pages/change-password/change-password.component';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
@@ -60,13 +60,13 @@ describe('Change Password Component', () => {
 
   describe('Change Password', () => {
     it('should not send confirmation if form is invalid', () => {
-      component.backendState = null;
+      component.apiRequestState = null;
       component.form.get('password').setErrors({ error: { valid: false } });
 
       component.changePassword();
 
       expect(registrationFacade.confirmPasswordReset).not.toHaveBeenCalled();
-      expect(component.backendState).toEqual(null);
+      expect(component.apiRequestState).toEqual(null);
     });
 
     it('should send change password confimration', () => {
@@ -74,12 +74,12 @@ describe('Change Password Component', () => {
       component.form.get('repeatPassword').setValue('pass1');
       (component as any).confirmPasswordResetCode = 'test';
 
-      registrationFacade.confirmPasswordReset.and.returnValue(of(BackendStateBuilder.success()));
+      registrationFacade.confirmPasswordReset.and.returnValue(of(ApiRequestStateBuilder.success()));
 
       component.changePassword();
 
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(registrationFacade.confirmPasswordReset, 1, 'test', 'pass1');
-      expect(component.backendState).toEqual(BackendStateBuilder.success());
+      expect(component.apiRequestState).toEqual(ApiRequestStateBuilder.success());
     });
   });
 

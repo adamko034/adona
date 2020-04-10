@@ -49,7 +49,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
         this.errorMessage = error.message;
         this.handleEmailExistsError(error);
-        this.handlePasswordsDoNotMatchError(error);
       });
   }
 
@@ -62,11 +61,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
     if (this.form.invalid) {
       this.registrationFacade.pushFormInvalidError();
-      return;
-    }
-
-    if (!this.arePassowrdsTheSame()) {
-      this.registrationFacade.pushPasswordsDoNotMatchError();
       return;
     }
 
@@ -90,15 +84,5 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.errorMessage = this.errorMessage.replace('{1}', this.form.get('email').value);
       this.form.get('email').setErrors({ [registrationErrorCodes.emailExists]: { isValid: false } });
     }
-  }
-
-  private handlePasswordsDoNotMatchError(error: RegistrationError): void {
-    if (error.code === registrationErrorCodes.passwordsDoNotMatch) {
-      this.form.get('confirmPassword').setErrors({ [registrationErrorCodes.passwordsDoNotMatch]: { isValid: false } });
-    }
-  }
-
-  private arePassowrdsTheSame(): boolean {
-    return this.form.get('confirmPassword').value === this.form.get('password').value;
   }
 }

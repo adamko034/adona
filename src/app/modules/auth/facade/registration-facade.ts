@@ -3,7 +3,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, distinctUntilChanged, map, mapTo, mergeMap, switchMap } from 'rxjs/operators';
 import { Credentials } from 'src/app/core/auth/model/credentials.model';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
-import { BackendState } from 'src/app/core/gui/model/backend-state/backend-state.model';
+import { ApiRequestState } from 'src/app/core/gui/model/backend-state/api-request-state.model';
 import { UserBuilder } from 'src/app/core/user/model/builders/user.builder';
 import { UserService } from 'src/app/core/user/services/user.service';
 import { registrationErrorCodes } from 'src/app/modules/auth/constants/registration-error-messages.constants';
@@ -47,11 +47,11 @@ export class RegistrationFacade {
     return this.emailConfirmationService.sendUsingAuthorizedUser();
   }
 
-  public sendPasswordResetEmail(email: string): Observable<BackendState> {
+  public sendPasswordResetEmail(email: string): Observable<ApiRequestState> {
     return this.resetPasswordService.sendPasswordResetEmail(email);
   }
 
-  public confirmPasswordReset(oobCode: string, newPassword: string): Observable<BackendState> {
+  public confirmPasswordReset(oobCode: string, newPassword: string): Observable<ApiRequestState> {
     return this.resetPasswordService.confirmPasswordReset(oobCode, newPassword);
   }
 
@@ -61,10 +61,6 @@ export class RegistrationFacade {
 
   public pushFormInvalidError() {
     this.registrationErrorService.push(registrationErrorCodes.formInvalid);
-  }
-
-  public pushPasswordsDoNotMatchError() {
-    this.registrationErrorService.push(registrationErrorCodes.passwordsDoNotMatch);
   }
 
   public clearRegistrationErrors() {
