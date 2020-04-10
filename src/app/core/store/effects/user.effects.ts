@@ -21,21 +21,25 @@ export class UserEffects {
   public loadUserRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(userActions.loadUserRequested),
-      switchMap(action => this.userService.loadUser(action.id)),
-      map((user: User) => userActions.loadUserSuccess({ user })),
-      catchError(err => of(userActions.loadUserFailure({ error: { errorObj: err } })))
+      switchMap((action) =>
+        this.userService.loadUser(action.id).pipe(
+          map((user: User) => userActions.loadUserSuccess({ user })),
+          catchError((err) => of(userActions.loadUserFailure({ error: { errorObj: err } })))
+        )
+      )
     );
   });
 
   public changeTeamRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(userActions.changeTeamRequested),
-      map(action => action.request),
-      switchMap((request: ChangeTeamRequest) => this.userService.changeTeam(request)),
-      map((request: ChangeTeamRequest) =>
-        userActions.changeTeamSuccess({ teamId: request.teamId, updated: request.updated })
-      ),
-      catchError(err => of(userActions.changeTeamFailure({ error: { errorObj: err } })))
+      map((action) => action.request),
+      switchMap((request: ChangeTeamRequest) =>
+        this.userService.changeTeam(request).pipe(
+          map(() => userActions.changeTeamSuccess({ teamId: request.teamId, updated: request.updated })),
+          catchError((err) => of(userActions.changeTeamFailure({ error: { errorObj: err } })))
+        )
+      )
     );
   });
 
@@ -54,15 +58,13 @@ export class UserEffects {
   public updateNameRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(userActions.updateNameRequested),
-      switchMap(action =>
+      switchMap((action) =>
         this.userService.updateName(action.id, action.newName).pipe(
           map((newName: string) => userActions.updateNameSuccess({ newName })),
-          catchError(err =>
+          catchError((err) =>
             of(
               userActions.updateNameFailure({
-                error: ErrorBuilder.from()
-                  .withErrorObject(err)
-                  .build()
+                error: ErrorBuilder.from().withErrorObject(err).build()
               })
             )
           )

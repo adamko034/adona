@@ -1,17 +1,19 @@
 <div class="verify-email-container">
   <p>We need you to verify your email address.</p>
   <p>Please, check your email box and follow instructions provided in our message.</p>
-  <div *ngIf="!emailSent && !showLoader" fxLayout="row wrap">
+  <div *ngIf="!apiRequestStatus?.started" fxLayout="row wrap">
     <span class="resend-email-label">Didn't get an email from us?</span>
     <span class="resend-email" (click)="resendConfirmationLink()">Click here to resend it!</span>
   </div>
-  <div *ngIf="showLoader">
+  <div *ngIf="apiRequestStatus?.started">
     <mat-progress-spinner [diameter]="35" mode="indeterminate"></mat-progress-spinner>
   </div>
 
-  <div *ngIf="emailSent && !showLoader"><span class="email-sent">Email has been sent!</span></div>
+  <div *ngIf="apiRequestStatus?.succeded"><span class="email-sent">Email has been sent!</span></div>
 
-  <div *ngIf="showError" class="email-sent-error"><span>Email has not been sent. Please, try again later.</span></div>
+  <div *ngIf="apiRequestStatus?.failed" class="email-sent-error">
+    <span>Email has not been sent. Please, try again later.</span>
+  </div>
 
   <div class="back-to-login" fxLayout="row" fxLayoutAlign="end">
     <a [routerLink]="'/login'">Back to login</a>

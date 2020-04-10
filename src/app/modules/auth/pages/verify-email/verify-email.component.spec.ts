@@ -1,4 +1,6 @@
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
+import { apiRequestIds } from 'src/app/core/api-requests/constants/api-request-ids.contants';
+import { ApiRequestStatusBuilder } from 'src/app/core/api-requests/models/api-request-status/api-request-status.builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { SpiesBuilder } from '../../../../utils/testUtils/builders/spies.builder';
 import { VerifyEmailComponent } from './verify-email.component';
@@ -7,27 +9,36 @@ describe('Verify Email Component', () => {
   let component: VerifyEmailComponent;
 
   const {
-    registrationFacade,
-    unsubscriberService
-  } = SpiesBuilder.init().withRegistrationFacade().withUnsubscriberService().build();
+    registerFacade,
+    unsubscriberService,
+    apiRequestsFacade
+  } = SpiesBuilder.init().withApiRequestsFacade().withRegisterFacade().withUnsubscriberService().build();
 
   beforeEach(() => {
-    component = new VerifyEmailComponent(registrationFacade, unsubscriberService);
+    component = new VerifyEmailComponent(registerFacade, unsubscriberService, apiRequestsFacade);
   });
 
   describe('Constructor', () => {
     it('should create unsubscriber', () => {
-      expect(unsubscriberService.create).toHaveBeenCalled();
-    });
+      unsubscriberService.create.calls.reset();
+      component = new VerifyEmailComponent(registerFacade, unsubscriberService, apiRequestsFacade);
 
-    it('should default flags to false', () => {
-      JasmineCustomMatchers.toBeFalsy(component.showError, component.showLoader, component.emailSent);
+      expect(unsubscriberService.create).toHaveBeenCalled();
     });
   });
 
   describe('On Init', () => {
-    it('should default flags to false', () => {
-      JasmineCustomMatchers.toBeFalsy(component.showError, component.showLoader, component.emailSent);
+    it('shuold subscibe to api request status', () => {
+      apiRequestsFacade.selectApiRequest.and.returnValue(of(ApiRequestStatusBuilder.start('1')));
+
+      component.ngOnInit();
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+        apiRequestsFacade.selectApiRequest,
+        1,
+        apiRequestIds.sendEmailVerificationLink
+      );
+      expect(component.apiRequestStatus).toEqual(ApiRequestStatusBuilder.start('1'));
     });
   });
 
@@ -39,23 +50,11 @@ describe('Verify Email Component', () => {
     });
   });
 
-  describe('Resend Confirmation Link', () => {
-    it('should set flags if email has been sent', () => {
-      registrationFacade.resendEmailConfirmationLink.and.returnValue(of(null));
+  describe('Send Email Confirmation Link', () => {
+    it('should send email confirmation link', () => {
+      component.sendEmailConfirmationLink();
 
-      component.resendConfirmationLink();
-
-      JasmineCustomMatchers.toBeFalsy(component.showLoader, component.showError);
-      expect(component.emailSent).toBeTruthy();
-    });
-
-    it('should set flags if email has not been sent', () => {
-      registrationFacade.resendEmailConfirmationLink.and.returnValue(throwError('err'));
-
-      component.resendConfirmationLink();
-
-      JasmineCustomMatchers.toBeFalsy(component.showLoader, component.emailSent);
-      expect(component.showError).toBeTruthy();
+      expect(registerFacade.sendEmailVerificationLink).toHaveBeenCalledTimes(1);
     });
   });
 });

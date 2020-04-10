@@ -11,6 +11,13 @@ export class ErrorBuilder {
     return new ErrorBuilder();
   }
 
+  public withFirebaseError(id: string, errorCode: string): ErrorBuilder {
+    this.error.id = id;
+    this.error.code = errorCode;
+
+    return this;
+  }
+
   public withErrorObject(errorObject: any): ErrorBuilder {
     this.error.errorObj = errorObject;
     return this;

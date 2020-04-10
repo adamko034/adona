@@ -30,4 +30,12 @@ export class NavigationService {
   public toExpenseContent(groupId: string) {
     this.router.navigate([`/expenses/d/${groupId}`]);
   }
+
+  public toResetPassword(oobCode: string) {
+    this.router.navigate(['/login/changePassword'], { queryParams: { oobCode } });
+  }
+
+  public toEmailVerified(oobCode: string) {
+    this.router.navigate(['/login/emailVerified'], { queryParams: { oobCode } });
+  }
 }

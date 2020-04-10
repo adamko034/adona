@@ -5,7 +5,7 @@ import { cold, hot } from 'jasmine-marbles';
 import { Observable, of } from 'rxjs';
 import { errors } from 'src/app/core/error/constants/errors.constants';
 import { ErrorTestDataBuilder } from 'src/app/core/error/utils/test/error-test-data.builder';
-import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
+import { errorActions } from 'src/app/core/store/actions/error.actions';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from '../../../../utils/testUtils/builders/user-test-builder';
@@ -19,14 +19,9 @@ describe('Expenses Effects', () => {
   let effects: ExpensesEffects;
 
   const user = UserTestBuilder.withDefaultData().build();
-  const expense = ExpensesGroupTestBuilder.default()
-    .withUsers([user])
-    .build();
+  const expense = ExpensesGroupTestBuilder.default().withUsers([user]).build();
 
-  const { userFacade, expensesService } = SpiesBuilder.init()
-    .withUserFacade()
-    .withExpensesService()
-    .build();
+  const { userFacade, expensesService } = SpiesBuilder.init().withUserFacade().withExpensesService().build();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -38,7 +33,7 @@ describe('Expenses Effects', () => {
       ]
     });
 
-    effects = TestBed.get<ExpensesEffects>(ExpensesEffects);
+    effects = TestBed.inject<ExpensesEffects>(ExpensesEffects);
 
     userFacade.selectUser.and.callFake(() => of(user));
     expensesService.getExpenses.and.returnValue(of([expense]));
@@ -79,29 +74,24 @@ describe('Expenses Effects', () => {
   });
 
   describe('Expenses Loaded Error', () => {
-    it('should map to Error Occured Action with custom message', () => {
+    it('should map to Error Broadcast action with custom message', () => {
       // given
-      const error = ErrorTestDataBuilder.from()
-        .withDefaultData()
-        .build();
+      const error = ErrorTestDataBuilder.from().withDefaultData().build();
       actions$ = hot('--a', { a: expensesActions.expensesLoadFailure({ error }) });
 
-      const expected = cold('--b', { b: new ErrorOccuredAction({ error }) });
+      const expected = cold('--b', { b: errorActions.handleError({ error }) });
 
       // when & then
       expect(effects.expensesLoadFailure$).toBeObservable(expected);
     });
 
-    it('should map to Error Occured Action with default message', () => {
+    it('should map to Error Broadcast action with default message', () => {
       // given
-      const errorSource = ErrorTestDataBuilder.from()
-        .withDefaultData()
-        .withMessage(null)
-        .build();
+      const errorSource = ErrorTestDataBuilder.from().withDefaultData().withMessage(null).build();
       actions$ = hot('--a', { a: expensesActions.expensesLoadFailure({ error: errorSource }) });
 
       const expected = cold('--b', {
-        b: new ErrorOccuredAction({
+        b: errorActions.handleError({
           error: { message: errors.DEFAULT_API_GET_ERROR_MESSAGE, errorObj: errorSource.errorObj }
         })
       });

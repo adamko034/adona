@@ -12,6 +12,7 @@ describe('AuthService', () => {
   let authService: AuthService;
   const fireAuthSpy: any = {
     auth: jasmine.createSpyObj('auth', {
+      applyActionCode: Promise.resolve(),
       signInWithEmailAndPassword: Promise.resolve({}),
       signOut: Promise.resolve(),
       createUserWithEmailAndPassword: Promise.resolve(firebaseUserCredential),
@@ -19,31 +20,27 @@ describe('AuthService', () => {
       confirmPasswordReset: Promise.resolve()
     })
   };
-  const { userUtilsService } = SpiesBuilder.init()
-    .withUserUtilsService()
-    .build();
+  const { userUtilsService } = SpiesBuilder.init().withUserUtilsService().build();
 
   beforeEach(() => {
     authService = new AuthService(fireAuthSpy, userUtilsService);
   });
 
-  it('should call fireauth service login method', () => {
-    // given
-    const credentials = { email: 'adam', password: 'test' };
+  describe('Login', () => {
+    it('should call fireauth service login method', () => {
+      const credentials = { email: 'adam', password: 'test' };
 
-    // when
-    authService.login(credentials);
+      authService.login(credentials);
 
-    // then
-    expect(fireAuthSpy.auth.signInWithEmailAndPassword).toHaveBeenCalledWith(credentials.email, credentials.password);
+      expect(fireAuthSpy.auth.signInWithEmailAndPassword).toHaveBeenCalledWith(credentials.email, credentials.password);
+    });
   });
 
-  it('should call fireauth service logout method', () => {
-    // when
-    authService.logout();
-
-    // then
-    expect(fireAuthSpy.auth.signOut).toHaveBeenCalledTimes(1);
+  describe('Logout', () => {
+    it('should call fireauth service logout method', () => {
+      authService.logout();
+      expect(fireAuthSpy.auth.signOut).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('Register', () => {
@@ -51,12 +48,12 @@ describe('AuthService', () => {
       userUtilsService.extractUsernameFromEmail.calls.reset();
     });
 
-    it('should register in firebase and return Firebase User', done => {
+    it('should register in firebase and return Firebase User', (done) => {
       const credentials = CredentialsBuilder.from(firebaseUserCredential.user.email, '123').build();
       userUtilsService.extractUsernameFromEmail.and.returnValue(firebaseUserCredential.user.email.split('@')[0]);
       firebaseUserCredential.user.updateProfile.and.returnValue(Promise.resolve());
 
-      authService.register(credentials).subscribe(resData => {
+      authService.register(credentials).subscribe((resData) => {
         expect(resData).toEqual(firebaseUserCredential.user);
         JasmineCustomMatchers.toHaveBeenCalledTimesWith(
           fireAuthSpy.auth.createUserWithEmailAndPassword,
@@ -87,6 +84,14 @@ describe('AuthService', () => {
       authService.confirmPasswordReset('123', 'newPassword');
 
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(fireAuthSpy.auth.confirmPasswordReset, 1, '123', 'newPassword');
+    });
+  });
+
+  describe('Confirm Email', () => {
+    it('should call Apply Action Code from firebase auth', () => {
+      authService.confirmEmail('123');
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(fireAuthSpy.auth.applyActionCode, 1, '123');
     });
   });
 });

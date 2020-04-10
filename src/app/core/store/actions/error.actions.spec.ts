@@ -1,19 +1,29 @@
-import { ErrorActionTypes, ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
+import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
+import { errorActions, errorActionsTypes } from 'src/app/core/store/actions/error.actions';
 
 describe('Error Actions', () => {
-  describe('Error Occured action', () => {
+  describe('Handle Error', () => {
+    it('should create action', () => {
+      expect(errorActions.handleError({ error: ErrorBuilder.from().withErrorObject({ code: 500 }).build() })).toEqual({
+        type: errorActionsTypes.handle,
+        error: ErrorBuilder.from().withErrorObject({ code: 500 }).build()
+      });
+    });
+  });
+
+  describe('Broadcast Error', () => {
     it('should create action with full payload', () => {
       // given
       const errObj = { error: 'internal server error', code: 500 };
       const message = 'this is error message';
 
       // when
-      const action = new ErrorOccuredAction({ error: { errorObj: errObj, message } });
+      const action = errorActions.handleError({ error: { errorObj: errObj, message } });
 
       // then
       expect({ ...action }).toEqual({
-        type: ErrorActionTypes.ErrorOccured,
-        payload: { error: { errorObj: errObj, message } }
+        type: errorActionsTypes.handle,
+        error: { errorObj: errObj, message }
       });
     });
 
@@ -22,12 +32,12 @@ describe('Error Actions', () => {
       const errObj = { error: 'internal server error', code: 500 };
 
       // when
-      const action = new ErrorOccuredAction({ error: { errorObj: errObj } });
+      const action = errorActions.handleError({ error: { errorObj: errObj } });
 
       // then
       expect({ ...action }).toEqual({
-        type: ErrorActionTypes.ErrorOccured,
-        payload: { error: { errorObj: errObj } }
+        type: errorActionsTypes.handle,
+        error: { errorObj: errObj }
       });
     });
 
@@ -36,24 +46,30 @@ describe('Error Actions', () => {
       const message = 'this is error message';
 
       // when
-      const action = new ErrorOccuredAction({ error: { message } });
+      const action = errorActions.handleError({ error: { message } });
 
       // then
       expect({ ...action }).toEqual({
-        type: ErrorActionTypes.ErrorOccured,
-        payload: { error: { message } }
+        type: errorActionsTypes.handle,
+        error: { message }
       });
     });
 
     it('should create action with empty payload', () => {
       // when
-      const action = new ErrorOccuredAction({ error: null });
+      const action = errorActions.handleError({ error: null });
 
       // then
       expect({ ...action }).toEqual({
-        type: ErrorActionTypes.ErrorOccured,
-        payload: { error: null }
+        type: errorActionsTypes.handle,
+        error: null
       });
+    });
+  });
+
+  describe('Clear Error', () => {
+    it('should create action', () => {
+      expect({ ...errorActions.clearError() }).toEqual({ type: errorActionsTypes.clear });
     });
   });
 });

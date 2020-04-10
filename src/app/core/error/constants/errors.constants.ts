@@ -2,8 +2,7 @@ const DEFAULT_GET_MESSAGE = 'Error occured while getting requested data. Please,
 const DEFAULT_POST_MESSAGE = 'Error occured while inserting data. Please, try again later.';
 const DEFAULT_PUT_MESSAGE = 'Error occured while updating data. Please, try again later.';
 const DEFAULT_DELETE_MESSAGE = 'Error occured while removing data. Please, try again later.';
-const DEFAULT_OTHER_MESSAGE =
-  'Something wrong has happened. Your request has not been processed. Please, try again later';
+const DEFAULT_OTHER_MESSAGE = 'Unknown error occured while processing your request. Please, try again later.';
 
 export const errors = {
   DEFAULT_API_GET_ERROR_MESSAGE: DEFAULT_GET_MESSAGE,

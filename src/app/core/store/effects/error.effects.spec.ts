@@ -1,42 +1,96 @@
 import { TestBed } from '@angular/core/testing';
+import { Actions } from '@ngrx/effects';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
-import { Observable } from 'rxjs';
+import { of } from 'rxjs';
+import { ApiRequestStatusBuilder } from 'src/app/core/api-requests/models/api-request-status/api-request-status.builder';
+import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
 import { ErrorEffects } from 'src/app/core/store/effects/error.effects';
-import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
-import { ErrorOccuredAction } from '../actions/error.actions';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
+import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
+import { errorActions } from '../actions/error.actions';
 
 describe('Error Effects', () => {
-  let actions$: Observable<Action>;
+  let actions$: Actions;
   let effects: ErrorEffects;
 
-  const environmentService = jasmine.createSpyObj<EnvironmentService>('environmentService', ['isDev']);
+  const {
+    environmentService,
+    apiRequestsFacade,
+    firebaseErrorsService
+  } = SpiesBuilder.init().withApiRequestsFacade().withFirebaseErrorsService().withEnvironmentService().build();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        ErrorEffects,
-        { provide: EnvironmentService, useValue: environmentService },
-        provideMockActions(() => actions$)
-      ]
+      providers: [provideMockActions(() => actions$)]
     });
+    actions$ = TestBed.inject(Actions);
 
-    effects = TestBed.get<ErrorEffects>(ErrorEffects);
+    effects = new ErrorEffects(actions$, environmentService, firebaseErrorsService, apiRequestsFacade);
+
+    apiRequestsFacade.selectApiRequest.calls.reset();
+    environmentService.isDev.calls.reset();
+    firebaseErrorsService.isErrorHandled.calls.reset();
   });
 
-  describe('Error Occured effect', () => {
+  describe('Broadcast', () => {
     it('should log message and map to Api Request Failed', () => {
-      // given
       environmentService.isDev.and.returnValue(true);
 
-      const action = new ErrorOccuredAction({ error: { message: 'this is message' } });
-      actions$ = hot('-a', { a: action });
-      const expected = cold('-b', { b: action });
+      actions$ = hot('-a', { a: errorActions.broadcastError({ error: { code: 'auth' } }) });
+      effects.broadcast$.subscribe(() => {
+        expect(environmentService.isDev).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
 
-      // when & then
-      expect(effects.errorOccured$).toBeObservable(expected);
-      expect(environmentService.isDev).toHaveBeenCalledTimes(1);
+  describe('Handle', () => {
+    it('should map to Api Request Fail action', () => {
+      const apiRequestId = '1';
+
+      apiRequestsFacade.selectApiRequest.and.returnValue(of(ApiRequestStatusBuilder.start(apiRequestId)));
+      firebaseErrorsService.isErrorHandled.and.returnValue(true);
+
+      actions$ = cold('--a', { a: errorActions.handleError({ error: { id: apiRequestId, code: 'testCode' } }) });
+
+      expect(effects.handle$).toBeObservable(
+        cold('--a', { a: apiRequestActions.requestFail({ id: apiRequestId, errorCode: 'testCode' }) })
+      );
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.selectApiRequest, 1, apiRequestId);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(firebaseErrorsService.isErrorHandled, 1, 'testCode');
+    });
+
+    it('should map to Broadcast action when api request not found', () => {
+      apiRequestsFacade.selectApiRequest.and.returnValue(of(null));
+      firebaseErrorsService.isErrorHandled.and.returnValue(false);
+
+      actions$ = cold('--a', { a: errorActions.handleError({ error: { errorObj: { code: 500 } } }) });
+
+      expect(effects.handle$).toBeObservable(
+        cold('--a', { a: errorActions.broadcastError({ error: { errorObj: { code: 500 } } }) })
+      );
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.selectApiRequest, 1, undefined);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(firebaseErrorsService.isErrorHandled, 1, undefined);
+    });
+
+    it('should map to Broadcast and Api Reqeust Fail actions when firebase error is not handled', () => {
+      const apiRequestId = '1';
+
+      apiRequestsFacade.selectApiRequest.and.returnValue(of(ApiRequestStatusBuilder.start(apiRequestId)));
+      firebaseErrorsService.isErrorHandled.and.returnValue(false);
+
+      actions$ = cold('--a', {
+        a: errorActions.handleError({ error: { errorObj: { code: 500 }, id: apiRequestId, code: 'testCode' } })
+      });
+
+      expect(effects.handle$).toBeObservable(
+        cold('--(ab)', {
+          a: errorActions.broadcastError({ error: { errorObj: { code: 500 }, id: apiRequestId, code: 'testCode' } }),
+          b: apiRequestActions.requestFail({ id: apiRequestId, errorCode: null })
+        })
+      );
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.selectApiRequest, 1, apiRequestId);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(firebaseErrorsService.isErrorHandled, 1, 'testCode');
     });
   });
 });

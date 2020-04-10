@@ -7,15 +7,17 @@
     </mat-form-field>
 
     <mat-form-field class="form-field">
-      <mat-pass-toggle-visibility #togglePassword matSuffix></mat-pass-toggle-visibility>
       <input
-        [type]="togglePassword.type"
+        [type]="showPassword ? 'text' : 'password'"
         matInput
         placeholder="Password"
         formControlName="password"
         name="password"
         class="full-width"
       />
+      <mat-icon matSuffix (click)="showPassword = !showPassword">{{
+        showPassword ? 'visibility' : 'visibility_off'
+      }}</mat-icon>
       <mat-error *ngIf="passwordEmpty()">Password is <strong>required</strong></mat-error>
     </mat-form-field>
 

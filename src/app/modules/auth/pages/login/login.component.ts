@@ -19,6 +19,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   });
   public showError: boolean;
   public showSpinner: boolean;
+  public showPassword = false;
 
   constructor(private authFacade: AuthFacade, private unsubscriberService: UnsubscriberService) {
     this.destroyed$ = this.unsubscriberService.create();

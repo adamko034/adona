@@ -1,0 +1,19 @@
+.error-content {
+  display: flex;
+
+  .error-content-icon {
+    font-size: 30px;
+    margin-right: 15px;
+    height: 32px;
+    align-self: center;
+    color: red;
+  }
+
+  .mat-snack-bar-container {
+    max-width: 50vw;
+  }
+  .action {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}

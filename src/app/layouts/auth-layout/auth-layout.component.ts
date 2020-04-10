@@ -34,7 +34,7 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
   private getTitle(route: string): string {
     if (route.toLowerCase().includes('register')) {
       return 'Register';
-    } else if (route.toLowerCase().includes('verifyemail')) {
+    } else if (route.toLowerCase().includes('verifyemail') || route.toLocaleLowerCase().includes('emailverified')) {
       return 'Email Verification';
     } else if (route.toLowerCase().includes('login/resetpassword')) {
       return 'Forgotten Password';

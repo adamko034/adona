@@ -2,12 +2,13 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade';
+import { apiRequestIds } from 'src/app/core/api-requests/constants/api-request-ids.contants';
+import { ApiRequestStatus } from 'src/app/core/api-requests/models/api-request-status/api-request-status.model';
 import { CredentialsBuilder } from 'src/app/core/auth/model/builder/credentials.builder';
-import { registrationErrorCodes } from 'src/app/modules/auth/constants/registration-error-messages.constants';
-import { RegistrationFacade } from 'src/app/modules/auth/facade/registration-facade';
-import { RegistrationError } from 'src/app/modules/auth/models/registration/registration-error.model';
+import { authErrorMessages } from 'src/app/modules/auth/constants/auth-error-messages.constants';
+import { RegisterFacade } from 'src/app/modules/auth/facades/register-facade';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
-import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
 import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.validator';
 
 @Component({
@@ -18,8 +19,8 @@ import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.v
 export class RegisterComponent implements OnInit, OnDestroy {
   private destroyed$: Subject<void>;
 
+  public apiRequestStatus: ApiRequestStatus;
   public errorMessage: string;
-  public showSpinner = false;
 
   public form: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.email, CustomValidators.requiredValue]),
@@ -28,28 +29,20 @@ export class RegisterComponent implements OnInit, OnDestroy {
   });
 
   constructor(
-    private registrationFacade: RegistrationFacade,
-    private navigationService: NavigationService,
+    private registerFacade: RegisterFacade,
+    private apiRequestsFacade: ApiRequestsFacade,
     private unsubscriberService: UnsubscriberService
   ) {
     this.destroyed$ = this.unsubscriberService.create();
   }
 
   public ngOnInit(): void {
-    this.registrationFacade
-      .selectRegistrationError()
+    this.apiRequestsFacade
+      .selectApiRequest(apiRequestIds.register)
       .pipe(takeUntil(this.destroyed$))
-      .subscribe((error: RegistrationError) => {
-        this.showSpinner = false;
-
-        if (!error) {
-          this.errorMessage = null;
-          return;
-        }
-
-        this.errorMessage = error.message;
-        this.handleEmailExistsError(error);
-        this.handlePasswordsDoNotMatchError(error);
+      .subscribe((apiRequestStatus: ApiRequestStatus) => {
+        this.apiRequestStatus = apiRequestStatus;
+        this.handleErrors();
       });
   }
 
@@ -58,47 +51,28 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   public register(): void {
-    this.registrationFacade.clearRegistrationErrors();
+    if (this.form.valid) {
+      const email = this.form.get('email').value;
+      const password = this.form.get('password').value;
 
-    if (this.form.invalid) {
-      this.registrationFacade.pushFormInvalidError();
-      return;
-    }
-
-    if (!this.arePassowrdsTheSame()) {
-      this.registrationFacade.pushPasswordsDoNotMatchError();
-      return;
-    }
-
-    this.showSpinner = true;
-    const email = this.form.get('email').value;
-    const password = this.form.get('password').value;
-
-    this.registrationFacade
-      .register(CredentialsBuilder.from(email, password).build())
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((success) => {
-        if (success) {
-          this.showSpinner = false;
-          this.navigationService.toVerifyEmail();
-        }
-      });
-  }
-
-  private handleEmailExistsError(error: RegistrationError): void {
-    if (error.code === registrationErrorCodes.emailExists) {
-      this.errorMessage = this.errorMessage.replace('{1}', this.form.get('email').value);
-      this.form.get('email').setErrors({ [registrationErrorCodes.emailExists]: { isValid: false } });
+      this.registerFacade.register(CredentialsBuilder.from(email, password).build());
     }
   }
 
-  private handlePasswordsDoNotMatchError(error: RegistrationError): void {
-    if (error.code === registrationErrorCodes.passwordsDoNotMatch) {
-      this.form.get('confirmPassword').setErrors({ [registrationErrorCodes.passwordsDoNotMatch]: { isValid: false } });
-    }
-  }
+  private handleErrors(): void {
+    this.errorMessage = '';
+    if (this.apiRequestStatus?.failed && this.apiRequestStatus?.errorCode) {
+      this.errorMessage = authErrorMessages[this.apiRequestStatus.errorCode];
 
-  private arePassowrdsTheSame(): boolean {
-    return this.form.get('confirmPassword').value === this.form.get('password').value;
+      if (this.apiRequestStatus.errorCode.includes('email')) {
+        this.errorMessage = this.errorMessage.replace('{1}', this.form.get('email').value);
+        this.form.get('email').setErrors({ backend: { valid: false } });
+        return;
+      }
+
+      if (this.apiRequestStatus.errorCode.includes('password')) {
+        this.form.get('password').setErrors({ backend: { valid: false } });
+      }
+    }
   }
 }

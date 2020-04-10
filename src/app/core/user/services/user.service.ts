@@ -16,12 +16,7 @@ export class UserService {
   constructor(private db: AngularFirestore, private timeService: TimeService) {}
 
   public createUser(user: User): Observable<void> {
-    return from(
-      this.db
-        .collection(this.collectionName)
-        .doc(user.id)
-        .set(user)
-    );
+    return from(this.db.collection(this.collectionName).doc(user.id).set(user));
   }
 
   public loadUser(uid: string): Observable<User> {
@@ -35,8 +30,8 @@ export class UserService {
       );
   }
 
-  public changeTeam(request: ChangeTeamRequest): Observable<ChangeTeamRequest> {
-    const teams = request.user.teams.map(team => {
+  public changeTeam(request: ChangeTeamRequest): Observable<void> {
+    const teams = request.user.teams.map((team) => {
       if (team.id === request.teamId) {
         return { ...team, updated: request.updated };
       }
@@ -49,14 +44,11 @@ export class UserService {
       .doc(request.user.id)
       .update({ selectedTeamId: request.teamId, teams });
 
-    return from(promise.then(() => request));
+    return from(promise.then());
   }
 
   public updateName(uid: string, newName: string): Observable<string> {
-    const promise = this.db
-      .collection(this.collectionName)
-      .doc(uid)
-      .update({ name: newName });
+    const promise = this.db.collection(this.collectionName).doc(uid).update({ name: newName });
 
     return from(promise.then(() => newName));
   }
@@ -65,7 +57,7 @@ export class UserService {
     const teams: UserTeam[] = [];
 
     if (firebaseUser.teams) {
-      firebaseUser.teams.forEach(team => {
+      firebaseUser.teams.forEach((team) => {
         teams.push(
           UserTeamBuilder.from(
             team.id,

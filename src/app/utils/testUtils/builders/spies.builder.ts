@@ -2,6 +2,8 @@ import { AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { Subject } from 'rxjs';
+import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade';
+import { FirebaseErrorsService } from 'src/app/core/api-requests/services/firebase-errors/firebase-errors.service';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
@@ -9,16 +11,15 @@ import { RouterFacade } from 'src/app/core/router/router.facade';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { UserService } from 'src/app/core/user/services/user.service';
-import { RegistrationFacade } from 'src/app/modules/auth/facade/registration-facade';
+import { RegisterFacade } from 'src/app/modules/auth/facades/register-facade';
 import { EmailConfirmationService } from 'src/app/modules/auth/services/email-confirmation.service';
-import { RegistrationErrorService } from 'src/app/modules/auth/services/registration-error.service';
-import { ResetPasswordService } from 'src/app/modules/auth/services/reset-password/reset-password.service';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { ExpensesService } from 'src/app/modules/expenses/services/expenses.service';
 import { ExpensesFacade } from 'src/app/modules/expenses/store/expenses.facade';
 import { DialogService } from 'src/app/shared/services/dialogs/dialog.service';
 import { SharedDialogsService } from 'src/app/shared/services/dialogs/shared-dialogs.service';
+import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
 import { DayHoursService } from 'src/app/shared/services/time/parts/day-hours.service';
@@ -57,11 +58,12 @@ export interface Spies {
   guiFacade?: jasmine.SpyObj<GuiFacade>;
   sharedDialogService?: jasmine.SpyObj<SharedDialogsService>;
   teamUtilsService?: jasmine.SpyObj<TeamUtilsService>;
-  registrationFacade?: jasmine.SpyObj<RegistrationFacade>;
-  registrationErrorService?: jasmine.SpyObj<RegistrationErrorService>;
+  registerFacade?: jasmine.SpyObj<RegisterFacade>;
   emailConfirmationService?: jasmine.SpyObj<EmailConfirmationService>;
-  resetPasswordService?: jasmine.SpyObj<ResetPasswordService>;
   unsubscriberService?: jasmine.SpyObj<UnsubscriberService>;
+  apiRequestsFacade?: jasmine.SpyObj<ApiRequestsFacade>;
+  firebaseErrorsService?: jasmine.SpyObj<FirebaseErrorsService>;
+  environmentService?: jasmine.SpyObj<EnvironmentService>;
 }
 
 export class SpiesBuilder {
@@ -81,7 +83,9 @@ export class SpiesBuilder {
       'toExpensesMobile',
       'toExpensesDesktop',
       'toExpenseContent',
-      'toVerifyEmail'
+      'toVerifyEmail',
+      'toResetPassword',
+      'toEmailVerified'
     ]);
 
     return this;
@@ -120,7 +124,8 @@ export class SpiesBuilder {
       'logout',
       'register',
       'sendPasswordResetEmail',
-      'confirmPasswordReset'
+      'confirmPasswordReset',
+      'confirmEmail'
     ]);
 
     return this;
@@ -252,7 +257,7 @@ export class SpiesBuilder {
   }
 
   public withErrorFacade(): SpiesBuilder {
-    this.spies.errorFacade = jasmine.createSpyObj<ErrorFacade>('errorFacade', ['selectErrors']);
+    this.spies.errorFacade = jasmine.createSpyObj<ErrorFacade>('errorFacade', ['selectError', 'clearError']);
 
     return this;
   }
@@ -307,26 +312,15 @@ export class SpiesBuilder {
     return this;
   }
 
-  public withRegistrationFacade(): SpiesBuilder {
-    this.spies.registrationFacade = jasmine.createSpyObj<RegistrationFacade>('registrationFacade', [
+  public withRegisterFacade(): SpiesBuilder {
+    this.spies.registerFacade = jasmine.createSpyObj<RegisterFacade>('registerFacade', [
       'register',
-      'resendEmailConfirmationLink',
-      'selectRegistrationError',
-      'pushFormInvalidError',
-      'pushPasswordsDoNotMatchError',
-      'clearRegistrationErrors',
+      'confirmEmailVerification',
+      'sendEmailVerificationLink',
       'confirmPasswordReset',
       'sendPasswordResetEmail'
     ]);
 
-    return this;
-  }
-
-  public withRegistrationErrorService(): SpiesBuilder {
-    this.spies.registrationErrorService = jasmine.createSpyObj<RegistrationErrorService>('registrationErrorService', [
-      'push',
-      'selectErrors'
-    ]);
     return this;
   }
 
@@ -338,15 +332,6 @@ export class SpiesBuilder {
     return this;
   }
 
-  public withResetPasswordService(): SpiesBuilder {
-    this.spies.resetPasswordService = jasmine.createSpyObj<ResetPasswordService>('resetPasswordService', [
-      'sendPasswordResetEmail',
-      'confirmPasswordReset'
-    ]);
-
-    return this;
-  }
-
   public withUnsubscriberService(): SpiesBuilder {
     this.spies.unsubscriberService = jasmine.createSpyObj<UnsubscriberService>('unsubscriberService', [
       'create',
@@ -354,6 +339,28 @@ export class SpiesBuilder {
     ]);
 
     this.spies.unsubscriberService.create.and.returnValue(new Subject<void>());
+    return this;
+  }
+
+  public withApiRequestsFacade(): SpiesBuilder {
+    this.spies.apiRequestsFacade = jasmine.createSpyObj<ApiRequestsFacade>('apiRequestsFacade', [
+      'startRequest',
+      'selectApiRequest'
+    ]);
+
+    return this;
+  }
+
+  public withEnvironmentService(): SpiesBuilder {
+    this.spies.environmentService = jasmine.createSpyObj<EnvironmentService>('environmentService', ['isProd', 'isDev']);
+
+    return this;
+  }
+
+  public withFirebaseErrorsService(): SpiesBuilder {
+    this.spies.firebaseErrorsService = jasmine.createSpyObj<FirebaseErrorsService>('firebaseErrorsService', [
+      'isErrorHandled'
+    ]);
     return this;
   }
 

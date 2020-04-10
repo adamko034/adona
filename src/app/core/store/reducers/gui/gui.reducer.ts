@@ -15,7 +15,7 @@ const guiReducer = createReducer(
   on(guiActions.initSideNavbar, (state, action) => {
     return { ...state, sideNavbarOptions: action.options };
   }),
-  on(guiActions.toggleSideNavbar, state => ({
+  on(guiActions.toggleSideNavbar, (state) => ({
     ...state,
     sideNavbarOptions: { ...state.sideNavbarOptions, opened: !state.sideNavbarOptions.opened }
   }))

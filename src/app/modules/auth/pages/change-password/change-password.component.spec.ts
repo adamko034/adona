@@ -1,5 +1,8 @@
 import { of } from 'rxjs';
-import { BackendStateBuilder } from 'src/app/core/gui/model/backend-state/backend-state.builder';
+import { firebaseAuthErrorCodes } from 'src/app/core/api-requests/constants/firebase-errors.constants';
+import { ApiRequestStatusBuilder } from 'src/app/core/api-requests/models/api-request-status/api-request-status.builder';
+import { adonaAuthErrorCodes } from 'src/app/modules/auth/constants/adona-auth-error-codes.constants';
+import { authErrorMessages } from 'src/app/modules/auth/constants/auth-error-messages.constants';
 import { ChangePasswordComponent } from 'src/app/modules/auth/pages/change-password/change-password.component';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
@@ -9,15 +12,22 @@ describe('Change Password Component', () => {
 
   const {
     routerFacade,
-    registrationFacade,
-    unsubscriberService
-  } = SpiesBuilder.init().withRouterFacade().withRegistrationFacade().withUnsubscriberService().build();
+    registerFacade,
+    unsubscriberService,
+    apiRequestsFacade
+  } = SpiesBuilder.init()
+    .withApiRequestsFacade()
+    .withRouterFacade()
+    .withRegisterFacade()
+    .withUnsubscriberService()
+    .build();
 
   beforeEach(() => {
-    component = new ChangePasswordComponent(routerFacade, registrationFacade, unsubscriberService);
+    component = new ChangePasswordComponent(routerFacade, registerFacade, unsubscriberService, apiRequestsFacade);
 
-    registrationFacade.confirmPasswordReset.calls.reset();
+    registerFacade.confirmPasswordReset.calls.reset();
     routerFacade.selectRouteQueryParams.calls.reset();
+    apiRequestsFacade.selectApiRequest.calls.reset();
   });
 
   describe('Constructor', () => {
@@ -29,15 +39,18 @@ describe('Change Password Component', () => {
   describe('On Init', () => {
     it('should make subscriptions', () => {
       routerFacade.selectRouteQueryParams.and.returnValue(of(null));
+      apiRequestsFacade.selectApiRequest.and.returnValue(of(null));
 
       component.ngOnInit();
 
       expect(routerFacade.selectRouteQueryParams).toHaveBeenCalledTimes(1);
+      expect(apiRequestsFacade.selectApiRequest).toHaveBeenCalledTimes(1);
     });
 
     describe('Route Query Params subscription', () => {
       [null, { test: 'test' }, { oobCode: 'code' }].forEach((params) => {
         it(`should store oob code if query params is: ${JSON.stringify(params)}`, () => {
+          apiRequestsFacade.selectApiRequest.and.returnValue(of(null));
           (component as any).confirmPasswordResetCode = null;
           routerFacade.selectRouteQueryParams.and.returnValue(of(params));
 
@@ -45,6 +58,62 @@ describe('Change Password Component', () => {
 
           expect(routerFacade.selectRouteQueryParams).toHaveBeenCalledTimes(1);
           expect((component as any).confirmPasswordResetCode).toEqual(params && params.oobCode ? 'code' : null);
+        });
+      });
+    });
+
+    describe('Select Api Request subscription', () => {
+      beforeEach(() => {
+        routerFacade.selectRouteQueryParams.and.returnValue(of(null));
+      });
+
+      [
+        ApiRequestStatusBuilder.start('1'),
+        ApiRequestStatusBuilder.success('1'),
+        ApiRequestStatusBuilder.fail('1', null),
+        null
+      ].forEach((request) => {
+        it(`should unset error message when Api Request Status is: ${JSON.stringify(request)}`, () => {
+          component.sessionExpired = true;
+          component.errorMessage = 'test error';
+          apiRequestsFacade.selectApiRequest.and.returnValue(of(request));
+
+          component.ngOnInit();
+
+          expect(component.apiRequestStatus).toEqual(request);
+          expect(component.errorMessage).toEqual('');
+          expect(component.sessionExpired).toBeFalse();
+        });
+      });
+
+      it('should handle Weak Password error', () => {
+        apiRequestsFacade.selectApiRequest.and.returnValue(
+          of(ApiRequestStatusBuilder.fail('123', firebaseAuthErrorCodes.weakPassword))
+        );
+        component.sessionExpired = true;
+
+        component.ngOnInit();
+
+        expect(component.apiRequestStatus).toEqual(
+          ApiRequestStatusBuilder.fail('123', firebaseAuthErrorCodes.weakPassword)
+        );
+        expect(component.errorMessage).toEqual(authErrorMessages[firebaseAuthErrorCodes.weakPassword]);
+        expect(component.sessionExpired).toBeFalse();
+      });
+
+      [
+        ApiRequestStatusBuilder.fail('123', firebaseAuthErrorCodes.oobCodeExpired),
+        ApiRequestStatusBuilder.fail('123', firebaseAuthErrorCodes.oobCodeInvalid)
+      ].forEach((request) => {
+        it(`should handle ${request.errorCode} error`, () => {
+          component.sessionExpired = false;
+          apiRequestsFacade.selectApiRequest.and.returnValue(of(request));
+
+          component.ngOnInit();
+
+          expect(component.apiRequestStatus).toEqual(request);
+          expect(component.errorMessage).toEqual(authErrorMessages[adonaAuthErrorCodes.invalidSession]);
+          expect(component.sessionExpired).toBeTrue();
         });
       });
     });
@@ -59,27 +128,22 @@ describe('Change Password Component', () => {
   });
 
   describe('Change Password', () => {
-    it('should not send confirmation if form is invalid', () => {
-      component.backendState = null;
+    it('should not call facade is form is invalid', () => {
       component.form.get('password').setErrors({ error: { valid: false } });
 
       component.changePassword();
 
-      expect(registrationFacade.confirmPasswordReset).not.toHaveBeenCalled();
-      expect(component.backendState).toEqual(null);
+      expect(registerFacade.confirmPasswordReset).not.toHaveBeenCalled();
     });
 
-    it('should send change password confimration', () => {
+    it('should call facade', () => {
       component.form.get('password').setValue('pass1');
       component.form.get('repeatPassword').setValue('pass1');
       (component as any).confirmPasswordResetCode = 'test';
 
-      registrationFacade.confirmPasswordReset.and.returnValue(of(BackendStateBuilder.success()));
-
       component.changePassword();
 
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(registrationFacade.confirmPasswordReset, 1, 'test', 'pass1');
-      expect(component.backendState).toEqual(BackendStateBuilder.success());
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(registerFacade.confirmPasswordReset, 1, 'test', 'pass1');
     });
   });
 
@@ -95,6 +159,27 @@ describe('Change Password Component', () => {
         (component as any).confirmPasswordResetCode = code;
 
         expect(component.isComponentValidUsage()).toBeFalse();
+      });
+    });
+  });
+
+  describe('Should Show Form', () => {
+    [
+      { code: '123', request: ApiRequestStatusBuilder.start('1'), sessionExpired: false, expected: true },
+      { code: '123', request: ApiRequestStatusBuilder.fail('1', 'test'), sessionExpired: false, expected: true },
+      { code: '123', request: null, sessionExpired: false, expected: true },
+      { code: null, request: null, sessionExpired: false, expected: false },
+      { code: '123', request: ApiRequestStatusBuilder.success('1'), sessionExpired: false, expected: false },
+      { code: '123', request: null, sessionExpired: true, expected: false }
+    ].forEach((input) => {
+      it(`should ${input.expected ? '' : 'not'} show form for data: ${JSON.stringify(input)}`, () => {
+        (component as any).confirmPasswordResetCode = input.code;
+        component.apiRequestStatus = input.request;
+        component.sessionExpired = input.sessionExpired;
+
+        const result = component.shouldShowForm();
+
+        expect(result).toEqual(input.expected);
       });
     });
   });

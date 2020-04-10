@@ -1,8 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade';
+import { apiRequestIds } from 'src/app/core/api-requests/constants/api-request-ids.contants';
+import { ApiRequestStatus } from 'src/app/core/api-requests/models/api-request-status/api-request-status.model';
+import { RegisterFacade } from 'src/app/modules/auth/facades/register-facade';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
-import { RegistrationFacade } from '../../facade/registration-facade';
 
 @Component({
   selector: 'app-verify-email',
@@ -12,40 +15,30 @@ import { RegistrationFacade } from '../../facade/registration-facade';
 export class VerifyEmailComponent implements OnInit, OnDestroy {
   private destroyed$: Subject<void>;
 
-  public emailSent = false;
-  public showLoader = false;
-  public showError = false;
+  public apiRequestStatus: ApiRequestStatus;
 
-  constructor(private registrationFacade: RegistrationFacade, private unsubscriberService: UnsubscriberService) {
+  constructor(
+    private registerFacade: RegisterFacade,
+    private unsubscriberService: UnsubscriberService,
+    private apiRequestsFacade: ApiRequestsFacade
+  ) {
     this.destroyed$ = this.unsubscriberService.create();
   }
 
   public ngOnInit() {
-    this.emailSent = false;
-    this.showLoader = false;
-    this.showError = false;
+    this.apiRequestsFacade
+      .selectApiRequest(apiRequestIds.sendEmailVerificationLink)
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((apiRequestStatus: ApiRequestStatus) => {
+        this.apiRequestStatus = apiRequestStatus;
+      });
   }
 
   public ngOnDestroy() {
     this.unsubscriberService.complete(this.destroyed$);
   }
 
-  public resendConfirmationLink() {
-    this.showLoader = true;
-    this.registrationFacade
-      .resendEmailConfirmationLink()
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe(
-        () => {
-          this.showLoader = false;
-          this.emailSent = true;
-          this.showError = false;
-        },
-        () => {
-          this.showLoader = false;
-          this.showError = true;
-          this.emailSent = false;
-        }
-      );
+  public sendEmailConfirmationLink() {
+    this.registerFacade.sendEmailVerificationLink();
   }
 }

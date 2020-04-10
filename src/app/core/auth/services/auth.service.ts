@@ -41,4 +41,8 @@ export class AuthService {
   public confirmPasswordReset(code: string, newPassword: string): Observable<void> {
     return from(this.fireAuth.auth.confirmPasswordReset(code, newPassword));
   }
+
+  public confirmEmail(code: string): Observable<void> {
+    return from(this.fireAuth.auth.applyActionCode(code));
+  }
 }
