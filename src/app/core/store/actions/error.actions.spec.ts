@@ -1,19 +1,19 @@
-import { ErrorActionTypes, ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
+import { errorActions, errorActionsTypes } from 'src/app/core/store/actions/error.actions';
 
 describe('Error Actions', () => {
-  describe('Error Occured action', () => {
+  describe('Error Broadcast action', () => {
     it('should create action with full payload', () => {
       // given
       const errObj = { error: 'internal server error', code: 500 };
       const message = 'this is error message';
 
       // when
-      const action = new ErrorOccuredAction({ error: { errorObj: errObj, message } });
+      const action = errorActions.broadcast({ error: { errorObj: errObj, message } });
 
       // then
       expect({ ...action }).toEqual({
-        type: ErrorActionTypes.ErrorOccured,
-        payload: { error: { errorObj: errObj, message } }
+        type: errorActionsTypes.broadcast,
+        error: { errorObj: errObj, message }
       });
     });
 
@@ -22,12 +22,12 @@ describe('Error Actions', () => {
       const errObj = { error: 'internal server error', code: 500 };
 
       // when
-      const action = new ErrorOccuredAction({ error: { errorObj: errObj } });
+      const action = errorActions.broadcast({ error: { errorObj: errObj } });
 
       // then
       expect({ ...action }).toEqual({
-        type: ErrorActionTypes.ErrorOccured,
-        payload: { error: { errorObj: errObj } }
+        type: errorActionsTypes.broadcast,
+        error: { errorObj: errObj }
       });
     });
 
@@ -36,24 +36,30 @@ describe('Error Actions', () => {
       const message = 'this is error message';
 
       // when
-      const action = new ErrorOccuredAction({ error: { message } });
+      const action = errorActions.broadcast({ error: { message } });
 
       // then
       expect({ ...action }).toEqual({
-        type: ErrorActionTypes.ErrorOccured,
-        payload: { error: { message } }
+        type: errorActionsTypes.broadcast,
+        error: { message }
       });
     });
 
     it('should create action with empty payload', () => {
       // when
-      const action = new ErrorOccuredAction({ error: null });
+      const action = errorActions.broadcast({ error: null });
 
       // then
       expect({ ...action }).toEqual({
-        type: ErrorActionTypes.ErrorOccured,
-        payload: { error: null }
+        type: errorActionsTypes.broadcast,
+        error: null
       });
+    });
+  });
+
+  describe('Clear', () => {
+    it('should create action', () => {
+      expect({ ...errorActions.clear() }).toEqual({ type: errorActionsTypes.clear });
     });
   });
 });

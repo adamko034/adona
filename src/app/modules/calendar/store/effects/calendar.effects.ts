@@ -5,7 +5,8 @@ import { Action } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
 import { catchError, filter, map, mapTo, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
 import { errors } from 'src/app/core/error/constants/errors.constants';
-import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
+import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
+import { errorActions } from 'src/app/core/store/actions/error.actions';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import {
@@ -35,7 +36,8 @@ export class CalendarEffects {
     private actions$: Actions,
     private calendarService: CalendarService,
     private timeService: TimeService,
-    private calendarFacade: CalendarFacade
+    private calendarFacade: CalendarFacade,
+    private errorEffectService: ErrorEffectService
   ) {}
 
   @Effect()
@@ -45,7 +47,7 @@ export class CalendarEffects {
     withLatestFrom(this.calendarFacade.selectMonthsLoaded()),
     filter(([date, monthsLoaded]) => {
       const monthYear = this.timeService.Extraction.getYearMonthString(date);
-      return monthsLoaded.findIndex(x => x === monthYear) < 0;
+      return monthsLoaded.findIndex((x) => x === monthYear) < 0;
     }),
     mergeMap(([date]) => {
       return this.calendarService.getMonthEvents(date).pipe(
@@ -55,7 +57,7 @@ export class CalendarEffects {
         })
       );
     }),
-    catchError(err => of(new EventsLoadedErrorAction({ error: { errorObj: err } })))
+    catchError((err) => of(new EventsLoadedErrorAction({ error: { errorObj: err } })))
   );
 
   @Effect()
@@ -68,7 +70,7 @@ export class CalendarEffects {
 
       return { ...action.payload.error, message };
     }),
-    map((error: Error) => new ErrorOccuredAction({ error }))
+    map((error: Error) => errorActions.broadcast({ error }))
   );
 
   @Effect()
@@ -77,7 +79,7 @@ export class CalendarEffects {
     map((action: NewEventRequestedAction) => action.payload.newEvent),
     switchMap((event: Event) => this.calendarService.addEvent(event)),
     map((newEvent: Event) => new NewEventAddedAction({ event: newEvent })),
-    catchError(err => of(new EventCreationErrorAction({ error: { errorObj: err } })))
+    catchError((err) => of(new EventCreationErrorAction({ error: { errorObj: err } })))
   );
 
   @Effect()
@@ -89,7 +91,7 @@ export class CalendarEffects {
         : errors.DEFAULT_API_POST_ERROR_MESSAGE;
       return { ...action.payload.error, message };
     }),
-    map((error: Error) => new ErrorOccuredAction({ error }))
+    map((error: Error) => errorActions.broadcast({ error }))
   );
 
   @Effect()
@@ -105,7 +107,7 @@ export class CalendarEffects {
 
       return new EventUpdatedAction({ eventUpdate });
     }),
-    catchError(err => {
+    catchError((err) => {
       return of(new EventUpdateErrorAction({ error: { errorObj: err } }));
     })
   );
@@ -120,7 +122,7 @@ export class CalendarEffects {
 
       return { ...action.payload.error, message };
     }),
-    map((error: Error) => new ErrorOccuredAction({ error }))
+    map((error: Error) => errorActions.broadcast({ error }))
   );
 
   @Effect()
@@ -130,7 +132,7 @@ export class CalendarEffects {
     switchMap((id: string) => {
       return this.calendarService.deleteEvent(id).pipe(mapTo(new EventDeleteSuccessAction({ id })));
     }),
-    catchError(err => of(new EventDeleteErrorAction({ error: { errorObj: err } })))
+    catchError((err) => of(new EventDeleteErrorAction({ error: { errorObj: err } })))
   );
 
   @Effect()
@@ -139,7 +141,7 @@ export class CalendarEffects {
     map((action: EventUpdateErrorAction) => {
       return { message: errors.DEFAULT_API_DELETE_ERROR_MESSAGE, errorObj: action.payload.error.errorObj };
     }),
-    map((error: Error) => new ErrorOccuredAction({ error }))
+    map((error: Error) => errorActions.broadcast({ error }))
   );
 
   @Effect()

@@ -1,14 +1,15 @@
-import { Action } from '@ngrx/store';
+import { createAction, props } from '@ngrx/store';
 import { Error } from 'src/app/core/error/model/error.model';
 
-export enum ErrorActionTypes {
-  ErrorOccured = '[Error] Error Occured'
-}
+export const errorActionsTypes = {
+  broadcast: '[Page] Error Occured',
+  clear: '[Error Snackbar] Clear'
+};
 
-export class ErrorOccuredAction implements Action {
-  readonly type = ErrorActionTypes.ErrorOccured;
+const broadcast = createAction(errorActionsTypes.broadcast, props<{ error: Error }>());
+const clear = createAction(errorActionsTypes.clear);
 
-  public constructor(public payload: { error: Error }) {}
-}
-
-export type ErrorActions = ErrorOccuredAction;
+export const errorActions = {
+  broadcast,
+  clear
+};

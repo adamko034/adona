@@ -24,22 +24,30 @@
         </div>
       </div>
 
-      <div class="setting-row">
-        <mat-form-field appearance="outline" class="input-full-width">
-          <mat-label><strong>Name</strong></mat-label>
-          <input
-            matInput
-            type="text"
-            (blur)="onNameChanged(); $event.target.focus()"
-            (keydown.enter)="$event.target.blur()"
-            [formControl]="newName"
-          />
-          <mat-error *ngIf="newName.hasError('requiredValue')">Name is required</mat-error>
-          <mat-error *ngIf="newName.hasError('singleWord')">Name cannot contain space</mat-error>
-          <mat-error *ngIf="newName.hasError('backend')"
-            >Error occured. New name has not been changed. Please, try again later</mat-error
-          >
-        </mat-form-field>
+      <div class="setting-row" [ngClass.gt-sm]="'settings-row-desktop'">
+        <form [formGroup]="form" (submit)="udpateName()">
+          <mat-form-field appearance="outline" class="input-full-width">
+            <mat-label><strong>Name</strong></mat-label>
+            <input matInput type="text" formControlName="newName" />
+            <mat-error *ngIf="form.get('newName').hasError('requiredValue')">Name is required</mat-error>
+            <mat-error *ngIf="form.get('newName').hasError('singleWord')">Name cannot contain space</mat-error>
+            <mat-error *ngIf="form.get('newName').hasError('backend')"
+              >Error occured. New name has not been changed. Please, try again later</mat-error
+            >
+          </mat-form-field>
+
+          <div fxLayoutAlign="end center">
+            <button
+              [disabled]="form.invalid"
+              type="submit"
+              class="form-button button button-stroked-blue"
+              mat-stroked-button
+              color="primary"
+            >
+              Update
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

@@ -21,10 +21,7 @@ describe('User Effects', () => {
 
   const user = UserTestBuilder.withDefaultData().build();
 
-  const { userService, errorEffectService } = SpiesBuilder.init()
-    .withUserService()
-    .withErrorEffectService()
-    .build();
+  const { userService, errorEffectService } = SpiesBuilder.init().withUserService().withErrorEffectService().build();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -36,7 +33,7 @@ describe('User Effects', () => {
       ]
     });
 
-    effects = TestBed.get<UserEffects>(UserEffects);
+    effects = TestBed.inject<UserEffects>(UserEffects);
 
     userService.loadUser.calls.reset();
     userService.changeTeam.calls.reset();
@@ -55,16 +52,15 @@ describe('User Effects', () => {
       expect(userService.loadUser).toHaveBeenCalledWith(user.id);
     });
 
-    it('should dispatch Load User Failure aciton if loading user fails', () => {
+    it('should dispatch Load User Failure action if loading user fails', () => {
       const error = { code: 500 };
       userService.loadUser.and.returnValue(cold('#', {}, error));
 
-      actions$ = hot('--a', { a: userActions.loadUserRequested({ id: user.id }) });
-      const expected = cold('--(b|)', { b: userActions.loadUserFailure({ error: { errorObj: error } }) });
+      actions$ = hot('--a-a', { a: userActions.loadUserRequested({ id: user.id }) });
+      const expected = cold('--b-b', { b: userActions.loadUserFailure({ error: { errorObj: error } }) });
 
       expect(effects.loadUserRequested$).toBeObservable(expected);
-      expect(userService.loadUser).toHaveBeenCalledTimes(1);
-      expect(userService.loadUser).toHaveBeenCalledWith(user.id);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.loadUser, 2, user.id);
     });
   });
 
@@ -96,12 +92,11 @@ describe('User Effects', () => {
       const error = { code: 500 };
       userService.changeTeam.and.returnValue(cold('#', {}, error));
 
-      actions$ = hot('--a', { a: userActions.changeTeamRequested({ request }) });
-      const expected = cold('--(b|)', { b: userActions.changeTeamFailure({ error: { errorObj: error } }) });
+      actions$ = hot('--a--a', { a: userActions.changeTeamRequested({ request }) });
+      const expected = cold('--b--b', { b: userActions.changeTeamFailure({ error: { errorObj: error } }) });
 
       expect(effects.changeTeamRequested$).toBeObservable(expected);
-      expect(userService.changeTeam).toHaveBeenCalledTimes(1);
-      expect(userService.changeTeam).toHaveBeenCalledWith(request);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.changeTeam, 2, request);
     });
   });
 
@@ -118,17 +113,15 @@ describe('User Effects', () => {
     });
 
     it('should dispatch Update Name Failure when service fails', () => {
-      actions$ = hot('--a', { a: userActions.updateNameRequested({ id: '1', newName: 'exampleUser' }) });
+      actions$ = hot('--a--a', { a: userActions.updateNameRequested({ id: '1', newName: 'exampleUser' }) });
       userService.updateName.and.returnValue(cold('#', null, { code: 500 }));
 
-      const expectedError = ErrorBuilder.from()
-        .withErrorObject({ code: 500 })
-        .build();
+      const expectedError = ErrorBuilder.from().withErrorObject({ code: 500 }).build();
 
       expect(effects.updateNameRequested$).toBeObservable(
-        cold('--a', { a: userActions.updateNameFailure({ error: expectedError }) })
+        cold('--a--a', { a: userActions.updateNameFailure({ error: expectedError }) })
       );
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.updateName, 1, '1', 'exampleUser');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.updateName, 2, '1', 'exampleUser');
     });
   });
 

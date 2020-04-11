@@ -29,10 +29,12 @@ describe('Unsubscriber Service', () => {
 
     it('should not complete if Subject is null', () => {
       service.complete(null);
+      expect(true).toBeTrue();
     });
 
     it('should not complete if Subject is undefined', () => {
       service.complete(undefined);
+      expect(true).toBeTrue();
     });
   });
 });

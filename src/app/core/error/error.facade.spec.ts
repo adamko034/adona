@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold } from 'jasmine-marbles';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
+import { errorActions } from 'src/app/core/store/actions/error.actions';
 import { ErrorState } from 'src/app/core/store/reducers/error/error.reducer';
 import { errorQueries } from 'src/app/core/store/selectors/error.selectors';
+import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 
 describe('Error Facade', () => {
   let store: MockStore<ErrorState>;
@@ -15,23 +16,33 @@ describe('Error Facade', () => {
       providers: [provideMockStore()]
     });
 
-    store = TestBed.get<Store<ErrorState>>(Store);
+    store = TestBed.inject(MockStore);
     facade = new ErrorFacade(store);
 
     expect(facade).toBeTruthy();
   });
 
-  describe('getErrors', () => {
-    it('should return observable of error messages', () => {
+  describe('Select Error', () => {
+    it('should return observable of error message', () => {
       // given
       store.overrideSelector(errorQueries.selectErrorMessage, 'This is error');
       const expected = cold('a', { a: 'This is error' });
 
       // when
-      const actual = facade.selectErrors();
+      const actual = facade.selectError();
 
       // then
       expect(actual).toBeObservable(expected);
+    });
+  });
+
+  describe('Clear Error', () => {
+    it('should dispatch Error Clear action', () => {
+      const dispatchSpy = spyOn(store, 'dispatch');
+
+      facade.clearError();
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, errorActions.clear());
     });
   });
 });

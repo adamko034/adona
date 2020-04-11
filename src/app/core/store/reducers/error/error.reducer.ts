@@ -1,19 +1,21 @@
+import { createReducer, on } from '@ngrx/store';
 import { Error } from 'src/app/core/error/model/error.model';
-import { ErrorActions, ErrorActionTypes } from 'src/app/core/store/actions/error.actions';
+import { errorActions } from 'src/app/core/store/actions/error.actions';
 
 export interface ErrorState {
   error?: Error;
 }
 
-export const initialState: ErrorState = {
+export const errorInitialState: ErrorState = {
   error: null
 };
 
-export function errorReducer(state: ErrorState = initialState, action: ErrorActions) {
-  switch (action.type) {
-    case ErrorActionTypes.ErrorOccured:
-      return { ...state, error: action.payload.error };
-    default:
-      return { ...state };
-  }
+const errorReducer = createReducer(
+  errorInitialState,
+  on(errorActions.broadcast, (state, action) => ({ ...state, error: action.error })),
+  on(errorActions.clear, (state) => ({ ...state, error: null }))
+);
+
+export function reducer(state: ErrorState | undefined, action) {
+  return errorReducer(state, action);
 }

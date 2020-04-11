@@ -1,6 +1,6 @@
 import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap, MetaReducer } from '@ngrx/store';
-import { errorReducer, ErrorState } from 'src/app/core/store/reducers/error/error.reducer';
+import * as fromError from 'src/app/core/store/reducers/error/error.reducer';
 import { environment } from '../../../../environments/environment';
 import * as fromAuth from './auth/auth.reducer';
 import * as fromGui from './gui/gui.reducer';
@@ -8,7 +8,7 @@ import * as fromTeam from './team/team.reducer';
 
 export interface AppState {
   auth: fromAuth.AuthState;
-  error: ErrorState;
+  error: fromError.ErrorState;
   router: RouterReducerState;
   team: fromTeam.TeamState;
   gui: fromGui.GuiState;
@@ -16,7 +16,7 @@ export interface AppState {
 
 export const reducers: ActionReducerMap<AppState> = {
   auth: fromAuth.reducer,
-  error: errorReducer,
+  error: fromError.reducer,
   router: routerReducer,
   team: fromTeam.reducer,
   gui: fromGui.reducer

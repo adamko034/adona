@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { User } from 'src/app/core/user/model/user.model';
@@ -18,7 +18,9 @@ export class SettingsAccountComponent implements OnInit, OnDestroy {
   public user: User;
   public isError: boolean;
 
-  public newName = new FormControl('', [CustomValidators.requiredValue, CustomValidators.singleWord]);
+  public form = new FormGroup({
+    newName: new FormControl('', [CustomValidators.requiredValue, CustomValidators.singleWord])
+  });
 
   constructor(private userFacade: UserFacade, private unsubscriberService: UnsubscriberService) {
     this.destroyed$ = this.unsubscriberService.create();
@@ -31,28 +33,18 @@ export class SettingsAccountComponent implements OnInit, OnDestroy {
       .subscribe((user: User) => {
         if (user) {
           this.user = user;
-          this.newName.setValue(user.name);
+          this.form.get('newName').setValue(user.name);
         }
       });
-
-    // this.requestStateSubscription = this.guiFacade.selectBackendState().subscribe((apiRequestState: BackendState) => {
-    //   if (apiRequestState && apiRequestState.failure) {
-    //     this.newName.setErrors({ backend: { valid: false } });
-    //   }
-
-    //   if (apiRequestState && apiRequestState.success) {
-    //     this.newName.setErrors(null);
-    //   }
-    // });
   }
 
   public ngOnDestroy(): void {
     this.unsubscriberService.complete(this.destroyed$);
   }
 
-  public onNameChanged(): void {
-    if (this.newName.valid) {
-      this.userFacade.updateName(this.user.id, this.newName.value);
+  public udpateName(): void {
+    if (this.form.valid) {
+      this.userFacade.updateName(this.user.id, this.form.get('newName').value);
     }
   }
 }

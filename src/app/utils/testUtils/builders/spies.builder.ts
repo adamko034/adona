@@ -252,7 +252,7 @@ export class SpiesBuilder {
   }
 
   public withErrorFacade(): SpiesBuilder {
-    this.spies.errorFacade = jasmine.createSpyObj<ErrorFacade>('errorFacade', ['selectErrors']);
+    this.spies.errorFacade = jasmine.createSpyObj<ErrorFacade>('errorFacade', ['selectError', 'clearError']);
 
     return this;
   }
