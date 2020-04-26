@@ -8,6 +8,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -21,6 +22,7 @@ import { ErrorComponent } from './components/error/error.component';
 import { FromToDatesComponent } from './components/from-to-dates/from-to-dates.component';
 import { TabsVerticalComponent } from './components/tabs-vertical/tabs-vertical.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
+import { LoaderComponent } from './components/ui/loader/loader.component';
 import { MobileHideDirective } from './directives/device/mobile-hide.directive';
 import { ResponsiveMatIconDirective } from './directives/device/responsive-mat-icon.directive';
 import { DateFormatPipe } from './pipes/date/date-format.pipe';
@@ -40,6 +42,7 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     DeviceDetectorModule,
     MatToolbarModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     RouterModule
   ],
   providers: [
@@ -58,7 +61,8 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     ResponsiveMatIconDirective,
     ToolbarComponent,
     ChangeTeamDialogComponent,
-    TabsVerticalComponent
+    TabsVerticalComponent,
+    LoaderComponent
   ],
   exports: [
     ErrorComponent,
@@ -68,7 +72,8 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     ResponsiveMatIconDirective,
     ToolbarComponent,
     ChangeTeamDialogComponent,
-    TabsVerticalComponent
+    TabsVerticalComponent,
+    LoaderComponent
   ],
   entryComponents: [ErrorContentComponent, ChangeTeamDialogComponent]
 })

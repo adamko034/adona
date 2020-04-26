@@ -27,9 +27,7 @@
       Register
     </button>
 
-    <div class="form-spinner" *ngIf="apiRequestStatus?.started" fxLayout="row" fxLayoutAlign="center center">
-      <mat-progress-spinner [diameter]="40" mode="indeterminate"></mat-progress-spinner>
-    </div>
+    <app-loader [visible]="apiRequestStatus?.started"></app-loader>
 
     <div class="form-error" *ngIf="apiRequestStatus?.failed && apiRequestStatus?.errorCode">
       {{ errorMessage }}
