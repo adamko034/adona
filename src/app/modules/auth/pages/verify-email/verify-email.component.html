@@ -3,11 +3,9 @@
   <p>Please, check your email box and follow instructions provided in our message.</p>
   <div *ngIf="!apiRequestStatus?.started" fxLayout="row wrap">
     <span class="resend-email-label">Didn't get an email from us?</span>
-    <span class="resend-email" (click)="resendConfirmationLink()">Click here to resend it!</span>
+    <span class="resend-email" (click)="sendEmailConfirmationLink()">Click here to resend it!</span>
   </div>
-  <div *ngIf="apiRequestStatus?.started">
-    <mat-progress-spinner [diameter]="35" mode="indeterminate"></mat-progress-spinner>
-  </div>
+  <app-loader [visible]="apiRequestStatus?.started"></app-loader>
 
   <div *ngIf="apiRequestStatus?.succeded"><span class="email-sent">Email has been sent!</span></div>
 

@@ -1,7 +1,5 @@
 <div class="email-verified-container">
-  <div class="form-spinner" *ngIf="apiRequestStatus?.started" fxLayout="row" fxLayoutAlign="center center">
-    <mat-progress-spinner [diameter]="40" mode="indeterminate"></mat-progress-spinner>
-  </div>
+  <app-loader [visible]="apiRequestStatus?.started"></app-loader>
 
   <div *ngIf="apiRequestStatus?.succeded">
     Cool! Your email has been verified. You can now log in using your credentials.
