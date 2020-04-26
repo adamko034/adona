@@ -9,13 +9,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { EffectsModule } from '@ngrx/effects';
+import { AuthActionsComponent } from 'src/app/modules/auth/components/auth-actions/auth-actions.component';
 import { NewPasswordComponent } from 'src/app/modules/auth/components/new-password/new-password.component';
 import { ChangePasswordComponent } from 'src/app/modules/auth/pages/change-password/change-password.component';
 import { LoginComponent } from 'src/app/modules/auth/pages/login/login.component';
 import { RegisterComponent } from 'src/app/modules/auth/pages/register/register.component';
 import { ResetPasswordComponent } from 'src/app/modules/auth/pages/reset-password/reset-password.component';
 import { VerifyEmailComponent } from 'src/app/modules/auth/pages/verify-email/verify-email.component';
+import { RegisterEffects } from 'src/app/modules/auth/store/effects/register.effects';
+import { ResetPasswordEffects } from 'src/app/modules/auth/store/effects/reset-password.effects';
 import { AuthRoutingModule } from './auth-routing.module';
+import { EmailVerifiedComponent } from './pages/email-verified/email-verified.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +29,9 @@ import { AuthRoutingModule } from './auth-routing.module';
     VerifyEmailComponent,
     ResetPasswordComponent,
     ChangePasswordComponent,
-    NewPasswordComponent
+    NewPasswordComponent,
+    AuthActionsComponent,
+    EmailVerifiedComponent
   ],
   imports: [
     CommonModule,
@@ -37,7 +44,8 @@ import { AuthRoutingModule } from './auth-routing.module';
     FlexLayoutModule,
     MatPasswordStrengthModule,
     MatIconModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    EffectsModule.forFeature([RegisterEffects, ResetPasswordEffects])
   ]
 })
 export class AuthModule {}

@@ -1,14 +1,14 @@
-import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
-import { errorReducer, ErrorState } from 'src/app/core/store/reducers/error/error.reducer';
+import { errorActions } from 'src/app/core/store/actions/error.actions';
+import * as fromReducer from 'src/app/core/store/reducers/error/error.reducer';
 
 describe('Error Reducer', () => {
   it('should return initial value if state is not set', () => {
     // given
     const action = {} as any;
-    const expectedState: ErrorState = { error: null };
+    const expectedState: fromReducer.ErrorState = { error: null };
 
     // when
-    const actual = errorReducer(undefined, action);
+    const actual = fromReducer.reducer(undefined, action);
 
     // then
     expect(actual).toEqual(expectedState);
@@ -17,28 +17,42 @@ describe('Error Reducer', () => {
   it('should return previous state for unknown action', () => {
     // given
     const action = {} as any;
-    const previousState: ErrorState = {
+    const previousState: fromReducer.ErrorState = {
       error: { message: 'this is error message' }
     };
 
     // when
-    const actualState = errorReducer(previousState, action);
+    const actualState = fromReducer.reducer(previousState, action);
 
     // then
     expect(actualState).toEqual(previousState);
   });
 
-  it('should return new state for Error Occured action', () => {
-    // given
-    const action = new ErrorOccuredAction({ error: { message: 'this is error' } });
-    const previousState: ErrorState = {
-      error: { message: 'this is previous error' }
-    };
+  describe('On Error Broadcast', () => {
+    it('should change error in state', () => {
+      // given
+      const action = errorActions.broadcastError({ error: { message: 'this is error' } });
+      const previousState: fromReducer.ErrorState = {
+        error: { message: 'this is previous error' }
+      };
 
-    // when
-    const newState = errorReducer(previousState, action);
+      // when
+      const newState = fromReducer.reducer(previousState, action);
 
-    // then
-    expect(newState).toEqual({ error: { message: action.payload.error.message } });
+      // then
+      expect(newState).toEqual({ ...newState, error: { message: action.error.message } });
+    });
+  });
+
+  describe('On Error Clear', () => {
+    it('should clear error', () => {
+      const previousState: fromReducer.ErrorState = {
+        error: { message: 'first error' }
+      };
+
+      const newState = fromReducer.reducer(previousState, errorActions.clearError());
+
+      expect(newState).toEqual({ ...newState, error: null });
+    });
   });
 });

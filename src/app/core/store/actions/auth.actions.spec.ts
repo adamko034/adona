@@ -11,10 +11,8 @@ describe('Auth Actions', () => {
   const user = UserTestBuilder.withDefaultData().build();
 
   it('should create login action', () => {
-    // when
     const action = authActions.login({ credentials });
 
-    // then
     expect({ ...action }).toEqual({
       type: authActionTypes.login,
       credentials
@@ -22,20 +20,16 @@ describe('Auth Actions', () => {
   });
 
   it('should create Login Clear Error action', () => {
-    // when
     const action = authActions.loginClearError();
 
-    // then
     expect({ ...action }).toEqual({
       type: authActionTypes.loginClearError
     });
   });
 
   it('should create login success action', () => {
-    // when
     const action = authActions.loginSuccess({ user });
 
-    // then
     expect({ ...action }).toEqual({
       type: authActionTypes.loginSuccess,
       user
@@ -43,28 +37,22 @@ describe('Auth Actions', () => {
   });
 
   it('should create login failed action', () => {
-    // when
     const action = authActions.loginFailed();
 
-    // then
     expect({ ...action }).toEqual({
       type: authActionTypes.loginFailed
     });
   });
 
   it('should create logout action', () => {
-    // when
     const action = authActions.logout();
 
-    // then
     expect({ ...action }).toEqual({ type: authActionTypes.logout });
   });
 
   it('should create logout success action', () => {
-    // when
     const action = authActions.logoutSuccess();
 
-    // then
     expect({ ...action }).toEqual({ type: authActionTypes.logoutSucces });
   });
 

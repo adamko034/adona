@@ -5,7 +5,7 @@ import { cold, hot } from 'jasmine-marbles';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { errors } from 'src/app/core/error/constants/errors.constants';
 import { ErrorTestDataBuilder } from 'src/app/core/error/utils/test/error-test-data.builder';
-import { ErrorOccuredAction } from 'src/app/core/store/actions/error.actions';
+import { errorActions } from 'src/app/core/store/actions/error.actions';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
 import {
@@ -34,11 +34,11 @@ describe('Calendar Effects', () => {
   let effects: CalendarEffects;
   let events: Event[];
 
-  const { calendarService, timeService, calendarFacade } = SpiesBuilder.init()
-    .withCalendarFacade()
-    .withTimeService()
-    .withCalendarService()
-    .build();
+  const {
+    calendarService,
+    timeService,
+    calendarFacade
+  } = SpiesBuilder.init().withCalendarFacade().withTimeService().withCalendarService().build();
 
   let monthsLoaded$;
 
@@ -65,7 +65,7 @@ describe('Calendar Effects', () => {
     timeService.Extraction.getYearMonthString.and.returnValue('201901');
     calendarFacade.selectMonthsLoaded.and.returnValue(monthsLoaded$.asObservable());
 
-    effects = TestBed.get<CalendarEffects>(CalendarEffects);
+    effects = TestBed.inject<CalendarEffects>(CalendarEffects);
     events = new EventsTestDataBuilder()
       .addOneWithDefaultData()
       .addOneWithDefaultData()
@@ -120,11 +120,11 @@ describe('Calendar Effects', () => {
   });
 
   describe('Events Loaded Error effect', () => {
-    it('should map to Error Occured action with custom message', () => {
+    it('should map to Error Broadcast action with custom message', () => {
       // given
       const message = 'this is error';
       const action = new EventsLoadedErrorAction({ error: { message, errorObj: { code: '500' } } });
-      const completion = new ErrorOccuredAction({ error: { message, errorObj: { code: '500' } } });
+      const completion = errorActions.handleError({ error: { message, errorObj: { code: '500' } } });
 
       actions$ = hot('-a', { a: action });
       const expected = cold('-b', { b: completion });
@@ -133,10 +133,10 @@ describe('Calendar Effects', () => {
       expect(effects.eventsLoadedError$).toBeObservable(expected);
     });
 
-    it('should map to Error Occured action with default message', () => {
+    it('should map to Error Broadcase action with default message', () => {
       // given
       const action = new EventsLoadedErrorAction({ error: { errorObj: { code: '404' } } });
-      const completion = new ErrorOccuredAction({
+      const completion = errorActions.handleError({
         error: { errorObj: { code: '404' }, message: errors.DEFAULT_API_GET_ERROR_MESSAGE }
       });
 
@@ -167,9 +167,7 @@ describe('Calendar Effects', () => {
     it('should map to Event Creation Error action', () => {
       // given
       const eventRequest = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const error = ErrorTestDataBuilder.from()
-        .withDefaultData()
-        .build();
+      const error = ErrorTestDataBuilder.from().withDefaultData().build();
 
       actions$ = hot('-a', { a: new NewEventRequestedAction({ newEvent: eventRequest }) });
       const serviceError = cold('-#|', {}, error);
@@ -187,26 +185,22 @@ describe('Calendar Effects', () => {
   });
 
   describe('Event Creation Error effect', () => {
-    it('should map to Error Occured Action with default message', () => {
+    it('should map to Error Broadcast action with default message', () => {
       // given
-      const error = ErrorTestDataBuilder.from()
-        .withErrorObj({ status: 500 })
-        .build();
+      const error = ErrorTestDataBuilder.from().withErrorObj({ status: 500 }).build();
       const expectedError = { ...error, message: errors.DEFAULT_API_POST_ERROR_MESSAGE };
       actions$ = hot('-a', { a: new EventCreationErrorAction({ error }) });
-      const expected = hot('-b', { b: new ErrorOccuredAction({ error: expectedError }) });
+      const expected = hot('-b', { b: errorActions.handleError({ error: expectedError }) });
 
       // then
       expect(effects.eventCreationError$).toBeObservable(expected);
     });
 
-    it('should map to Error Occured Action with custom message', () => {
+    it('should map to Error Broadcast action with custom message', () => {
       // given
-      const error = ErrorTestDataBuilder.from()
-        .withDefaultData()
-        .build();
+      const error = ErrorTestDataBuilder.from().withDefaultData().build();
       actions$ = hot('-a', { a: new EventCreationErrorAction({ error }) });
-      const expected = hot('-b', { b: new ErrorOccuredAction({ error }) });
+      const expected = hot('-b', { b: errorActions.handleError({ error }) });
 
       // then
       expect(effects.eventCreationError$).toBeObservable(expected);
@@ -233,9 +227,7 @@ describe('Calendar Effects', () => {
     it('should return Event Update Error Action when updating fails', () => {
       // given
       const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const error = ErrorTestDataBuilder.from()
-        .withDefaultData()
-        .build();
+      const error = ErrorTestDataBuilder.from().withDefaultData().build();
 
       actions$ = hot('-a', { a: new UpdateEventRequestedAction({ event }) });
       const expected = cold('--(b|)', {
@@ -253,26 +245,22 @@ describe('Calendar Effects', () => {
   });
 
   describe('Event Update Error effect', () => {
-    it('should map to Event Occured Action with custom message', () => {
+    it('should map to Error Broadcast action with custom message', () => {
       // given
-      const error = ErrorTestDataBuilder.from()
-        .withDefaultData()
-        .build();
+      const error = ErrorTestDataBuilder.from().withDefaultData().build();
       actions$ = hot('-a', { a: new EventUpdateErrorAction({ error }) });
-      const expected = cold('-b', { b: new ErrorOccuredAction({ error }) });
+      const expected = cold('-b', { b: errorActions.handleError({ error }) });
 
       // when & then
       expect(effects.eventUpdateError$).toBeObservable(expected);
     });
 
-    it('should map to Event Occured Action with default message', () => {
+    it('should map to Error Broadcast action with default message', () => {
       // given
-      const error = ErrorTestDataBuilder.from()
-        .withErrorObj({ status: 503 })
-        .build();
+      const error = ErrorTestDataBuilder.from().withErrorObj({ status: 503 }).build();
       const expectedError = { ...error, message: errors.DEFAULT_API_PUT_ERROR_MESSAGE };
       actions$ = hot('-a', { a: new EventUpdateErrorAction({ error }) });
-      const expected = cold('-b', { b: new ErrorOccuredAction({ error: expectedError }) });
+      const expected = cold('-b', { b: errorActions.handleError({ error: expectedError }) });
 
       // when & then
       expect(effects.eventUpdateError$).toBeObservable(expected);
@@ -302,9 +290,7 @@ describe('Calendar Effects', () => {
     it('should map to Event Delete Error action ', () => {
       // given
       const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const error = ErrorTestDataBuilder.from()
-        .withDefaultData()
-        .build();
+      const error = ErrorTestDataBuilder.from().withDefaultData().build();
 
       const action = new EventDeleteRequestedAction({ id: event.id });
       actions$ = hot('--a', { a: action });
@@ -323,15 +309,13 @@ describe('Calendar Effects', () => {
   });
 
   describe('Event Delete Error effect', () => {
-    it('should map to Event Occured Action', () => {
+    it('should map to Error Broadcast action', () => {
       // given
-      const error = ErrorTestDataBuilder.from()
-        .withErrorObj({ status: 503 })
-        .build();
+      const error = ErrorTestDataBuilder.from().withErrorObj({ status: 503 }).build();
       const expectedError = { ...error, message: errors.DEFAULT_API_DELETE_ERROR_MESSAGE };
 
       actions$ = hot('-a', { a: new EventDeleteErrorAction({ error }) });
-      const expected = cold('-b', { b: new ErrorOccuredAction({ error: expectedError }) });
+      const expected = cold('-b', { b: errorActions.handleError({ error: expectedError }) });
 
       // when & then
       expect(effects.eventDeleteError$).toBeObservable(expected);

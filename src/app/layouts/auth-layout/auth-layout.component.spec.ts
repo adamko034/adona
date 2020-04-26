@@ -27,6 +27,7 @@ describe('Auth Layout Component', () => {
       { route: '/login', expected: 'Login' },
       { route: '/login/register', expected: 'Register' },
       { route: '/login/verifyEmail', expected: 'Email Verification' },
+      { route: '/login/emailVerified', expected: 'Email Verification' },
       { route: '/login/resetPassword', expected: 'Forgotten Password' },
       { route: '/login/changePassword', expected: 'Change Password' }
     ].forEach((input) => {

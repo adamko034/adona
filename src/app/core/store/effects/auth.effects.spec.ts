@@ -17,11 +17,11 @@ describe('Auth Effects', () => {
   const user = UserTestBuilder.withDefaultData().build();
   const firebaseUser = UserTestBuilder.withDefaultData().buildFirebaseUser();
 
-  const { navigationService, authService, userService } = SpiesBuilder.init()
-    .withAuthService()
-    .withNavigationService()
-    .withUserService()
-    .build();
+  const {
+    navigationService,
+    authService,
+    userService
+  } = SpiesBuilder.init().withAuthService().withNavigationService().withUserService().build();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -35,7 +35,7 @@ describe('Auth Effects', () => {
       ]
     });
 
-    effects = TestBed.get<AuthEffects>(AuthEffects);
+    effects = TestBed.inject<AuthEffects>(AuthEffects);
 
     authService.login.calls.reset();
     authService.getAuthState.calls.reset();

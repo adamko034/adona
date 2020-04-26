@@ -25,11 +25,10 @@ describe('Settings Account Component', () => {
 
   describe('On Init', () => {
     beforeEach(() => {
-      component.newName.setErrors(null);
       userFacade.selectUser.and.returnValue(cold('a', { a: null }));
     });
 
-    it('should subscribe for user and backend state', () => {
+    it('should subscribe for user', () => {
       component.ngOnInit();
 
       expect(userFacade.selectUser).toHaveBeenCalledTimes(1);
@@ -43,7 +42,7 @@ describe('Settings Account Component', () => {
         component.ngOnInit();
 
         expect(component.user).toEqual(user);
-        expect(component.newName.value).toEqual(user.name);
+        expect(component.form.get('newName').value).toEqual(user.name);
       });
     });
   });
@@ -56,23 +55,24 @@ describe('Settings Account Component', () => {
     });
   });
 
-  describe('On Name Changed', () => {
-    it('should update name when New Name control is valid', () => {
-      component.user = UserTestBuilder.withDefaultData().build();
-      component.newName.setValue('example');
+  describe('Update Name', () => {
+    it('should not update name if form is invalid', () => {
+      component.form.get('newName').setErrors({ test: { valid: false } });
 
-      component.onNameChanged();
-
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userFacade.updateName, 1, component.user.id, 'example');
-    });
-
-    it('should not update name when New Name control is invalid', () => {
-      component.user = UserTestBuilder.withDefaultData().build();
-      component.newName.setValue('  ');
-
-      component.onNameChanged();
+      component.udpateName();
 
       expect(userFacade.updateName).not.toHaveBeenCalled();
+    });
+
+    it('should update name', () => {
+      const user = UserTestBuilder.withDefaultData().build();
+      component.form.get('newName').setErrors(null);
+      component.form.get('newName').setValue('newUserName');
+      component.user = user;
+
+      component.udpateName();
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userFacade.updateName, 1, user.id, 'newUserName');
     });
   });
 });

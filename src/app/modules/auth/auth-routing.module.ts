@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthActionsComponent } from 'src/app/modules/auth/components/auth-actions/auth-actions.component';
 import { ChangePasswordComponent } from 'src/app/modules/auth/pages/change-password/change-password.component';
+import { EmailVerifiedComponent } from 'src/app/modules/auth/pages/email-verified/email-verified.component';
 import { LoginComponent } from 'src/app/modules/auth/pages/login/login.component';
 import { RegisterComponent } from 'src/app/modules/auth/pages/register/register.component';
 import { ResetPasswordComponent } from 'src/app/modules/auth/pages/reset-password/reset-password.component';
@@ -22,12 +24,20 @@ const routes: Routes = [
     canActivate: [UserEmailVerifiedGuard]
   },
   {
+    path: 'emailVerified',
+    component: EmailVerifiedComponent
+  },
+  {
     path: 'resetPassword',
     component: ResetPasswordComponent
   },
   {
     path: 'changePassword',
     component: ChangePasswordComponent
+  },
+  {
+    path: 'authActions',
+    component: AuthActionsComponent
   }
 ];
 

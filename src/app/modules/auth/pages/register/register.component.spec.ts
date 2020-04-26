@@ -1,6 +1,9 @@
 import { of } from 'rxjs';
+import { apiRequestIds } from 'src/app/core/api-requests/constants/api-request-ids.contants';
+import { firebaseAuthErrorCodes } from 'src/app/core/api-requests/constants/firebase-errors.constants';
+import { ApiRequestStatusBuilder } from 'src/app/core/api-requests/models/api-request-status/api-request-status.builder';
 import { CredentialsBuilder } from 'src/app/core/auth/model/builder/credentials.builder';
-import { registrationErrorCodes } from 'src/app/modules/auth/constants/registration-error-messages.constants';
+import { authErrorMessages } from 'src/app/modules/auth/constants/auth-error-messages.constants';
 import { RegisterComponent } from 'src/app/modules/auth/pages/register/register.component';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
@@ -9,82 +12,116 @@ describe('Register Component', () => {
   let component: RegisterComponent;
 
   const {
-    registrationFacade,
-    navigationService,
+    registerFacade,
+    apiRequestsFacade,
     unsubscriberService
-  } = SpiesBuilder.init().withRegistrationFacade().withUnsubscriberService().withNavigationService().build();
+  } = SpiesBuilder.init().withRegisterFacade().withUnsubscriberService().withApiRequestsFacade().build();
 
   beforeEach(() => {
-    component = new RegisterComponent(registrationFacade, navigationService, unsubscriberService);
-
-    registrationFacade.selectRegistrationError.calls.reset();
-    registrationFacade.clearRegistrationErrors.calls.reset();
+    component = new RegisterComponent(registerFacade, apiRequestsFacade, unsubscriberService);
   });
 
   describe('Constructor', () => {
     it('should set default values', () => {
       expect(unsubscriberService.create).toHaveBeenCalled();
-      JasmineCustomMatchers.toBeFalsy(component.errorMessage, component.showSpinner);
-
       expect(component.form.value).toEqual({ email: '', password: '', confirmPassword: '' });
     });
   });
 
   describe('On Init', () => {
     beforeEach(() => {
-      component.showSpinner = true;
+      apiRequestsFacade.selectApiRequest.calls.reset();
     });
 
     describe('Register Error Subscription', () => {
-      it('should handle null error', () => {
-        component.errorMessage = 'test';
-        registrationFacade.selectRegistrationError.and.returnValue(of(null));
+      [
+        ApiRequestStatusBuilder.start('1'),
+        ApiRequestStatusBuilder.success('1'),
+        null,
+        undefined,
+        ApiRequestStatusBuilder.fail('1', null)
+      ].forEach((requestStatus) => {
+        it(`should unset error message if reqeust status is: ${JSON.stringify(requestStatus)}`, () => {
+          component.errorMessage = 'test';
+          apiRequestsFacade.selectApiRequest.and.returnValue(of(requestStatus));
 
-        component.ngOnInit();
+          component.ngOnInit();
 
-        expect(registrationFacade.selectRegistrationError).toHaveBeenCalledTimes(1);
-        expect(component.showSpinner).toEqual(false);
-        expect(component.errorMessage).toEqual(null);
+          JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+            apiRequestsFacade.selectApiRequest,
+            1,
+            apiRequestIds.register
+          );
+          expect(component.apiRequestStatus).toEqual(requestStatus);
+          expect(component.errorMessage).toEqual('');
+        });
       });
 
       it('should handle unkown error', () => {
-        registrationFacade.selectRegistrationError.and.returnValue(
-          of({ code: registrationErrorCodes.unknown, message: 'unkown error' })
-        );
+        component.errorMessage = 'test';
+        apiRequestsFacade.selectApiRequest.and.returnValue(of(ApiRequestStatusBuilder.fail('1', 'unkownError')));
 
         component.ngOnInit();
 
-        expect(registrationFacade.selectRegistrationError).toHaveBeenCalledTimes(1);
-        expect(component.showSpinner).toEqual(false);
-        expect(component.errorMessage).toEqual('unkown error');
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.selectApiRequest, 1, apiRequestIds.register);
+        expect(component.apiRequestStatus).toEqual(ApiRequestStatusBuilder.fail('1', 'unkownError'));
+        expect(component.errorMessage).toBeFalsy();
       });
 
-      it('should handle Email Exists error', () => {
-        registrationFacade.selectRegistrationError.and.returnValue(
-          of({ code: registrationErrorCodes.emailExists, message: 'email {1} exists' })
+      it('should handle network error', () => {
+        component.errorMessage = 'test';
+        apiRequestsFacade.selectApiRequest.and.returnValue(
+          of(ApiRequestStatusBuilder.fail('1', firebaseAuthErrorCodes.networkFailure))
         );
-        component.form.get('email').setErrors(null);
-        component.form.get('email').setValue('exampleUser@email');
 
         component.ngOnInit();
 
-        expect(registrationFacade.selectRegistrationError).toHaveBeenCalledTimes(1);
-        expect(component.showSpinner).toEqual(false);
-        expect(component.errorMessage).toEqual('email exampleUser@email exists');
-        expect(component.form.get('email').hasError(registrationErrorCodes.emailExists));
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.selectApiRequest, 1, apiRequestIds.register);
+        expect(component.apiRequestStatus).toEqual(
+          ApiRequestStatusBuilder.fail('1', firebaseAuthErrorCodes.networkFailure)
+        );
+        expect(component.errorMessage).toEqual(authErrorMessages[firebaseAuthErrorCodes.networkFailure]);
       });
 
-      it('should handle Passwords Do Not Match error', () => {
-        registrationFacade.selectRegistrationError.and.returnValue(
-          of({ code: registrationErrorCodes.passwordsDoNotMatch, message: 'passwords do not match' })
-        );
-        component.form.get('confirmPassword').setErrors(null);
-        component.ngOnInit();
+      [firebaseAuthErrorCodes.emailAlreadyInUse, firebaseAuthErrorCodes.invalidEmail].forEach((errorCode) => {
+        it(`should handle ${errorCode} error`, () => {
+          component.errorMessage = 'test';
+          apiRequestsFacade.selectApiRequest.and.returnValue(of(ApiRequestStatusBuilder.fail('1', errorCode)));
+          component.form.get('email').setValue('user@example.com');
+          const expectedErrorMessage = authErrorMessages[errorCode].replace('{1}', 'user@example.com');
 
-        expect(registrationFacade.selectRegistrationError).toHaveBeenCalledTimes(1);
-        expect(component.showSpinner).toEqual(false);
-        expect(component.errorMessage).toEqual('passwords do not match');
-        expect(component.form.get('confirmPassword').hasError(registrationErrorCodes.passwordsDoNotMatch));
+          component.ngOnInit();
+
+          JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+            apiRequestsFacade.selectApiRequest,
+            1,
+            apiRequestIds.register
+          );
+          expect(component.apiRequestStatus).toEqual(ApiRequestStatusBuilder.fail('1', errorCode));
+          expect(component.errorMessage).toEqual(expectedErrorMessage);
+          expect(component.form.get('email').hasError('backend'));
+        });
+
+        it('should handle weak password error', () => {
+          component.errorMessage = 'test';
+          apiRequestsFacade.selectApiRequest.and.returnValue(
+            of(ApiRequestStatusBuilder.fail('1', firebaseAuthErrorCodes.weakPassword))
+          );
+          component.form.get('password').setValue('test1');
+
+          component.ngOnInit();
+
+          JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+            apiRequestsFacade.selectApiRequest,
+            1,
+            apiRequestIds.register
+          );
+          expect(component.apiRequestStatus).toEqual(
+            ApiRequestStatusBuilder.fail('1', firebaseAuthErrorCodes.weakPassword)
+          );
+          expect(component.errorMessage).toEqual(authErrorMessages[firebaseAuthErrorCodes.weakPassword]);
+          expect(component.form.get('password').hasError('backend'));
+        });
       });
     });
   });
@@ -99,73 +136,30 @@ describe('Register Component', () => {
 
   describe('Register', () => {
     beforeEach(() => {
-      registrationFacade.register.calls.reset();
-      registrationFacade.pushFormInvalidError.calls.reset();
-      registrationFacade.pushPasswordsDoNotMatchError.calls.reset();
-      navigationService.toVerifyEmail.calls.reset();
-
-      component.showSpinner = false;
-      component.form.setErrors(null);
+      registerFacade.register.calls.reset();
     });
 
-    it('should push Invalid Form error and not register the user', () => {
-      component.form.setErrors({ testError: { valid: false } });
+    it('should not register if form is not valid', () => {
+      component.form.get('email').setErrors({ email: { valid: false } });
 
       component.register();
 
-      expect(registrationFacade.clearRegistrationErrors).toHaveBeenCalledTimes(1);
-      expect(registrationFacade.pushFormInvalidError).toHaveBeenCalledTimes(1);
-      expect(registrationFacade.register).not.toHaveBeenCalled();
-      expect(component.showSpinner).toBeFalse();
+      expect(registerFacade.register).not.toHaveBeenCalled();
     });
 
-    it('should push Passwords Do Not Match error and not register the user', () => {
-      component.form.get('password').setValue('test');
-      component.form.get('confirmPassword').setValue('test2');
-      component.form.get('email').setValue('example@example.com');
+    it('should register', () => {
+      component.form.get('email').setErrors(null);
+      component.form.get('email').setValue('user@example.com');
+      component.form.get('password').setValue('pass1');
+      component.form.get('confirmPassword').setValue('pass1');
 
       component.register();
 
-      expect(registrationFacade.clearRegistrationErrors).toHaveBeenCalledTimes(1);
-      expect(registrationFacade.pushPasswordsDoNotMatchError).toHaveBeenCalledTimes(1);
-      expect(registrationFacade.register).not.toHaveBeenCalled();
-      expect(component.showSpinner).toBeFalse();
-    });
-
-    it('should do nothing if registration has failed', () => {
-      component.form.get('password').setValue('test');
-      component.form.get('confirmPassword').setValue('test');
-      component.form.get('email').setValue('example@example.com');
-
-      registrationFacade.register.and.returnValue(of(false));
-
-      component.register();
-
-      expect(component.showSpinner).toEqual(true);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(
-        registrationFacade.register,
+        registerFacade.register,
         1,
-        CredentialsBuilder.from('example@example.com', 'test').build()
+        CredentialsBuilder.from('user@example.com', 'pass1').build()
       );
-      expect(navigationService.toVerifyEmail).not.toHaveBeenCalled();
-    });
-
-    it('should register user and navigate to Email Verify page', () => {
-      component.form.get('password').setValue('test');
-      component.form.get('confirmPassword').setValue('test');
-      component.form.get('email').setValue('example@example.com');
-
-      registrationFacade.register.and.returnValue(of(true));
-
-      component.register();
-
-      expect(component.showSpinner).toEqual(false);
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(
-        registrationFacade.register,
-        1,
-        CredentialsBuilder.from('example@example.com', 'test').build()
-      );
-      expect(navigationService.toVerifyEmail).toHaveBeenCalledTimes(1);
     });
   });
 });

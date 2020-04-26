@@ -16,7 +16,7 @@
     ></app-new-password>
 
     <button
-      *ngIf="!showSpinner"
+      *ngIf="!apiRequestStatus?.started"
       [disabled]="form.invalid"
       type="submit"
       class="form-button register-button"
@@ -27,11 +27,11 @@
       Register
     </button>
 
-    <div class="form-spinner" *ngIf="showSpinner" fxLayout="row" fxLayoutAlign="center center">
+    <div class="form-spinner" *ngIf="apiRequestStatus?.started" fxLayout="row" fxLayoutAlign="center center">
       <mat-progress-spinner [diameter]="40" mode="indeterminate"></mat-progress-spinner>
     </div>
 
-    <div class="form-error" *ngIf="errorMessage">
+    <div class="form-error" *ngIf="apiRequestStatus?.failed && apiRequestStatus?.errorCode">
       {{ errorMessage }}
     </div>
   </form>

@@ -22,7 +22,7 @@ export class AuthEffects {
   public logIn$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(authActions.login),
-      map(action => action.credentials),
+      map((action) => action.credentials),
       switchMap((credentials: Credentials) =>
         this.authService.login(credentials).pipe(
           switchMap(({ user }) => {
@@ -35,11 +35,7 @@ export class AuthEffects {
 
             return authActions.loginSuccess({ user });
           }),
-          catchError(err => {
-            console.log(err);
-
-            return of(authActions.loginFailed());
-          })
+          catchError(() => of(authActions.loginFailed()))
         )
       )
     );

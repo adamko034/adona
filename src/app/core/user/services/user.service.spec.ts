@@ -11,10 +11,7 @@ import { UserService } from './user.service';
 describe('User Service', () => {
   let service: UserService;
 
-  const { angularFirestore, timeService } = SpiesBuilder.init()
-    .withAngularFirestore()
-    .withTimeService()
-    .build();
+  const { angularFirestore, timeService } = SpiesBuilder.init().withAngularFirestore().withTimeService().build();
 
   beforeEach(() => {
     service = new UserService(angularFirestore, timeService);
@@ -81,16 +78,11 @@ describe('User Service', () => {
 
   describe('Change Team', () => {
     beforeEach(() => {
-      angularFirestore
-        .collection()
-        .doc()
-        .update.calls.reset();
+      angularFirestore.collection().doc().update.calls.reset();
     });
 
     it('should set Selected Team Id field and Updated of this team', () => {
-      const yestarday = DateTestBuilder.now()
-        .addDays(-1)
-        .build();
+      const yestarday = DateTestBuilder.now().addDays(-1).build();
       const now = DateTestBuilder.now().build();
       const userTeams = [
         UserTeamBuilder.from('123', 'name 1', yestarday).build(),
@@ -109,18 +101,14 @@ describe('User Service', () => {
         .withUserTeams(userTeams)
         .build();
 
-      angularFirestore
-        .collection()
-        .doc()
-        .update.and.returnValue(Promise.resolve());
+      angularFirestore.collection().doc().update.and.returnValue(Promise.resolve());
       angularFirestore.collection().doc.calls.reset();
       angularFirestore.collection.calls.reset();
 
       const request: ChangeTeamRequest = { teamId: chosenTeam.id, updated: now, user };
 
-      const result = service.changeTeam(request);
+      service.changeTeam(request).subscribe();
 
-      result.subscribe(actual => expect(actual).toEqual(request));
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection, 1, 'users');
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc, 1, user.id);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc().update, 1, {
@@ -131,12 +119,9 @@ describe('User Service', () => {
   });
 
   describe('Create User', () => {
-    it('should call firebase and create new record', done => {
+    it('should call firebase and create new record', (done) => {
       const user = UserTestBuilder.withDefaultData().build();
-      angularFirestore
-        .collection()
-        .doc()
-        .set.and.returnValue(Promise.resolve());
+      angularFirestore.collection().doc().set.and.returnValue(Promise.resolve());
       angularFirestore.collection().doc.calls.reset();
       angularFirestore.collection.calls.reset();
 
@@ -155,18 +140,12 @@ describe('User Service', () => {
       const id = '1';
       const newName = 'example';
 
-      angularFirestore
-        .collection()
-        .doc()
-        .update.and.returnValue(Promise.resolve());
-      angularFirestore
-        .collection()
-        .doc()
-        .update.calls.reset();
+      angularFirestore.collection().doc().update.and.returnValue(Promise.resolve());
+      angularFirestore.collection().doc().update.calls.reset();
       angularFirestore.collection().doc.calls.reset();
       angularFirestore.collection.calls.reset();
 
-      service.updateName(id, newName).subscribe(name => expect(name).toEqual(newName));
+      service.updateName(id, newName).subscribe((name) => expect(name).toEqual(newName));
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection, 1, 'users');
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc, 1, '1');
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc().update, 1, { name: newName });

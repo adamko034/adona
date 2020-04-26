@@ -98,4 +98,14 @@ describe('NavigationService', () => {
     // then
     expect(routerMock.navigate).toHaveBeenCalledWith([homeRoute]);
   });
+
+  it('should navigate to Reset Password page', () => {
+    navigationService.toResetPassword('123');
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/login/changePassword'], { queryParams: { oobCode: '123' } });
+  });
+
+  it('should navigate to Email Verified page', () => {
+    navigationService.toEmailVerified('123');
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/login/emailVerified'], { queryParams: { oobCode: '123' } });
+  });
 });

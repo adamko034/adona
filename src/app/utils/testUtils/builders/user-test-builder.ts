@@ -70,7 +70,7 @@ export class UserTestBuilder {
     }
 
     if (!!userTeams) {
-      userTeams.forEach(team => this.user.teams.push(team));
+      userTeams.forEach((team) => this.user.teams.push(team));
     }
 
     return this;
