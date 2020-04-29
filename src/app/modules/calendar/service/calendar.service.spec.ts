@@ -31,7 +31,7 @@ describe('Calendar Service', () => {
   describe('Add Event', () => {
     it('should add event and returned observable with event with new id', fakeAsync(() => {
       // given
-      const newEvent = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const newEvent = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
 
       const newId = 'new id';
       const expectedNewEvent = { ...newEvent, id: newId };
@@ -43,7 +43,7 @@ describe('Calendar Service', () => {
       flush();
 
       // then
-      actual.subscribe(res => {
+      actual.subscribe((res) => {
         expect(res).toEqual(expectedNewEvent);
       });
       expect(firestore.collection).toHaveBeenCalledWith('/events');
@@ -55,7 +55,7 @@ describe('Calendar Service', () => {
   describe('Update Event', () => {
     it('should update event', fakeAsync(() => {
       // given
-      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
 
       firestore.collection().doc.and.returnValue({
         update: jasmine.createSpy('update').and.returnValue(Promise.resolve(event))
@@ -66,7 +66,7 @@ describe('Calendar Service', () => {
       flush();
 
       // then
-      actual.subscribe(res => {
+      actual.subscribe((res) => {
         expect(res).toEqual(event);
       });
       expect(firestore.collection).toHaveBeenCalledWith('/events');
@@ -78,7 +78,7 @@ describe('Calendar Service', () => {
   describe('Delete Event', () => {
     it('should delete event', fakeAsync(() => {
       // given
-      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
       firestore.collection().doc.and.returnValue({
         delete: jasmine.createSpy('delete').and.returnValue(Promise.resolve())
       });
@@ -88,9 +88,7 @@ describe('Calendar Service', () => {
       flush();
 
       // then
-      result.subscribe(resData => {
-        expect(resData).toEqual(event.id);
-      });
+      result.subscribe();
       expect(firestore.collection).toHaveBeenCalledWith('/events');
       expect(firestore.collection().doc).toHaveBeenCalledWith(event.id);
       expect(firestore.collection().doc().delete).toHaveBeenCalledTimes(1);
@@ -107,14 +105,11 @@ describe('Calendar Service', () => {
       timeService.Extraction.getStartOfMonth.and.returnValue(startOfMonth);
       timeService.Extraction.getStartOfMonth.and.returnValue(endOfMonth);
 
-      const firebaseEvents = new EventsTestDataBuilder()
+      const firebaseEvents = EventsTestDataBuilder.from()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .buildFirebaseEvents();
-      const events = new EventsTestDataBuilder()
-        .addOneWithDefaultData()
-        .addOneWithDefaultData()
-        .buildEvents();
+      const events = EventsTestDataBuilder.from().addOneWithDefaultData().addOneWithDefaultData().buildEvents();
 
       firestore.collection().valueChanges.and.returnValue(of(firebaseEvents));
       mapper.Event.fromFirebaseEvents.and.returnValue(events);
@@ -130,7 +125,7 @@ describe('Calendar Service', () => {
       expect(firestore.collection().valueChanges).toHaveBeenCalledTimes(1);
       expect(firestore.collection().valueChanges).toHaveBeenCalledWith({ idField: 'id' });
 
-      actual.subscribe(res => {
+      actual.subscribe((res) => {
         expect(mapper.Event.fromFirebaseEvents).toHaveBeenCalledTimes(1);
         expect(mapper.Event.fromFirebaseEvents).toHaveBeenCalledWith(firebaseEvents);
         expect(res).toEqual(events);

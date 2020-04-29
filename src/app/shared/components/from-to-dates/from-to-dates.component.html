@@ -4,8 +4,14 @@
   <div fxLayout fxLayoutGap="20px">
     <div>
       <mat-form-field class="date-picker">
-        <input matInput name="startDate" placeholder="Start date" [matDatepicker]="startDatePicker" [(ngModel)]="startDate"
-          (dateChange)="adjustValuesAndEmit()" />
+        <input
+          matInput
+          name="startDate"
+          placeholder="Start date"
+          [matDatepicker]="startDatePicker"
+          [(ngModel)]="startDate"
+          (dateChange)="startDateChanged(); adjustValuesAndEmit()"
+        />
         <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
         <mat-datepicker touchUi #startDatePicker></mat-datepicker>
       </mat-form-field>

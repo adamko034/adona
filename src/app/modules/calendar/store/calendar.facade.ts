@@ -5,17 +5,10 @@ import * as lodash from 'lodash';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Event } from 'src/app/modules/calendar/model/event.model';
+import { calendarActions } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
 import { CalendarMapper } from '../mappers/calendar.mapper';
 import { AdonaCalendarView } from '../model/adona-calendar-view.model';
-import {
-  CalendarViewChangedAction,
-  CalendarViewDateChangedAction,
-  EventDeleteRequestedAction,
-  MonthEventsRequestedAction,
-  NewEventRequestedAction,
-  UpdateEventRequestedAction
-} from './actions/calendar.actions';
 import { CalendarState } from './reducers/calendar.reducer';
 
 @Injectable()
@@ -26,7 +19,7 @@ export class CalendarFacade {
     return this.store.pipe(
       select(calendarQueries.selectEvents),
       map((events: Event[]) => this.mapper.CalendarEvent.fromEvents(events)),
-      map(events => lodash.sortBy(events, ['start', 'end', 'title']))
+      map((events) => lodash.sortBy(events, ['start', 'end', 'title']))
     );
   }
 
@@ -38,31 +31,31 @@ export class CalendarFacade {
     return this.store.pipe(select(calendarQueries.selectViewDate));
   }
 
-  public selectMonthsLoaded(): Observable<string[]> {
+  public selectMonthsLoaded(): Observable<Date[]> {
     return this.store.pipe(select(calendarQueries.selectMonthsLoaded));
   }
 
   public addEvent(event: Event): void {
-    this.store.dispatch(new NewEventRequestedAction({ newEvent: event }));
+    this.store.dispatch(calendarActions.event.addEventRequest({ event }));
   }
 
   public updateEvent(event: Event): void {
-    this.store.dispatch(new UpdateEventRequestedAction({ event }));
+    this.store.dispatch(calendarActions.event.updateEventRequest({ event }));
   }
 
   public loadMonthEvents(date: Date): void {
-    this.store.dispatch(new MonthEventsRequestedAction({ date }));
+    this.store.dispatch(calendarActions.events.loadMonthEventsRequest({ date }));
   }
 
   public deleteEvent(event: Event) {
-    this.store.dispatch(new EventDeleteRequestedAction({ id: event.id }));
+    this.store.dispatch(calendarActions.event.deleteEventRequest({ id: event.id }));
   }
 
   public changeViewDate(newDate: Date) {
-    this.store.dispatch(new CalendarViewDateChangedAction({ newDate }));
+    this.store.dispatch(calendarActions.ui.viewDateChange({ date: newDate }));
   }
 
   public changeView(newView: AdonaCalendarView) {
-    this.store.dispatch(new CalendarViewChangedAction({ newView }));
+    this.store.dispatch(calendarActions.ui.viewChange({ view: newView }));
   }
 }

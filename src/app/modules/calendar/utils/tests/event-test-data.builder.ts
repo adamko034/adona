@@ -3,16 +3,22 @@ import * as moment from 'moment';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 
 export class EventsTestDataBuilder {
-  private events: Event[] = [];
+  private events: Event[];
+
+  private constructor() {
+    this.events = [];
+  }
+
+  public static from(): EventsTestDataBuilder {
+    return new EventsTestDataBuilder();
+  }
 
   public addOneWithDefaultData(): EventsTestDataBuilder {
     this.events.push({
       id: this.events.length.toString(),
       title: 'Test Event' + this.events.length.toString(),
       start: new Date(),
-      end: moment()
-        .add(1, 'h')
-        .toDate(),
+      end: moment().add(1, 'h').toDate(),
       allDay: false
     });
 

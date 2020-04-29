@@ -8,12 +8,8 @@ import { DialogService } from './dialog.service';
 
 describe('Calendar Event Dialog Service', () => {
   const matDialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']);
-  const { deviceDetectorService } = SpiesBuilder.init()
-    .withDeviceDetectorService()
-    .build();
-  const dialogResult = DialogResultTestDataBuilder.init()
-    .withCancelResult()
-    .build();
+  const { deviceDetectorService } = SpiesBuilder.init().withDeviceDetectorService().build();
+  const dialogResult = DialogResultTestDataBuilder.init().withCancelResult().build();
 
   let service: DialogService;
   let expectedResult;
@@ -36,7 +32,7 @@ describe('Calendar Event Dialog Service', () => {
       component: NewEventDialogComponent,
       dialogProps: {
         width: '100px',
-        data: { event: new EventsTestDataBuilder().addOneWithDefaultData().buildCalendarEvents()[0] }
+        data: { event: EventsTestDataBuilder.from().addOneWithDefaultData().buildCalendarEvents()[0] }
       }
     };
 

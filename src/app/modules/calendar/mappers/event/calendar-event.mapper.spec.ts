@@ -13,7 +13,7 @@ describe('Calendar Event Mapper', () => {
 
   it('should map from event', () => {
     // given
-    const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+    const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
     const expected: CalendarEvent = toCalendarEvent(event);
 
     // when
@@ -25,10 +25,7 @@ describe('Calendar Event Mapper', () => {
 
   it('should map from events', () => {
     // given
-    const events = new EventsTestDataBuilder()
-      .addOneWithDefaultData()
-      .addOneWithDefaultData()
-      .buildEvents();
+    const events = EventsTestDataBuilder.from().addOneWithDefaultData().addOneWithDefaultData().buildEvents();
 
     const expected = [];
     events.forEach((event: Event) => {

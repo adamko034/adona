@@ -21,6 +21,11 @@ export class DateTestBuilder {
     return this;
   }
 
+  public addMonth(amount: number): DateTestBuilder {
+    this.date.add(amount, 'months');
+    return this;
+  }
+
   public build(): Date {
     return this.date.toDate();
   }

@@ -1,16 +1,10 @@
 import { CalendarView } from 'angular-calendar';
 import * as moment from 'moment';
-import {
-  CalendarViewChangedAction,
-  CalendarViewDateChangedAction,
-  EventDeleteSuccessAction,
-  EventsLoadedAction,
-  EventUpdatedAction,
-  NewEventAddedAction
-} from 'src/app/modules/calendar/store/actions/calendar.actions';
-import { calendarReducer, CalendarState } from 'src/app/modules/calendar/store/reducers/calendar.reducer';
+import { calendarActions } from 'src/app/modules/calendar/store/actions/calendar.actions';
+import { CalendarState, reducer } from 'src/app/modules/calendar/store/reducers/calendar.reducer';
 import { CalendarStateTestDataBuilder } from 'src/app/modules/calendar/utils/tests/calendar-state-test-data.builder';
 import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
+import { DateTestBuilder } from 'src/app/utils/testUtils/builders/date-test.builder';
 
 describe('Calendar Reducer', () => {
   describe('Initial state', () => {
@@ -18,10 +12,10 @@ describe('Calendar Reducer', () => {
       // given
       const date = new Date();
       const action = {} as any;
-      const expected: CalendarState = new CalendarStateTestDataBuilder().build();
+      const expected: CalendarState = CalendarStateTestDataBuilder.fromDefaults().build();
 
       // when
-      const result = calendarReducer(undefined, action);
+      const result = reducer(undefined, action);
 
       // then
       expect({ ...result, viewDate: date }).toEqual({ ...expected, viewDate: date });
@@ -32,43 +26,45 @@ describe('Calendar Reducer', () => {
       // given
       const date = new Date();
       const action = {} as any;
-      const events = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents();
-      const previousState = new CalendarStateTestDataBuilder()
+      const events = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents();
+      const previousState = CalendarStateTestDataBuilder.fromDefaults()
         .withEvents(events)
-        .withMonthsLoaded(['201901'])
+        .withMonthsLoaded([DateTestBuilder.now().build()])
         .build();
 
       // when
-      const result = calendarReducer(previousState, action);
+      const result = reducer(previousState, action);
 
       // expect
       expect({ ...result, viewDate: date }).toEqual({ ...previousState, viewDate: date });
     });
   });
 
-  describe('Events Loaded', () => {
-    it('should return new state on all events loaded action', () => {
-      // given
-      const events = new EventsTestDataBuilder()
+  describe('On Load Month Events Success', () => {
+    it('should return new state with events', () => {
+      const dateNow = DateTestBuilder.now().build();
+      const dateMonthAgo = DateTestBuilder.now().addMonth(-1).build();
+
+      const events = EventsTestDataBuilder.from()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .buildEvents();
 
-      const previousState = new CalendarStateTestDataBuilder()
+      const previousState = CalendarStateTestDataBuilder.fromDefaults()
         .withEvents(events.slice(0, 2))
-        .withMonthsLoaded(['201901'])
+        .withMonthsLoaded([dateNow])
         .build();
-      const expectedState = new CalendarStateTestDataBuilder()
+      const expectedState = CalendarStateTestDataBuilder.fromDefaults()
         .withEvents(events)
-        .withMonthsLoaded(['201901', '201902'])
+        .withMonthsLoaded([dateNow, dateMonthAgo])
         .build();
 
-      const action = new EventsLoadedAction({ events, yearMonth: '201902' });
-
-      // when
-      const result = calendarReducer(previousState, action);
+      const result = reducer(
+        previousState,
+        calendarActions.events.loadMonthEventsSuccess({ events, date: dateMonthAgo })
+      );
 
       // then
       expect(result.ids).toEqual(expectedState.ids);
@@ -77,69 +73,59 @@ describe('Calendar Reducer', () => {
     });
   });
 
-  describe('New Event Added', () => {
+  describe('On Add Event Success', () => {
     it('should add event to empty state', () => {
-      // given
-      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
-      const action = new NewEventAddedAction({ event });
-      const expectedState = new CalendarStateTestDataBuilder().withEvents([event]).build();
+      const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
+      const expectedState = CalendarStateTestDataBuilder.fromDefaults().withEvents([event]).build();
 
-      // when
-      const result = calendarReducer(undefined, action);
+      const result = reducer(undefined, calendarActions.event.addEventSuccess({ event }));
 
-      // then
       expect(result.ids).toEqual(expectedState.ids);
       expect(result.entities).toEqual(expectedState.entities);
       expect(result.monthsLoaded).toEqual(expectedState.monthsLoaded);
     });
 
     it('should add event to previous state', () => {
-      // given
-      const events = new EventsTestDataBuilder()
+      const events = EventsTestDataBuilder.from()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .buildEvents();
-      const action = new NewEventAddedAction({ event: events[3] });
-      const previousState = new CalendarStateTestDataBuilder().withEvents(events.slice(0, 3)).build();
-      const expectedState = new CalendarStateTestDataBuilder().withEvents(events).build();
 
-      // when
-      const result = calendarReducer(previousState, action);
+      const previousState = CalendarStateTestDataBuilder.fromDefaults().withEvents(events.slice(0, 3)).build();
+      const expectedState = CalendarStateTestDataBuilder.fromDefaults().withEvents(events).build();
 
-      // then
+      const result = reducer(previousState, calendarActions.event.addEventSuccess({ event: events[3] }));
+
       expect(result.ids).toEqual(expectedState.ids);
       expect(result.entities).toEqual(expectedState.entities);
       expect(result.monthsLoaded).toEqual(expectedState.monthsLoaded);
     });
   });
 
-  describe('Event Updated', () => {
+  describe('On Update Event Success', () => {
     it('should update event', () => {
-      // given
-      const events = new EventsTestDataBuilder()
+      const events = EventsTestDataBuilder.from()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .buildEvents();
+
       const eventUpdate = {
         id: events[3].id,
         changes: { ...events[3], title: 'this is new updated title' }
       };
-      const action = new EventUpdatedAction({ eventUpdate });
-      const previousState = new CalendarStateTestDataBuilder().withEvents(events).build();
+      const previousState = CalendarStateTestDataBuilder.fromDefaults().withEvents(events).build();
 
       const expectedEvents = [...events];
       expectedEvents[3].title = 'this is new updated title';
 
-      const expectedState = new CalendarStateTestDataBuilder().withEvents(expectedEvents).build();
+      const expectedState = CalendarStateTestDataBuilder.fromDefaults().withEvents(expectedEvents).build();
 
-      // when
-      const result = calendarReducer(previousState, action);
+      const result = reducer(previousState, calendarActions.event.updateEventSuccess({ eventUpdate }));
 
-      // then
       expect(result.ids).toEqual(expectedState.ids);
       expect(result.entities).toEqual(expectedState.entities);
       expect(result.monthsLoaded).toEqual(expectedState.monthsLoaded);
@@ -148,55 +134,42 @@ describe('Calendar Reducer', () => {
 
   describe('Event Deleted', () => {
     it('should delete event', () => {
-      // given
-      const events = new EventsTestDataBuilder()
+      const events = EventsTestDataBuilder.from()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .buildEvents();
+
       const eventToDelete = events[2];
-      const action = new EventDeleteSuccessAction({ id: eventToDelete.id });
-      const previousState = new CalendarStateTestDataBuilder().withEvents(events).build();
+      const previousState = CalendarStateTestDataBuilder.fromDefaults().withEvents(events).build();
 
-      const expectedEvents = events.filter(e => e.id !== eventToDelete.id);
-      const expectedState = new CalendarStateTestDataBuilder().withEvents(expectedEvents).build();
+      const expectedEvents = events.filter((e) => e.id !== eventToDelete.id);
+      const expectedState = CalendarStateTestDataBuilder.fromDefaults().withEvents(expectedEvents).build();
 
-      // when
-      const result = calendarReducer(previousState, action);
+      const result = reducer(previousState, calendarActions.event.deleteEventSuccess({ id: eventToDelete.id }));
 
-      // then
       expect(result.ids).toEqual(expectedState.ids);
       expect(result.entities).toEqual(expectedState.entities);
       expect(result.monthsLoaded).toEqual(expectedState.monthsLoaded);
     });
   });
 
-  describe('View Date Changed', () => {
-    it('should change view date', () => {
-      // given
-      const newDate = new Date(2020, 2, 12);
-      const previousState = new CalendarStateTestDataBuilder().build();
+  it('on View Date Change', () => {
+    const newDate = new Date(2020, 2, 20);
+    const currentState = CalendarStateTestDataBuilder.fromDefaults().build();
+    const expectedState = { ...currentState, viewDate: newDate };
 
-      // when
-      const result = calendarReducer(previousState, new CalendarViewDateChangedAction({ newDate }));
-
-      // then
-      expect(result.viewDate).toEqual(newDate);
-    });
+    expect(reducer(currentState, calendarActions.ui.viewDateChange({ date: newDate }))).toEqual(expectedState);
   });
 
-  describe('View Changed', () => {
-    it('should change view', () => {
-      // given
-      const newView = { isList: false, calendarView: CalendarView.Day };
-      const previousState = new CalendarStateTestDataBuilder().build();
+  it('on View Change', () => {
+    const newView = { isList: false, calendarView: CalendarView.Day };
+    const previousState = CalendarStateTestDataBuilder.fromDefaults().build();
 
-      // when
-      const result = calendarReducer(previousState, new CalendarViewChangedAction({ newView }));
-
-      // then
-      expect(result.view).toEqual(newView);
+    expect(reducer(previousState, calendarActions.ui.viewChange({ view: newView }))).toEqual({
+      ...previousState,
+      view: newView
     });
   });
 });
