@@ -14,8 +14,7 @@ import { Event } from '../../../model/event.model';
   styleUrls: ['./new-event-dialog.component.scss']
 })
 export class NewEventDialogComponent {
-  private editMode = false;
-
+  public editMode = false;
   public form: FormGroup = new FormGroup(
     {
       id: new FormControl(''),
@@ -28,13 +27,13 @@ export class NewEventDialogComponent {
   );
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { event: CalendarEvent },
+    @Inject(MAT_DIALOG_DATA) public event: CalendarEvent,
     private dialogRef: MatDialogRef<NewEventDialogComponent>
   ) {
-    if (this.data && this.data.event) {
+    if (this.event && this.event) {
       this.editMode = true;
 
-      const { title, start, end, allDay, id } = this.data.event;
+      const { title, start, end, allDay, id } = this.event;
       this.form.setValue({ id, title, allDay, start, end });
     }
   }
@@ -72,14 +71,14 @@ export class NewEventDialogComponent {
   }
 
   public getInitialAllDayFlag(): boolean {
-    return this.editMode ? this.data.event.allDay : false;
+    return this.editMode ? this.event.allDay : false;
   }
 
   public getInitialStartDate(): Date {
-    return this.editMode ? this.data.event.start : null;
+    return this.editMode ? this.event.start : null;
   }
 
   public getInitialEndDate(): Date {
-    return this.editMode ? this.data.event.end : null;
+    return this.editMode ? this.event.end : null;
   }
 }

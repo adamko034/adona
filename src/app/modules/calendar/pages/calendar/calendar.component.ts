@@ -42,7 +42,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.viewDateSubsciption = this.facade.selectViewDate().subscribe((viewDate: Date) => (this.viewDate = viewDate));
     this.events$ = this.facade.selectEvents();
 
-    this.userFacade.selectUser().subscribe(user => {
+    this.userFacade.selectUser().subscribe((user) => {
       if (user) {
         this.facade.changeView({ isList: this.deviceService.isMobile(), calendarView: this.view.calendarView });
         this.facade.loadMonthEvents(this.viewDate);
@@ -68,6 +68,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   public onEventClicked(event?: CalendarEvent) {
     const props: DialogProperties<CalendarEvent> = { data: event };
+
     this.dialogResultSubscription = this.dialogService
       .open<CalendarEvent>(NewEventDialogComponent, props)
       .subscribe((result: DialogResult<Event>) => {

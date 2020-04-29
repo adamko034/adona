@@ -24,28 +24,4 @@ describe('Time Creation Service', () => {
       expect(result.getMinutes()).toBe(15);
     });
   });
-
-  describe('Get Date Time From Month Loaded', () => {
-    [
-      {
-        stringValue: '201910',
-        year: 2019,
-        month: 9
-      },
-      {
-        stringValue: '201903',
-        year: 2019,
-        month: 2
-      }
-    ].forEach(input => {
-      it(`should get date from ${input.stringValue}`, () => {
-        // when
-        const actual = service.fromMonthLoaded(input.stringValue);
-
-        // then
-        expect(actual.getFullYear()).toEqual(input.year);
-        expect(actual.getMonth()).toEqual(input.month);
-      });
-    });
-  });
 });

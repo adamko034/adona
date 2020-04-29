@@ -6,10 +6,7 @@ import { CalendarViewComponent } from './calendar-view.component';
 
 describe('Calendar View Component', () => {
   const currentViewDate = new Date(2019, 10, 5);
-  const events = new EventsTestDataBuilder()
-    .addOneWithDefaultData()
-    .addOneWithDefaultData()
-    .buildEvents();
+  const events = EventsTestDataBuilder.from().addOneWithDefaultData().addOneWithDefaultData().buildEvents();
 
   let component: CalendarViewComponent;
 
@@ -46,9 +43,7 @@ describe('Calendar View Component', () => {
         [true, false].forEach((value: boolean) => {
           it(`shold disable active day when previous value is: ${value.toString()}`, () => {
             // given
-            const newDate = moment(currentViewDate)
-              .add(1, 'days')
-              .toDate();
+            const newDate = moment(currentViewDate).add(1, 'days').toDate();
             component.activeDayIsOpen = value;
 
             // when
@@ -83,7 +78,7 @@ describe('Calendar View Component', () => {
   describe('Event clicked', () => {
     it('should emit event', () => {
       // given
-      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildCalendarEvents()[0];
+      const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildCalendarEvents()[0];
       const spy = spyOn(component.eventClicked, 'emit');
 
       // when
@@ -102,9 +97,7 @@ describe('Calendar View Component', () => {
 
     it('should set to false if event does not exists on this day', () => {
       // given
-      component.viewDate = moment()
-        .add('1', 'weeks')
-        .toDate();
+      component.viewDate = moment().add('1', 'weeks').toDate();
       component.events = events;
 
       // when
@@ -117,7 +110,7 @@ describe('Calendar View Component', () => {
     it('should set to true if event exists on this day', () => {
       // given
       component.viewDate = moment().toDate();
-      component.events = new EventsTestDataBuilder()
+      component.events = EventsTestDataBuilder.from()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .buildCalendarEvents();
@@ -131,20 +124,14 @@ describe('Calendar View Component', () => {
 
     it('should set to true if all days event exists on this day', () => {
       // given
-      component.viewDate = moment()
-        .add('5', 'days')
-        .toDate();
+      component.viewDate = moment().add('5', 'days').toDate();
 
-      const calendarEvents = new EventsTestDataBuilder()
+      const calendarEvents = EventsTestDataBuilder.from()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .buildCalendarEvents();
-      calendarEvents[0].start = moment()
-        .add('3', 'days')
-        .toDate();
-      calendarEvents[0].end = moment()
-        .add('6', 'days')
-        .toDate();
+      calendarEvents[0].start = moment().add('3', 'days').toDate();
+      calendarEvents[0].end = moment().add('6', 'days').toDate();
 
       component.events = calendarEvents;
 

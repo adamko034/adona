@@ -33,14 +33,12 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
   public ngOnInit() {
     this.monthsLoadedSubscription = this.calendarFacade
       .selectMonthsLoaded()
-      .pipe(filter((monthsLoaded: string[]) => monthsLoaded.length !== 0))
-      .subscribe((monthsLoaded: string[]) => {
-        monthsLoaded = [...monthsLoaded].sort();
-        const minMonth = this.timeService.Creation.fromMonthLoaded(monthsLoaded[0]);
-        const maxMonth = this.timeService.Creation.fromMonthLoaded(monthsLoaded[monthsLoaded.length - 1]);
+      .pipe(filter((monthsLoaded: Date[]) => monthsLoaded.length !== 0))
+      .subscribe((monthsLoaded: Date[]) => {
+        monthsLoaded = [...monthsLoaded].sort((d1, d2) => +d1 - +d2);
 
-        this.previousDateToLoad = this.timeService.Manipulation.addMonths(-1, minMonth);
-        this.nextDateToLoad = this.timeService.Manipulation.addMonths(1, maxMonth);
+        this.previousDateToLoad = this.timeService.Manipulation.addMonths(-1, monthsLoaded[0]);
+        this.nextDateToLoad = this.timeService.Manipulation.addMonths(1, monthsLoaded[monthsLoaded.length - 1]);
       });
   }
 
@@ -128,12 +126,12 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private createGroups(eventsToGroup: CalendarEvent[]) {
-    eventsToGroup.forEach(event => {
+    eventsToGroup.forEach((event) => {
       let date = event.start;
       const end = event.end;
 
       do {
-        let group = this.eventsGrouped.find(x => this.timeService.Comparison.areDatesTheSame(x.start, date));
+        let group = this.eventsGrouped.find((x) => this.timeService.Comparison.areDatesTheSame(x.start, date));
 
         if (!group) {
           group = this.createEmptyGroup(date);
@@ -157,13 +155,13 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
 
   private appendTodayGroupIfNotExists() {
     const now = new Date();
-    if (this.eventsGrouped.findIndex(group => this.timeService.Comparison.areDatesTheSame(group.start, now)) < 0) {
+    if (this.eventsGrouped.findIndex((group) => this.timeService.Comparison.areDatesTheSame(group.start, now)) < 0) {
       this.eventsGrouped.push({ id: '', start: now, events: [] });
     }
   }
 
   private appendIds() {
-    this.eventsGrouped.find(x => this.timeService.Comparison.areDatesTheSame(x.start, new Date())).id =
+    this.eventsGrouped.find((x) => this.timeService.Comparison.areDatesTheSame(x.start, new Date())).id =
       CalendarConstants.EventContainerTodayId;
   }
 }

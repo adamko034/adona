@@ -64,6 +64,10 @@ export class FromToDatesComponent implements OnInit {
     this.emitValue(this.getStartDateTime(), this.getEndDateTime());
   }
 
+  public startDateChanged() {
+    this.endDate = this.startDate;
+  }
+
   public adjustValuesAndEmit() {
     if (this.isAtLeastOneValueNull()) {
       this.endDateValid = false;

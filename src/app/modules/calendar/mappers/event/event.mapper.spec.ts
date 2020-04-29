@@ -11,7 +11,7 @@ describe('Event Mapper', () => {
 
   it('should map from calendar event', () => {
     // given
-    const calendarEvent = new EventsTestDataBuilder().addOneWithDefaultData().buildCalendarEvents()[0];
+    const calendarEvent = EventsTestDataBuilder.from().addOneWithDefaultData().buildCalendarEvents()[0];
     const expected = fromCalendarEvent(calendarEvent);
 
     // when
@@ -23,7 +23,7 @@ describe('Event Mapper', () => {
 
   it('should map from firebase event', () => {
     // given
-    const firebaseEvent = new EventsTestDataBuilder().addOneWithDefaultData().buildFirebaseEvents()[0];
+    const firebaseEvent = EventsTestDataBuilder.from().addOneWithDefaultData().buildFirebaseEvents()[0];
     const expected = fromFirebaseEvent(firebaseEvent);
 
     // when
@@ -35,7 +35,7 @@ describe('Event Mapper', () => {
 
   it('should map from firebase events', () => {
     // given
-    const firebaseEvents = new EventsTestDataBuilder()
+    const firebaseEvents = EventsTestDataBuilder.from()
       .addOneWithDefaultData()
       .addOneWithDefaultData()
       .buildFirebaseEvents();

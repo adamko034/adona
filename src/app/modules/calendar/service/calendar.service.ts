@@ -16,7 +16,7 @@ export class CalendarService {
       this.db
         .collection<Event>(this.collectionName)
         .add(event)
-        .then(ref => {
+        .then((ref) => {
           return { ...event, id: ref.id };
         })
     );
@@ -32,21 +32,15 @@ export class CalendarService {
     );
   }
 
-  public deleteEvent(id: string): Observable<string> {
-    return from(
-      this.db
-        .collection(this.collectionName)
-        .doc(id)
-        .delete()
-        .then(() => id)
-    );
+  public deleteEvent(id: string): Observable<void> {
+    return from(this.db.collection(this.collectionName).doc(id).delete());
   }
 
   public getMonthEvents(date: Date): Observable<Event[]> {
     const startOfMonth = this.timeService.Extraction.getStartOfMonth(date);
     const endOfMonth = this.timeService.Extraction.getEndOfMonth(date);
 
-    const collection = this.db.collection<Event>(this.collectionName, doc =>
+    const collection = this.db.collection<Event>(this.collectionName, (doc) =>
       doc.where('start', '>=', startOfMonth).where('start', '<=', endOfMonth)
     );
 
@@ -56,7 +50,7 @@ export class CalendarService {
   private pushEventsFromCollection(collection: AngularFirestoreCollection<Event>): Observable<Event[]> {
     return collection.valueChanges({ idField: 'id' }).pipe(
       take(1),
-      map(firebaseEvents => this.mapper.Event.fromFirebaseEvents(firebaseEvents))
+      map((firebaseEvents) => this.mapper.Event.fromFirebaseEvents(firebaseEvents))
     );
   }
 }

@@ -1,19 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { CalendarView } from 'angular-calendar';
 import { hot } from 'jasmine-marbles';
+import { calendarActions } from 'src/app/modules/calendar/store/actions/calendar.actions';
+import { DateTestBuilder } from 'src/app/utils/testUtils/builders/date-test.builder';
+import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { AdonaCalendarView } from '../model/adona-calendar-view.model';
 import { EventsTestDataBuilder } from '../utils/tests/event-test-data.builder';
 import { fromCalendarEvents, toCalendarEvents } from '../utils/tests/mappers-test-functions';
-import {
-  CalendarViewChangedAction,
-  CalendarViewDateChangedAction,
-  EventDeleteRequestedAction,
-  MonthEventsRequestedAction,
-  NewEventRequestedAction,
-  UpdateEventRequestedAction
-} from './actions/calendar.actions';
 import { CalendarFacade } from './calendar.facade';
 import { CalendarState } from './reducers/calendar.reducer';
 import { calendarQueries } from './selectors/calendar.selectors';
@@ -34,7 +28,7 @@ describe('Calendar Facade', () => {
       providers: [provideMockStore()]
     });
 
-    mockStore = TestBed.get<Store<CalendarState>>(Store);
+    mockStore = TestBed.inject(MockStore);
     facade = new CalendarFacade(mockStore, mapper);
 
     dispatchSpy = spyOn(mockStore, 'dispatch');
@@ -48,65 +42,68 @@ describe('Calendar Facade', () => {
       // when
       facade.loadMonthEvents(date);
 
-      // then
-      expect(dispatchSpy).toHaveBeenCalledTimes(1);
-      expect(dispatchSpy).toHaveBeenCalledWith(new MonthEventsRequestedAction({ date }));
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+        dispatchSpy,
+        1,
+        calendarActions.events.loadMonthEventsRequest({ date })
+      );
     });
   });
 
   describe('Update Event method', () => {
     it('should dispatch Update Event Requested Action', () => {
       // given
-      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
 
       // when
       facade.updateEvent(event);
 
       // then
       expect(dispatchSpy).toHaveBeenCalledTimes(1);
-      expect(dispatchSpy).toHaveBeenCalledWith(new UpdateEventRequestedAction({ event }));
+      expect(dispatchSpy).toHaveBeenCalledWith(calendarActions.event.updateEventRequest({ event }));
     });
   });
 
   describe('Add Event method', () => {
     it('should dispatch New Event Requested Action', () => {
       // given
-      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
 
       // when
       facade.addEvent(event);
 
       // then
       expect(dispatchSpy).toHaveBeenCalledTimes(1);
-      expect(dispatchSpy).toHaveBeenCalledWith(new NewEventRequestedAction({ newEvent: event }));
+      expect(dispatchSpy).toHaveBeenCalledWith(calendarActions.event.addEventRequest({ event }));
     });
   });
 
   describe('Delete Event method', () => {
     it('should dispatch Event Delete Requested Action', () => {
       // given
-      const event = new EventsTestDataBuilder().addOneWithDefaultData().buildEvents()[0];
+      const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
 
       // when
       facade.deleteEvent(event);
 
       // then
       expect(dispatchSpy).toHaveBeenCalledTimes(1);
-      expect(dispatchSpy).toHaveBeenCalledWith(new EventDeleteRequestedAction({ id: event.id }));
+      expect(dispatchSpy).toHaveBeenCalledWith(calendarActions.event.deleteEventRequest({ id: event.id }));
     });
   });
 
   describe('Get Months Loaded method', () => {
     it('should return months loaded', () => {
-      // given
-      const months = ['201901', '201902', '201812'];
+      const months = [
+        DateTestBuilder.now().addMonth(-1).build(),
+        DateTestBuilder.now().addMonth(-2).build(),
+        DateTestBuilder.now().addMonth(-3).build()
+      ];
       mockStore.overrideSelector(calendarQueries.selectMonthsLoaded, months);
       const expected = hot('b', { b: months });
 
-      // when
       const result = facade.selectMonthsLoaded();
 
-      // then
       expect(result).toBeObservable(expected);
     });
   });
@@ -114,7 +111,7 @@ describe('Calendar Facade', () => {
   describe('Select Events', () => {
     it('should return events', () => {
       // given
-      const events = new EventsTestDataBuilder()
+      const events = EventsTestDataBuilder.from()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
@@ -132,29 +129,25 @@ describe('Calendar Facade', () => {
 
   describe('Change View', () => {
     it('should dispatch View Changed Action', () => {
-      // given
       const newView: AdonaCalendarView = { isList: true, calendarView: CalendarView.Month };
 
-      // when
       facade.changeView(newView);
 
-      // then
-      expect(dispatchSpy).toHaveBeenCalledTimes(1);
-      expect(dispatchSpy).toHaveBeenCalledWith(new CalendarViewChangedAction({ newView }));
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, calendarActions.ui.viewChange({ view: newView }));
     });
   });
 
   describe('Change View Date', () => {
     it('should dispatch View Date Changed Action', () => {
-      // given
       const newDate = new Date(2020, 1, 20);
 
-      // when
       facade.changeViewDate(newDate);
 
-      // then
-      expect(dispatchSpy).toHaveBeenCalledTimes(1);
-      expect(dispatchSpy).toHaveBeenCalledWith(new CalendarViewDateChangedAction({ newDate }));
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+        dispatchSpy,
+        1,
+        calendarActions.ui.viewDateChange({ date: newDate })
+      );
     });
   });
 

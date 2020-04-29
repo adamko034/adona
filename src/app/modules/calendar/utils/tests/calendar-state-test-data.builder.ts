@@ -5,7 +5,7 @@ import { CalendarState } from 'src/app/modules/calendar/store/reducers/calendar.
 export class CalendarStateTestDataBuilder {
   private state: CalendarState;
 
-  constructor() {
+  private constructor() {
     this.state = {
       monthsLoaded: [],
       ids: [],
@@ -15,14 +15,12 @@ export class CalendarStateTestDataBuilder {
     };
   }
 
+  public static fromDefaults(): CalendarStateTestDataBuilder {
+    return new CalendarStateTestDataBuilder();
+  }
+
   public withEvents(events: Event[]): CalendarStateTestDataBuilder {
-    const newState: CalendarState = {
-      ids: events.map(event => event.id),
-      entities: {},
-      monthsLoaded: [],
-      view: { isList: false, calendarView: CalendarView.Month },
-      viewDate: new Date()
-    };
+    const newState: CalendarState = { ...this.state, ids: events.map((event) => event.id), entities: {} };
 
     this.state = events.reduce((state, item) => {
       state.entities[Number.parseInt(item.id, 10)] = item;
@@ -32,7 +30,7 @@ export class CalendarStateTestDataBuilder {
     return this;
   }
 
-  public withMonthsLoaded(monthsLoaded: string[]): CalendarStateTestDataBuilder {
+  public withMonthsLoaded(monthsLoaded: Date[]): CalendarStateTestDataBuilder {
     this.state.monthsLoaded = [...monthsLoaded];
 
     return this;

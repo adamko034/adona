@@ -14,7 +14,9 @@ import { StoreModule } from '@ngrx/store';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
-import { CalendarEffects } from 'src/app/modules/calendar/store/effects/calendar.effects';
+import { CalendarEventEffects } from 'src/app/modules/calendar/store/effects/event/calendar-event.effects';
+import { CalendarEventsEffects } from 'src/app/modules/calendar/store/effects/events/calendar-events.effects';
+import { CalendarUiEffects } from 'src/app/modules/calendar/store/effects/ui/calendar-ui.effects';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { CalendarRoutingModule } from './calendar-routing.module';
 import { CalendarTitleComponent } from './components/calendar-title/calendar-title.component';
@@ -51,7 +53,7 @@ import * as fromReducer from './store/reducers/calendar.reducer';
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
-    EffectsModule.forFeature([CalendarEffects]),
+    EffectsModule.forFeature([CalendarEventEffects, CalendarUiEffects, CalendarEventsEffects]),
     MatDialogModule,
     MatInputModule,
     MatToolbarModule,
@@ -62,7 +64,7 @@ import * as fromReducer from './store/reducers/calendar.reducer';
     FlexLayoutModule,
     MatCheckboxModule,
     ReactiveFormsModule,
-    StoreModule.forFeature(fromReducer.calendarFeatureKey, fromReducer.calendarReducer)
+    StoreModule.forFeature(fromReducer.calendarFeatureKey, fromReducer.reducer)
   ],
   providers: [CalendarService, CalendarFacade, CalendarMapper]
 })
