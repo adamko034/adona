@@ -1,5 +1,6 @@
 import { CalendarEvent } from 'calendar-utils';
 import * as moment from 'moment';
+import { User } from 'src/app/core/user/model/user.model';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 
 export class EventsTestDataBuilder {
@@ -13,13 +14,33 @@ export class EventsTestDataBuilder {
     return new EventsTestDataBuilder();
   }
 
+  public addOneWithUserData(user: User): EventsTestDataBuilder {
+    this.events.push({
+      id: this.events.length.toString(),
+      title: 'Test Event' + this.events.length.toString(),
+      start: new Date(),
+      end: moment().add(1, 'h').toDate(),
+      allDay: false,
+      created: new Date(),
+      createdBy: user.name,
+      createdById: user.id,
+      teamId: user.selectedTeamId
+    });
+
+    return this;
+  }
+
   public addOneWithDefaultData(): EventsTestDataBuilder {
     this.events.push({
       id: this.events.length.toString(),
       title: 'Test Event' + this.events.length.toString(),
       start: new Date(),
       end: moment().add(1, 'h').toDate(),
-      allDay: false
+      allDay: false,
+      created: new Date(),
+      createdBy: 'user',
+      createdById: 'user123',
+      teamId: 'team123'
     });
 
     return this;
@@ -36,13 +57,17 @@ export class EventsTestDataBuilder {
   }
 
   public buildFirebaseEvents(): any[] {
-    return this.events.map(({ id, title, start, end, allDay }) => {
+    return this.events.map(({ id, title, start, end, allDay, created, createdById, teamId, createdBy }) => {
       return {
         id,
         title,
         start: { seconds: moment(start).get('seconds') },
         end: { seconds: moment(end).get('seconds') },
-        allDay
+        allDay,
+        created: { seconds: moment(created).get('seconds') },
+        teamId,
+        createdBy,
+        createdById
       };
     });
   }

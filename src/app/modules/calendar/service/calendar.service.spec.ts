@@ -19,8 +19,9 @@ describe('Calendar Service', () => {
     Event: jasmine.createSpyObj<EventMapper>('EventMapper', ['fromFirebaseEvents'])
   };
 
-  const collectionStub = jasmine.createSpyObj<AngularFirestoreCollection>('Collection', ['add', 'doc', 'valueChanges']);
+  const collectionStub = jasmine.createSpyObj<AngularFirestoreCollection>('Collection', ['doc', 'valueChanges']);
   const firestore: any = {
+    createId: jasmine.createSpy('createId').and.returnValue('newId'),
     collection: jasmine.createSpy('collection').and.returnValue(collectionStub)
   };
 
@@ -33,10 +34,12 @@ describe('Calendar Service', () => {
       // given
       const newEvent = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
 
-      const newId = 'new id';
+      const newId = 'newId';
       const expectedNewEvent = { ...newEvent, id: newId };
 
-      firestore.collection().add.and.returnValue(Promise.resolve({ id: newId }));
+      firestore.collection().doc.and.returnValue({
+        set: jasmine.createSpy('set').and.returnValue(Promise.resolve(newEvent))
+      });
 
       // when
       const actual = service.addEvent(newEvent);
@@ -47,8 +50,8 @@ describe('Calendar Service', () => {
         expect(res).toEqual(expectedNewEvent);
       });
       expect(firestore.collection).toHaveBeenCalledWith('/events');
-      expect(firestore.collection().add).toHaveBeenCalledTimes(1);
-      expect(firestore.collection().add).toHaveBeenCalledWith(newEvent);
+      expect(firestore.collection().doc).toHaveBeenCalledWith('newId');
+      expect(firestore.collection().doc().set).toHaveBeenCalledWith(expectedNewEvent);
     }));
   });
 

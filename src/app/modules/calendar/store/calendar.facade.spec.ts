@@ -7,7 +7,7 @@ import { DateTestBuilder } from 'src/app/utils/testUtils/builders/date-test.buil
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { AdonaCalendarView } from '../model/adona-calendar-view.model';
 import { EventsTestDataBuilder } from '../utils/tests/event-test-data.builder';
-import { fromCalendarEvents, toCalendarEvents } from '../utils/tests/mappers-test-functions';
+import { toCalendarEvents } from '../utils/tests/mappers-test-functions';
 import { CalendarFacade } from './calendar.facade';
 import { CalendarState } from './reducers/calendar.reducer';
 import { calendarQueries } from './selectors/calendar.selectors';
@@ -16,7 +16,7 @@ describe('Calendar Facade', () => {
   let mockStore: MockStore<CalendarState>;
   const mapper: any = {
     CalendarEvent: {
-      fromEvents: fromCalendarEvents
+      fromEvents: toCalendarEvents
     }
   };
 
