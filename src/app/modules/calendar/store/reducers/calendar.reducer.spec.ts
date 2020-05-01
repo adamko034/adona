@@ -9,33 +9,26 @@ import { DateTestBuilder } from 'src/app/utils/testUtils/builders/date-test.buil
 describe('Calendar Reducer', () => {
   describe('Initial state', () => {
     it('should return initial state', () => {
-      // given
       const date = new Date();
       const action = {} as any;
       const expected: CalendarState = CalendarStateTestDataBuilder.fromDefaults().build();
 
-      // when
       const result = reducer(undefined, action);
 
-      // then
       expect({ ...result, viewDate: date }).toEqual({ ...expected, viewDate: date });
       expect(moment(result.viewDate).isSame(expected.viewDate, 'day')).toBeTruthy();
     });
 
     it('should return previous state for unknown action', () => {
-      // given
       const date = new Date();
       const action = {} as any;
       const events = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents();
       const previousState = CalendarStateTestDataBuilder.fromDefaults()
-        .withEvents(events)
-        .withMonthsLoaded([DateTestBuilder.now().build()])
+        .withEvents(events, events[0].teamId)
+        .withMonthsLoaded([DateTestBuilder.now().build()], events[0].teamId)
         .build();
 
-      // when
       const result = reducer(previousState, action);
-
-      // expect
       expect({ ...result, viewDate: date }).toEqual({ ...previousState, viewDate: date });
     });
   });
@@ -51,38 +44,41 @@ describe('Calendar Reducer', () => {
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .buildEvents();
+      const teamId = events[0].teamId;
 
       const previousState = CalendarStateTestDataBuilder.fromDefaults()
-        .withEvents(events.slice(0, 2))
-        .withMonthsLoaded([dateNow])
+        .withEvents(events.slice(0, 2), teamId)
+        .withMonthsLoaded([dateNow], teamId)
         .build();
       const expectedState = CalendarStateTestDataBuilder.fromDefaults()
-        .withEvents(events)
-        .withMonthsLoaded([dateNow, dateMonthAgo])
+        .withEvents(events, teamId)
+        .withMonthsLoaded([dateNow, dateMonthAgo], teamId)
         .build();
 
       const result = reducer(
         previousState,
-        calendarActions.events.loadMonthEventsSuccess({ events, date: dateMonthAgo })
+        calendarActions.events.loadMonthEventsSuccess({ events, date: dateMonthAgo, teamId })
       );
 
-      // then
-      expect(result.ids).toEqual(expectedState.ids);
-      expect(result.entities).toEqual(expectedState.entities);
-      expect(result.monthsLoaded).toEqual(expectedState.monthsLoaded);
+      expect(result.teams[teamId]).toBeTruthy();
+      expect(result.teams[teamId].entities).toEqual(expectedState.teams[teamId].entities);
+      expect(result.teams[teamId].ids).toEqual(expectedState.teams[teamId].ids);
+      expect(result.teams[teamId].monthsLoaded).toEqual(expectedState.teams[teamId].monthsLoaded);
     });
   });
 
   describe('On Add Event Success', () => {
     it('should add event to empty state', () => {
       const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
-      const expectedState = CalendarStateTestDataBuilder.fromDefaults().withEvents([event]).build();
+      const teamId = event.teamId;
+      const expectedState = CalendarStateTestDataBuilder.fromDefaults().withEvents([event], event.teamId).build();
 
       const result = reducer(undefined, calendarActions.event.addEventSuccess({ event }));
 
-      expect(result.ids).toEqual(expectedState.ids);
-      expect(result.entities).toEqual(expectedState.entities);
-      expect(result.monthsLoaded).toEqual(expectedState.monthsLoaded);
+      expect(result.teams[teamId]).toBeTruthy();
+      expect(result.teams[teamId].entities).toEqual(expectedState.teams[teamId].entities);
+      expect(result.teams[teamId].ids).toEqual(expectedState.teams[teamId].ids);
+      expect(result.teams[teamId].monthsLoaded).toEqual(expectedState.teams[teamId].monthsLoaded);
     });
 
     it('should add event to previous state', () => {
@@ -92,15 +88,17 @@ describe('Calendar Reducer', () => {
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .buildEvents();
+      const teamId = events[0].teamId;
 
-      const previousState = CalendarStateTestDataBuilder.fromDefaults().withEvents(events.slice(0, 3)).build();
-      const expectedState = CalendarStateTestDataBuilder.fromDefaults().withEvents(events).build();
+      const previousState = CalendarStateTestDataBuilder.fromDefaults().withEvents(events.slice(0, 3), teamId).build();
+      const expectedState = CalendarStateTestDataBuilder.fromDefaults().withEvents(events, teamId).build();
 
       const result = reducer(previousState, calendarActions.event.addEventSuccess({ event: events[3] }));
 
-      expect(result.ids).toEqual(expectedState.ids);
-      expect(result.entities).toEqual(expectedState.entities);
-      expect(result.monthsLoaded).toEqual(expectedState.monthsLoaded);
+      expect(result.teams[teamId]).toBeTruthy();
+      expect(result.teams[teamId].entities).toEqual(expectedState.teams[teamId].entities);
+      expect(result.teams[teamId].ids).toEqual(expectedState.teams[teamId].ids);
+      expect(result.teams[teamId].monthsLoaded).toEqual(expectedState.teams[teamId].monthsLoaded);
     });
   });
 
@@ -112,23 +110,25 @@ describe('Calendar Reducer', () => {
         .addOneWithDefaultData()
         .addOneWithDefaultData()
         .buildEvents();
+      const teamId = events[0].teamId;
 
       const eventUpdate = {
         id: events[3].id,
         changes: { ...events[3], title: 'this is new updated title' }
       };
-      const previousState = CalendarStateTestDataBuilder.fromDefaults().withEvents(events).build();
+      const previousState = CalendarStateTestDataBuilder.fromDefaults().withEvents(events, teamId).build();
 
       const expectedEvents = [...events];
       expectedEvents[3].title = 'this is new updated title';
 
-      const expectedState = CalendarStateTestDataBuilder.fromDefaults().withEvents(expectedEvents).build();
+      const expectedState = CalendarStateTestDataBuilder.fromDefaults().withEvents(expectedEvents, teamId).build();
 
       const result = reducer(previousState, calendarActions.event.updateEventSuccess({ eventUpdate }));
 
-      expect(result.ids).toEqual(expectedState.ids);
-      expect(result.entities).toEqual(expectedState.entities);
-      expect(result.monthsLoaded).toEqual(expectedState.monthsLoaded);
+      expect(result.teams[teamId]).toBeTruthy();
+      expect(result.teams[teamId].entities).toEqual(expectedState.teams[teamId].entities);
+      expect(result.teams[teamId].ids).toEqual(expectedState.teams[teamId].ids);
+      expect(result.teams[teamId].monthsLoaded).toEqual(expectedState.teams[teamId].monthsLoaded);
     });
   });
 
@@ -141,17 +141,19 @@ describe('Calendar Reducer', () => {
         .addOneWithDefaultData()
         .buildEvents();
 
+      const teamId = events[0].teamId;
       const eventToDelete = events[2];
-      const previousState = CalendarStateTestDataBuilder.fromDefaults().withEvents(events).build();
+      const previousState = CalendarStateTestDataBuilder.fromDefaults().withEvents(events, teamId).build();
 
       const expectedEvents = events.filter((e) => e.id !== eventToDelete.id);
-      const expectedState = CalendarStateTestDataBuilder.fromDefaults().withEvents(expectedEvents).build();
+      const expectedState = CalendarStateTestDataBuilder.fromDefaults().withEvents(expectedEvents, teamId).build();
 
-      const result = reducer(previousState, calendarActions.event.deleteEventSuccess({ id: eventToDelete.id }));
+      const result = reducer(previousState, calendarActions.event.deleteEventSuccess({ id: eventToDelete.id, teamId }));
 
-      expect(result.ids).toEqual(expectedState.ids);
-      expect(result.entities).toEqual(expectedState.entities);
-      expect(result.monthsLoaded).toEqual(expectedState.monthsLoaded);
+      expect(result.teams[teamId]).toBeTruthy();
+      expect(result.teams[teamId].entities).toEqual(expectedState.teams[teamId].entities);
+      expect(result.teams[teamId].ids).toEqual(expectedState.teams[teamId].ids);
+      expect(result.teams[teamId].monthsLoaded).toEqual(expectedState.teams[teamId].monthsLoaded);
     });
   });
 

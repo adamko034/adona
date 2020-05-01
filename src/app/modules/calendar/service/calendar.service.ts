@@ -12,13 +12,14 @@ export class CalendarService {
   private readonly collectionName: string = '/events';
 
   public addEvent(event: Event): Observable<Event> {
+    const eventToAdd = { ...event, id: this.db.createId() };
+
     return from(
       this.db
         .collection<Event>(this.collectionName)
-        .add(event)
-        .then((ref) => {
-          return { ...event, id: ref.id };
-        })
+        .doc(eventToAdd.id)
+        .set(eventToAdd)
+        .then(() => eventToAdd)
     );
   }
 
@@ -36,12 +37,12 @@ export class CalendarService {
     return from(this.db.collection(this.collectionName).doc(id).delete());
   }
 
-  public getMonthEvents(date: Date): Observable<Event[]> {
+  public getMonthEvents(date: Date, teamId: string): Observable<Event[]> {
     const startOfMonth = this.timeService.Extraction.getStartOfMonth(date);
     const endOfMonth = this.timeService.Extraction.getEndOfMonth(date);
 
     const collection = this.db.collection<Event>(this.collectionName, (doc) =>
-      doc.where('start', '>=', startOfMonth).where('start', '<=', endOfMonth)
+      doc.where('teamId', '==', teamId).where('start', '>=', startOfMonth).where('start', '<=', endOfMonth)
     );
 
     return this.pushEventsFromCollection(collection);

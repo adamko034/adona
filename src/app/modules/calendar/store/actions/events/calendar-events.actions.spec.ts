@@ -3,12 +3,14 @@ import { calendarActions } from 'src/app/modules/calendar/store/actions/calendar
 import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
 
 describe('Calendar Events Actions', () => {
+  const teamId = '123';
   it('should create Load Month Events Request action', () => {
     const date = new Date();
 
-    expect(calendarActions.events.loadMonthEventsRequest({ date })).toEqual({
+    expect(calendarActions.events.loadMonthEventsRequest({ date, teamId })).toEqual({
       type: '[Calendar Page] Load Month Events Request',
-      date
+      date,
+      teamId
     });
   });
 
@@ -20,10 +22,11 @@ describe('Calendar Events Actions', () => {
       .addOneWithDefaultData()
       .buildEvents();
 
-    expect(calendarActions.events.loadMonthEventsSuccess({ events, date })).toEqual({
+    expect(calendarActions.events.loadMonthEventsSuccess({ events, date, teamId })).toEqual({
       type: '[Database API] Load Month Events Success',
       events,
-      date
+      date,
+      teamId
     });
   });
 

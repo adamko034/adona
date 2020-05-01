@@ -1,12 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CalendarEvent } from 'calendar-utils';
+import { NewEventDialogData } from 'src/app/modules/calendar/components/dialogs/new-event-dialog/models/new-event-dialog-data.model';
 import { FromToDates } from 'src/app/shared/components/from-to-dates/model/from-to-dates.model';
 import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.validator';
 import { DialogAction } from '../../../../../shared/enum/dialog-action.enum';
 import { DialogResult } from '../../../../../shared/services/dialogs/dialog-result.model';
-import { Event } from '../../../model/event.model';
 
 @Component({
   selector: 'app-new-event-dialog',
@@ -27,13 +26,13 @@ export class NewEventDialogComponent {
   );
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public event: CalendarEvent,
+    @Inject(MAT_DIALOG_DATA) public data: NewEventDialogData,
     private dialogRef: MatDialogRef<NewEventDialogComponent>
   ) {
-    if (this.event && this.event) {
+    if (this.data) {
       this.editMode = true;
 
-      const { title, start, end, allDay, id } = this.event;
+      const { title, start, end, allDay, id } = this.data;
       this.form.setValue({ id, title, allDay, start, end });
     }
   }
@@ -45,18 +44,18 @@ export class NewEventDialogComponent {
   public save() {
     if (this.form.valid) {
       const action = this.editMode ? DialogAction.SaveUpdate : DialogAction.SaveAdd;
-      const result: DialogResult<Event> = { action, payload: this.form.value };
+      const result: DialogResult<NewEventDialogData> = { action, payload: this.form.value };
       this.dialogRef.close(result);
     }
   }
 
   public delete() {
-    const result: DialogResult<Event> = { action: DialogAction.Delete, payload: this.form.value };
+    const result: DialogResult<NewEventDialogData> = { action: DialogAction.Delete, payload: this.form.value };
     this.dialogRef.close(result);
   }
 
   public cancel() {
-    const result: DialogResult<Event> = { action: DialogAction.Cancel };
+    const result: DialogResult<NewEventDialogData> = { action: DialogAction.Cancel };
     this.dialogRef.close(result);
   }
 
@@ -71,14 +70,14 @@ export class NewEventDialogComponent {
   }
 
   public getInitialAllDayFlag(): boolean {
-    return this.editMode ? this.event.allDay : false;
+    return this.editMode ? this.data.allDay : false;
   }
 
   public getInitialStartDate(): Date {
-    return this.editMode ? this.event.start : null;
+    return this.editMode ? this.data.start : null;
   }
 
   public getInitialEndDate(): Date {
-    return this.editMode ? this.event.end : null;
+    return this.editMode ? this.data.end : null;
   }
 }

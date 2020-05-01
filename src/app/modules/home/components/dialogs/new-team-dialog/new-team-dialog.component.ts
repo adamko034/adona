@@ -5,7 +5,6 @@ import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
 import { TeamMember } from 'src/app/core/team/model/team-member.model';
 import { User } from '../../../../../core/user/model/user.model';
 import { DialogResult } from '../../../../../shared/services/dialogs/dialog-result.model';
-import { NewEventDialogComponent } from '../../../../calendar/components/dialogs/new-event-dialog/new-event-dialog.component';
 import { NewTeamDialogStep } from './models/new-team-dialog-step.enum';
 import { NewTeamDialogStepsHelper } from './service/new-team-dialog-steps-helper.service';
 
@@ -33,7 +32,7 @@ export class NewTeamDialogComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { user: User },
-    private dialogRef: MatDialogRef<NewEventDialogComponent>,
+    private dialogRef: MatDialogRef<NewTeamDialogComponent>,
     private stepsService: NewTeamDialogStepsHelper
   ) {}
 

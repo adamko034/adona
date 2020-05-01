@@ -4,4 +4,8 @@ export interface Event {
   start: Date;
   end: Date;
   allDay: boolean;
+  created: Date;
+  createdById: string;
+  createdBy: string;
+  teamId: string;
 }

@@ -1,15 +1,13 @@
 import { CalendarView } from 'angular-calendar';
 import { Event } from 'src/app/modules/calendar/model/event.model';
-import { CalendarState } from 'src/app/modules/calendar/store/reducers/calendar.reducer';
+import { CalendarState, TeamEventsState } from 'src/app/modules/calendar/store/reducers/calendar.reducer';
 
 export class CalendarStateTestDataBuilder {
   private state: CalendarState;
 
   private constructor() {
     this.state = {
-      monthsLoaded: [],
-      ids: [],
-      entities: {},
+      teams: {},
       view: { isList: false, calendarView: CalendarView.Month },
       viewDate: new Date()
     };
@@ -19,19 +17,27 @@ export class CalendarStateTestDataBuilder {
     return new CalendarStateTestDataBuilder();
   }
 
-  public withEvents(events: Event[]): CalendarStateTestDataBuilder {
-    const newState: CalendarState = { ...this.state, ids: events.map((event) => event.id), entities: {} };
+  public withEvents(events: Event[], teamId: string): CalendarStateTestDataBuilder {
+    let teamEvents: TeamEventsState = !!this.state.teams[teamId]
+      ? { ...this.state.teams[teamId], ids: events.map((event) => event.id), entities: {} }
+      : { monthsLoaded: [], ids: events.map((event) => event.id), entities: {} };
 
-    this.state = events.reduce((state, item) => {
+    teamEvents = events.reduce((state, item) => {
       state.entities[Number.parseInt(item.id, 10)] = item;
       return state;
-    }, newState);
+    }, teamEvents);
+
+    this.state = { ...this.state, teams: { ...this.state.teams, [teamId]: teamEvents } };
 
     return this;
   }
 
-  public withMonthsLoaded(monthsLoaded: Date[]): CalendarStateTestDataBuilder {
-    this.state.monthsLoaded = [...monthsLoaded];
+  public withMonthsLoaded(monthsLoaded: Date[], teamId: string): CalendarStateTestDataBuilder {
+    if (this.state.teams[teamId]) {
+      this.state.teams[teamId] = { ...this.state.teams[teamId], monthsLoaded };
+    } else {
+      this.state.teams[teamId] = { monthsLoaded, ids: [], entities: {} };
+    }
 
     return this;
   }

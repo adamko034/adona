@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { CalendarEvent } from 'calendar-utils';
-import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+import { UserFacade } from 'src/app/core/user/user.facade';
+import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
 import { DateFormat } from '../../../../../shared/services/time/model/date-format.enum';
 import { TimeService } from '../../../../../shared/services/time/time.service';
 import { CalendarFacade } from '../../../store/calendar.facade';
@@ -18,7 +20,7 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
 
   @Output() eventClicked = new EventEmitter<CalendarEvent>();
 
-  private monthsLoadedSubscription: Subscription;
+  private destroyed$: Subject<void>;
 
   public eventsGrouped: EventsGroupedByStartDate[] = [];
   public hidePastEvents = true;
@@ -28,17 +30,32 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
   public previousDateToLoad: Date;
   public nextDateToLoad: Date;
 
-  constructor(private calendarFacade: CalendarFacade, public timeService: TimeService) {}
+  constructor(
+    private calendarFacade: CalendarFacade,
+    public timeService: TimeService,
+    private unsubscriberSerivce: UnsubscriberService,
+    private userFacade: UserFacade
+  ) {
+    this.destroyed$ = this.unsubscriberSerivce.create();
+  }
 
   public ngOnInit() {
-    this.monthsLoadedSubscription = this.calendarFacade
-      .selectMonthsLoaded()
-      .pipe(filter((monthsLoaded: Date[]) => monthsLoaded.length !== 0))
-      .subscribe((monthsLoaded: Date[]) => {
-        monthsLoaded = [...monthsLoaded].sort((d1, d2) => +d1 - +d2);
+    this.userFacade
+      .selectUser()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(({ selectedTeamId }) => {
+        this.calendarFacade
+          .selectMonthsLoaded(selectedTeamId)
+          .pipe(
+            filter((monthsLoaded: Date[]) => monthsLoaded.length !== 0),
+            takeUntil(this.destroyed$)
+          )
+          .subscribe((monthsLoaded: Date[]) => {
+            monthsLoaded = [...monthsLoaded].sort((d1, d2) => +d1 - +d2);
 
-        this.previousDateToLoad = this.timeService.Manipulation.addMonths(-1, monthsLoaded[0]);
-        this.nextDateToLoad = this.timeService.Manipulation.addMonths(1, monthsLoaded[monthsLoaded.length - 1]);
+            this.previousDateToLoad = this.timeService.Manipulation.addMonths(-1, monthsLoaded[0]);
+            this.nextDateToLoad = this.timeService.Manipulation.addMonths(1, monthsLoaded[monthsLoaded.length - 1]);
+          });
       });
   }
 
@@ -47,19 +64,17 @@ export class CalendarViewListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   public ngOnDestroy() {
-    if (this.monthsLoadedSubscription) {
-      this.monthsLoadedSubscription.unsubscribe();
-    }
+    this.unsubscriberSerivce.complete(this.destroyed$);
   }
 
   public onLoadNext() {
-    this.calendarFacade.loadMonthEvents(this.nextDateToLoad);
+    this.calendarFacade.changeViewDate(this.nextDateToLoad);
     this.nextDateToLoad = this.timeService.Manipulation.addMonths(1, this.nextDateToLoad);
   }
 
   public onLoadPrevious() {
     this.hidePastEvents = false;
-    this.calendarFacade.loadMonthEvents(this.previousDateToLoad);
+    this.calendarFacade.changeViewDate(this.previousDateToLoad);
     this.previousDateToLoad = this.timeService.Manipulation.addMonths(-1, this.previousDateToLoad);
   }
 

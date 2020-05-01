@@ -1,5 +1,5 @@
 import { EventsTestDataBuilder } from '../../utils/tests/event-test-data.builder';
-import { fromCalendarEvent, fromFirebaseEvent } from '../../utils/tests/mappers-test-functions';
+import { fromFirebaseEvent } from '../../utils/tests/mappers-test-functions';
 import { EventMapper } from './event.mapper';
 
 describe('Event Mapper', () => {
@@ -7,18 +7,6 @@ describe('Event Mapper', () => {
 
   beforeEach(() => {
     mapper = new EventMapper();
-  });
-
-  it('should map from calendar event', () => {
-    // given
-    const calendarEvent = EventsTestDataBuilder.from().addOneWithDefaultData().buildCalendarEvents()[0];
-    const expected = fromCalendarEvent(calendarEvent);
-
-    // when
-    const actual = mapper.fromCalendarEvent(calendarEvent);
-
-    // then
-    expect(actual).toEqual(expected);
   });
 
   it('should map from firebase event', () => {

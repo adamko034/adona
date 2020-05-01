@@ -8,8 +8,11 @@ const types = {
   loadMonthEventsFailure: '[Database API] Load Month Events Failure'
 };
 
-const loadMonthEventsRequest = createAction(types.loadMonthEventsRequest, props<{ date: Date }>());
-const loadMonthEventsSuccess = createAction(types.loadMonthEventsSuccess, props<{ events: Event[]; date: Date }>());
+const loadMonthEventsRequest = createAction(types.loadMonthEventsRequest, props<{ date: Date; teamId: string }>());
+const loadMonthEventsSuccess = createAction(
+  types.loadMonthEventsSuccess,
+  props<{ events: Event[]; date: Date; teamId: string }>()
+);
 const loadMonthEventsFailure = createAction(types.loadMonthEventsFailure, props<{ error: Error }>());
 
 export const calendarEventsActions = {
