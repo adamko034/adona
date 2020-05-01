@@ -15,9 +15,9 @@ import { CalendarState } from './reducers/calendar.reducer';
 export class CalendarFacade {
   constructor(private store: Store<CalendarState>, private mapper: CalendarMapper) {}
 
-  public selectEvents(): Observable<CalendarEvent[]> {
+  public selectEvents(teamId: string): Observable<CalendarEvent[]> {
     return this.store.pipe(
-      select(calendarQueries.selectEvents),
+      select(calendarQueries.selectEvents, { teamId }),
       map((events: Event[]) => this.mapper.CalendarEvent.fromEvents(events)),
       map((events) => lodash.sortBy(events, ['start', 'end', 'title']))
     );
@@ -31,8 +31,8 @@ export class CalendarFacade {
     return this.store.pipe(select(calendarQueries.selectViewDate));
   }
 
-  public selectMonthsLoaded(): Observable<Date[]> {
-    return this.store.pipe(select(calendarQueries.selectMonthsLoaded));
+  public selectMonthsLoaded(teamId: string): Observable<Date[]> {
+    return this.store.pipe(select(calendarQueries.selectMonthsLoaded, { teamId }));
   }
 
   public addEvent(event: Event): void {
@@ -43,12 +43,12 @@ export class CalendarFacade {
     this.store.dispatch(calendarActions.event.updateEventRequest({ event }));
   }
 
-  public loadMonthEvents(date: Date): void {
-    this.store.dispatch(calendarActions.events.loadMonthEventsRequest({ date }));
+  public loadMonthEvents(date: Date, teamId: string): void {
+    this.store.dispatch(calendarActions.events.loadMonthEventsRequest({ date, teamId }));
   }
 
   public deleteEvent(event: Event) {
-    this.store.dispatch(calendarActions.event.deleteEventRequest({ id: event.id }));
+    this.store.dispatch(calendarActions.event.deleteEventRequest({ event }));
   }
 
   public changeViewDate(newDate: Date) {

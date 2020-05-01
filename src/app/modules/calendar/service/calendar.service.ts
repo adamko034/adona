@@ -37,23 +37,12 @@ export class CalendarService {
     return from(this.db.collection(this.collectionName).doc(id).delete());
   }
 
-  // public getMOnthEventsForUserId(uid: string, date: Date): Observable<Event> {
-  //       const startOfMonth = this.timeService.Extraction.getStartOfMonth(date);
-  //       const endOfMonth = this.timeService.Extraction.getEndOfMonth(date);
-
-  //           const collection = this.db.collection<Event>(this.collectionName, (doc) =>
-  //             doc.where('').where('start', '>=', startOfMonth).where('start', '<=', endOfMonth)
-  //           );
-
-  //           return this.pushEventsFromCollection(collection);
-  // }
-
-  public getMonthEvents(date: Date): Observable<Event[]> {
+  public getMonthEvents(date: Date, teamId: string): Observable<Event[]> {
     const startOfMonth = this.timeService.Extraction.getStartOfMonth(date);
     const endOfMonth = this.timeService.Extraction.getEndOfMonth(date);
 
     const collection = this.db.collection<Event>(this.collectionName, (doc) =>
-      doc.where('start', '>=', startOfMonth).where('start', '<=', endOfMonth)
+      doc.where('teamId', '==', teamId).where('start', '>=', startOfMonth).where('start', '<=', endOfMonth)
     );
 
     return this.pushEventsFromCollection(collection);

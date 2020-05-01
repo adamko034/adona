@@ -99,8 +99,8 @@ describe('Calendar Service', () => {
   });
 
   describe('Get Month Events', () => {
-    it('should get events', () => {
-      // given
+    it('should get events', (done) => {
+      const teamId = '12';
       const date = new Date(2019, 10, 10);
       const startOfMonth = new Date(2019, 10, 1);
       const endOfMonth = new Date(2019, 10, 30);
@@ -119,7 +119,7 @@ describe('Calendar Service', () => {
       firestore.collection.calls.reset();
 
       // when
-      const actual = service.getMonthEvents(date);
+      const actual = service.getMonthEvents(date, teamId);
 
       // then
       expect(timeService.Extraction.getStartOfMonth).toHaveBeenCalledWith(date);
@@ -132,6 +132,7 @@ describe('Calendar Service', () => {
         expect(mapper.Event.fromFirebaseEvents).toHaveBeenCalledTimes(1);
         expect(mapper.Event.fromFirebaseEvents).toHaveBeenCalledWith(firebaseEvents);
         expect(res).toEqual(events);
+        done();
       });
     });
   });

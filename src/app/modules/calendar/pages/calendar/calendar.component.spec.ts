@@ -4,6 +4,7 @@ import { NewEventDialogData } from 'src/app/modules/calendar/components/dialogs/
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
+import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
 import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
 import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
@@ -66,7 +67,9 @@ describe('CalendarComponent', () => {
     calendarFacade.selectView.calls.reset();
     calendarFacade.selectViewDate.calls.reset();
     calendarFacade.changeView.calls.reset();
+    calendarFacade.selectEvents.calls.reset();
     dialogService.open.calls.reset();
+    deviceDetectorService.isMobile.calls.reset();
 
     calendarFacade.selectView.and.returnValue(of({ isList: false, calendarView: CalendarView.Month }));
     calendarFacade.selectViewDate.and.returnValue(of(new Date()));
@@ -81,7 +84,6 @@ describe('CalendarComponent', () => {
 
   describe('On Init', () => {
     it('should read from store (view, view date, events for this, previous and next months)', () => {
-      // given
       const viewDate = new Date(2019, 10, 10);
       const previousMonth = new Date(2019, 9, 10);
       const nextMonth = new Date(2019, 11, 10);
@@ -90,16 +92,21 @@ describe('CalendarComponent', () => {
       calendarFacade.selectViewDate.and.returnValue(of(viewDate));
       timeService.Extraction.getPreviousMonthOf.and.returnValue(previousMonth);
       timeService.Extraction.getNextMonthOf.and.returnValue(nextMonth);
+      deviceDetectorService.isMobile.and.returnValue(true);
 
-      // when
       component.ngOnInit();
 
-      // then
       expect(calendarFacade.selectView).toHaveBeenCalledTimes(1);
       expect(calendarFacade.selectViewDate).toHaveBeenCalledTimes(1);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(3);
-      expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(viewDate);
-      expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(previousMonth);
+      expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(viewDate, component.user.selectedTeamId);
+      expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(previousMonth, component.user.selectedTeamId);
+      expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(nextMonth, component.user.selectedTeamId);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(calendarFacade.changeView, 1, {
+        isList: true,
+        calendarView: component.view.calendarView
+      });
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(calendarFacade.selectEvents, 1, component.user.selectedTeamId);
     });
 
     it('should default to month view on non mobile device', () => {

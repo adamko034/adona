@@ -24,7 +24,7 @@ export class CalendarEventsEffects {
   public monthEventsRequest$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(calendarActions.events.loadMonthEventsRequest),
-      concatMap((action) => of(action).pipe(withLatestFrom(this.calendarFacade.selectMonthsLoaded()))),
+      concatMap((action) => of(action).pipe(withLatestFrom(this.calendarFacade.selectMonthsLoaded(action.teamId)))),
       filter(([action, monthsLoaded]) => {
         return (
           monthsLoaded.filter((date) => this.timeService.Comparison.areDatesInTheSameMonth(date, action.date))
@@ -32,8 +32,10 @@ export class CalendarEventsEffects {
         );
       }),
       mergeMap(([action]) => {
-        return this.calendarService.getMonthEvents(action.date).pipe(
-          map((events: Event[]) => calendarActions.events.loadMonthEventsSuccess({ events, date: action.date })),
+        return this.calendarService.getMonthEvents(action.date, action.teamId).pipe(
+          map((events: Event[]) =>
+            calendarActions.events.loadMonthEventsSuccess({ events, date: action.date, teamId: action.teamId })
+          ),
           catchError((err) => {
             const error = ErrorBuilder.from().withErrorObject(err).build();
             return of(calendarActions.events.loadMonthEventsFailure({ error }));

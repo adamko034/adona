@@ -7,5 +7,5 @@ export interface Event {
   created: Date;
   createdById: string;
   createdBy: string;
-  teamId?: string;
+  teamId: string;
 }

@@ -16,6 +16,7 @@ describe('Calendar Events Effects', () => {
   let effects: CalendarEventsEffects;
   let actions$: Actions;
 
+  const teamId = '123';
   const dateNow = DateTestBuilder.now().build();
   const events = EventsTestDataBuilder.from()
     .addOneWithDefaultData()
@@ -69,8 +70,8 @@ describe('Calendar Events Effects', () => {
         ])
       );
       calendarService.getMonthEvents.and.returnValue(of(events));
-      const action = calendarActions.events.loadMonthEventsRequest({ date: dateNow });
-      const completion = calendarActions.events.loadMonthEventsSuccess({ events, date: dateNow });
+      const action = calendarActions.events.loadMonthEventsRequest({ date: dateNow, teamId });
+      const completion = calendarActions.events.loadMonthEventsSuccess({ events, date: dateNow, teamId });
 
       actions$ = hot('--a--a', { a: action });
       const expected = cold('--b--b', { b: completion });
@@ -78,6 +79,7 @@ describe('Calendar Events Effects', () => {
       // when && then
       expect(effects.monthEventsRequest$).toBeObservable(expected);
       expect(calendarFacade.selectMonthsLoaded).toHaveBeenCalledTimes(2);
+      expect(calendarFacade.selectMonthsLoaded).toHaveBeenCalledWith(teamId);
       expect(calendarService.getMonthEvents).toHaveBeenCalledTimes(2);
       expect(timeService.Comparison.areDatesInTheSameMonth).toHaveBeenCalledTimes(6);
     });
@@ -90,12 +92,13 @@ describe('Calendar Events Effects', () => {
           DateTestBuilder.now().addMonth(-2).build()
         ])
       );
-      const action = calendarActions.events.loadMonthEventsRequest({ date: dateNow });
+      const action = calendarActions.events.loadMonthEventsRequest({ date: dateNow, teamId });
 
       actions$ = hot('--a--a', { a: action });
 
       expect(effects.monthEventsRequest$).toBeObservable(cold('------'));
       expect(calendarFacade.selectMonthsLoaded).toHaveBeenCalledTimes(2);
+      expect(calendarFacade.selectMonthsLoaded).toHaveBeenCalledWith(teamId);
       expect(calendarService.getMonthEvents).toHaveBeenCalledTimes(0);
       expect(timeService.Comparison.areDatesInTheSameMonth).toHaveBeenCalled();
     });
@@ -105,7 +108,7 @@ describe('Calendar Events Effects', () => {
         of([DateTestBuilder.now().addMonth(-1).build(), DateTestBuilder.now().addMonth(-2).build()])
       );
       calendarService.getMonthEvents.and.returnValue(cold('#', null, { test: 500 }));
-      const action = calendarActions.events.loadMonthEventsRequest({ date: dateNow });
+      const action = calendarActions.events.loadMonthEventsRequest({ date: dateNow, teamId });
       const completion = calendarActions.events.loadMonthEventsFailure({
         error: ErrorBuilder.from().withErrorObject({ test: 500 }).build()
       });
@@ -115,6 +118,7 @@ describe('Calendar Events Effects', () => {
 
       expect(effects.monthEventsRequest$).toBeObservable(expected);
       expect(calendarFacade.selectMonthsLoaded).toHaveBeenCalledTimes(2);
+      expect(calendarFacade.selectMonthsLoaded).toHaveBeenCalledWith(teamId);
       expect(calendarService.getMonthEvents).toHaveBeenCalledTimes(2);
     });
   });

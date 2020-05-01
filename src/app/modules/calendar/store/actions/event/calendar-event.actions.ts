@@ -25,8 +25,8 @@ const updateEventRequest = createAction(types.updateEventRequest, props<{ event:
 const updateEventSuccess = createAction(types.updateEventSuccess, props<{ eventUpdate: Update<Event> }>());
 const updateEventFailure = createAction(types.updateEventFailure, props<{ error: Error }>());
 
-const deleteEventRequest = createAction(types.deleteEventRequest, props<{ id: string }>());
-const deleteEventSuccess = createAction(types.deleteEventSuccess, props<{ id: string }>());
+const deleteEventRequest = createAction(types.deleteEventRequest, props<{ event: Event }>());
+const deleteEventSuccess = createAction(types.deleteEventSuccess, props<{ id: string; teamId: string }>());
 const deleteEventFailure = createAction(types.deleteEventFailure, props<{ error: Error }>());
 
 export const calendarEventActions = {

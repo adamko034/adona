@@ -129,11 +129,11 @@ describe('Calendar Event Effects', () => {
     it('should call service and map to Delete Event Success action', () => {
       const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
 
-      actions$ = hot('--a-a', { a: calendarActions.event.deleteEventRequest({ id: event.id }) });
+      actions$ = hot('--a-a', { a: calendarActions.event.deleteEventRequest({ event }) });
       calendarService.deleteEvent.and.returnValue(cold('a', { a: null }));
 
       expect(effects.deleteEventRequest$).toBeObservable(
-        cold('--a-a', { a: calendarActions.event.deleteEventSuccess({ id: event.id }) })
+        cold('--a-a', { a: calendarActions.event.deleteEventSuccess({ id: event.id, teamId: event.teamId }) })
       );
       expect(calendarService.deleteEvent).toHaveBeenCalledTimes(2);
       expect(calendarService.deleteEvent).toHaveBeenCalledWith(event.id);
@@ -143,7 +143,7 @@ describe('Calendar Event Effects', () => {
       const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
       calendarService.deleteEvent.and.returnValue(cold('#', null, { test: 500 }));
 
-      actions$ = hot('--a---a', { a: calendarActions.event.deleteEventRequest({ id: event.id }) });
+      actions$ = hot('--a---a', { a: calendarActions.event.deleteEventRequest({ event }) });
 
       expect(effects.deleteEventRequest$).toBeObservable(
         cold('--a---a', {

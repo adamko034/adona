@@ -50,7 +50,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
       .selectViewDate()
       .pipe(takeUntil(this.destroyed$))
       .subscribe((viewDate: Date) => (this.viewDate = viewDate));
-    this.events$ = this.facade.selectEvents();
 
     this.userFacade
       .selectUser()
@@ -58,10 +57,12 @@ export class CalendarComponent implements OnInit, OnDestroy {
       .subscribe((user: User) => {
         if (user) {
           this.user = user;
+          const teamId = this.user.selectedTeamId;
           this.facade.changeView({ isList: this.deviceService.isMobile(), calendarView: this.view.calendarView });
-          this.facade.loadMonthEvents(this.viewDate);
-          this.facade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate));
-          this.facade.loadMonthEvents(this.timeService.Extraction.getNextMonthOf(this.viewDate));
+          this.facade.loadMonthEvents(this.viewDate, teamId);
+          this.facade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate), teamId);
+          this.facade.loadMonthEvents(this.timeService.Extraction.getNextMonthOf(this.viewDate), teamId);
+          this.events$ = this.facade.selectEvents(teamId);
         }
       });
   }

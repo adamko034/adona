@@ -20,6 +20,7 @@ describe('Calendar Facade', () => {
     }
   };
 
+  const teamId = '123';
   let dispatchSpy;
   let facade: CalendarFacade;
 
@@ -36,16 +37,14 @@ describe('Calendar Facade', () => {
 
   describe('Load Month Events method', () => {
     it('should dispatch Month Events Requested Action', () => {
-      // given
       const date = new Date();
 
-      // when
-      facade.loadMonthEvents(date);
+      facade.loadMonthEvents(date, teamId);
 
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(
         dispatchSpy,
         1,
-        calendarActions.events.loadMonthEventsRequest({ date })
+        calendarActions.events.loadMonthEventsRequest({ date, teamId })
       );
     });
   });
@@ -88,7 +87,7 @@ describe('Calendar Facade', () => {
 
       // then
       expect(dispatchSpy).toHaveBeenCalledTimes(1);
-      expect(dispatchSpy).toHaveBeenCalledWith(calendarActions.event.deleteEventRequest({ id: event.id }));
+      expect(dispatchSpy).toHaveBeenCalledWith(calendarActions.event.deleteEventRequest({ event }));
     });
   });
 
@@ -102,7 +101,7 @@ describe('Calendar Facade', () => {
       mockStore.overrideSelector(calendarQueries.selectMonthsLoaded, months);
       const expected = hot('b', { b: months });
 
-      const result = facade.selectMonthsLoaded();
+      const result = facade.selectMonthsLoaded(teamId);
 
       expect(result).toBeObservable(expected);
     });
@@ -110,7 +109,6 @@ describe('Calendar Facade', () => {
 
   describe('Select Events', () => {
     it('should return events', () => {
-      // given
       const events = EventsTestDataBuilder.from()
         .addOneWithDefaultData()
         .addOneWithDefaultData()
@@ -119,10 +117,8 @@ describe('Calendar Facade', () => {
       mockStore.overrideSelector(calendarQueries.selectEvents, events);
       const expected = hot('b', { b: toCalendarEvents(events) });
 
-      // when
-      const result = facade.selectEvents();
+      const result = facade.selectEvents(teamId);
 
-      // then
       expect(result).toBeObservable(expected);
     });
   });

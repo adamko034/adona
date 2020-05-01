@@ -65,17 +65,18 @@ describe('Calendar Event Actions', () => {
   describe('Delete Event', () => {
     it('should create Delete Event Request action', () => {
       const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
-      expect(calendarActions.event.deleteEventRequest({ id: event.id })).toEqual({
+      expect(calendarActions.event.deleteEventRequest({ event })).toEqual({
         type: '[Update Event Dialog] Delete Event Request',
-        id: event.id
+        event
       });
     });
 
     it('should create Delete Event Success action', () => {
       const event = EventsTestDataBuilder.from().addOneWithDefaultData().buildEvents()[0];
-      expect(calendarActions.event.deleteEventSuccess({ id: event.id })).toEqual({
+      expect(calendarActions.event.deleteEventSuccess({ id: event.id, teamId: '123' })).toEqual({
         type: '[Database API] Delete Event Success',
-        id: event.id
+        id: event.id,
+        teamId: '123'
       });
     });
 

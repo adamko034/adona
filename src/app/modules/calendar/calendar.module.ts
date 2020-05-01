@@ -64,7 +64,7 @@ import * as fromReducer from './store/reducers/calendar.reducer';
     FlexLayoutModule,
     MatCheckboxModule,
     ReactiveFormsModule,
-    StoreModule.forFeature(fromReducer.calendarFeatureKey, fromReducer.reducer)
+    StoreModule.forFeature('calendar', fromReducer.reducer)
   ],
   providers: [CalendarService, CalendarFacade, CalendarMapper]
 })

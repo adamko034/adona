@@ -70,10 +70,9 @@ export class CalendarEventEffects {
   public deleteEventRequest$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(calendarActions.event.deleteEventRequest),
-      map((action) => action.id),
-      switchMap((id: string) =>
-        this.calendarService.deleteEvent(id).pipe(
-          map(() => calendarActions.event.deleteEventSuccess({ id })),
+      switchMap((action) =>
+        this.calendarService.deleteEvent(action.event.id).pipe(
+          map(() => calendarActions.event.deleteEventSuccess({ id: action.event.id, teamId: action.event.teamId })),
           catchError((err) => {
             const error = ErrorBuilder.from().withErrorObject(err).build();
             return of(calendarActions.event.deleteEventFailure({ error }));
