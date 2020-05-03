@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view/adona-calendar-view.model';
 
 const types = {
   viewChange: '[Calendar Page] View Change',

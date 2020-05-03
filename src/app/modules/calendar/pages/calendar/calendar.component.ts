@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CalendarEvent, CalendarView } from 'angular-calendar';
-import { DeviceDetectorService } from 'ngx-device-detector';
+import { CalendarEvent } from 'angular-calendar';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { RouterFacade } from 'src/app/core/router/router.facade';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { NewEventDialogData } from 'src/app/modules/calendar/components/dialogs/new-event-dialog/models/new-event-dialog-data.model';
-import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
+import { AdonaCalendarViewBuilder } from 'src/app/modules/calendar/model/adona-calendar-view/adona-calendar-view.builder';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view/adona-calendar-view.model';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
@@ -25,7 +26,7 @@ import { CalendarFacade } from '../../store/calendar.facade';
 export class CalendarComponent implements OnInit, OnDestroy {
   private destroyed$: Subject<void>;
 
-  public view: AdonaCalendarView = { isList: false, calendarView: CalendarView.Month };
+  public view: AdonaCalendarView;
   public viewDate = new Date();
   public events$: Observable<CalendarEvent[]>;
   public user: User;
@@ -33,19 +34,30 @@ export class CalendarComponent implements OnInit, OnDestroy {
   constructor(
     private facade: CalendarFacade,
     private timeService: TimeService,
-    private deviceService: DeviceDetectorService,
     private dialogService: DialogService,
     private userFacade: UserFacade,
-    private unsubscriberService: UnsubscriberService
+    private unsubscriberService: UnsubscriberService,
+    private routerFacade: RouterFacade
   ) {
     this.destroyed$ = this.unsubscriberService.create();
   }
 
   public ngOnInit() {
+    this.routerFacade
+      .selectCurrentRute()
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe((route: string) => {
+        const view = AdonaCalendarViewBuilder.fromRoute(route).build();
+        this.facade.changeView(view);
+      });
+
     this.facade
       .selectView()
       .pipe(takeUntil(this.destroyed$))
-      .subscribe((view: AdonaCalendarView) => (this.view = view));
+      .subscribe((view: AdonaCalendarView) => {
+        this.view = view;
+      });
+
     this.facade
       .selectViewDate()
       .pipe(takeUntil(this.destroyed$))
@@ -58,7 +70,6 @@ export class CalendarComponent implements OnInit, OnDestroy {
         if (user) {
           this.user = user;
           const teamId = this.user.selectedTeamId;
-          this.facade.changeView({ isList: this.deviceService.isMobile(), calendarView: this.view.calendarView });
           this.facade.loadMonthEvents(this.viewDate, teamId);
           this.facade.loadMonthEvents(this.timeService.Extraction.getPreviousMonthOf(this.viewDate), teamId);
           this.facade.loadMonthEvents(this.timeService.Extraction.getNextMonthOf(this.viewDate), teamId);

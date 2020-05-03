@@ -23,12 +23,12 @@ describe('CalendarComponent', () => {
   const {
     calendarFacade,
     dialogService,
-    deviceDetectorService,
+    routerFacade,
     timeService,
     userFacade,
     unsubscriberService
   } = SpiesBuilder.init()
-    .withDeviceDetectorService()
+    .withRouterFacade()
     .withTimeService()
     .withCalendarFacade()
     .withDialogService()
@@ -54,10 +54,10 @@ describe('CalendarComponent', () => {
     component = new CalendarComponent(
       calendarFacade,
       timeService,
-      deviceDetectorService,
       dialogService,
       userFacade,
-      unsubscriberService
+      unsubscriberService,
+      routerFacade
     );
 
     calendarFacade.loadMonthEvents.calls.reset();
@@ -69,7 +69,7 @@ describe('CalendarComponent', () => {
     calendarFacade.changeView.calls.reset();
     calendarFacade.selectEvents.calls.reset();
     dialogService.open.calls.reset();
-    deviceDetectorService.isMobile.calls.reset();
+    routerFacade.selectCurrentRute.calls.reset();
 
     calendarFacade.selectView.and.returnValue(of({ isList: false, calendarView: CalendarView.Month }));
     calendarFacade.selectViewDate.and.returnValue(of(new Date()));
@@ -92,10 +92,11 @@ describe('CalendarComponent', () => {
       calendarFacade.selectViewDate.and.returnValue(of(viewDate));
       timeService.Extraction.getPreviousMonthOf.and.returnValue(previousMonth);
       timeService.Extraction.getNextMonthOf.and.returnValue(nextMonth);
-      deviceDetectorService.isMobile.and.returnValue(true);
+      routerFacade.selectCurrentRute.and.returnValue(of('/calendar/month'));
 
       component.ngOnInit();
 
+      expect(routerFacade.selectCurrentRute).toHaveBeenCalledTimes(1);
       expect(calendarFacade.selectView).toHaveBeenCalledTimes(1);
       expect(calendarFacade.selectViewDate).toHaveBeenCalledTimes(1);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(3);
@@ -103,34 +104,10 @@ describe('CalendarComponent', () => {
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(previousMonth, component.user.selectedTeamId);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledWith(nextMonth, component.user.selectedTeamId);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(calendarFacade.changeView, 1, {
-        isList: true,
-        calendarView: component.view.calendarView
+        isList: false,
+        calendarView: CalendarView.Month
       });
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(calendarFacade.selectEvents, 1, component.user.selectedTeamId);
-    });
-
-    it('should default to month view on non mobile device', () => {
-      // given
-      deviceDetectorService.isMobile.and.returnValue(false);
-
-      // when
-      component.ngOnInit();
-
-      // then
-      expect(calendarFacade.changeView).toHaveBeenCalledTimes(1);
-      expect(calendarFacade.changeView).toHaveBeenCalledWith({ isList: false, calendarView: CalendarView.Month });
-    });
-
-    it('should default to list view on mobile device', () => {
-      // given
-      deviceDetectorService.isMobile.and.returnValue(true);
-
-      // when
-      component.ngOnInit();
-
-      // then
-      expect(calendarFacade.changeView).toHaveBeenCalledTimes(1);
-      expect(calendarFacade.changeView).toHaveBeenCalledWith({ isList: true, calendarView: CalendarView.Month });
     });
   });
 

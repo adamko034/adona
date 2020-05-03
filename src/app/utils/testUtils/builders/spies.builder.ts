@@ -85,7 +85,11 @@ export class SpiesBuilder {
       'toExpenseContent',
       'toVerifyEmail',
       'toResetPassword',
-      'toEmailVerified'
+      'toEmailVerified',
+      'toCalendarDayView',
+      'toCalendarWeekView',
+      'toCalendarMonthView',
+      'toCalendarListView'
     ]);
 
     return this;

@@ -1,4 +1,3 @@
-import { CalendarView } from 'angular-calendar';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { CalendarState, TeamEventsState } from 'src/app/modules/calendar/store/reducers/calendar.reducer';
 
@@ -8,7 +7,7 @@ export class CalendarStateTestDataBuilder {
   private constructor() {
     this.state = {
       teams: {},
-      view: { isList: false, calendarView: CalendarView.Month },
+      view: null,
       viewDate: new Date()
     };
   }

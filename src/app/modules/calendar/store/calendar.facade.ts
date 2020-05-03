@@ -4,11 +4,11 @@ import { CalendarEvent } from 'calendar-utils';
 import * as lodash from 'lodash';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view/adona-calendar-view.model';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { calendarActions } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { calendarQueries } from 'src/app/modules/calendar/store/selectors/calendar.selectors';
 import { CalendarMapper } from '../mappers/calendar.mapper';
-import { AdonaCalendarView } from '../model/adona-calendar-view.model';
 import { CalendarState } from './reducers/calendar.reducer';
 
 @Injectable()
@@ -55,7 +55,7 @@ export class CalendarFacade {
     this.store.dispatch(calendarActions.ui.viewDateChange({ date: newDate }));
   }
 
-  public changeView(newView: AdonaCalendarView) {
-    this.store.dispatch(calendarActions.ui.viewChange({ view: newView }));
+  public changeView(view: AdonaCalendarView) {
+    this.store.dispatch(calendarActions.ui.viewChange({ view }));
   }
 }

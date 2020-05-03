@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { AdonaCalendarView } from '../../model/adona-calendar-view.model';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view/adona-calendar-view.model';
 
 @Component({
   selector: 'app-calendar-toolbar',

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CalendarView } from 'angular-calendar';
-import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view/adona-calendar-view.model';
 
 @Component({
   selector: 'app-celendar-title',

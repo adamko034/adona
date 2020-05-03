@@ -19,6 +19,22 @@ export class NavigationService {
     this.router.navigate(['/home']);
   }
 
+  public toCalendarMonthView() {
+    this.router.navigate(['/calendar/month']);
+  }
+
+  public toCalendarWeekView() {
+    this.router.navigate(['/calendar/week']);
+  }
+
+  public toCalendarDayView() {
+    this.router.navigate(['/calendar/day']);
+  }
+
+  public toCalendarListView() {
+    this.router.navigate(['/calendar/list']);
+  }
+
   public toExpensesMobile(params: string = '') {
     this.router.navigate([`/expenses/m/${params}`]);
   }
