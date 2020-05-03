@@ -1,9 +1,8 @@
 import { createEntityAdapter, EntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
-import { CalendarView } from 'angular-calendar';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view/adona-calendar-view.model';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 import { calendarActions } from 'src/app/modules/calendar/store/actions/calendar.actions';
-import { AdonaCalendarView } from '../../model/adona-calendar-view.model';
 
 export interface TeamEventsState extends EntityState<Event> {
   monthsLoaded: Date[];
@@ -22,7 +21,7 @@ export interface CalendarState {
 
 export const initialCalendarState: CalendarState = {
   teams: {},
-  view: { isList: false, calendarView: CalendarView.Month },
+  view: null,
   viewDate: new Date()
 };
 

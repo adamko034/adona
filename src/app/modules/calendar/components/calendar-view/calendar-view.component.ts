@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { CalendarDateFormatter, CalendarEvent, CalendarEventTitleFormatter, CalendarView } from 'angular-calendar';
 import * as _ from 'lodash';
-import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view.model';
+import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view/adona-calendar-view.model';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { CalendarFacade } from '../../store/calendar.facade';
 import { CalendarCustomEventTitleFormatter } from '../../utils/calendar-custom-event-title-formatter';

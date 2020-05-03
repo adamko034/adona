@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { CalendarView } from 'angular-calendar';
 import { Views } from 'src/app/modules/calendar/components/calendar-toolbar/calendar-view-switch/model/calendar-view-switch-views.enum';
-import { CalendarFacade } from '../../../store/calendar.facade';
+import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
 
 @Component({
   selector: 'app-calendar-view-switch',
@@ -11,27 +10,22 @@ import { CalendarFacade } from '../../../store/calendar.facade';
 export class CalendarViewSwitchComponent {
   public Views = Views;
 
-  constructor(private calendarFacade: CalendarFacade) {}
+  constructor(private navigationService: NavigationService) {}
 
   public onViewChanged(view: Views) {
-    const newView = {
-      isList: view === Views.List,
-      calendarView: this.convertEnum(view)
-    };
-
-    this.calendarFacade.changeView(newView);
-  }
-
-  private convertEnum(componentView: Views): CalendarView {
-    switch (componentView) {
-      case Views.Day:
-        return CalendarView.Day;
-      case Views.Week:
-        return CalendarView.Week;
+    switch (view) {
       case Views.Month:
-        return CalendarView.Month;
-      default:
-        return CalendarView.Month;
+        this.navigationService.toCalendarMonthView();
+        break;
+      case Views.Week:
+        this.navigationService.toCalendarWeekView();
+        break;
+      case Views.Day:
+        this.navigationService.toCalendarDayView();
+        break;
+      case Views.List:
+        this.navigationService.toCalendarListView();
+        break;
     }
   }
 }

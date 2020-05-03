@@ -1,35 +1,26 @@
-import { CalendarView } from 'angular-calendar';
 import { Views } from 'src/app/modules/calendar/components/calendar-toolbar/calendar-view-switch/model/calendar-view-switch-views.enum';
-import { CalendarFacade } from '../../../store/calendar.facade';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { CalendarViewSwitchComponent } from './calendar-view-switch.component';
 
 describe('Calendar View Switch Component', () => {
   let component: CalendarViewSwitchComponent;
 
-  const facade = jasmine.createSpyObj<CalendarFacade>('calendarFacade', ['changeView']);
+  const { navigationService } = SpiesBuilder.init().withNavigationService().build();
 
   beforeEach(() => {
-    component = new CalendarViewSwitchComponent(facade);
-
-    facade.changeView.calls.reset();
+    component = new CalendarViewSwitchComponent(navigationService);
   });
 
   [
-    { newView: Views.Day, expectedViewEmitted: CalendarView.Day, expectedIsList: false },
-    { newView: Views.Week, expectedViewEmitted: CalendarView.Week, expectedIsList: false },
-    { newView: Views.Month, expectedViewEmitted: CalendarView.Month, expectedIsList: false },
-    { newView: Views.List, expectedViewEmitted: CalendarView.Month, expectedIsList: true }
-  ].forEach(input => {
+    { newView: Views.Day, spy: navigationService.toCalendarDayView },
+    { newView: Views.Week, spy: navigationService.toCalendarWeekView },
+    { newView: Views.Month, spy: navigationService.toCalendarMonthView },
+    { newView: Views.List, spy: navigationService.toCalendarListView }
+  ].forEach((input) => {
     it(`should change view to ${input.newView.toString()}`, () => {
-      // when
       component.onViewChanged(input.newView);
 
-      // then
-      expect(facade.changeView).toHaveBeenCalledTimes(1);
-      expect(facade.changeView).toHaveBeenCalledWith({
-        calendarView: input.expectedViewEmitted,
-        isList: input.expectedIsList
-      });
+      expect(input.spy).toHaveBeenCalledTimes(1);
     });
   });
 });
