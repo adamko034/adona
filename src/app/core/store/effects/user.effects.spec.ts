@@ -5,6 +5,7 @@ import { createAction } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { of } from 'rxjs';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
+import { GuiFacade } from 'src/app/core/gui/gui.facade';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
@@ -21,7 +22,11 @@ describe('User Effects', () => {
 
   const user = UserTestBuilder.withDefaultData().build();
 
-  const { userService, errorEffectService } = SpiesBuilder.init().withUserService().withErrorEffectService().build();
+  const {
+    userService,
+    errorEffectService,
+    guiFacade
+  } = SpiesBuilder.init().withUserService().withErrorEffectService().withGuiFacade().build();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -29,7 +34,8 @@ describe('User Effects', () => {
         UserEffects,
         provideMockActions(() => actions$),
         { provide: UserService, useValue: userService },
-        { provide: ErrorEffectService, useValue: errorEffectService }
+        { provide: ErrorEffectService, useValue: errorEffectService },
+        { provide: GuiFacade, useValue: guiFacade }
       ]
     });
 
@@ -38,6 +44,8 @@ describe('User Effects', () => {
     userService.loadUser.calls.reset();
     userService.changeTeam.calls.reset();
     userService.updateName.calls.reset();
+    guiFacade.showLoading.calls.reset();
+    guiFacade.hideLoading.calls.reset();
   });
 
   describe('Load User Requested', () => {
@@ -81,6 +89,8 @@ describe('User Effects', () => {
       expect(effects.changeTeamRequested$).toBeObservable(expected);
       expect(userService.changeTeam).toHaveBeenCalledTimes(1);
       expect(userService.changeTeam).toHaveBeenCalledWith(request);
+      expect(guiFacade.showLoading).toHaveBeenCalledTimes(1);
+      expect(guiFacade.hideLoading).toHaveBeenCalledTimes(1);
     });
 
     it('should dispatch Change Team Failure action', () => {
@@ -97,6 +107,8 @@ describe('User Effects', () => {
 
       expect(effects.changeTeamRequested$).toBeObservable(expected);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.changeTeam, 2, request);
+      expect(guiFacade.showLoading).toHaveBeenCalledTimes(2);
+      expect(guiFacade.hideLoading).not.toHaveBeenCalled();
     });
   });
 
@@ -131,7 +143,7 @@ describe('User Effects', () => {
 
     const actions = new Actions(of(createAction('test action')));
 
-    effects = new UserEffects(actions, userService, errorEffectService);
+    effects = new UserEffects(actions, userService, errorEffectService, guiFacade);
 
     expect(errorEffectService.createFrom).toHaveBeenCalledTimes(3);
     expect(errorEffectService.createFrom).toHaveBeenCalledWith(

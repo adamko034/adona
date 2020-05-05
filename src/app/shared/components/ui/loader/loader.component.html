@@ -1,3 +1,7 @@
-<div *ngIf="visible" fxLayout="row" fxLayoutAlign="center center">
+<div *ngIf="visible && mode === 'spinner'" fxLayout="row" fxLayoutAlign="center center">
+  <mat-progress-spinner [diameter]="diameter" mode="indeterminate"></mat-progress-spinner>
+</div>
+
+<div *ngIf="visible && mode === 'overlay'" class="loader-overlay" fxLayout="row" fxLayoutAlign="center center">
   <mat-progress-spinner [diameter]="diameter" mode="indeterminate"></mat-progress-spinner>
 </div>

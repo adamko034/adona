@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
+import { GuiFacade } from 'src/app/core/gui/gui.facade';
 import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
 import { ErrorEffectService } from '../../services/store/error-effect.service';
 import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
@@ -15,7 +16,8 @@ export class UserEffects {
   constructor(
     private actions$: Actions,
     private userService: UserService,
-    private errorEffectService: ErrorEffectService
+    private errorEffectService: ErrorEffectService,
+    private guiFacade: GuiFacade
   ) {}
 
   public loadUserRequested$ = createEffect(() => {
@@ -33,10 +35,12 @@ export class UserEffects {
   public changeTeamRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(userActions.changeTeamRequested),
+      tap(() => this.guiFacade.showLoading()),
       map((action) => action.request),
       switchMap((request: ChangeTeamRequest) =>
         this.userService.changeTeam(request).pipe(
           map(() => userActions.changeTeamSuccess({ teamId: request.teamId, updated: request.updated })),
+          tap(() => this.guiFacade.hideLoading()),
           catchError((err) => of(userActions.changeTeamFailure({ error: { errorObj: err } })))
         )
       )

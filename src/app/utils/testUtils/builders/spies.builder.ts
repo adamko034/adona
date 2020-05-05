@@ -286,7 +286,10 @@ export class SpiesBuilder {
       'selectSideNavbarOptions',
       'initSideNavbar',
       'toggleSideNavbar',
-      'toggleSideNavbarIfMobile'
+      'toggleSideNavbarIfMobile',
+      'hideLoading',
+      'showLoading',
+      'selectLoading'
     ]);
 
     return this;

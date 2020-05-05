@@ -32,7 +32,7 @@
       Log in
     </button>
 
-    <app-loader [visible]="showSpinner"></app-loader>
+    <app-loader [visible]="showSpinner" [mode]="'spinner'"></app-loader>
 
     <div class="form-error" *ngIf="showError">
       Email address or password is invalid. Please enter correct credentials

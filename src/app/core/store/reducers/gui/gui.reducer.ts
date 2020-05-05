@@ -4,10 +4,12 @@ import { guiActions } from '../../actions/gui.actions';
 
 export interface GuiState {
   sideNavbarOptions?: SideNavbarOptions;
+  loading: boolean;
 }
 
 const guiStateInitial: GuiState = {
-  sideNavbarOptions: null
+  sideNavbarOptions: null,
+  loading: false
 };
 
 const guiReducer = createReducer(
@@ -18,7 +20,9 @@ const guiReducer = createReducer(
   on(guiActions.toggleSideNavbar, (state) => ({
     ...state,
     sideNavbarOptions: { ...state.sideNavbarOptions, opened: !state.sideNavbarOptions.opened }
-  }))
+  })),
+  on(guiActions.showLoading, (state) => ({ ...state, loading: true })),
+  on(guiActions.hideLoading, (state) => ({ ...state, loading: false }))
 );
 
 export function reducer(state: GuiState | undefined, action: Action) {

@@ -1,5 +1,5 @@
 <div class="email-verified-container">
-  <app-loader [visible]="apiRequestStatus?.started"></app-loader>
+  <app-loader [visible]="apiRequestStatus?.started" [mode]="'spinner'"></app-loader>
 
   <div *ngIf="apiRequestStatus?.succeded">
     Cool! Your email has been verified. You can now log in using your credentials.

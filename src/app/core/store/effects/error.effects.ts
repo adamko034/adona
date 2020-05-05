@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { concatMap, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade';
 import { FirebaseErrorsService } from 'src/app/core/api-requests/services/firebase-errors/firebase-errors.service';
+import { GuiFacade } from 'src/app/core/gui/gui.facade';
 import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
 import { errorActions } from 'src/app/core/store/actions/error.actions';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
@@ -14,12 +15,14 @@ export class ErrorEffects {
     private actions$: Actions,
     private environmentService: EnvironmentService,
     private firebaseErrorsService: FirebaseErrorsService,
-    private apiRequestsFacade: ApiRequestsFacade
+    private apiRequestsFacade: ApiRequestsFacade,
+    private guiFacade: GuiFacade
   ) {}
 
   public handle$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(errorActions.handleError),
+      tap(() => this.guiFacade.hideLoading()),
       concatMap((action) => of(action).pipe(withLatestFrom(this.apiRequestsFacade.selectApiRequest(action.error.id)))),
       switchMap(([action, apiRequest]) => {
         if (this.firebaseErrorsService.isErrorHandled(action.error?.code)) {

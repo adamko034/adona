@@ -33,4 +33,16 @@ export class GuiFacade {
       this.toggleSideNavbar();
     }
   }
+
+  public selectLoading(): Observable<boolean> {
+    return this.store.select(guiQueries.selectLoading);
+  }
+
+  public showLoading(): void {
+    this.store.dispatch(guiActions.showLoading());
+  }
+
+  public hideLoading(): void {
+    this.store.dispatch(guiActions.hideLoading());
+  }
 }

@@ -7,7 +7,17 @@ import { Component, Input } from '@angular/core';
 })
 export class LoaderComponent {
   @Input() visible: boolean;
-  @Input() diameter = 40;
+  @Input() mode: 'overlay' | 'spinner';
+
+  public get diameter(): number {
+    if (this.mode === 'spinner') {
+      return 40;
+    }
+
+    if (this.mode === 'overlay') {
+      return 100;
+    }
+  }
 
   constructor() {}
 }

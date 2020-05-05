@@ -27,7 +27,7 @@
       Register
     </button>
 
-    <app-loader [visible]="apiRequestStatus?.started"></app-loader>
+    <app-loader [visible]="apiRequestStatus?.started" [mode]="'spinner'"></app-loader>
 
     <div class="form-error" *ngIf="apiRequestStatus?.failed && apiRequestStatus?.errorCode">
       {{ errorMessage }}
