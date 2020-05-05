@@ -1,17 +1,26 @@
-<mat-sidenav-container
-  autosize
-  class="side-nav-container"
-  [ngClass.lt-lg]="'side-nav-container-mobile'"
-  [ngClass.gt-md]="'side-nav-container-desktop'"
->
-  <mat-sidenav #sideNav [autoFocus]="false">
-    <app-side-nav [team]="team" [user]="user" [currentRoute]="currentRoute"></app-side-nav>
-  </mat-sidenav>
-  <mat-sidenav-content>
-    <div class="container-fluid">
-      <app-header [user]="user"></app-header>
-      <router-outlet></router-outlet>
-      <div id="footer"></div>
-    </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+<ng-container *ngIf="data$ | async as data">
+  <app-loader [visible]="data.showLoading" [mode]="'overlay'"></app-loader>
+
+  <mat-sidenav-container
+    autosize
+    class="side-nav-container"
+    [ngClass.lt-lg]="'side-nav-container-mobile'"
+    [ngClass.gt-md]="'side-nav-container-desktop'"
+  >
+    <mat-sidenav
+      #sideNav
+      [autoFocus]="false"
+      [opened]="data.sideNavbarOptions?.opened"
+      [mode]="data.sideNavbarOptions?.mode"
+    >
+      <app-side-nav [team]="data.team" [user]="data.user" [currentRoute]="data.route"></app-side-nav>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <div class="container-fluid">
+        <app-header [user]="data.user"></app-header>
+        <router-outlet></router-outlet>
+        <div id="footer"></div>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</ng-container>

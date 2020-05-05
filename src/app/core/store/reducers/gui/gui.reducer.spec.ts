@@ -4,7 +4,7 @@ import { guiActions } from '../../actions/gui.actions';
 import * as fromReducer from './gui.reducer';
 
 describe('Gui Reducer', () => {
-  const initialState: fromReducer.GuiState = { sideNavbarOptions: null };
+  const initialState: fromReducer.GuiState = { sideNavbarOptions: null, loading: false };
 
   describe('Init Side Navbar', () => {
     it('should set Side Navbar Options', () => {
@@ -35,6 +35,31 @@ describe('Gui Reducer', () => {
       );
 
       expect({ ...result }).toEqual({ ...initialState, sideNavbarOptions: { opened: false, mode: 'push' } });
+    });
+  });
+
+  describe('Show Loading', () => {
+    it('should set Loading to true', () => {
+      const previousState = { sideNavbarOptions: SideNavbarOptionsBuilder.from(true, 'over').build(), loading: false };
+
+      expect(fromReducer.reducer(previousState, guiActions.showLoading())).toEqual({
+        ...previousState,
+        loading: true
+      });
+    });
+  });
+
+  describe('Hide Loading', () => {
+    it('should set Loading to false', () => {
+      const previousState = {
+        sideNavbarOptions: SideNavbarOptionsBuilder.from(true, 'over').build(),
+        loading: true
+      };
+
+      expect(fromReducer.reducer(previousState, guiActions.hideLoading())).toEqual({
+        ...previousState,
+        loading: false
+      });
     });
   });
 });

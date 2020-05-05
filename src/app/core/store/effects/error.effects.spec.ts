@@ -17,8 +17,14 @@ describe('Error Effects', () => {
   const {
     environmentService,
     apiRequestsFacade,
-    firebaseErrorsService
-  } = SpiesBuilder.init().withApiRequestsFacade().withFirebaseErrorsService().withEnvironmentService().build();
+    firebaseErrorsService,
+    guiFacade
+  } = SpiesBuilder.init()
+    .withApiRequestsFacade()
+    .withFirebaseErrorsService()
+    .withEnvironmentService()
+    .withGuiFacade()
+    .build();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -26,11 +32,12 @@ describe('Error Effects', () => {
     });
     actions$ = TestBed.inject(Actions);
 
-    effects = new ErrorEffects(actions$, environmentService, firebaseErrorsService, apiRequestsFacade);
+    effects = new ErrorEffects(actions$, environmentService, firebaseErrorsService, apiRequestsFacade, guiFacade);
 
     apiRequestsFacade.selectApiRequest.calls.reset();
     environmentService.isDev.calls.reset();
     firebaseErrorsService.isErrorHandled.calls.reset();
+    guiFacade.hideLoading.calls.reset();
   });
 
   describe('Broadcast', () => {
@@ -58,6 +65,7 @@ describe('Error Effects', () => {
       );
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.selectApiRequest, 1, apiRequestId);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(firebaseErrorsService.isErrorHandled, 1, 'testCode');
+      expect(guiFacade.hideLoading).toHaveBeenCalledTimes(1);
     });
 
     it('should map to Broadcast action when api request not found', () => {
@@ -71,6 +79,7 @@ describe('Error Effects', () => {
       );
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.selectApiRequest, 1, undefined);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(firebaseErrorsService.isErrorHandled, 1, undefined);
+      expect(guiFacade.hideLoading).toHaveBeenCalledTimes(1);
     });
 
     it('should map to Broadcast and Api Reqeust Fail actions when firebase error is not handled', () => {
@@ -91,6 +100,7 @@ describe('Error Effects', () => {
       );
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.selectApiRequest, 1, apiRequestId);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(firebaseErrorsService.isErrorHandled, 1, 'testCode');
+      expect(guiFacade.hideLoading).toHaveBeenCalledTimes(1);
     });
   });
 });

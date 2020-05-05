@@ -1,6 +1,9 @@
+import { cold } from 'jasmine-marbles';
 import { of } from 'rxjs';
 import { SideNavbarOptionsBuilder } from 'src/app/core/gui/model/builders/side-navbar-options.builder';
+import { TeamsTestDataBuilder } from 'src/app/core/team/utils/test/teams-test-data.builder';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { ContentLayoutComponent } from './content-layout.component';
 
 describe('Content Layout Component', () => {
@@ -29,6 +32,7 @@ describe('Content Layout Component', () => {
     userFacade.selectUser.calls.reset();
     guiFacade.initSideNavbar.calls.reset();
     guiFacade.selectSideNavbarOptions.calls.reset();
+    guiFacade.selectLoading.calls.reset();
   });
 
   describe('Constructor', () => {
@@ -39,10 +43,17 @@ describe('Content Layout Component', () => {
 
   describe('On Init', () => {
     it('should init the component', () => {
-      teamFacade.selectSelectedTeam.and.returnValue(of(null));
-      routerFacade.selectCurrentRute.and.returnValue(of(null));
-      guiFacade.selectSideNavbarOptions.and.returnValue(of(null));
-      userFacade.selectUser.and.returnValue(of(null));
+      const team = TeamsTestDataBuilder.withDefaultData().build()[0];
+      const route = 'test/route';
+      const sideNavbarOptions = SideNavbarOptionsBuilder.from(true, 'push').build();
+      const user = UserTestBuilder.withDefaultData().build();
+      const showLoading = false;
+
+      teamFacade.selectSelectedTeam.and.returnValue(of(team));
+      routerFacade.selectCurrentRute.and.returnValue(of(route));
+      guiFacade.selectSideNavbarOptions.and.returnValue(of(sideNavbarOptions));
+      userFacade.selectUser.and.returnValue(of(user));
+      guiFacade.selectLoading.and.returnValue(of(showLoading));
 
       component.ngOnInit();
 
@@ -51,31 +62,11 @@ describe('Content Layout Component', () => {
       expect(guiFacade.initSideNavbar).toHaveBeenCalledTimes(1);
       expect(guiFacade.selectSideNavbarOptions).toHaveBeenCalledTimes(1);
       expect(teamFacade.loadSelectedTeam).toHaveBeenCalledTimes(1);
-    });
+      expect(guiFacade.selectLoading).toHaveBeenCalledTimes(1);
 
-    [true, false].forEach((isMobile) => {
-      it(`should init side navbar for ${isMobile ? 'mobile' : 'desktop'}`, () => {
-        teamFacade.selectSelectedTeam.and.returnValue(of(null));
-        routerFacade.selectCurrentRute.and.returnValue(of(null));
-        userFacade.selectUser.and.returnValue(of(null));
-
-        const navbarOptions = isMobile
-          ? SideNavbarOptionsBuilder.forMobile().build()
-          : SideNavbarOptionsBuilder.forDesktop().build();
-        guiFacade.selectSideNavbarOptions.and.returnValue(of(navbarOptions));
-
-        (component.sideNav as any) = {
-          mode: 'push',
-          open: jasmine.createSpy('open'),
-          close: jasmine.createSpy('close')
-        };
-
-        component.ngOnInit();
-
-        expect(component.sideNav.mode).toEqual(navbarOptions.mode);
-        expect(component.sideNav.open).toHaveBeenCalledTimes(isMobile ? 0 : 1);
-        expect(component.sideNav.close).toHaveBeenCalledTimes(isMobile ? 1 : 0);
-      });
+      expect(component.data$).toBeObservable(
+        cold('(x|)', { x: { user, team, showLoading, route, sideNavbarOptions } })
+      );
     });
   });
 

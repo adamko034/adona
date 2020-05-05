@@ -11,4 +11,12 @@ describe('Gui Actions', () => {
   it('should create Toggle Side Navbar actoin', () => {
     expect({ ...guiActions.toggleSideNavbar() }).toEqual({ type: guiActionTypes.toggleSideNavbar });
   });
+
+  it('should create Show Loading action', () => {
+    expect(guiActions.showLoading()).toEqual({ type: guiActionTypes.showLoading });
+  });
+
+  it('should create Hide Loading action', () => {
+    expect(guiActions.hideLoading()).toEqual({ type: guiActionTypes.hideLoading });
+  });
 });

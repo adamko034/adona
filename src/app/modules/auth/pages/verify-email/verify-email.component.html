@@ -5,7 +5,7 @@
     <span class="resend-email-label">Didn't get an email from us?</span>
     <span class="resend-email" (click)="sendEmailConfirmationLink()">Click here to resend it!</span>
   </div>
-  <app-loader [visible]="apiRequestStatus?.started"></app-loader>
+  <app-loader [visible]="apiRequestStatus?.started" [mode]="'spinner'"></app-loader>
 
   <div *ngIf="apiRequestStatus?.succeded"><span class="email-sent">Email has been sent!</span></div>
 

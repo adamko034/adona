@@ -14,9 +14,7 @@ describe('Gui Facade', () => {
   let facade: GuiFacade;
   let store: MockStore<GuiState>;
 
-  const { deviceDetectorService } = SpiesBuilder.init()
-    .withDeviceDetectorService()
-    .build();
+  const { deviceDetectorService } = SpiesBuilder.init().withDeviceDetectorService().build();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -38,7 +36,7 @@ describe('Gui Facade', () => {
   });
 
   describe('Init Side Navbar', () => {
-    [true, false].forEach(isMobile => {
+    [true, false].forEach((isMobile) => {
       it(`should init side navbar for ${isMobile ? 'mobile' : 'desktop'}`, () => {
         const dispatchSpy = spyOn(store, 'dispatch');
         const epxectedOptions = isMobile
@@ -67,7 +65,7 @@ describe('Gui Facade', () => {
   });
 
   describe('Toogle Side Navbar If Mobile', () => {
-    [true, false].forEach(isMobile => {
+    [true, false].forEach((isMobile) => {
       it(`should ${isMobile ? '' : ' not '} dispatch Toogle Side Navbar action`, () => {
         const dispatchSpy = spyOn(store, 'dispatch');
         dispatchSpy.calls.reset();
@@ -80,4 +78,33 @@ describe('Gui Facade', () => {
       });
     });
   });
+
+  describe('Show Loading', () => {
+    it('should dispatch Show Loading action', () => {
+      const dispatchSpy = getDispatchSpy(store);
+      facade.showLoading();
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, guiActions.showLoading());
+    });
+  });
+
+  describe('Hide Loading', () => {
+    it('should dispatch Hide Loading action', () => {
+      const spy = getDispatchSpy(store);
+      facade.hideLoading();
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(spy, 1, guiActions.hideLoading());
+    });
+  });
+
+  describe('Select Loading', () => {
+    it('should return observable of loading value', () => {
+      store.overrideSelector(guiQueries.selectLoading, true);
+      expect(facade.selectLoading()).toBeObservable(cold('x', { x: true }));
+    });
+  });
 });
+
+function getDispatchSpy(store) {
+  return spyOn(store, 'dispatch');
+}

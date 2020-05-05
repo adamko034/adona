@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { Team } from 'src/app/core/team/model/team.model';
 import { TeamFacade } from 'src/app/core/team/team.facade';
 import { User } from 'src/app/core/user/model/user.model';
@@ -10,6 +10,14 @@ import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsu
 import { GuiFacade } from '../../core/gui/gui.facade';
 import { SideNavbarOptions } from '../../core/gui/model/side-navbar-options.model';
 import { RouterFacade } from '../../core/router/router.facade';
+
+interface ContentLayoutComponentData {
+  user: User;
+  team: Team;
+  showLoading: boolean;
+  route: string;
+  sideNavbarOptions: SideNavbarOptions;
+}
 
 @Component({
   selector: 'app-content-layout',
@@ -22,9 +30,7 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
   @ViewChild('sideNav', { static: true })
   public sideNav: MatSidenav;
 
-  public user: User;
-  public team: Team;
-  public currentRoute: string;
+  public data$: Observable<ContentLayoutComponentData>;
 
   constructor(
     private teamFacade: TeamFacade,
@@ -37,36 +43,25 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit() {
+    this.data$ = combineLatest([
+      this.guiFacade.selectLoading(),
+      this.teamFacade.selectSelectedTeam(),
+      this.routerFacade.selectCurrentRute(),
+      this.userFacade.selectUser(),
+      this.guiFacade.selectSideNavbarOptions()
+    ]).pipe(
+      map(([showLoading, team, route, user, sideNavbarOptions]) => ({
+        showLoading,
+        team,
+        route,
+        user,
+        sideNavbarOptions
+      })),
+      takeUntil(this.destroyed$)
+    );
+
     this.guiFacade.initSideNavbar();
     this.teamFacade.loadSelectedTeam();
-
-    this.teamFacade
-      .selectSelectedTeam()
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((selectedTeam: Team) => {
-        this.team = selectedTeam;
-      });
-    this.routerFacade
-      .selectCurrentRute()
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((route) => {
-        this.currentRoute = route;
-      });
-    this.userFacade
-      .selectUser()
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((user: User) => {
-        this.user = user;
-      });
-    this.guiFacade
-      .selectSideNavbarOptions()
-      .pipe(takeUntil(this.destroyed$))
-      .subscribe((options: SideNavbarOptions) => {
-        if (options) {
-          this.sideNav.mode = options.mode;
-          options.opened ? this.sideNav.open() : this.sideNav.close();
-        }
-      });
   }
 
   public ngOnDestroy() {

@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold } from 'jasmine-marbles';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
@@ -22,7 +21,7 @@ describe('User Facade', () => {
       providers: [provideMockStore()]
     });
 
-    store = TestBed.get<Store<AuthState>>(Store);
+    store = TestBed.inject(MockStore);
     facade = new UserFacade(store);
     dispatchSpy = spyOn(store, 'dispatch');
     dispatchSpy.calls.reset();
