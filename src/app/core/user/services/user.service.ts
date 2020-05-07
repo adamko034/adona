@@ -72,7 +72,7 @@ export class UserService {
       .withName(firebaseUser.name)
       .withSelectedTeamId(!!firebaseUser.selectedTeamId ? firebaseUser.selectedTeamId : null)
       .withTeams(teams)
-      .withPhotoUrl(firebaseUser.photoUrl)
+      .withPhotoUrl(firebaseUser.photoURL)
       .build();
   }
 }

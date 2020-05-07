@@ -9,6 +9,9 @@ import { DefaultErrorType } from 'src/app/core/error/enum/default-error-type.enu
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
+import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
+import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
+import { TeamService } from 'src/app/core/team/services/team.service';
 import { UserBuilder } from 'src/app/core/user/model/builders/user.builder';
 import { UserService } from 'src/app/core/user/services/user.service';
 import { EmailConfirmationService } from 'src/app/modules/auth/services/email-confirmation.service';
@@ -24,7 +27,8 @@ export class RegisterEffects {
     private emailConfirmationService: EmailConfirmationService,
     private apiRequestsFacade: ApiRequestsFacade,
     private navigationService: NavigationService,
-    private errorEffectsService: ErrorEffectService
+    private errorEffectsService: ErrorEffectService,
+    private teamService: TeamService
   ) {}
 
   public registerRequested$ = createEffect(() => {
@@ -34,11 +38,22 @@ export class RegisterEffects {
       switchMap((action) => {
         return this.authService.register(action.credentials).pipe(
           switchMap((firebaseUser: firebase.User) => {
+            const photoUrl = firebaseUser.photoURL || UserBuilder.defaultPhotoUrl;
             const user = UserBuilder.from(firebaseUser.uid, firebaseUser.email, firebaseUser.displayName)
-              .withDefaultPhotoUrl()
+              .withPhotoUrl(photoUrl)
               .build();
 
-            return this.userService.createUser(user).pipe(mapTo(firebaseUser));
+            return this.userService.createUser(user).pipe(mapTo({ firebaseUser, photoUrl }));
+          }),
+          switchMap(({ firebaseUser, photoUrl }) => {
+            const team: NewTeamRequest = {
+              created: new Date(),
+              createdBy: firebaseUser.displayName,
+              name: 'Personal',
+              members: TeamMembersBuilder.from().withMember(firebaseUser.displayName, photoUrl).build()
+            };
+
+            return this.teamService.addTeam(team, firebaseUser.uid).pipe(mapTo(firebaseUser));
           }),
           mergeMap((firebaseUser: firebase.User) => {
             return this.emailConfirmationService.send(firebaseUser);

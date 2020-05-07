@@ -11,19 +11,13 @@ describe('Team Utils Service', () => {
 
   describe('Get Members Count', () => {
     it('should return 0 if without members', () => {
-      let team = TeamBuilder.from('123', new Date(), 'test user', 'test team')
-        .withMembers(null)
-        .build();
+      let team = TeamBuilder.from('123', new Date(), 'test user', 'test team').withMembers(null).build();
       expect(service.getMembersCount(team)).toEqual(0);
 
-      team = TeamBuilder.from('123', new Date(), 'test user', 'test team')
-        .withMembers(undefined)
-        .build();
+      team = TeamBuilder.from('123', new Date(), 'test user', 'test team').withMembers(undefined).build();
       expect(service.getMembersCount(team)).toEqual(0);
 
-      team = TeamBuilder.from('123', new Date(), 'test user', 'test team')
-        .withMembers({})
-        .build();
+      team = TeamBuilder.from('123', new Date(), 'test user', 'test team').withMembers({}).build();
       expect(service.getMembersCount(team)).toEqual(0);
     });
 
@@ -31,11 +25,11 @@ describe('Team Utils Service', () => {
       const team = TeamBuilder.from('123', new Date(), 'test', 'test')
         .withMembers(
           TeamMembersBuilder.from()
-            .withMember('a')
-            .withMember('b')
-            .withMember('c')
-            .withMember('d')
-            .withMember('e')
+            .withMember('a', 'photourl')
+            .withMember('b', 'photourl')
+            .withMember('c', 'photourl')
+            .withMember('d', 'photourl')
+            .withMember('e', 'photourl')
             .build()
         )
         .build();

@@ -1,4 +1,5 @@
 import { UserTeamBuilder } from 'src/app/core/user/model/builders/user-team.builder';
+import { UserBuilder } from 'src/app/core/user/model/builders/user.builder';
 import { User } from 'src/app/core/user/model/user.model';
 import { UserTeam } from '../../../core/user/model/user-team.model';
 import { DateTestBuilder } from './date-test.builder';
@@ -7,7 +8,7 @@ export class UserTestBuilder {
   private user: User;
 
   private constructor(id: string, name: string) {
-    this.user = { id, name, email: 'test-user@example.com', photoUrl: 'testUrl' };
+    this.user = { id, name, email: 'test-user@example.com', photoUrl: UserBuilder.defaultPhotoUrl };
   }
 
   public static with(id: string, name: string): UserTestBuilder {
@@ -88,7 +89,7 @@ export class UserTestBuilder {
       selectedTeamId: this.user.selectedTeamId,
       emailVerified: true,
       email: this.user.email,
-      photoUrl: this.user.photoUrl,
+      photoURL: this.user.photoUrl,
       sendEmailVerification: jasmine.createSpy('sendEmailVerification'),
       updateProfile: jasmine.createSpy('updateProfile')
     };

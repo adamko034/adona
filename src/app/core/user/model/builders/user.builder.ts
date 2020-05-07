@@ -2,11 +2,13 @@ import { UserTeam } from '../user-team.model';
 import { User } from '../user.model';
 
 export class UserBuilder {
-  private user: User;
-
   private constructor(id: string, email: string, name: string) {
     this.user = { id, email, name };
   }
+
+  public static defaultPhotoUrl = '/assets/images/user.png';
+
+  private user: User;
 
   public static from(id: string, email: string, name: string): UserBuilder {
     return new UserBuilder(id, email, name);
@@ -29,11 +31,6 @@ export class UserBuilder {
 
   public withPhotoUrl(photoUrl: string): UserBuilder {
     this.user.photoUrl = photoUrl;
-    return this;
-  }
-
-  public withDefaultPhotoUrl(): UserBuilder {
-    this.user.photoUrl = '/assets/images/user.png';
     return this;
   }
 

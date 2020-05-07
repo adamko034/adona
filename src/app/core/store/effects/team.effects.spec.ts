@@ -60,7 +60,10 @@ describe('Team Effects', () => {
       newTeamRequest = {
         created: new Date(),
         createdBy: 'test user',
-        members: TeamMembersBuilder.from().withMember('test user').withMember('test user 2').build(),
+        members: TeamMembersBuilder.from()
+          .withMember('test user', 'photourl')
+          .withMember('test user 2', 'photourl')
+          .build(),
         name: 'new team name'
       };
 
