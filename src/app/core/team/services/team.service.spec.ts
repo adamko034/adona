@@ -9,10 +9,7 @@ import { Team } from '../model/team.model';
 import { TeamService } from './team.service';
 
 describe('Team Service', () => {
-  const { angularFirestore, timeService } = SpiesBuilder.init()
-    .withAngularFirestore()
-    .withTimeService()
-    .build();
+  const { angularFirestore, timeService } = SpiesBuilder.init().withAngularFirestore().withTimeService().build();
   const user = UserTestBuilder.withDefaultData().build();
 
   let service: TeamService;
@@ -30,9 +27,7 @@ describe('Team Service', () => {
         created: new Date(),
         createdBy: user.name,
         name: 'team name',
-        members: TeamMembersBuilder.from()
-          .withMember(user.name)
-          .build()
+        members: TeamMembersBuilder.from().withMember(user.name, 'photourl').build()
       };
 
       expectedTeam = TeamBuilder.from('123', request.created, request.createdBy, request.name)
@@ -54,7 +49,7 @@ describe('Team Service', () => {
       const result = service.addTeam(request, user.id);
       flush();
 
-      result.subscribe(team => expect(team).toEqual(expectedTeam));
+      result.subscribe((team) => expect(team).toEqual(expectedTeam));
       expect(angularFirestore.firestore.batch).toHaveBeenCalledTimes(1);
       expect(angularFirestore.firestore.batch().set).toHaveBeenCalledTimes(1);
       expect(angularFirestore.firestore.batch().update).toHaveBeenCalledTimes(1);
@@ -76,7 +71,7 @@ describe('Team Service', () => {
       const result = service.addTeam(request, user.id);
       flush();
 
-      result.subscribe({ error: err => expect(err).toEqual('this is error') });
+      result.subscribe({ error: (err) => expect(err).toEqual('this is error') });
       expect(angularFirestore.firestore.batch).toHaveBeenCalledTimes(1);
       expect(angularFirestore.firestore.batch().set).toHaveBeenCalledTimes(1);
       expect(angularFirestore.firestore.batch().update).toHaveBeenCalledTimes(1);
@@ -96,11 +91,7 @@ describe('Team Service', () => {
     let expectedTeam: Team;
     beforeEach(fakeAsync(() => {
       expectedTeam = TeamBuilder.from('123', new Date(), 'test user', 'test team')
-        .withMembers(
-          TeamMembersBuilder.from()
-            .withMember(user.name)
-            .build()
-        )
+        .withMembers(TeamMembersBuilder.from().withMember(user.name, 'photourl').build())
         .build();
     }));
 
@@ -120,7 +111,7 @@ describe('Team Service', () => {
 
       const result = service.loadTeam(expectedTeam.id);
 
-      result.subscribe(team => expect(team).toEqual(expectedTeam));
+      result.subscribe((team) => expect(team).toEqual(expectedTeam));
       expect(angularFirestore.collection).toHaveBeenCalledTimes(1);
       expect(angularFirestore.collection).toHaveBeenCalledWith('teams');
       expect(angularFirestore.collection().doc).toHaveBeenCalledTimes(1);

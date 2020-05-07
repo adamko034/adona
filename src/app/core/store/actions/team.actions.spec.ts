@@ -6,10 +6,7 @@ import { Team } from '../../team/model/team.model';
 import { teamActions, teamActionTypes } from './team.actions';
 
 describe('Team Actions', () => {
-  const members = TeamMembersBuilder.from()
-    .withMember('user 1')
-    .withMember('user 2')
-    .build();
+  const members = TeamMembersBuilder.from().withMember('user 1', 'photourl').withMember('user 2', 'photourl').build();
 
   describe('New Team', () => {
     describe('New Team Requested', () => {
@@ -30,9 +27,7 @@ describe('Team Actions', () => {
 
     describe('New Team Create Success', () => {
       it('should create action', () => {
-        const team = TeamBuilder.from('1', new Date(), 'test user', 'example name')
-          .withMembers(members)
-          .build();
+        const team = TeamBuilder.from('1', new Date(), 'test user', 'example name').withMembers(members).build();
 
         const result = teamActions.newTeamCreateSuccess({ team });
 
@@ -42,9 +37,7 @@ describe('Team Actions', () => {
 
     describe('New Team Create Failure', () => {
       it('should create action', () => {
-        const error = ErrorTestDataBuilder.from()
-          .withDefaultData()
-          .build();
+        const error = ErrorTestDataBuilder.from().withDefaultData().build();
 
         const result = teamActions.newTeamCreateFailure({ error });
 
@@ -88,9 +81,7 @@ describe('Team Actions', () => {
 
     describe('Team Loaded Failure', () => {
       it('should create action', () => {
-        const error = ErrorTestDataBuilder.from()
-          .withDefaultData()
-          .build();
+        const error = ErrorTestDataBuilder.from().withDefaultData().build();
 
         const result = teamActions.loadTeamFailure({ error });
 

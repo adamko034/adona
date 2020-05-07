@@ -9,33 +9,12 @@ export class TeamsTestDataBuilder {
 
   private constructor() {
     this.teams = {
-      123: TeamBuilder.from(
-        '123',
-        DateTestBuilder.now()
-          .addSeconds(-10)
-          .build(),
-        'test user',
-        'new team'
-      )
-        .withMembers(
-          TeamMembersBuilder.from()
-            .withMember('test user')
-            .build()
-        )
+      123: TeamBuilder.from('123', DateTestBuilder.now().addSeconds(-10).build(), 'test user', 'new team')
+        .withMembers(TeamMembersBuilder.from().withMember('test user', 'photourl').build())
         .build(),
-      124: TeamBuilder.from(
-        '124',
-        DateTestBuilder.now()
-          .addSeconds(-30)
-          .build(),
-        'test user 2',
-        'team 2'
-      )
+      124: TeamBuilder.from('124', DateTestBuilder.now().addSeconds(-30).build(), 'test user 2', 'team 2')
         .withMembers(
-          TeamMembersBuilder.from()
-            .withMember('test user 2')
-            .withMember('test user')
-            .build()
+          TeamMembersBuilder.from().withMember('test user 2', 'photourl').withMember('test user', 'photourl').build()
         )
         .build()
     };

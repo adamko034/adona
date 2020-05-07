@@ -75,7 +75,7 @@ describe('Home Toolbar Component', () => {
         payload: {
           created: new Date(),
           createdBy: user.name,
-          members: TeamMembersBuilder.from().withMember(user.name).build(),
+          members: TeamMembersBuilder.from().withMember(user.name, 'photourl').build(),
           name: 'new team test name'
         }
       };

@@ -11,8 +11,8 @@ export class TeamMembersBuilder {
     return new TeamMembersBuilder();
   }
 
-  public withMember(name: string): TeamMembersBuilder {
-    this.members[name] = { name };
+  public withMember(name: string, photoUrl: string): TeamMembersBuilder {
+    this.members[name] = { name, photoUrl };
     return this;
   }
 

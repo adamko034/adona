@@ -19,6 +19,7 @@ import { ResetPasswordComponent } from 'src/app/modules/auth/pages/reset-passwor
 import { VerifyEmailComponent } from 'src/app/modules/auth/pages/verify-email/verify-email.component';
 import { RegisterEffects } from 'src/app/modules/auth/store/effects/register.effects';
 import { ResetPasswordEffects } from 'src/app/modules/auth/store/effects/reset-password.effects';
+import { VerifyEmailEffects } from 'src/app/modules/auth/store/effects/verify-email.effects';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { AuthRoutingModule } from './auth-routing.module';
 import { EmailVerifiedComponent } from './pages/email-verified/email-verified.component';
@@ -47,7 +48,7 @@ import { EmailVerifiedComponent } from './pages/email-verified/email-verified.co
     MatPasswordStrengthModule,
     MatIconModule,
     MatSlideToggleModule,
-    EffectsModule.forFeature([RegisterEffects, ResetPasswordEffects])
+    EffectsModule.forFeature([RegisterEffects, ResetPasswordEffects, VerifyEmailEffects])
   ]
 })
 export class AuthModule {}
