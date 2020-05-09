@@ -1,4 +1,4 @@
-import { TeamMember } from '../team-member.model';
+import { TeamMember } from 'src/app/core/team/model/team-member/team-member.model';
 
 export class TeamMembersBuilder {
   private members: { [name: string]: TeamMember };
@@ -11,8 +11,8 @@ export class TeamMembersBuilder {
     return new TeamMembersBuilder();
   }
 
-  public withMember(name: string, photoUrl: string): TeamMembersBuilder {
-    this.members[name] = { name, photoUrl };
+  public withMember(name: string, photoUrl: string, email?: string): TeamMembersBuilder {
+    this.members[name] = { name, photoUrl, email };
     return this;
   }
 

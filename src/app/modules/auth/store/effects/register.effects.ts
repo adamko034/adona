@@ -10,7 +10,7 @@ import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
 import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
-import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
+import { NewTeamRequestBuilder } from 'src/app/core/team/model/new-team-request/new-team-request.builder';
 import { TeamService } from 'src/app/core/team/services/team.service';
 import { UserBuilder } from 'src/app/core/user/model/builders/user.builder';
 import { UserService } from 'src/app/core/user/services/user.service';
@@ -46,12 +46,8 @@ export class RegisterEffects {
             return this.userService.createUser(user).pipe(mapTo({ firebaseUser, photoUrl }));
           }),
           switchMap(({ firebaseUser, photoUrl }) => {
-            const team: NewTeamRequest = {
-              created: new Date(),
-              createdBy: firebaseUser.displayName,
-              name: 'Personal',
-              members: TeamMembersBuilder.from().withMember(firebaseUser.displayName, photoUrl).build()
-            };
+            const teamMembers = TeamMembersBuilder.from().withMember(firebaseUser.displayName, photoUrl).build();
+            const team = NewTeamRequestBuilder.from('Personal', firebaseUser.displayName, teamMembers).build();
 
             return this.teamService.addTeam(team, firebaseUser.uid).pipe(mapTo(firebaseUser));
           }),

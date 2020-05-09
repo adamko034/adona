@@ -7,7 +7,7 @@ export class CustomValidators {
   }
 
   static requiredValue(control: FormControl) {
-    return control.value.trim() !== '' ? null : { requiredValue: { valid: false } };
+    return control.value?.trim() !== '' ? null : { requiredValue: { valid: false } };
   }
 
   static dateBefore = (firstControlName: string, secondControlName: string) => {

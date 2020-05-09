@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { Dictionary } from '@ngrx/entity';
-import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { hot } from 'jasmine-marbles';
+import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
+import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
 import { teamActions } from '../store/actions/team.actions';
 import { TeamState } from '../store/reducers/team/team.reducer';
 import { teamQueries } from '../store/selectors/team.selectors';
 import { TeamBuilder } from './model/builders/team.builder';
-import { NewTeamRequest } from './model/new-team-request.model';
 import { Team } from './model/team.model';
 import { TeamFacade } from './team.facade';
 import { TeamsTestDataBuilder } from './utils/test/teams-test-data.builder';
@@ -22,7 +22,7 @@ describe('Team Facade', () => {
       providers: [provideMockStore()]
     });
 
-    store = TestBed.get<Store<TeamState>>(Store);
+    store = TestBed.inject(MockStore);
     dispatchSpy = spyOn(store, 'dispatch');
     dispatchSpy.calls.reset();
 
@@ -52,7 +52,8 @@ describe('Team Facade', () => {
       const request: NewTeamRequest = {
         created: new Date(),
         createdBy: 'test',
-        name: 'test name'
+        name: 'test name',
+        members: TeamMembersBuilder.from().withMember('testUser', 'url').build()
       };
 
       facade.addTeam(request);

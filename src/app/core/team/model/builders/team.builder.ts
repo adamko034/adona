@@ -1,4 +1,4 @@
-import { TeamMember } from '../team-member.model';
+import { TeamMember } from 'src/app/core/team/model/team-member/team-member.model';
 import { Team } from '../team.model';
 
 export class TeamBuilder {

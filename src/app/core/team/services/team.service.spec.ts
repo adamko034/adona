@@ -1,10 +1,10 @@
 import { fakeAsync, flush } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
 import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
 import { TeamMembersBuilder } from '../model/builders/team-members.builder';
 import { TeamBuilder } from '../model/builders/team.builder';
-import { NewTeamRequest } from '../model/new-team-request.model';
 import { Team } from '../model/team.model';
 import { TeamService } from './team.service';
 
