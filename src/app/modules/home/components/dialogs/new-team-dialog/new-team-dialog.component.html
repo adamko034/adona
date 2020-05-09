@@ -1,7 +1,7 @@
 <button class="adona-dialog-close" mat-icon-button (click)="close()">
   <mat-icon>close</mat-icon>
 </button>
-<h2 mat-dialog-title>New Team</h2>
+<h3 mat-dialog-title>{{ getDialogTitle() }}</h3>
 <div mat-dialog-content>
   <div [ngSwitch]="currentStep">
     <form [formGroup]="form">
@@ -9,43 +9,89 @@
         <div>
           <span>How should we call your team?</span>
           <mat-form-field fxFill>
-            <input matInput id="name" formControlName="name" name="name" />
-            <mat-error *ngIf="form.get('name').hasError('required')">Please provide us your team name</mat-error>
+            <input
+              cdkTrapFocus
+              cdkTrapFocusAutoCapture
+              matInput
+              id="name"
+              formControlName="name"
+              name="name"
+              tabindex="0"
+            />
+            <mat-error *ngIf="form.get('name').hasError('requiredValue')">Please provide your team name</mat-error>
           </mat-form-field>
         </div>
         <div fxLayout="row" fxLayoutAlign="end">
-          <button mat-stroked-button class="button-stroked-blue" (click)="nextStep()">
+          <button
+            mat-stroked-button
+            class="button-stroked-blue"
+            (click)="nextStep()"
+            [disabled]="form.get('name').invalid"
+          >
             <span>Next</span>
           </button>
         </div>
       </div>
+
       <div *ngSwitchCase="steps.Users" fxLayout="column">
-        <span>Who should belong to this team?</span>
-        <div fxLayout fxLayoutAlign="space-between">
-          <mat-form-field fxFlex="80">
-            <input matInput formControlName="newUser" name="newUser" #newMemberInput />
-            <mat-error *ngIf="form.get('newUser').hasError('required')">Please provide us new member name</mat-error>
-          </mat-form-field>
-          <button mat-icon-button [disableRipple]="true" fxFlex="20" (click)="addNewMember()">
-            <mat-icon>add</mat-icon>
-          </button>
+        <label id="addMemberModeLabel">How would you like to add a new member?</label>
+        <div class="members-addition-modes">
+          <mat-radio-group #radioGroup="matRadioGroup" aria-labelledby="addMemeberModeLabel" fxLayout="column">
+            <mat-radio-button value="friend" [color]="'primary'">Invite friend</mat-radio-button>
+
+            <div *ngIf="radioGroup.value === 'friend'" fxLayout fxLayoutAlign="space-between center">
+              <mat-form-field fxFlex="90">
+                <input placeholder="Email address" matInput formControlName="newFriend" #newFriendInput />
+                <mat-error *ngIf="form.get('newFriend').hasError('requiredValue')"
+                  >Please provide email address</mat-error
+                >
+                <mat-error
+                  *ngIf="form.get('newFriend').hasError('email') && !form.get('newFriend').hasError('requiredValue')"
+                  >Please provide valid email address</mat-error
+                >
+              </mat-form-field>
+              <button mat-icon-button [disableRipple]="true" fxFlex="10" (click)="addFriend()">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+
+            <mat-radio-button class="radio-button-second" value="virtual" [color]="'primary'"
+              >Add virtual member</mat-radio-button
+            >
+            <div *ngIf="radioGroup.value === 'virtual'" fxLayout="column">
+              <div fxLayout fxLayoutAlign="space-between center">
+                <mat-form-field fxFlex="90">
+                  <input
+                    placeholder="Member name"
+                    matInput
+                    formControlName="newMember"
+                    name="newMember"
+                    #newMemberInput
+                  />
+                  <mat-error *ngIf="form.get('newMember').hasError('required')">Please provide member name</mat-error>
+                </mat-form-field>
+                <button mat-icon-button [disableRipple]="true" fxFlex="10" (click)="addMember()">
+                  <mat-icon>add</mat-icon>
+                </button>
+              </div>
+            </div>
+          </mat-radio-group>
         </div>
+
         <div fxLayout="column">
           <div class="members-list-title">
-            <mat-icon style="vertical-align: text-bottom;">
-              supervisor_account
-            </mat-icon>
-            <span style="margin-left: 5px;">Members:</span>
+            <span>Team members:</span>
           </div>
           <div *ngFor="let member of members | keyvalue; let i = index">
-            <div fxFill class="members-list-member">
-              <div fxFlex="60">
-                <span>{{ i + 1 }}. {{ formatMemberName(member.key) }}</span>
+            <div class="members-list-member">
+              <div fxFlex="90">
+                <span>{{ i + 1 }}. {{ formatMemberName(member.value) }}</span>
               </div>
               <span
+                fxFlex="10"
                 class="members-list-member-remove"
-                *ngIf="!isCurrentUser(member.key)"
-                (click)="removeMember(member.key)"
+                *ngIf="!isCurrentUser(member.value)"
+                (click)="removeMember(member.value)"
               >
                 <mat-icon>
                   clear
@@ -61,23 +107,25 @@
       </div>
       <div *ngSwitchCase="steps.Summary" fxLayout="column" fxLayoutGap="10px">
         <div>
-          You're about to create team: <br />
-          <span fxLayout="center" class="text-bold">{{ this.form.get('name').value }}</span>
+          <span class="summary-team-name">Team name:</span><span>{{ form.get('name').value }}</span>
         </div>
         <div class="summary-members-list">
-          <span class="members-list-title">Including {{ getMembersCount() }} members:</span>
-          <div fxLayout="column">
-            <span
-              class="members-list-member summary-members-list-member"
-              *ngFor="let member of members | keyvalue; let i = index"
-            >
-              <mat-icon style="vertical-align: middle;">
-                perm_identity
-              </mat-icon>
-              {{ member.key }}
-            </span>
+          <div class="members-list-title">
+            <span>Team members:</span>
+          </div>
+          <div *ngFor="let member of members | keyvalue; let i = index">
+            <div fxFill class="members-list-member">
+              <span>{{ i + 1 }}. {{ formatMemberName(member.value) }}</span>
+            </div>
           </div>
         </div>
+
+        <app-alert
+          *ngIf="shouldSendInvitations()"
+          [mode]="'warning'"
+          [message]="'This will send invitation emails.'"
+        ></app-alert>
+
         <div fxLayout="row" fxLayoutAlign="space-between">
           <button mat-stroked-button (click)="previousStep()">Back</button>
           <button mat-stroked-button class="button-stroked-green" (click)="save()">Create</button>

@@ -3,9 +3,9 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import * as firebase from 'firebase/app/';
 import { from, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
+import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { TeamBuilder } from '../model/builders/team.builder';
-import { NewTeamRequest } from '../model/new-team-request.model';
 import { Team } from '../model/team.model';
 
 @Injectable({ providedIn: 'root' })
@@ -34,7 +34,7 @@ export class TeamService {
     return from(
       batch.commit().then(
         () => teamToAdd,
-        error => new Error(error)
+        (error) => new Error(error)
       )
     );
   }

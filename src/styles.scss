@@ -35,7 +35,9 @@ body {
 
 .button-stroked-blue {
   color: #3f51b5;
-  border-color: #3f51b5 !important;
+  &:not(:disabled) {
+    border-color: #3f51b5 !important;
+  }
 }
 
 .cdk-overlay-pane.adona-dialog {

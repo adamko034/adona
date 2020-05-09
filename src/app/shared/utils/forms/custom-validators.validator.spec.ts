@@ -5,8 +5,9 @@ describe('Custom Validators', () => {
   describe('Required Value', () => {
     [
       { control: { value: 'test' }, expected: null },
-      { control: { value: '' }, expected: { requiredValue: { valid: false } } }
-    ].forEach(input => {
+      { control: { value: '' }, expected: { requiredValue: { valid: false } } },
+      { control: { value: null }, expected: null }
+    ].forEach((input) => {
       it(`shoult return ${input.expected} for value ${input.control.value}`, () => {
         // when
         const actual = CustomValidators.requiredValue(input.control as any);
@@ -25,7 +26,7 @@ describe('Custom Validators', () => {
         dateTwo: new Date(2019, 9, 3, 10, 15),
         expected: { dateBefore: { valid: false } }
       }
-    ].forEach(input => {
+    ].forEach((input) => {
       it(`should return ${input.expected} for date ${input.dateOne} before ${input.dateTwo}`, () => {
         // given
         const formGroup = new FormGroup({
@@ -51,7 +52,7 @@ describe('Custom Validators', () => {
       { value: 'aa a', valid: false },
       { value: 'aaa123', valid: true },
       { value: 'aaa_123', valid: true }
-    ].forEach(input => {
+    ].forEach((input) => {
       it(`should be ${input.valid ? '' : 'not'} be valid for control value: ${input.value}`, () => {
         const control = new FormControl();
         control.setValue(input.value);

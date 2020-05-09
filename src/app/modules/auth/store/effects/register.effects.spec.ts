@@ -13,7 +13,7 @@ import { Error } from 'src/app/core/error/model/error.model';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
 import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
-import { NewTeamRequest } from 'src/app/core/team/model/new-team-request.model';
+import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
 import { TeamService } from 'src/app/core/team/services/team.service';
 import { UserBuilder } from 'src/app/core/user/model/builders/user.builder';
 import { User } from 'src/app/core/user/model/user.model';

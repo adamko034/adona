@@ -2,25 +2,35 @@
   margin-top: 20px;
 }
 
+.members-addition-modes {
+  margin-top: 10px;
+  margin-bottom: 15px;
+
+  .radio-button-second {
+    margin-top: 5px;
+  }
+}
+
+.summary-team-name {
+  font-weight: 500;
+  margin-right: 5px;
+}
+
 .members-list-title {
   margin-bottom: 5px;
+  font-weight: 500;
 }
 
 .members-list-member {
   margin-left: 10px;
+  min-height: 30px;
+  max-height: 30px;
 
   .members-list-member-remove {
-    min-height: 30px;
-    max-height: 30px;
     cursor: pointer;
   }
 }
 
 .summary-members-list {
   margin-top: 10px;
-}
-
-.summary-members-list-member {
-  min-height: 30px;
-  max-height: 30px;
 }

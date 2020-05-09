@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
+import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
 import { Error } from '../../error/model/error.model';
-import { NewTeamRequest } from '../../team/model/new-team-request.model';
 import { Team } from '../../team/model/team.model';
 
 export const teamActionTypes = {
