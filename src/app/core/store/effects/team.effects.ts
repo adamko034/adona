@@ -3,6 +3,8 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, concatMap, filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
+import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
+import { NewInvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
 import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
 import { ErrorEffectService } from '../../services/store/error-effect.service';
 import { Team } from '../../team/model/team.model';
@@ -20,7 +22,8 @@ export class TeamEffects {
     private teamService: TeamService,
     private teamFacade: TeamFacade,
     private errorEffectService: ErrorEffectService,
-    private guiFacade: GuiFacade
+    private guiFacade: GuiFacade,
+    private invitationsFacade: InvitationsFacade
   ) {}
 
   public newTeamRequested$ = createEffect(() => {
@@ -42,7 +45,14 @@ export class TeamEffects {
     () => {
       return this.actions$.pipe(
         ofType(teamActions.newTeamCreateSuccess),
-        tap(() => this.guiFacade.hideLoading())
+        concatMap((action) => of(action).pipe(withLatestFrom(this.userFacade.selectUser()))),
+        map(([action, user]) => {
+          const invitationsReqeust = NewInvitationRequestBuilder.from(user, action.team).build();
+          this.invitationsFacade.send(invitationsReqeust);
+          this.guiFacade.hideLoading();
+
+          return action;
+        })
       );
     },
     { dispatch: false }

@@ -10,4 +10,18 @@ export class TeamUtilsService {
 
     return Object.keys(team.members).length;
   }
+
+  public isAtLeastOneMemberWithEmail(team: Team): boolean {
+    return this.getMembersEmails(team).length > 0;
+  }
+
+  public getMembersEmails(team: Team): string[] {
+    if (!team.members) {
+      return [];
+    }
+
+    return Object.values(team.members)
+      .filter((member) => !!member.email)
+      .map((member) => member.email);
+  }
 }

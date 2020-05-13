@@ -6,6 +6,7 @@ import { createAction } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { of } from 'rxjs';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
+import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
 import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
@@ -29,12 +30,14 @@ describe('Team Effects', () => {
     teamService,
     teamFacade,
     errorEffectService,
-    guiFacade
+    guiFacade,
+    invitationsFacade
   } = SpiesBuilder.init()
     .withUserFacade()
     .withTeamService()
     .withTeamFacade()
     .withErrorEffectService()
+    .withInvitationsFacade()
     .withGuiFacade()
     .build();
 
@@ -44,9 +47,18 @@ describe('Team Effects', () => {
     });
 
     actions$ = TestBed.inject(Actions);
-    effects = new TeamEffects(actions$, userFacade, teamService, teamFacade, errorEffectService, guiFacade);
+    effects = new TeamEffects(
+      actions$,
+      userFacade,
+      teamService,
+      teamFacade,
+      errorEffectService,
+      guiFacade,
+      invitationsFacade
+    );
 
     userFacade.selectUserId.calls.reset();
+    userFacade.selectUser.calls.reset();
     teamService.addTeam.calls.reset();
     teamService.loadTeam.calls.reset();
     teamFacade.selectTeams.calls.reset();
@@ -110,12 +122,17 @@ describe('Team Effects', () => {
   });
 
   describe('New Team Create Success', () => {
-    it('should hide loading', () => {
-      const action = teamActions.newTeamCreateSuccess({ team: TeamsTestDataBuilder.withDefaultData().build()[0] });
+    it('should send invitation requests and hide loading', () => {
+      const team = TeamBuilder.from('1', new Date(), user.name, 'team 1').build();
+
+      userFacade.selectUser.and.returnValue(of(user));
+      const action = teamActions.newTeamCreateSuccess({ team });
       actions$ = cold('aa-a', { a: action });
 
       expect(effects.newTeamCreateSuccess$).toBeObservable(cold('aa-a', { a: action }));
       expect(guiFacade.hideLoading).toHaveBeenCalledTimes(3);
+      expect(userFacade.selectUser).toHaveBeenCalledTimes(3);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(invitationsFacade.send, 3, { sender: user, team });
     });
   });
 
@@ -225,7 +242,15 @@ describe('Team Effects', () => {
   it('should create error effects', () => {
     errorEffectService.createFrom.and.returnValue(of(null));
     const actions = new Actions(of(createAction('test action')));
-    effects = new TeamEffects(actions, userFacade, teamService, teamFacade, errorEffectService, guiFacade);
+    effects = new TeamEffects(
+      actions,
+      userFacade,
+      teamService,
+      teamFacade,
+      errorEffectService,
+      guiFacade,
+      invitationsFacade
+    );
 
     expect(errorEffectService.createFrom).toHaveBeenCalledTimes(2);
     expect(errorEffectService.createFrom).toHaveBeenCalledWith(

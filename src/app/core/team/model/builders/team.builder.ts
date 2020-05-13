@@ -5,7 +5,7 @@ export class TeamBuilder {
   private team: Team;
 
   private constructor(id: string, created: Date, createdBy: string, name: string) {
-    this.team = { id, created, createdBy, name };
+    this.team = { id, created, createdBy, name, members: {} };
   }
 
   public static from(id: string, created: Date, createdBy: string, name: string) {

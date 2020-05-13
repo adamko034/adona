@@ -5,5 +5,5 @@ export interface Team {
   created: Date;
   createdBy: string;
   name: string;
-  members?: { [name: string]: TeamMember };
+  members: { [name: string]: TeamMember };
 }
