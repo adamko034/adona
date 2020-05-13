@@ -7,6 +7,8 @@ import { FirebaseErrorsService } from 'src/app/core/api-requests/services/fireba
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
+import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
+import { InvitationsService } from 'src/app/core/invitations/services/invitations-service/invitations.service';
 import { RouterFacade } from 'src/app/core/router/router.facade';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
@@ -64,6 +66,8 @@ export interface Spies {
   apiRequestsFacade?: jasmine.SpyObj<ApiRequestsFacade>;
   firebaseErrorsService?: jasmine.SpyObj<FirebaseErrorsService>;
   environmentService?: jasmine.SpyObj<EnvironmentService>;
+  invitationsService?: jasmine.SpyObj<InvitationsService>;
+  invitationsFacade?: jasmine.SpyObj<InvitationsFacade>;
 }
 
 export class SpiesBuilder {
@@ -314,7 +318,11 @@ export class SpiesBuilder {
   }
 
   public withTeamUtilsService(): SpiesBuilder {
-    this.spies.teamUtilsService = jasmine.createSpyObj<TeamUtilsService>('teamUtilsService', ['getMembersCount']);
+    this.spies.teamUtilsService = jasmine.createSpyObj<TeamUtilsService>('teamUtilsService', [
+      'getMembersCount',
+      'isAtLeastOneMemberWithEmail',
+      'getMembersEmails'
+    ]);
 
     return this;
   }
@@ -368,6 +376,16 @@ export class SpiesBuilder {
     this.spies.firebaseErrorsService = jasmine.createSpyObj<FirebaseErrorsService>('firebaseErrorsService', [
       'isErrorHandled'
     ]);
+    return this;
+  }
+
+  public withInvitationsService(): SpiesBuilder {
+    this.spies.invitationsService = jasmine.createSpyObj<InvitationsService>('invitationsService', ['addRequests']);
+    return this;
+  }
+
+  public withInvitationsFacade(): SpiesBuilder {
+    this.spies.invitationsFacade = jasmine.createSpyObj<InvitationsFacade>('invitationsFacade', ['send']);
     return this;
   }
 

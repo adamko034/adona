@@ -3,6 +3,7 @@ import * as functions from 'firebase-functions';
 
 admin.initializeApp();
 
+export const sendInvitation = require('./invitations/invitation');
 export const toggleEmailVerified = functions.https.onRequest(async (req, res) => {
   try {
     const uid = req.query.uid;
