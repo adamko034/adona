@@ -2,13 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold } from 'jasmine-marbles';
+import { GuiFacade } from 'src/app/core/gui/gui.facade';
+import { SideNavbarOptionsBuilder } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.builder';
+import { guiActions } from 'src/app/core/gui/store/actions/gui.actions';
+import { GuiState } from 'src/app/core/gui/store/reducer/gui.reducer';
+import { guiQueries } from 'src/app/core/gui/store/selectors/gui.selectors';
 import { SpiesBuilder } from '../../utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from '../../utils/testUtils/jasmine-custom-matchers';
-import { guiActions } from '../store/actions/gui.actions';
-import { GuiState } from '../store/reducers/gui/gui.reducer';
-import { guiQueries } from '../store/selectors/gui.selectors';
-import { GuiFacade } from './gui.facade';
-import { SideNavbarOptionsBuilder } from './model/builders/side-navbar-options.builder';
 
 describe('Gui Facade', () => {
   let facade: GuiFacade;

@@ -1,6 +1,6 @@
-import { SideNavbarOptionsBuilder } from '../../../gui/model/builders/side-navbar-options.builder';
-import { SideNavbarOptions } from '../../../gui/model/side-navbar-options.model';
-import { guiActions } from '../../actions/gui.actions';
+import { SideNavbarOptionsBuilder } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.builder';
+import { SideNavbarOptions } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.model';
+import { guiActions } from 'src/app/core/gui/store/actions/gui.actions';
 import * as fromReducer from './gui.reducer';
 
 describe('Gui Reducer', () => {

@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import * as fromReducer from '../reducers/gui/gui.reducer';
+import * as fromReducer from 'src/app/core/gui/store/reducer/gui.reducer';
 
 const guiStateSelector = createFeatureSelector<fromReducer.GuiState>('gui');
 

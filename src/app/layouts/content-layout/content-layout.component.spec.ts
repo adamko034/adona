@@ -1,6 +1,6 @@
 import { cold } from 'jasmine-marbles';
 import { of } from 'rxjs';
-import { SideNavbarOptionsBuilder } from 'src/app/core/gui/model/builders/side-navbar-options.builder';
+import { SideNavbarOptionsBuilder } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.builder';
 import { TeamsTestDataBuilder } from 'src/app/core/team/utils/test/teams-test-data.builder';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';

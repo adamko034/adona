@@ -14,6 +14,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { DeviceDetectorModule } from 'ngx-device-detector';
+import { ToastrModule } from 'ngx-toastr';
 import { ErrorContentComponent } from 'src/app/shared/components/error/error-content/error-content.component';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
@@ -24,6 +25,7 @@ import { TabsVerticalComponent } from './components/tabs-vertical/tabs-vertical.
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { AlertComponent } from './components/ui/alert/alert.component';
 import { LoaderComponent } from './components/ui/loader/loader.component';
+import { ToastrComponent } from './components/ui/toastr/toastr.component';
 import { MobileHideDirective } from './directives/device/mobile-hide.directive';
 import { ResponsiveMatIconDirective } from './directives/device/responsive-mat-icon.directive';
 import { DateFormatPipe } from './pipes/date/date-format.pipe';
@@ -44,7 +46,12 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     MatToolbarModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    RouterModule
+    RouterModule,
+    ToastrModule.forRoot({
+      timeOut: 0,
+      closeButton: true,
+      positionClass: 'toastr-top-center'
+    })
   ],
   providers: [
     TimeService,
@@ -64,7 +71,8 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     ChangeTeamDialogComponent,
     TabsVerticalComponent,
     LoaderComponent,
-    AlertComponent
+    AlertComponent,
+    ToastrComponent
   ],
   exports: [
     ErrorComponent,

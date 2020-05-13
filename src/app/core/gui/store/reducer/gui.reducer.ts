@@ -1,6 +1,6 @@
 import { Action, createReducer, on } from '@ngrx/store';
-import { SideNavbarOptions } from '../../../gui/model/side-navbar-options.model';
-import { guiActions } from '../../actions/gui.actions';
+import { SideNavbarOptions } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.model';
+import { guiActions } from 'src/app/core/gui/store/actions/gui.actions';
 
 export interface GuiState {
   sideNavbarOptions?: SideNavbarOptions;

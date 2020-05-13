@@ -1,4 +1,4 @@
-import { SideNavbarOptionsBuilder } from '../../gui/model/builders/side-navbar-options.builder';
+import { SideNavbarOptionsBuilder } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.builder';
 import { guiActions, guiActionTypes } from './gui.actions';
 
 describe('Gui Actions', () => {
