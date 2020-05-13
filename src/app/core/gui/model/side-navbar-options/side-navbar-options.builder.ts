@@ -1,4 +1,4 @@
-import { SideNavbarOptions } from '../side-navbar-options.model';
+import { SideNavbarOptions } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.model';
 
 export class SideNavbarOptionsBuilder {
   private state: SideNavbarOptions;

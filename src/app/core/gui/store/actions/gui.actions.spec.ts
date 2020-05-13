@@ -1,4 +1,6 @@
-import { SideNavbarOptionsBuilder } from '../../gui/model/builders/side-navbar-options.builder';
+import { SideNavbarOptionsBuilder } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.builder';
+import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
 import { guiActions, guiActionTypes } from './gui.actions';
 
 describe('Gui Actions', () => {
@@ -18,5 +20,10 @@ describe('Gui Actions', () => {
 
   it('should create Hide Loading action', () => {
     expect(guiActions.hideLoading()).toEqual({ type: guiActionTypes.hideLoading });
+  });
+
+  it('should create Show Toastr action', () => {
+    const data = ToastrDataBuilder.from('error', ToastrMode.ERROR).withTitle('oops').build();
+    expect(guiActions.showToastr({ data })).toEqual({ type: guiActionTypes.showToastr, data });
   });
 });

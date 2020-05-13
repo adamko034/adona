@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { Observable } from 'rxjs';
-import { guiActions } from '../store/actions/gui.actions';
-import { GuiState } from '../store/reducers/gui/gui.reducer';
-import { guiQueries } from '../store/selectors/gui.selectors';
-import { SideNavbarOptionsBuilder } from './model/builders/side-navbar-options.builder';
-import { SideNavbarOptions } from './model/side-navbar-options.model';
+import { SideNavbarOptionsBuilder } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.builder';
+import { SideNavbarOptions } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.model';
+import { guiActions } from 'src/app/core/gui/store/actions/gui.actions';
+import { GuiState } from 'src/app/core/gui/store/reducer/gui.reducer';
+import { guiQueries } from 'src/app/core/gui/store/selectors/gui.selectors';
+import { ToastrData } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.mode';
 
 @Injectable({ providedIn: 'root' })
 export class GuiFacade {
@@ -44,5 +45,13 @@ export class GuiFacade {
 
   public hideLoading(): void {
     this.store.dispatch(guiActions.hideLoading());
+  }
+
+  public selectToastrData(): Observable<ToastrData> {
+    return this.store.select(guiQueries.selectTaostrData);
+  }
+
+  public showToastr(data: ToastrData): void {
+    this.store.dispatch(guiActions.showToastr({ data }));
   }
 }

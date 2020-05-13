@@ -6,6 +6,8 @@ import { createAction } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { of } from 'rxjs';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
+import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
@@ -65,6 +67,7 @@ describe('Team Effects', () => {
     errorEffectService.createFrom.calls.reset();
     guiFacade.hideLoading.calls.reset();
     guiFacade.showLoading.calls.reset();
+    guiFacade.showToastr.calls.reset();
   });
 
   describe('New Team Requested', () => {
@@ -122,8 +125,9 @@ describe('Team Effects', () => {
   });
 
   describe('New Team Create Success', () => {
-    it('should send invitation requests and hide loading', () => {
+    it('should send invitation requests, hide loading and show toastr', () => {
       const team = TeamBuilder.from('1', new Date(), user.name, 'team 1').build();
+      const toastr = ToastrDataBuilder.from(`Team <b>${team.name}</b> has been created.`, ToastrMode.SUCCESS).build();
 
       userFacade.selectUser.and.returnValue(of(user));
       const action = teamActions.newTeamCreateSuccess({ team });
@@ -133,6 +137,7 @@ describe('Team Effects', () => {
       expect(guiFacade.hideLoading).toHaveBeenCalledTimes(3);
       expect(userFacade.selectUser).toHaveBeenCalledTimes(3);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(invitationsFacade.send, 3, { sender: user, team });
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(guiFacade.showToastr, 3, toastr);
     });
   });
 

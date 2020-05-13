@@ -89,3 +89,9 @@ mat-password-strength-info > mat-card > mat-card-content > div.info-row > mat-ic
   text-overflow: ellipsis;
   overflow: hidden;
 }
+
+.toast-top-center {
+  top: 6px;
+  right: 0;
+  width: 100%;
+}

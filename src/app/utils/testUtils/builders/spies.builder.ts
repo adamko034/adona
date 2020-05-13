@@ -1,6 +1,7 @@
 import { AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade';
 import { FirebaseErrorsService } from 'src/app/core/api-requests/services/firebase-errors/firebase-errors.service';
@@ -68,6 +69,7 @@ export interface Spies {
   environmentService?: jasmine.SpyObj<EnvironmentService>;
   invitationsService?: jasmine.SpyObj<InvitationsService>;
   invitationsFacade?: jasmine.SpyObj<InvitationsFacade>;
+  toastrService?: jasmine.SpyObj<ToastrService>;
 }
 
 export class SpiesBuilder {
@@ -293,7 +295,9 @@ export class SpiesBuilder {
       'toggleSideNavbarIfMobile',
       'hideLoading',
       'showLoading',
-      'selectLoading'
+      'selectLoading',
+      'selectToastrData',
+      'showToastr'
     ]);
 
     return this;
@@ -386,6 +390,16 @@ export class SpiesBuilder {
 
   public withInvitationsFacade(): SpiesBuilder {
     this.spies.invitationsFacade = jasmine.createSpyObj<InvitationsFacade>('invitationsFacade', ['send']);
+    return this;
+  }
+
+  public withToastrService(): SpiesBuilder {
+    this.spies.toastrService = jasmine.createSpyObj<ToastrService>('toastrService', [
+      'info',
+      'error',
+      'warning',
+      'success'
+    ]);
     return this;
   }
 
