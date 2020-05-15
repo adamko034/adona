@@ -1,14 +1,15 @@
 import { TestBed } from '@angular/core/testing';
-import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold } from 'jasmine-marbles';
+import { GuiFacade } from 'src/app/core/gui/gui.facade';
+import { SideNavbarOptionsBuilder } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.builder';
+import { guiActions } from 'src/app/core/gui/store/actions/gui.actions';
+import { GuiState } from 'src/app/core/gui/store/reducer/gui.reducer';
+import { guiQueries } from 'src/app/core/gui/store/selectors/gui.selectors';
+import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
 import { SpiesBuilder } from '../../utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from '../../utils/testUtils/jasmine-custom-matchers';
-import { guiActions } from '../store/actions/gui.actions';
-import { GuiState } from '../store/reducers/gui/gui.reducer';
-import { guiQueries } from '../store/selectors/gui.selectors';
-import { GuiFacade } from './gui.facade';
-import { SideNavbarOptionsBuilder } from './model/builders/side-navbar-options.builder';
 
 describe('Gui Facade', () => {
   let facade: GuiFacade;
@@ -21,7 +22,7 @@ describe('Gui Facade', () => {
       providers: [provideMockStore()]
     });
 
-    store = TestBed.get<Store<GuiState>>(Store);
+    store = TestBed.inject(MockStore);
     facade = new GuiFacade(deviceDetectorService, store);
   });
 
@@ -101,6 +102,26 @@ describe('Gui Facade', () => {
     it('should return observable of loading value', () => {
       store.overrideSelector(guiQueries.selectLoading, true);
       expect(facade.selectLoading()).toBeObservable(cold('x', { x: true }));
+    });
+  });
+
+  describe('Select Toastr Data', () => {
+    it('should return obserable of Toastr Data', () => {
+      const toastr = ToastrDataBuilder.from('test message', ToastrMode.INFO).build();
+      store.overrideSelector(guiQueries.selectTaostrData, toastr);
+
+      expect(facade.selectToastrData()).toBeObservable(cold('x', { x: toastr }));
+    });
+  });
+
+  describe('Show Toastr', () => {
+    it('should dispatch Show Toastr action', () => {
+      const spy = getDispatchSpy(store);
+      const data = ToastrDataBuilder.from('test message', ToastrMode.INFO).build();
+
+      facade.showToastr(data);
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(spy, 1, guiActions.showToastr({ data }));
     });
   });
 });

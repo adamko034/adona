@@ -1,6 +1,8 @@
-import { SideNavbarOptionsBuilder } from '../../../gui/model/builders/side-navbar-options.builder';
-import { SideNavbarOptions } from '../../../gui/model/side-navbar-options.model';
-import { guiActions } from '../../actions/gui.actions';
+import { SideNavbarOptionsBuilder } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.builder';
+import { SideNavbarOptions } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.model';
+import { guiActions } from 'src/app/core/gui/store/actions/gui.actions';
+import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
 import * as fromReducer from './gui.reducer';
 
 describe('Gui Reducer', () => {
@@ -59,6 +61,16 @@ describe('Gui Reducer', () => {
       expect(fromReducer.reducer(previousState, guiActions.hideLoading())).toEqual({
         ...previousState,
         loading: false
+      });
+    });
+  });
+
+  describe('Show Toastr', () => {
+    it('should set Toastr Data', () => {
+      const data = ToastrDataBuilder.from('err', ToastrMode.ERROR).build();
+      expect(fromReducer.reducer({ loading: false }, guiActions.showToastr({ data }))).toEqual({
+        loading: false,
+        toastrData: data
       });
     });
   });

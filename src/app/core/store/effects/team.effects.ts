@@ -5,6 +5,8 @@ import { catchError, concatMap, filter, map, switchMap, tap, withLatestFrom } fr
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
 import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
 import { NewInvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
+import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
 import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
 import { ErrorEffectService } from '../../services/store/error-effect.service';
 import { Team } from '../../team/model/team.model';
@@ -49,6 +51,13 @@ export class TeamEffects {
         map(([action, user]) => {
           const invitationsReqeust = NewInvitationRequestBuilder.from(user, action.team).build();
           this.invitationsFacade.send(invitationsReqeust);
+
+          const toastrData = ToastrDataBuilder.from(
+            `Team <b>${action.team.name}</b> has been created.`,
+            ToastrMode.SUCCESS
+          ).build();
+          this.guiFacade.showToastr(toastrData);
+
           this.guiFacade.hideLoading();
 
           return action;
