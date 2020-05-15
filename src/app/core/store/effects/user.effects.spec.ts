@@ -9,7 +9,6 @@ import { GuiFacade } from 'src/app/core/gui/gui.facade';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
-import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
 import { ErrorEffectService } from '../../services/store/error-effect.service';
 import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
 import { UserService } from '../../user/services/user.service';
@@ -146,20 +145,8 @@ describe('User Effects', () => {
     effects = new UserEffects(actions, userService, errorEffectService, guiFacade);
 
     expect(errorEffectService.createFrom).toHaveBeenCalledTimes(3);
-    expect(errorEffectService.createFrom).toHaveBeenCalledWith(
-      actions,
-      userActions.loadUserFailure,
-      DefaultErrorType.ApiGet
-    );
-    expect(errorEffectService.createFrom).toHaveBeenCalledWith(
-      actions,
-      userActions.changeTeamFailure,
-      DefaultErrorType.ApiOther
-    );
-    expect(errorEffectService.createFrom).toHaveBeenCalledWith(
-      actions,
-      userActions.updateNameFailure,
-      DefaultErrorType.ApiOther
-    );
+    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions, userActions.loadUserFailure);
+    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions, userActions.changeTeamFailure);
+    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions, userActions.updateNameFailure);
   });
 });

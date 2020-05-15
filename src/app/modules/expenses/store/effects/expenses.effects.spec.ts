@@ -92,7 +92,7 @@ describe('Expenses Effects', () => {
 
       const expected = cold('--b', {
         b: errorActions.handleError({
-          error: { message: errors.DEFAULT_API_GET_ERROR_MESSAGE, errorObj: errorSource.errorObj }
+          error: { message: errors.DEFAULT_MESSAGE, errorObj: errorSource.errorObj }
         })
       });
 

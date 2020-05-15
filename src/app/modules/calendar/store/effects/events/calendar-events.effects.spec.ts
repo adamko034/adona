@@ -3,7 +3,6 @@ import { Actions } from '@ngrx/effects';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { cold, hot } from 'jasmine-marbles';
 import { of } from 'rxjs';
-import { DefaultErrorType } from 'src/app/core/error/enum/default-error-type.enum';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
 import { calendarActions } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { CalendarEventsEffects } from 'src/app/modules/calendar/store/effects/events/calendar-events.effects';
@@ -55,8 +54,7 @@ describe('Calendar Events Effects', () => {
       errorEffectService.createFrom,
       1,
       actions$,
-      calendarActions.events.loadMonthEventsFailure,
-      DefaultErrorType.ApiGet
+      calendarActions.events.loadMonthEventsFailure
     );
   });
 

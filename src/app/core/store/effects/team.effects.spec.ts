@@ -11,7 +11,6 @@ import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mo
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
-import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
 import { TeamMembersBuilder } from '../../team/model/builders/team-members.builder';
 import { TeamBuilder } from '../../team/model/builders/team.builder';
 import { Team } from '../../team/model/team.model';
@@ -258,15 +257,7 @@ describe('Team Effects', () => {
     );
 
     expect(errorEffectService.createFrom).toHaveBeenCalledTimes(2);
-    expect(errorEffectService.createFrom).toHaveBeenCalledWith(
-      actions,
-      teamActions.loadTeamFailure,
-      DefaultErrorType.ApiGet
-    );
-    expect(errorEffectService.createFrom).toHaveBeenCalledWith(
-      actions,
-      teamActions.newTeamCreateFailure,
-      DefaultErrorType.ApiPost
-    );
+    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions, teamActions.loadTeamFailure);
+    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions, teamActions.newTeamCreateFailure);
   });
 });

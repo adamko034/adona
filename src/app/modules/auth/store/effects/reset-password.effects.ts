@@ -5,7 +5,6 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade';
 import { apiRequestIds } from 'src/app/core/api-requests/constants/api-request-ids.contants';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
-import { DefaultErrorType } from 'src/app/core/error/enum/default-error-type.enum';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
@@ -48,8 +47,7 @@ export class ResetPasswordEffects {
 
   public sendPasswordResetLinkFailure$ = this.errorEffectServie.createFrom(
     this.actions$,
-    resetPasswordActions.sendPasswordResetLinkFailure,
-    DefaultErrorType.ApiOther
+    resetPasswordActions.sendPasswordResetLinkFailure
   );
 
   public confirmPasswordResetRequested$ = createEffect(() => {
@@ -80,7 +78,6 @@ export class ResetPasswordEffects {
 
   public confirmPasswordResetFailure$ = this.errorEffectServie.createFrom(
     this.actions$,
-    resetPasswordActions.confirmPasswordResetFailure,
-    DefaultErrorType.ApiOther
+    resetPasswordActions.confirmPasswordResetFailure
   );
 }

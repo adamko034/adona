@@ -27,7 +27,7 @@ export class ExpensesEffects {
     this.actions$.pipe(
       ofType(expensesActions.expensesLoadFailure),
       map((action) => {
-        const message = action.error.message ? action.error.message : errors.DEFAULT_API_GET_ERROR_MESSAGE;
+        const message = action.error.message ? action.error.message : errors.DEFAULT_MESSAGE;
         return { ...action.error, message };
       }),
       map((error: Error) => errorActions.handleError({ error }))

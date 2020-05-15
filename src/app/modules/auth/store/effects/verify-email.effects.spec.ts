@@ -3,7 +3,6 @@ import { Actions } from '@ngrx/effects';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { cold } from 'jasmine-marbles';
 import { apiRequestIds } from 'src/app/core/api-requests/constants/api-request-ids.contants';
-import { DefaultErrorType } from 'src/app/core/error/enum/default-error-type.enum';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
 import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
 import { verifyEmailActions } from 'src/app/modules/auth/store/actions/verify-email.actions';
@@ -58,15 +57,10 @@ describe('Verify Email Effects', () => {
       );
 
       expect(errorEffectService.createFrom).toHaveBeenCalledTimes(2);
+      expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions$, verifyEmailActions.confirmEmailFailure);
       expect(errorEffectService.createFrom).toHaveBeenCalledWith(
         actions$,
-        verifyEmailActions.confirmEmailFailure,
-        DefaultErrorType.ApiOther
-      );
-      expect(errorEffectService.createFrom).toHaveBeenCalledWith(
-        actions$,
-        verifyEmailActions.sendEmailVerificationLinkFailure,
-        DefaultErrorType.ApiOther
+        verifyEmailActions.sendEmailVerificationLinkFailure
       );
     });
   });

@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { Actions } from '@ngrx/effects';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { cold, hot } from 'jasmine-marbles';
-import { DefaultErrorType } from 'src/app/core/error/enum/default-error-type.enum';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
 import { calendarActions } from 'src/app/modules/calendar/store/actions/calendar.actions';
 import { CalendarEventEffects } from 'src/app/modules/calendar/store/effects/event/calendar-event.effects';
@@ -33,21 +32,9 @@ describe('Calendar Event Effects', () => {
     effects = new CalendarEventEffects(actions$, calendarService, errorEffectService);
 
     expect(errorEffectService.createFrom).toHaveBeenCalledTimes(3);
-    expect(errorEffectService.createFrom).toHaveBeenCalledWith(
-      actions$,
-      calendarActions.event.addEventFailure,
-      DefaultErrorType.ApiPost
-    );
-    expect(errorEffectService.createFrom).toHaveBeenCalledWith(
-      actions$,
-      calendarActions.event.updateEventFailure,
-      DefaultErrorType.ApiPut
-    );
-    expect(errorEffectService.createFrom).toHaveBeenCalledWith(
-      actions$,
-      calendarActions.event.deleteEventFailure,
-      DefaultErrorType.ApiDelete
-    );
+    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions$, calendarActions.event.addEventFailure);
+    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions$, calendarActions.event.updateEventFailure);
+    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions$, calendarActions.event.deleteEventFailure);
   });
 
   describe('New Event Requested effect', () => {

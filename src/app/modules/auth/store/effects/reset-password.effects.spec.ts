@@ -3,7 +3,6 @@ import { Actions } from '@ngrx/effects';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { cold } from 'jasmine-marbles';
 import { apiRequestIds } from 'src/app/core/api-requests/constants/api-request-ids.contants';
-import { DefaultErrorType } from 'src/app/core/error/enum/default-error-type.enum';
 import { Error } from 'src/app/core/error/model/error.model';
 import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
 import { resetPasswordActions } from 'src/app/modules/auth/store/actions/reset-password.actions';
@@ -89,13 +88,11 @@ describe('Reset Password Effects', () => {
       expect(errorEffectService.createFrom).toHaveBeenCalledTimes(2);
       expect(errorEffectService.createFrom).toHaveBeenCalledWith(
         actions$,
-        resetPasswordActions.sendPasswordResetLinkFailure,
-        DefaultErrorType.ApiOther
+        resetPasswordActions.sendPasswordResetLinkFailure
       );
       expect(errorEffectService.createFrom).toHaveBeenCalledWith(
         actions$,
-        resetPasswordActions.confirmPasswordResetFailure,
-        DefaultErrorType.ApiOther
+        resetPasswordActions.confirmPasswordResetFailure
       );
     });
   });

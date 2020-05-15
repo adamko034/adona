@@ -7,7 +7,6 @@ import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
 import { NewInvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
 import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
 import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
-import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
 import { ErrorEffectService } from '../../services/store/error-effect.service';
 import { Team } from '../../team/model/team.model';
 import { TeamService } from '../../team/services/team.service';
@@ -67,11 +66,7 @@ export class TeamEffects {
     { dispatch: false }
   );
 
-  public newTeamCreateFailure$ = this.errorEffectService.createFrom(
-    this.actions$,
-    teamActions.newTeamCreateFailure,
-    DefaultErrorType.ApiPost
-  );
+  public newTeamCreateFailure$ = this.errorEffectService.createFrom(this.actions$, teamActions.newTeamCreateFailure);
 
   public loadTeamRequested$ = createEffect(() => {
     return this.actions$.pipe(
@@ -98,9 +93,5 @@ export class TeamEffects {
     );
   });
 
-  public loadTeamFailure$ = this.errorEffectService.createFrom(
-    this.actions$,
-    teamActions.loadTeamFailure,
-    DefaultErrorType.ApiGet
-  );
+  public loadTeamFailure$ = this.errorEffectService.createFrom(this.actions$, teamActions.loadTeamFailure);
 }
