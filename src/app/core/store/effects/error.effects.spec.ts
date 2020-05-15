@@ -4,8 +4,11 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { cold, hot } from 'jasmine-marbles';
 import { of } from 'rxjs';
 import { ApiRequestStatusBuilder } from 'src/app/core/api-requests/models/api-request-status/api-request-status.builder';
+import { errors } from 'src/app/core/error/constants/errors.constants';
 import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
 import { ErrorEffects } from 'src/app/core/store/effects/error.effects';
+import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { errorActions } from '../actions/error.actions';
@@ -41,13 +44,15 @@ describe('Error Effects', () => {
   });
 
   describe('Broadcast', () => {
-    it('should log message and map to Api Request Failed', () => {
+    it('should show toastr and if dev env log error to console', () => {
       environmentService.isDev.and.returnValue(true);
+      const action = errorActions.broadcastError({ error: { code: 'auth', message: 'test' } });
+      actions$ = hot('-a-a', { a: action });
+      const toastr = ToastrDataBuilder.from('test', ToastrMode.ERROR).withTitle(errors.TOASTR_TITLE).build();
 
-      actions$ = hot('-a', { a: errorActions.broadcastError({ error: { code: 'auth' } }) });
-      effects.broadcast$.subscribe(() => {
-        expect(environmentService.isDev).toHaveBeenCalledTimes(1);
-      });
+      expect(effects.broadcast$).toBeObservable(cold('-a-a', { a: action }));
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(guiFacade.showToastr, 2, toastr);
+      expect(environmentService.isDev).toHaveBeenCalledTimes(2);
     });
   });
 

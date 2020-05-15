@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, concatMap, filter, map, mergeMap, withLatestFrom } from 'rxjs/operators';
-import { DefaultErrorType } from 'src/app/core/error/enum/default-error-type.enum';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { Event } from 'src/app/modules/calendar/model/event.model';
@@ -47,7 +46,6 @@ export class CalendarEventsEffects {
 
   public loadMonthEventsFailure$ = this.errorEffectsService.createFrom(
     this.actions$,
-    calendarActions.events.loadMonthEventsFailure,
-    DefaultErrorType.ApiGet
+    calendarActions.events.loadMonthEventsFailure
   );
 }

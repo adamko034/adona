@@ -3,7 +3,6 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Update } from '@ngrx/entity';
 import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
-import { DefaultErrorType } from 'src/app/core/error/enum/default-error-type.enum';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { Event } from 'src/app/modules/calendar/model/event.model';
@@ -33,11 +32,7 @@ export class CalendarEventEffects {
     );
   });
 
-  public addEventFailure$ = this.errorEffectsService.createFrom(
-    this.actions$,
-    calendarActions.event.addEventFailure,
-    DefaultErrorType.ApiPost
-  );
+  public addEventFailure$ = this.errorEffectsService.createFrom(this.actions$, calendarActions.event.addEventFailure);
 
   public updateEventRequest$ = createEffect(() => {
     return this.actions$.pipe(
@@ -63,8 +58,7 @@ export class CalendarEventEffects {
 
   public updateEventFailure$ = this.errorEffectsService.createFrom(
     this.actions$,
-    calendarActions.event.updateEventFailure,
-    DefaultErrorType.ApiPut
+    calendarActions.event.updateEventFailure
   );
 
   public deleteEventRequest$ = createEffect(() => {
@@ -84,7 +78,6 @@ export class CalendarEventEffects {
 
   public deleteEventFailure$ = this.errorEffectsService.createFrom(
     this.actions$,
-    calendarActions.event.deleteEventFailure,
-    DefaultErrorType.ApiDelete
+    calendarActions.event.deleteEventFailure
   );
 }

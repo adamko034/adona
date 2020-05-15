@@ -4,7 +4,6 @@ import { of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
-import { DefaultErrorType } from '../../error/enum/default-error-type.enum';
 import { ErrorEffectService } from '../../services/store/error-effect.service';
 import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
 import { User } from '../../user/model/user.model';
@@ -47,17 +46,9 @@ export class UserEffects {
     );
   });
 
-  public loadUserFailure$ = this.errorEffectService.createFrom(
-    this.actions$,
-    userActions.loadUserFailure,
-    DefaultErrorType.ApiGet
-  );
+  public loadUserFailure$ = this.errorEffectService.createFrom(this.actions$, userActions.loadUserFailure);
 
-  public changeTeamFailure$ = this.errorEffectService.createFrom(
-    this.actions$,
-    userActions.changeTeamFailure,
-    DefaultErrorType.ApiOther
-  );
+  public changeTeamFailure$ = this.errorEffectService.createFrom(this.actions$, userActions.changeTeamFailure);
 
   public updateNameRequested$ = createEffect(() => {
     return this.actions$.pipe(
@@ -77,9 +68,5 @@ export class UserEffects {
     );
   });
 
-  public updateNameFailure$ = this.errorEffectService.createFrom(
-    this.actions$,
-    userActions.updateNameFailure,
-    DefaultErrorType.ApiOther
-  );
+  public updateNameFailure$ = this.errorEffectService.createFrom(this.actions$, userActions.updateNameFailure);
 }

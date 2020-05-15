@@ -15,11 +15,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { ToastrModule } from 'ngx-toastr';
-import { ErrorContentComponent } from 'src/app/shared/components/error/error-content/error-content.component';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { ChangeTeamDialogComponent } from './components/dialogs/change-team-dialog/change-team-dialog.component';
-import { ErrorComponent } from './components/error/error.component';
 import { FromToDatesComponent } from './components/from-to-dates/from-to-dates.component';
 import { TabsVerticalComponent } from './components/tabs-vertical/tabs-vertical.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
@@ -63,8 +61,6 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     { provide: 'Document', useValue: document }
   ],
   declarations: [
-    ErrorComponent,
-    ErrorContentComponent,
     FromToDatesComponent,
     DateFormatPipe,
     MobileHideDirective,
@@ -77,7 +73,6 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     ToastrComponent
   ],
   exports: [
-    ErrorComponent,
     FromToDatesComponent,
     DateFormatPipe,
     MobileHideDirective,
@@ -89,6 +84,6 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     AlertComponent,
     ToastrComponent
   ],
-  entryComponents: [ErrorContentComponent, ChangeTeamDialogComponent]
+  entryComponents: [ChangeTeamDialogComponent]
 })
 export class SharedModule {}

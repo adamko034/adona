@@ -8,7 +8,6 @@ import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade
 import { apiRequestIds } from 'src/app/core/api-requests/constants/api-request-ids.contants';
 import { CredentialsBuilder } from 'src/app/core/auth/model/builder/credentials.builder';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
-import { DefaultErrorType } from 'src/app/core/error/enum/default-error-type.enum';
 import { Error } from 'src/app/core/error/model/error.model';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
@@ -285,8 +284,7 @@ describe('Register Effecs', () => {
         errorEffectService.createFrom,
         1,
         actions,
-        registerActions.registerFailure,
-        DefaultErrorType.ApiOther
+        registerActions.registerFailure
       );
     });
   });
