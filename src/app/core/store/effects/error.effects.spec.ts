@@ -4,11 +4,11 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { cold, hot } from 'jasmine-marbles';
 import { of } from 'rxjs';
 import { ApiRequestStatusBuilder } from 'src/app/core/api-requests/models/api-request-status/api-request-status.builder';
-import { errors } from 'src/app/core/error/constants/errors.constants';
 import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
 import { ErrorEffects } from 'src/app/core/store/effects/error.effects';
 import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
 import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
+import { resources } from 'src/app/shared/resources/resources';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { errorActions } from '../actions/error.actions';
@@ -48,7 +48,7 @@ describe('Error Effects', () => {
       environmentService.isDev.and.returnValue(true);
       const action = errorActions.broadcastError({ error: { code: 'auth', message: 'test' } });
       actions$ = hot('-a-a', { a: action });
-      const toastr = ToastrDataBuilder.from('test', ToastrMode.ERROR).withTitle(errors.TOASTR_TITLE).build();
+      const toastr = ToastrDataBuilder.from('test', ToastrMode.ERROR).withTitle(resources.toastr.title.error).build();
 
       expect(effects.broadcast$).toBeObservable(cold('-a-a', { a: action }));
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(guiFacade.showToastr, 2, toastr);
@@ -76,11 +76,12 @@ describe('Error Effects', () => {
     it('should map to Broadcast action when api request not found', () => {
       apiRequestsFacade.selectApiRequest.and.returnValue(of(null));
       firebaseErrorsService.isErrorHandled.and.returnValue(false);
+      const toastr = ToastrDataBuilder.from('test message', ToastrMode.INFO).build();
 
-      actions$ = cold('--a', { a: errorActions.handleError({ error: { errorObj: { code: 500 } } }) });
+      actions$ = cold('--a', { a: errorActions.handleError({ error: { errorObj: { code: 500 } }, toastr }) });
 
       expect(effects.handle$).toBeObservable(
-        cold('--a', { a: errorActions.broadcastError({ error: { errorObj: { code: 500 } } }) })
+        cold('--a', { a: errorActions.broadcastError({ error: { errorObj: { code: 500 } }, toastr }) })
       );
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.selectApiRequest, 1, undefined);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(firebaseErrorsService.isErrorHandled, 1, undefined);
@@ -99,7 +100,10 @@ describe('Error Effects', () => {
 
       expect(effects.handle$).toBeObservable(
         cold('--(ab)', {
-          a: errorActions.broadcastError({ error: { errorObj: { code: 500 }, id: apiRequestId, code: 'testCode' } }),
+          a: errorActions.broadcastError({
+            error: { errorObj: { code: 500 }, id: apiRequestId, code: 'testCode' },
+            toastr: undefined
+          }),
           b: apiRequestActions.requestFail({ id: apiRequestId, errorCode: null })
         })
       );

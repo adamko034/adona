@@ -20,6 +20,7 @@ import { CalendarService } from 'src/app/modules/calendar/service/calendar.servi
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { ExpensesService } from 'src/app/modules/expenses/services/expenses.service';
 import { ExpensesFacade } from 'src/app/modules/expenses/store/expenses.facade';
+import { ResourceService } from 'src/app/shared/resources/services/resource.service';
 import { DialogService } from 'src/app/shared/services/dialogs/dialog.service';
 import { SharedDialogsService } from 'src/app/shared/services/dialogs/shared-dialogs.service';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
@@ -70,6 +71,7 @@ export interface Spies {
   invitationsService?: jasmine.SpyObj<InvitationsService>;
   invitationsFacade?: jasmine.SpyObj<InvitationsFacade>;
   toastrService?: jasmine.SpyObj<ToastrService>;
+  resourceService?: jasmine.SpyObj<ResourceService>;
 }
 
 export class SpiesBuilder {
@@ -400,6 +402,11 @@ export class SpiesBuilder {
       'warning',
       'success'
     ]);
+    return this;
+  }
+
+  public withResourceService(): SpiesBuilder {
+    this.spies.resourceService = jasmine.createSpyObj<ResourceService>('resourceService', ['format']);
     return this;
   }
 

@@ -7,7 +7,7 @@ import { SideNavbarOptions } from 'src/app/core/gui/model/side-navbar-options/si
 import { guiActions } from 'src/app/core/gui/store/actions/gui.actions';
 import { GuiState } from 'src/app/core/gui/store/reducer/gui.reducer';
 import { guiQueries } from 'src/app/core/gui/store/selectors/gui.selectors';
-import { ToastrData } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.mode';
+import { ToastrData } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.model';
 
 @Injectable({ providedIn: 'root' })
 export class GuiFacade {

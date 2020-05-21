@@ -4,15 +4,19 @@ import { ActionCreator } from '@ngrx/store';
 import { TypedAction } from '@ngrx/store/src/models';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { errors } from 'src/app/core/error/constants/errors.constants';
 import { errorActions } from 'src/app/core/store/actions/error.actions';
+import { ToastrData } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.model';
+import { resources } from 'src/app/shared/resources/resources';
 import { Error } from '../../error/model/error.model';
 
 @Injectable({ providedIn: 'root' })
 export class ErrorEffectService {
   public createFrom(
     actions$: Actions,
-    failureAction: ActionCreator<string, (props: { error: Error }) => { error: Error } & TypedAction<string>>
+    failureAction: ActionCreator<
+      string,
+      (props: { error: Error; toastr?: ToastrData }) => { error: Error; toastr?: ToastrData } & TypedAction<string>
+    >
   ): Observable<{ error: Error }> {
     return createEffect(() => {
       return actions$.pipe(
@@ -20,10 +24,10 @@ export class ErrorEffectService {
         map((action) => {
           const error: Error = {
             ...action.error,
-            message: action.error.message ? action.error.message : errors.DEFAULT_MESSAGE
+            message: action.error.message ? action.error.message : resources.general.errors.message
           };
 
-          return errorActions.handleError({ error });
+          return errorActions.handleError({ error, toastr: action.toastr });
         })
       );
     });

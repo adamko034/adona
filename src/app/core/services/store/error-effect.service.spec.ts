@@ -1,6 +1,9 @@
 import { createAction, props } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { errorActions } from 'src/app/core/store/actions/error.actions';
+import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
+import { ToastrData } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.model';
+import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
 import { Error } from '../../error/model/error.model';
 import { ErrorTestDataBuilder } from '../../error/utils/test/error-test-data.builder';
 import { ErrorEffectService } from './error-effect.service';
@@ -18,7 +21,7 @@ describe('Error Effect Service', () => {
       const failureAction = createAction('test action', props<{ error: Error }>());
 
       const actions$ = hot('--a', { a: failureAction({ error }) });
-      const expected = cold('--b', { b: errorActions.handleError({ error }) });
+      const expected = cold('--b', { b: errorActions.handleError({ error, toastr: undefined }) });
 
       const result = service.createFrom(actions$, failureAction);
 
@@ -32,7 +35,21 @@ describe('Error Effect Service', () => {
     const failureAction = createAction('test action', props<{ error: Error }>());
 
     const actions$ = hot('--a', { a: failureAction({ error }) });
-    const expected = cold('--b', { b: errorActions.handleError({ error: expectedError }) });
+    const expected = cold('--b', { b: errorActions.handleError({ error: expectedError, toastr: undefined }) });
+
+    const result = service.createFrom(actions$, failureAction);
+
+    expect(result).toBeObservable(expected);
+  });
+
+  it('should create effect dispatching Error Handle Error action with toastr', () => {
+    const toastr = ToastrDataBuilder.from('test message', ToastrMode.INFO).build();
+    const error = ErrorTestDataBuilder.from().withDefaultData().withMessage(null).build();
+    const expectedError = ErrorTestDataBuilder.from().withDefaultData().build();
+    const failureAction = createAction('test action', props<{ error: Error; toastr: ToastrData }>());
+
+    const actions$ = hot('--a', { a: failureAction({ error, toastr }) });
+    const expected = cold('--b', { b: errorActions.handleError({ error: expectedError, toastr }) });
 
     const result = service.createFrom(actions$, failureAction);
 

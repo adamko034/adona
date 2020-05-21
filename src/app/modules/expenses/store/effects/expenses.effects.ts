@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, concatMap, map, switchMap, withLatestFrom } from 'rxjs/operators';
-import { errors } from 'src/app/core/error/constants/errors.constants';
 import { errorActions } from 'src/app/core/store/actions/error.actions';
 import { UserFacade } from 'src/app/core/user/user.facade';
+import { resources } from 'src/app/shared/resources/resources';
 import { ExpenseGroup } from '../../model/expense-group.model';
 import { ExpensesService } from '../../services/expenses.service';
 import { expensesActions, expensesActionsTypes } from '../actions/expenses.actions';
@@ -27,7 +27,7 @@ export class ExpensesEffects {
     this.actions$.pipe(
       ofType(expensesActions.expensesLoadFailure),
       map((action) => {
-        const message = action.error.message ? action.error.message : errors.DEFAULT_MESSAGE;
+        const message = action.error.message ? action.error.message : resources.general.errors.message;
         return { ...action.error, message };
       }),
       map((error: Error) => errorActions.handleError({ error }))

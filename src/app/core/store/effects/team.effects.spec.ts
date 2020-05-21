@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
 import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
 import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
+import { resources } from 'src/app/shared/resources/resources';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
@@ -32,7 +33,8 @@ describe('Team Effects', () => {
     teamFacade,
     errorEffectService,
     guiFacade,
-    invitationsFacade
+    invitationsFacade,
+    resourceService
   } = SpiesBuilder.init()
     .withUserFacade()
     .withTeamService()
@@ -40,6 +42,7 @@ describe('Team Effects', () => {
     .withErrorEffectService()
     .withInvitationsFacade()
     .withGuiFacade()
+    .withResourceService()
     .build();
 
   beforeEach(() => {
@@ -55,7 +58,8 @@ describe('Team Effects', () => {
       teamFacade,
       errorEffectService,
       guiFacade,
-      invitationsFacade
+      invitationsFacade,
+      resourceService
     );
 
     userFacade.selectUserId.calls.reset();
@@ -67,6 +71,7 @@ describe('Team Effects', () => {
     guiFacade.hideLoading.calls.reset();
     guiFacade.showLoading.calls.reset();
     guiFacade.showToastr.calls.reset();
+    resourceService.format.calls.reset();
   });
 
   describe('New Team Requested', () => {
@@ -126,7 +131,9 @@ describe('Team Effects', () => {
   describe('New Team Create Success', () => {
     it('should send invitation requests, hide loading and show toastr', () => {
       const team = TeamBuilder.from('1', new Date(), user.name, 'team 1').build();
-      const toastr = ToastrDataBuilder.from(`Team <b>${team.name}</b> has been created.`, ToastrMode.SUCCESS).build();
+      const toastr = ToastrDataBuilder.from('test', ToastrMode.SUCCESS).build();
+
+      resourceService.format.and.returnValue('test');
 
       userFacade.selectUser.and.returnValue(of(user));
       const action = teamActions.newTeamCreateSuccess({ team });
@@ -135,6 +142,7 @@ describe('Team Effects', () => {
       expect(effects.newTeamCreateSuccess$).toBeObservable(cold('aa-a', { a: action }));
       expect(guiFacade.hideLoading).toHaveBeenCalledTimes(3);
       expect(userFacade.selectUser).toHaveBeenCalledTimes(3);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(resourceService.format, 3, resources.team.created, team.name);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(invitationsFacade.send, 3, { sender: user, team });
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(guiFacade.showToastr, 3, toastr);
     });
@@ -253,7 +261,8 @@ describe('Team Effects', () => {
       teamFacade,
       errorEffectService,
       guiFacade,
-      invitationsFacade
+      invitationsFacade,
+      resourceService
     );
 
     expect(errorEffectService.createFrom).toHaveBeenCalledTimes(2);

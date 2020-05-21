@@ -8,6 +8,9 @@ import { NewInvitationRequest } from 'src/app/core/invitations/models/new-invita
 import { invitationActions } from 'src/app/core/invitations/store/actions/invitation.actions';
 import { InvitationEffects } from 'src/app/core/invitations/store/effects/invitation.effects';
 import { TeamsTestDataBuilder } from 'src/app/core/team/utils/test/teams-test-data.builder';
+import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
+import { resources } from 'src/app/shared/resources/resources';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 
@@ -15,7 +18,10 @@ describe('Invitation Effects', () => {
   let effects: InvitationEffects;
   let actions$: Actions;
 
-  const { invitationsService } = SpiesBuilder.init().withInvitationsService().build();
+  const {
+    invitationsService,
+    errorEffectService
+  } = SpiesBuilder.init().withErrorEffectService().withInvitationsService().build();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -23,7 +29,7 @@ describe('Invitation Effects', () => {
     });
 
     actions$ = TestBed.inject(Actions);
-    effects = new InvitationEffects(actions$, invitationsService);
+    effects = new InvitationEffects(actions$, invitationsService, errorEffectService);
 
     invitationsService.addRequests.calls.reset();
   });
@@ -55,7 +61,8 @@ describe('Invitation Effects', () => {
       expect(effects.invitationSendRequest$).toBeObservable(
         cold('b---b', {
           b: invitationActions.invitationsSendFailure({
-            error: ErrorBuilder.from().withErrorObject({ test: 500 }).build()
+            error: ErrorBuilder.from().withErrorObject({ test: 500 }).build(),
+            toastr: ToastrDataBuilder.from(resources.team.initations.failed, ToastrMode.WARNING).build()
           })
         })
       );

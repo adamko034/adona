@@ -1,4 +1,4 @@
-import { errors } from 'src/app/core/error/constants/errors.constants';
+import { resources } from 'src/app/shared/resources/resources';
 import { Error } from '../../model/error.model';
 
 export class ErrorTestDataBuilder {
@@ -26,7 +26,7 @@ export class ErrorTestDataBuilder {
 
   public withDefaultData(): ErrorTestDataBuilder {
     this.error.errorObj = { code: '500', title: 'Unhandled exception' };
-    this.error.message = errors.DEFAULT_MESSAGE;
+    this.error.message = resources.general.errors.message;
 
     return this;
   }

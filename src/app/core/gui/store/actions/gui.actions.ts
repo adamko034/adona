@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { SideNavbarOptions } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.model';
-import { ToastrData } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.mode';
+import { ToastrData } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.model';
 
 export const guiActionTypes = {
   initSideNavbar: '[Home Page] Init Side Navbar',
