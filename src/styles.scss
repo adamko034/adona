@@ -95,3 +95,15 @@ mat-password-strength-info > mat-card > mat-card-content > div.info-row > mat-ic
   right: 0;
   width: 100%;
 }
+
+@media screen and (min-width: 960px) {
+  #toast-container > div {
+    width: 60%;
+  }
+}
+
+@media screen and (max-width: 960px) {
+  #toast-container > div {
+    width: 90%;
+  }
+}

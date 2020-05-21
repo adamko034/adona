@@ -3,5 +3,5 @@ import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mo
 export interface ToastrData {
   mode: ToastrMode;
   message: string;
-  title?: string;
+  title: string;
 }

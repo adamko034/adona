@@ -2,6 +2,8 @@ import { ErrorTestDataBuilder } from 'src/app/core/error/utils/test/error-test-d
 import { NewInvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
 import { invitationActions } from 'src/app/core/invitations/store/actions/invitation.actions';
 import { TeamsTestDataBuilder } from 'src/app/core/team/utils/test/teams-test-data.builder';
+import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 
 describe('Invitations Actions', () => {
@@ -23,10 +25,12 @@ describe('Invitations Actions', () => {
   });
 
   it('should create Invitation Send Failure action', () => {
+    const toastr = ToastrDataBuilder.from('test message', ToastrMode.INFO).build();
     const error = ErrorTestDataBuilder.from().withDefaultData().build();
-    expect(invitationActions.invitationsSendFailure({ error })).toEqual({
+    expect(invitationActions.invitationsSendFailure({ error, toastr })).toEqual({
       type: '[Database API] Invitations Send Failure',
-      error
+      error,
+      toastr
     });
   });
 });

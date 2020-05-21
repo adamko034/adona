@@ -1,7 +1,7 @@
 import { Action, createReducer, on } from '@ngrx/store';
 import { SideNavbarOptions } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.model';
 import { guiActions } from 'src/app/core/gui/store/actions/gui.actions';
-import { ToastrData } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.mode';
+import { ToastrData } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.model';
 
 export interface GuiState {
   sideNavbarOptions?: SideNavbarOptions;

@@ -7,6 +7,8 @@ import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
 import { NewInvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
 import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
 import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
+import { resources } from 'src/app/shared/resources/resources';
+import { ResourceService } from 'src/app/shared/resources/services/resource.service';
 import { ErrorEffectService } from '../../services/store/error-effect.service';
 import { Team } from '../../team/model/team.model';
 import { TeamService } from '../../team/services/team.service';
@@ -24,7 +26,8 @@ export class TeamEffects {
     private teamFacade: TeamFacade,
     private errorEffectService: ErrorEffectService,
     private guiFacade: GuiFacade,
-    private invitationsFacade: InvitationsFacade
+    private invitationsFacade: InvitationsFacade,
+    private resource: ResourceService
   ) {}
 
   public newTeamRequested$ = createEffect(() => {
@@ -52,7 +55,7 @@ export class TeamEffects {
           this.invitationsFacade.send(invitationsReqeust);
 
           const toastrData = ToastrDataBuilder.from(
-            `Team <b>${action.team.name}</b> has been created.`,
+            this.resource.format(resources.team.created, action.team.name),
             ToastrMode.SUCCESS
           ).build();
           this.guiFacade.showToastr(toastrData);

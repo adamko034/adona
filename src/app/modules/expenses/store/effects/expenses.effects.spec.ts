@@ -3,10 +3,10 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { Observable, of } from 'rxjs';
-import { errors } from 'src/app/core/error/constants/errors.constants';
 import { ErrorTestDataBuilder } from 'src/app/core/error/utils/test/error-test-data.builder';
 import { errorActions } from 'src/app/core/store/actions/error.actions';
 import { UserFacade } from 'src/app/core/user/user.facade';
+import { resources } from 'src/app/shared/resources/resources';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from '../../../../utils/testUtils/builders/user-test-builder';
 import { ExpensesService } from '../../services/expenses.service';
@@ -92,7 +92,7 @@ describe('Expenses Effects', () => {
 
       const expected = cold('--b', {
         b: errorActions.handleError({
-          error: { message: errors.DEFAULT_MESSAGE, errorObj: errorSource.errorObj }
+          error: { message: resources.general.errors.message, errorObj: errorSource.errorObj }
         })
       });
 
