@@ -12,7 +12,7 @@ export const authActionTypes = {
   emailNotVerified: '[Datbase API] Email Not Verified'
 };
 
-const login = createAction(authActionTypes.login, props<{ credentials: Credentials }>());
+const login = createAction(authActionTypes.login, props<{ credentials: Credentials; invitationId: string }>());
 const loginFailed = createAction(authActionTypes.loginFailed);
 const loginSuccess = createAction(authActionTypes.loginSuccess, props<{ user: User }>());
 const loginClearError = createAction(authActionTypes.loginClearError);

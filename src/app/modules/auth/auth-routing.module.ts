@@ -11,7 +11,7 @@ import { UserEmailVerifiedGuard } from './guards/user-email-verified.guard';
 
 const routes: Routes = [
   {
-    path: '',
+    path: 'login',
     component: LoginComponent
   },
   {

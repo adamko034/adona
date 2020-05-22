@@ -1,16 +1,23 @@
 import { of, Subject } from 'rxjs';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
+import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
 
-  const { authFacade, unsubscriberService } = SpiesBuilder.init().withAuthFacade().withUnsubscriberService().build();
+  const {
+    authFacade,
+    unsubscriberService,
+    routerFacade
+  } = SpiesBuilder.init().withRouterFacade().withAuthFacade().withUnsubscriberService().build();
 
   beforeEach(() => {
-    component = new LoginComponent(authFacade, unsubscriberService);
+    component = new LoginComponent(authFacade, unsubscriberService, routerFacade);
 
     authFacade.selectLoginFailure.calls.reset();
+    routerFacade.selectRouteQueryParams.calls.reset();
+    authFacade.login.calls.reset();
   });
 
   describe('Constructor', () => {
@@ -79,14 +86,43 @@ describe('LoginComponent', () => {
   });
 
   describe('On Init', () => {
-    it('should init to default on subscribe to failures', () => {
+    it('should make subscriptions', () => {
       authFacade.selectLoginFailure.and.returnValue(new Subject());
+      routerFacade.selectRouteQueryParams.and.returnValue(of(null));
 
       component.ngOnInit();
 
       expect(authFacade.selectLoginFailure).toHaveBeenCalledTimes(1);
+      expect(routerFacade.selectRouteQueryParams).toHaveBeenCalledTimes(1);
       expect(component.showError).toBeFalsy();
       expect(component.showSpinner).toBeFalsy();
+    });
+
+    describe('Select Router Query Params Subscriptions', () => {
+      [
+        { params: null, expectedInvitationId: undefined },
+        { params: { test: 'test' }, expectedInvitationId: undefined },
+        { params: { inv: 'test' }, expectedInvitationId: 'test' }
+      ].forEach((input) => {
+        it(`should ${input.expectedInvitationId ? '' : 'not'} set invitation id if params is: ${JSON.stringify(
+          input.params
+        )}`, () => {
+          routerFacade.selectRouteQueryParams.and.returnValue(of(input.params));
+          authFacade.selectLoginFailure.and.returnValue(of(false));
+
+          component.ngOnInit();
+
+          expect(routerFacade.selectRouteQueryParams).toHaveBeenCalledTimes(1);
+
+          component.login();
+          JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+            authFacade.login,
+            1,
+            { email: '', password: '' },
+            input.expectedInvitationId
+          );
+        });
+      });
     });
 
     describe('Get Login Failure subscription', () => {
@@ -95,6 +131,7 @@ describe('LoginComponent', () => {
           component.showError = false;
           component.showSpinner = false;
 
+          routerFacade.selectRouteQueryParams.and.returnValue(of(null));
           authFacade.selectLoginFailure.and.returnValue(of(isLoginFailure));
 
           component.ngOnInit();

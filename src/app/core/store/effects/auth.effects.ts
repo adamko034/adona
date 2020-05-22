@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, Effect, ofType } from '@ngrx/effects';
-import { Action } from '@ngrx/store';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
-import { Credentials } from 'src/app/core/auth/model/credentials.model';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
 import { User } from '../../user/model/user.model';
@@ -22,19 +20,17 @@ export class AuthEffects {
   public logIn$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(authActions.login),
-      map((action) => action.credentials),
-      switchMap((credentials: Credentials) =>
-        this.authService.login(credentials).pipe(
-          switchMap(({ user }) => {
-            return user.emailVerified ? this.userService.loadUser(user.uid) : of(null);
-          }),
+      switchMap((action) =>
+        this.authService.login(action.credentials).pipe(
+          switchMap(({ user }) => (user.emailVerified ? this.userService.loadUser(user.uid) : of(null))),
           map((user: User) => {
-            if (!user) {
-              return authActions.emailNotVerified();
+            if (!user?.invitationId && !!action.invitationId) {
+              user.invitationId = action.invitationId;
             }
 
-            return authActions.loginSuccess({ user });
+            return user;
           }),
+          map((user: User) => (!!user ? authActions.loginSuccess({ user }) : authActions.emailNotVerified())),
           catchError(() => of(authActions.loginFailed()))
         )
       )
@@ -62,7 +58,7 @@ export class AuthEffects {
   );
 
   @Effect()
-  public logOut$: Observable<Action> = this.actions$.pipe(
+  public logOut$ = this.actions$.pipe(
     ofType(authActions.logout),
     switchMap(() => this.authService.logout()),
     mapTo(authActions.logoutSuccess())

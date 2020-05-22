@@ -18,26 +18,26 @@ const routes: Routes = [
     children: [
       {
         path: 'home',
-        loadChildren: () => import('./modules/home/home.module').then(mod => mod.HomeModule)
+        loadChildren: () => import('./modules/home/home.module').then((mod) => mod.HomeModule)
       },
       {
         path: 'calendar',
-        loadChildren: () => import('./modules/calendar/calendar.module').then(mod => mod.AdonaCalendarModule)
+        loadChildren: () => import('./modules/calendar/calendar.module').then((mod) => mod.AdonaCalendarModule)
       },
       {
         path: 'expenses',
-        loadChildren: () => import('./modules/expenses/expenses.module').then(mod => mod.ExpensesModule)
+        loadChildren: () => import('./modules/expenses/expenses.module').then((mod) => mod.ExpensesModule)
       },
       {
         path: 'settings',
-        loadChildren: () => import('./modules/settings/settings.module').then(mod => mod.SettingsModule)
+        loadChildren: () => import('./modules/settings/settings.module').then((mod) => mod.SettingsModule)
       }
     ]
   },
   {
-    path: 'login',
+    path: 'auth',
     component: AuthLayoutComponent,
-    loadChildren: () => import('./modules/auth/auth.module').then(mod => mod.AuthModule)
+    loadChildren: () => import('./modules/auth/auth.module').then((mod) => mod.AuthModule)
   }
 ];
 
