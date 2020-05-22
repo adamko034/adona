@@ -1,9 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Params } from '@angular/router';
+import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { AuthFacade } from 'src/app/core/auth/auth.facade';
+import { RouterFacade } from 'src/app/core/router/router.facade';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
-import { AuthFacade } from '../../../../core/auth/auth.facade';
 
 @Component({
   selector: 'app-login',
@@ -12,6 +14,7 @@ import { AuthFacade } from '../../../../core/auth/auth.facade';
 })
 export class LoginComponent implements OnInit, OnDestroy {
   private destroyed$: Subject<void>;
+  private invitationId: string;
 
   public loginForm = new FormGroup({
     email: new FormControl('', [Validators.email, Validators.required]),
@@ -21,7 +24,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   public showSpinner: boolean;
   public showPassword = false;
 
-  constructor(private authFacade: AuthFacade, private unsubscriberService: UnsubscriberService) {
+  constructor(
+    private authFacade: AuthFacade,
+    private unsubscriberService: UnsubscriberService,
+    private routerFacade: RouterFacade
+  ) {
     this.destroyed$ = this.unsubscriberService.create();
   }
 
@@ -29,14 +36,11 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.showError = false;
     this.showSpinner = false;
 
-    this.authFacade
-      .selectLoginFailure()
+    combineLatest([this.routerFacade.selectRouteQueryParams(), this.authFacade.selectLoginFailure()])
       .pipe(takeUntil(this.destroyed$))
-      .subscribe((isLoginError) => {
-        if (isLoginError != null) {
-          this.showError = isLoginError;
-          this.showSpinner = !isLoginError;
-        }
+      .subscribe(([params, isLoginError]) => {
+        this.handleIsLoginError(isLoginError);
+        this.handleRouteQueryParams(params);
       });
   }
 
@@ -47,7 +51,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   public login() {
     this.showSpinner = true;
     this.showError = false;
-    this.authFacade.login(this.loginForm.value);
+    this.authFacade.login(this.loginForm.value, this.invitationId);
   }
 
   public emailNotValid(): boolean {
@@ -62,5 +66,18 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   public passwordEmpty(): boolean {
     return this.loginForm.get('password').hasError('required');
+  }
+
+  private handleRouteQueryParams(params: Params): void {
+    if (params?.inv) {
+      this.invitationId = params.inv;
+    }
+  }
+
+  private handleIsLoginError(isLoginError: boolean): void {
+    if (isLoginError != null) {
+      this.showError = isLoginError;
+      this.showSpinner = !isLoginError;
+    }
   }
 }

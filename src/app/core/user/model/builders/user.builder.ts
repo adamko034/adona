@@ -34,6 +34,11 @@ export class UserBuilder {
     return this;
   }
 
+  public withInvitationId(invitationId: string): UserBuilder {
+    this.user.invitationId = invitationId;
+    return this;
+  }
+
   public build(): User {
     return this.user;
   }

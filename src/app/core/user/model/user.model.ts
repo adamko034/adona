@@ -7,4 +7,5 @@ export interface User {
   selectedTeamId?: string;
   teams?: UserTeam[];
   photoUrl?: string;
+  invitationId?: string;
 }

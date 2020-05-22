@@ -8,11 +8,11 @@ export class NavigationService {
   constructor(private router: Router) {}
 
   public toLogin() {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/auth/login']);
   }
 
   public toVerifyEmail() {
-    this.router.navigate(['/login/verifyEmail']);
+    this.router.navigate(['/auth/verifyEmail']);
   }
 
   public toHome() {
@@ -48,10 +48,10 @@ export class NavigationService {
   }
 
   public toResetPassword(oobCode: string) {
-    this.router.navigate(['/login/changePassword'], { queryParams: { oobCode } });
+    this.router.navigate(['/auth/changePassword'], { queryParams: { oobCode } });
   }
 
   public toEmailVerified(oobCode: string) {
-    this.router.navigate(['/login/emailVerified'], { queryParams: { oobCode } });
+    this.router.navigate(['/auth/emailVerified'], { queryParams: { oobCode } });
   }
 }

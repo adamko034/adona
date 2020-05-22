@@ -13,7 +13,7 @@ describe('NavigationService', () => {
 
   it('should navigate to login route', () => {
     // given
-    const loginRoute = '/login';
+    const loginRoute = '/auth/login';
 
     // when
     navigationService.toLogin();
@@ -35,7 +35,7 @@ describe('NavigationService', () => {
 
   it('should navigate to Verify Email page', () => {
     // given
-    const route = '/login/verifyEmail';
+    const route = '/auth/verifyEmail';
 
     // when
     navigationService.toVerifyEmail();
@@ -101,11 +101,11 @@ describe('NavigationService', () => {
 
   it('should navigate to Reset Password page', () => {
     navigationService.toResetPassword('123');
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/login/changePassword'], { queryParams: { oobCode: '123' } });
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/auth/changePassword'], { queryParams: { oobCode: '123' } });
   });
 
   it('should navigate to Email Verified page', () => {
     navigationService.toEmailVerified('123');
-    expect(routerMock.navigate).toHaveBeenCalledWith(['/login/emailVerified'], { queryParams: { oobCode: '123' } });
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/auth/emailVerified'], { queryParams: { oobCode: '123' } });
   });
 });

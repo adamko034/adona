@@ -14,9 +14,9 @@ export class AuthFacade {
     return this.store.select(authQueries.selectLoginFailure);
   }
 
-  public login(credentials: Credentials) {
+  public login(credentials: Credentials, invitationId: string) {
     this.store.dispatch(authActions.loginClearError());
-    this.store.dispatch(authActions.login({ credentials }));
+    this.store.dispatch(authActions.login({ credentials, invitationId }));
   }
 
   public logout() {

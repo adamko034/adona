@@ -48,12 +48,12 @@ describe('Auth Facade', () => {
     const spy = spyOn(store, 'dispatch');
 
     // when
-    facade.login(credentials);
+    facade.login(credentials, undefined);
 
     // then
     expect(spy).toHaveBeenCalledTimes(2);
     expect(spy).toHaveBeenCalledWith(authActions.loginClearError());
-    expect(spy).toHaveBeenCalledWith(authActions.login({ credentials }));
+    expect(spy).toHaveBeenCalledWith(authActions.login({ credentials, invitationId: undefined }));
   });
 
   it('should dispatch Logout Action on logout', () => {

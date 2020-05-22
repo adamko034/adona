@@ -11,11 +11,12 @@ describe('Auth Actions', () => {
   const user = UserTestBuilder.withDefaultData().build();
 
   it('should create login action', () => {
-    const action = authActions.login({ credentials });
+    const action = authActions.login({ credentials, invitationId: '123' });
 
     expect({ ...action }).toEqual({
       type: authActionTypes.login,
-      credentials
+      credentials,
+      invitationId: '123'
     });
   });
 

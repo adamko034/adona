@@ -49,7 +49,10 @@ describe('Auth Effects', () => {
       authService.login.and.returnValue(cold('x', { x: { user: firebaseUser } }));
       userService.loadUser.and.returnValue(cold('x', { x: user }));
 
-      const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
+      const action = authActions.login({
+        credentials: { email: 'test', password: 'testPwd' },
+        invitationId: undefined
+      });
       const completion = authActions.loginSuccess({ user });
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
@@ -64,7 +67,10 @@ describe('Auth Effects', () => {
       // given
       authService.login.and.returnValue(cold('#'));
 
-      const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
+      const action = authActions.login({
+        credentials: { email: 'test', password: 'testPwd' },
+        invitationId: undefined
+      });
       const completion = authActions.loginFailed();
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
@@ -80,7 +86,10 @@ describe('Auth Effects', () => {
       authService.login.and.returnValue(cold('x', { x: { user: firebaseUser } }));
       userService.loadUser.and.returnValue(cold('#'));
 
-      const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
+      const action = authActions.login({
+        credentials: { email: 'test', password: 'testPwd' },
+        invitationId: undefined
+      });
       const completion = authActions.loginFailed();
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
@@ -96,7 +105,10 @@ describe('Auth Effects', () => {
       const firebaseUserNotVerfied = { ...firebaseUser, emailVerified: false };
       authService.login.and.returnValue(cold('x', { x: { user: firebaseUserNotVerfied } }));
 
-      const action = authActions.login({ credentials: { email: 'test', password: 'testPwd' } });
+      const action = authActions.login({
+        credentials: { email: 'test', password: 'testPwd' },
+        invitationId: undefined
+      });
       const completion = authActions.emailNotVerified();
       actions$ = hot('--a', { a: action });
       const expected = cold('--b', { b: completion });
@@ -105,6 +117,46 @@ describe('Auth Effects', () => {
       expect(effects.logIn$).toBeObservable(expected);
       expect(authService.login).toHaveBeenCalledTimes(1);
       expect(userService.loadUser).toHaveBeenCalledTimes(0);
+    });
+
+    it('should login, not set user invitation id if user already has one, load user and dispatch Login Success action ', () => {
+      // given
+      authService.login.and.returnValue(cold('x', { x: { user: firebaseUser } }));
+      userService.loadUser.and.returnValue(cold('x', { x: user }));
+      const expectedUser = { ...user, invitationId: '123' };
+
+      const action = authActions.login({
+        credentials: { email: 'test', password: 'testPwd' },
+        invitationId: '123'
+      });
+      const completion = authActions.loginSuccess({ user: expectedUser });
+      actions$ = hot('--a', { a: action });
+      const expected = cold('--b', { b: completion });
+
+      // when & then
+      expect(effects.logIn$).toBeObservable(expected);
+      expect(authService.login).toHaveBeenCalledTimes(1);
+      expect(userService.loadUser).toHaveBeenCalledTimes(1);
+    });
+
+    it('should login, set user invitation id and load user and dispatch Login Success action ', () => {
+      // given
+      const userWithInvitationId = { ...user, invitationId: '10' };
+      authService.login.and.returnValue(cold('x', { x: { user: firebaseUser } }));
+      userService.loadUser.and.returnValue(cold('x', { x: userWithInvitationId }));
+
+      const action = authActions.login({
+        credentials: { email: 'test', password: 'testPwd' },
+        invitationId: '123'
+      });
+      const completion = authActions.loginSuccess({ user: userWithInvitationId });
+      actions$ = hot('--a', { a: action });
+      const expected = cold('--b', { b: completion });
+
+      // when & then
+      expect(effects.logIn$).toBeObservable(expected);
+      expect(authService.login).toHaveBeenCalledTimes(1);
+      expect(userService.loadUser).toHaveBeenCalledTimes(1);
     });
   });
 
