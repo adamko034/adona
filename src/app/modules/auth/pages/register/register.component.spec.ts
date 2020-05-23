@@ -14,11 +14,19 @@ describe('Register Component', () => {
   const {
     registerFacade,
     apiRequestsFacade,
-    unsubscriberService
-  } = SpiesBuilder.init().withRegisterFacade().withUnsubscriberService().withApiRequestsFacade().build();
+    unsubscriberService,
+    routerFacade
+  } = SpiesBuilder.init()
+    .withRouterFacade()
+    .withRegisterFacade()
+    .withUnsubscriberService()
+    .withApiRequestsFacade()
+    .build();
 
   beforeEach(() => {
-    component = new RegisterComponent(registerFacade, apiRequestsFacade, unsubscriberService);
+    component = new RegisterComponent(registerFacade, apiRequestsFacade, unsubscriberService, routerFacade);
+
+    registerFacade.register.calls.reset();
   });
 
   describe('Constructor', () => {
@@ -31,9 +39,14 @@ describe('Register Component', () => {
   describe('On Init', () => {
     beforeEach(() => {
       apiRequestsFacade.selectApiRequest.calls.reset();
+      routerFacade.selectRouteQueryParams.calls.reset();
     });
 
     describe('Register Error Subscription', () => {
+      beforeEach(() => {
+        routerFacade.selectRouteQueryParams.and.returnValue(of(null));
+      });
+
       [
         ApiRequestStatusBuilder.start('1'),
         ApiRequestStatusBuilder.success('1'),
@@ -124,6 +137,35 @@ describe('Register Component', () => {
         });
       });
     });
+
+    describe('Select Route Query Params Subscription', () => {
+      [
+        { params: null, invitaionId: undefined },
+        { params: { test: 1 }, invitaionId: undefined },
+        { params: { inv: '123' }, invitaionId: '123' }
+      ].forEach((input) => {
+        it(`should ${input.invitaionId ? '' : 'not'} set invitation id for params: ${JSON.stringify(
+          input.params
+        )}`, () => {
+          apiRequestsFacade.selectApiRequest.and.returnValue(of(null));
+          routerFacade.selectRouteQueryParams.and.returnValue(of(input.params));
+
+          component.ngOnInit();
+
+          expect(routerFacade.selectRouteQueryParams).toHaveBeenCalledTimes(1);
+          component.form.get('email').setValue('user@example.com');
+          component.form.get('password').setValue('pass1');
+          component.form.get('confirmPassword').setValue('pass1');
+          component.register();
+          JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+            registerFacade.register,
+            1,
+            CredentialsBuilder.from('user@example.com', 'pass1').build(),
+            input.invitaionId
+          );
+        });
+      });
+    });
   });
 
   describe('On Destroy', () => {
@@ -135,10 +177,6 @@ describe('Register Component', () => {
   });
 
   describe('Register', () => {
-    beforeEach(() => {
-      registerFacade.register.calls.reset();
-    });
-
     it('should not register if form is not valid', () => {
       component.form.get('email').setErrors({ email: { valid: false } });
 
@@ -158,7 +196,8 @@ describe('Register Component', () => {
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(
         registerFacade.register,
         1,
-        CredentialsBuilder.from('user@example.com', 'pass1').build()
+        CredentialsBuilder.from('user@example.com', 'pass1').build(),
+        undefined
       );
     });
   });

@@ -65,6 +65,11 @@ export class UserTestBuilder {
     return this;
   }
 
+  public withInvitationId(invitationId: string): UserTestBuilder {
+    this.user.invitationId = invitationId;
+    return this;
+  }
+
   public withUserTeams(userTeams: UserTeam[]): UserTestBuilder {
     if (!this.user.teams) {
       this.user.teams = [];
@@ -90,6 +95,7 @@ export class UserTestBuilder {
       emailVerified: true,
       email: this.user.email,
       photoURL: this.user.photoUrl,
+      invitationId: this.user.invitationId,
       sendEmailVerification: jasmine.createSpy('sendEmailVerification'),
       updateProfile: jasmine.createSpy('updateProfile')
     };

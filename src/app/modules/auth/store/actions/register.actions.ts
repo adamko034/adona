@@ -7,7 +7,10 @@ export const registerActionTypes = {
   registerFailure: '[Database API] Register Failure'
 };
 
-const registerRequested = createAction(registerActionTypes.registerRequested, props<{ credentials: Credentials }>());
+const registerRequested = createAction(
+  registerActionTypes.registerRequested,
+  props<{ credentials: Credentials; invitationId: string }>()
+);
 const registerSuccess = createAction(registerActionTypes.registerSuccess);
 const registerFailure = createAction(registerActionTypes.registerFailure, props<{ error: any }>());
 

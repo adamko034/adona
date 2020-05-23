@@ -10,8 +10,8 @@ import { verifyEmailActions } from 'src/app/modules/auth/store/actions/verify-em
 export class RegisterFacade {
   constructor(private store: Store<AuthState>) {}
 
-  public register(credentials: Credentials): void {
-    this.store.dispatch(registerActions.registerRequested({ credentials }));
+  public register(credentials: Credentials, invitationId: string): void {
+    this.store.dispatch(registerActions.registerRequested({ credentials, invitationId }));
   }
 
   public confirmEmailVerification(code: string): void {

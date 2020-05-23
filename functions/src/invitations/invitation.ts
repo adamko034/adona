@@ -35,7 +35,7 @@ export const sendInvitation = functions.firestore.document('invitations/{id}').o
   const docRef = snaphost.ref;
 
   if (invitation) {
-    const url = `${functions.config().adona.url}/${context.params.id}`;
+    const url = `${functions.config().adona.url}/auth/login?inv=${context.params.id}`;
     const emailOption = {
       from: 'ADONA team <noreply@adona.com>',
       to: invitation.recipientEmail,
