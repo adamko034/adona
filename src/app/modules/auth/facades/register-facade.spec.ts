@@ -50,12 +50,12 @@ describe('Register Facade', () => {
       const dispathSpy = spyOn(mockStore, 'dispatch');
       const credentials = CredentialsBuilder.from('user@example.com', 'pass1').build();
 
-      facade.register(credentials);
+      facade.register(credentials, null);
 
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(
         dispathSpy,
         1,
-        registerActions.registerRequested({ credentials })
+        registerActions.registerRequested({ credentials, invitationId: null })
       );
     });
   });

@@ -40,6 +40,7 @@ export class RegisterEffects {
             const photoUrl = firebaseUser.photoURL || UserBuilder.defaultPhotoUrl;
             const user = UserBuilder.from(firebaseUser.uid, firebaseUser.email, firebaseUser.displayName)
               .withPhotoUrl(photoUrl)
+              .withInvitationId(action.invitationId)
               .build();
 
             return this.userService.createUser(user).pipe(mapTo({ firebaseUser, photoUrl }));

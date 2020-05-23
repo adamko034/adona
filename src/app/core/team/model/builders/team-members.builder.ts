@@ -12,7 +12,7 @@ export class TeamMembersBuilder {
   }
 
   public withMember(name: string, photoUrl: string, email?: string): TeamMembersBuilder {
-    this.members[name] = { name, photoUrl, email };
+    this.members[name] = { name, photoUrl, email: email || null };
     return this;
   }
 

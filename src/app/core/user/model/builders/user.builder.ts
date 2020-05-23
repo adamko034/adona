@@ -35,7 +35,10 @@ export class UserBuilder {
   }
 
   public withInvitationId(invitationId: string): UserBuilder {
-    this.user.invitationId = invitationId;
+    if (invitationId) {
+      this.user.invitationId = invitationId;
+    }
+
     return this;
   }
 

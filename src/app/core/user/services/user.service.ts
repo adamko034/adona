@@ -73,6 +73,7 @@ export class UserService {
       .withSelectedTeamId(!!firebaseUser.selectedTeamId ? firebaseUser.selectedTeamId : null)
       .withTeams(teams)
       .withPhotoUrl(firebaseUser.photoURL)
+      .withInvitationId(firebaseUser.invitationId)
       .build();
   }
 }

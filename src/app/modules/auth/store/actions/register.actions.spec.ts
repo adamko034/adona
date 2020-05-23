@@ -5,9 +5,10 @@ import { registerActions, registerActionTypes } from 'src/app/modules/auth/store
 describe('Register Actions', () => {
   it('should create Register Requested action', () => {
     const cred = CredentialsBuilder.from('user@example.com', 'pass1').build();
-    expect(registerActions.registerRequested({ credentials: cred })).toEqual({
+    expect(registerActions.registerRequested({ credentials: cred, invitationId: null })).toEqual({
       type: registerActionTypes.registerRequested,
-      credentials: cred
+      credentials: cred,
+      invitationId: null
     });
   });
 

@@ -100,7 +100,7 @@ describe('Register Effecs', () => {
     it('should register, create user with team and with default photo url, send email and map to Register Success action', () => {
       const credentials = CredentialsBuilder.from('user@example.com', 'pass1').build();
       const firebaseUserWithoutPhotoUrl = { ...firebaseUser, photoURL: null };
-      actions$ = cold('--a--a', { a: registerActions.registerRequested({ credentials }) });
+      actions$ = cold('--a--a', { a: registerActions.registerRequested({ credentials, invitationId: null }) });
 
       apiRequestsFacade.startRequest.and.returnValue(null);
       authService.register.and.returnValue(cold('a', { a: firebaseUserWithoutPhotoUrl }));
@@ -123,9 +123,33 @@ describe('Register Effecs', () => {
       );
     });
 
+    it('should register with invitation id, send email and map to Register Success action', () => {
+      const userWithInvId: User = { ...user, invitationId: 'testInv' };
+      const credentials = CredentialsBuilder.from('user@example.com', 'pass1').build();
+      const firebaseUserWithInvId = { ...firebaseUser, photoURL: null, invitationId: userWithInvId.invitationId };
+      actions$ = cold('--a--a', {
+        a: registerActions.registerRequested({ credentials, invitationId: userWithInvId.invitationId })
+      });
+
+      apiRequestsFacade.startRequest.and.returnValue(null);
+      authService.register.and.returnValue(cold('a', { a: firebaseUserWithInvId }));
+      userService.createUser.and.returnValue(cold('a', { a: null }));
+      emailConfirmationService.send.and.returnValue(cold('a', { a: null }));
+      teamService.addTeam.and.returnValue(cold('a', { a: null }));
+
+      const expected = cold('--a--a', { a: registerActions.registerSuccess() });
+
+      expect(effects.registerRequested$).toBeObservable(expected);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.startRequest, 2, apiRequestIds.register);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(authService.register, 2, credentials);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.createUser, 2, userWithInvId);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(emailConfirmationService.send, 2, firebaseUserWithInvId);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamService.addTeam, 2, teamRequest, firebaseUserWithInvId.uid);
+    });
+
     it('should register, create user with team and using firebase photo url, send email and map to Register Success action', () => {
       const credentials = CredentialsBuilder.from('user@example.com', 'pass1').build();
-      actions$ = cold('--a--a', { a: registerActions.registerRequested({ credentials }) });
+      actions$ = cold('--a--a', { a: registerActions.registerRequested({ credentials, invitationId: undefined }) });
 
       const firebaseUserWithPhotoUrl: firebase.User = { ...firebaseUser, photoURL: 'testUrls' };
       const userWithPhotoUrl: User = { ...user, photoUrl: 'testUrls' };
@@ -158,7 +182,7 @@ describe('Register Effecs', () => {
 
     it('should fail the request if auth service fails', () => {
       const credentials = CredentialsBuilder.from('user@example.com', 'pass1').build();
-      actions$ = cold('--a--a', { a: registerActions.registerRequested({ credentials }) });
+      actions$ = cold('--a--a', { a: registerActions.registerRequested({ credentials, invitationId: null }) });
 
       apiRequestsFacade.startRequest.and.returnValue(null);
       authService.register.and.returnValue(cold('#', null, { code: 'auth/user-exists' }));
@@ -180,7 +204,7 @@ describe('Register Effecs', () => {
 
     it('should fail the request if user service fails', () => {
       const credentials = CredentialsBuilder.from('user@example.com', 'pass1').build();
-      actions$ = cold('--a--a', { a: registerActions.registerRequested({ credentials }) });
+      actions$ = cold('--a--a', { a: registerActions.registerRequested({ credentials, invitationId: null }) });
 
       apiRequestsFacade.startRequest.and.returnValue(null);
       authService.register.and.returnValue(cold('a', { a: firebaseUser }));
@@ -202,7 +226,7 @@ describe('Register Effecs', () => {
 
     it('should fail the request if teams service fails', () => {
       const credentials = CredentialsBuilder.from('user@example.com', 'pass1').build();
-      actions$ = cold('--a--a', { a: registerActions.registerRequested({ credentials }) });
+      actions$ = cold('--a--a', { a: registerActions.registerRequested({ credentials, invitationId: null }) });
 
       apiRequestsFacade.startRequest.and.returnValue(null);
       authService.register.and.returnValue(cold('a', { a: firebaseUser }));
@@ -227,7 +251,7 @@ describe('Register Effecs', () => {
 
     it('should fail the request if email confirmation fails', () => {
       const credentials = CredentialsBuilder.from('user@example.com', 'pass1').build();
-      actions$ = cold('--a--a', { a: registerActions.registerRequested({ credentials }) });
+      actions$ = cold('--a--a', { a: registerActions.registerRequested({ credentials, invitationId: null }) });
 
       apiRequestsFacade.startRequest.and.returnValue(null);
       authService.register.and.returnValue(cold('a', { a: firebaseUser }));

@@ -74,6 +74,37 @@ describe('User Service', () => {
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection, 1, 'users');
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc, 1, firebaseUser.id);
     }));
+
+    it('should return Observable of User, user with invitation id', fakeAsync(() => {
+      const now = new Date();
+      const userTeams = [UserTeamBuilder.from('123', 'test name', now).build()];
+      const firebaseUser = UserTestBuilder.with('1', 'user 1')
+        .withUserTeam(userTeams[0])
+        .withSelectedTeamId(userTeams[0].id)
+        .withInvitationId('testInv')
+        .buildFirebaseUser();
+      const expectedUser = UserTestBuilder.with(firebaseUser.id, firebaseUser.name)
+        .withUserTeam(userTeams[0])
+        .withSelectedTeamId(userTeams[0].id)
+        .withInvitationId(firebaseUser.invitationId)
+        .build();
+
+      angularFirestore
+        .collection()
+        .doc()
+        .valueChanges.and.returnValue(cold('x', { x: firebaseUser }));
+      angularFirestore.collection().doc.calls.reset();
+      angularFirestore.collection.calls.reset();
+      timeService.Creation.fromFirebaseTimestamp.and.returnValue(now);
+
+      const expected = cold('(x|)', { x: expectedUser });
+
+      const result = service.loadUser(firebaseUser.id);
+
+      expect(result).toBeObservable(expected);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection, 1, 'users');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc, 1, firebaseUser.id);
+    }));
   });
 
   describe('Change Team', () => {
