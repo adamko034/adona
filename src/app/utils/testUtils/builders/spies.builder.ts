@@ -149,7 +149,8 @@ export class SpiesBuilder {
       'selectUser',
       'selectUserId',
       'changeTeam',
-      'updateName'
+      'updateName',
+      'handleInvitation'
     ]);
     return this;
   }

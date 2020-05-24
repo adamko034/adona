@@ -5,9 +5,7 @@ import { UserLoadedGuard } from './user-loaded.guard';
 
 describe('User Loaded Guard', () => {
   it('should return true only when user is present', () => {
-    const { userFacade } = SpiesBuilder.init()
-      .withUserFacade()
-      .build();
+    const { userFacade } = SpiesBuilder.init().withUserFacade().build();
     const user = UserTestBuilder.withDefaultData().build();
 
     userFacade.selectUser.and.returnValue(hot('--a-b', { a: null, b: user }));

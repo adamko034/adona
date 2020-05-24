@@ -26,9 +26,7 @@ describe('User Actions', () => {
 
     describe('Load User Failure', () => {
       it('should create action', () => {
-        const error = ErrorTestDataBuilder.from()
-          .withDefaultData()
-          .build();
+        const error = ErrorTestDataBuilder.from().withDefaultData().build();
         const result = userActions.loadUserFailure({ error });
 
         expect({ ...result }).toEqual({ type: userActionTypes.loadUserFailure, error });
@@ -70,9 +68,7 @@ describe('User Actions', () => {
 
     describe('Change Team Failure', () => {
       it('should create action', () => {
-        const error: Error = ErrorTestDataBuilder.from()
-          .withDefaultData()
-          .build();
+        const error: Error = ErrorTestDataBuilder.from().withDefaultData().build();
 
         const result = userActions.changeTeamFailure({ error });
 
@@ -113,11 +109,32 @@ describe('User Actions', () => {
     });
 
     it('should create Update Name Failure action', () => {
-      const error = ErrorTestDataBuilder.from()
-        .withDefaultData()
-        .build();
+      const error = ErrorTestDataBuilder.from().withDefaultData().build();
       expect({ ...userActions.updateNameFailure({ error }) }).toEqual({
         type: userActionTypes.updateNameFailure,
+        error
+      });
+    });
+  });
+
+  describe('Handle Invitation', () => {
+    it('should create Handle Invitation Requested action', () => {
+      expect(userActions.handleInvitationRequested({ invitationId: '123' })).toEqual({
+        type: userActionTypes.handleInvitationRequested,
+        invitationId: '123'
+      });
+    });
+
+    it('should create Handle Invitation Success action', () => {
+      expect(userActions.handleInvitationSuccess()).toEqual({
+        type: userActionTypes.handleInvitationSuccess
+      });
+    });
+
+    it('should create Handle Invitation Failure action', () => {
+      const error = ErrorTestDataBuilder.from().withDefaultData().build();
+      expect(userActions.handleInvitationFailure({ error })).toEqual({
+        type: userActionTypes.handleInvitationFailure,
         error
       });
     });

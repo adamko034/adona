@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
   canActivate(): Observable<boolean> {
     return this.authService.getAuthState().pipe(
       take(1),
-      concatMap(firebaseUser => of(firebaseUser).pipe(withLatestFrom(this.facade.selectUser()))),
+      concatMap((firebaseUser) => of(firebaseUser).pipe(withLatestFrom(this.facade.selectUser()))),
       map(([firebaseUser, user]) => {
         if (!firebaseUser || !firebaseUser.emailVerified) {
           throw new Error();

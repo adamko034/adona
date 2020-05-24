@@ -82,4 +82,16 @@ describe('User Facade', () => {
       });
     });
   });
+
+  describe('Handle Invitation', () => {
+    it('should dispatch Handle Invitation Requested action', () => {
+      facade.handleInvitation('123');
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+        dispatchSpy,
+        1,
+        userActions.handleInvitationRequested({ invitationId: '123' })
+      );
+    });
+  });
 });

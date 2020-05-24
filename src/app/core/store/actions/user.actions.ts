@@ -16,7 +16,11 @@ export const userActionTypes = {
 
   updateNameRequested: '[Settings Page] Update Name Requested',
   updateNameSuccess: '[Database API] Update Name Success',
-  updateNameFailure: '[Database API] Update Name Failure'
+  updateNameFailure: '[Database API] Update Name Failure',
+
+  handleInvitationRequested: '[Page] Handle Invitation Requested',
+  handleInvitationSuccess: '[Database API] Handle Invitation Success',
+  handleInvitationFailure: '[Database API] Handle Inbitation Failure'
 };
 
 const loadUserRequested = createAction(userActionTypes.loadUserRequested, props<{ id: string }>());
@@ -33,6 +37,13 @@ const updateNameRequested = createAction(userActionTypes.updateNameRequested, pr
 const updateNameSuccess = createAction(userActionTypes.updateNameSuccess, props<{ newName: string }>());
 const updateNameFailure = createAction(userActionTypes.updateNameFailure, props<{ error: Error }>());
 
+const handleInvitationRequested = createAction(
+  userActionTypes.handleInvitationRequested,
+  props<{ invitationId: string }>()
+);
+const handleInvitationSuccess = createAction(userActionTypes.handleInvitationSuccess);
+const handleInvitationFailure = createAction(userActionTypes.handleInvitationFailure, props<{ error: Error }>());
+
 export const userActions = {
   loadUserRequested,
   loadUserSuccess,
@@ -43,5 +54,8 @@ export const userActions = {
   teamAdded,
   updateNameRequested,
   updateNameSuccess,
-  updateNameFailure
+  updateNameFailure,
+  handleInvitationRequested,
+  handleInvitationSuccess,
+  handleInvitationFailure
 };

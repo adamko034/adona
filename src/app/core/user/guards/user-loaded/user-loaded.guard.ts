@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CanActivate } from '@angular/router';
 import { Observable } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
-import { UserFacade } from '../user.facade';
+import { filter, mapTo, take } from 'rxjs/operators';
+import { UserFacade } from 'src/app/core/user/user.facade';
 
 @Injectable({ providedIn: 'root' })
 export class UserLoadedGuard implements CanActivate {
@@ -14,8 +14,8 @@ export class UserLoadedGuard implements CanActivate {
 
   private isUserLoaded(): Observable<boolean> {
     return this.userFacade.selectUser().pipe(
-      map(user => !!user),
-      filter(loaded => loaded),
+      filter((user) => !!user),
+      mapTo(true),
       take(1)
     );
   }
