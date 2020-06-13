@@ -31,7 +31,7 @@ export class UserFacade {
     this.store.dispatch(userActions.updateNameRequested({ id, newName }));
   }
 
-  public handleInvitation(invitationId: string): void {
-    this.store.dispatch(userActions.handleInvitationRequested({ invitationId }));
+  public handleInvitation(user: User): void {
+    this.store.dispatch(userActions.handleInvitationRequested({ user }));
   }
 }

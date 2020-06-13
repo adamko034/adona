@@ -1,6 +1,6 @@
-import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
-import { ToastrData } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.model';
-import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
+import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.builder';
+import { ToastrData } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.model';
+import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mode.enum';
 import { resources } from 'src/app/shared/resources/resources';
 
 describe('Toastr Data Builder', () => {

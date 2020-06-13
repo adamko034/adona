@@ -4,14 +4,20 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { Observable } from 'rxjs';
 import { SideNavbarOptionsBuilder } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.builder';
 import { SideNavbarOptions } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.model';
+import { ToastrData } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.model';
+import { ToastrAdonaService } from 'src/app/core/gui/services/toastr-adona-service/toastr-adona.service';
 import { guiActions } from 'src/app/core/gui/store/actions/gui.actions';
 import { GuiState } from 'src/app/core/gui/store/reducer/gui.reducer';
 import { guiQueries } from 'src/app/core/gui/store/selectors/gui.selectors';
-import { ToastrData } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.model';
+import { Logger } from 'src/app/shared/utils/logger/logger';
 
 @Injectable({ providedIn: 'root' })
 export class GuiFacade {
-  constructor(private deviceDetector: DeviceDetectorService, private store: Store<GuiState>) {}
+  constructor(
+    private deviceDetector: DeviceDetectorService,
+    private store: Store<GuiState>,
+    private toastrService: ToastrAdonaService
+  ) {}
 
   public selectSideNavbarOptions(): Observable<SideNavbarOptions> {
     return this.store.pipe(select(guiQueries.selectSideNavbarOptions));
@@ -40,18 +46,20 @@ export class GuiFacade {
   }
 
   public showLoading(): void {
+    Logger.logDev('gui facade, show loading');
     this.store.dispatch(guiActions.showLoading());
   }
 
   public hideLoading(): void {
+    Logger.logDev('gui facade, hide loading');
     this.store.dispatch(guiActions.hideLoading());
   }
 
-  public selectToastrData(): Observable<ToastrData> {
-    return this.store.select(guiQueries.selectTaostrData);
+  public showToastr(data: ToastrData): void {
+    this.toastrService.show(data);
   }
 
-  public showToastr(data: ToastrData): void {
-    this.store.dispatch(guiActions.showToastr({ data }));
+  public clearToastr(): void {
+    this.toastrService.clearAll();
   }
 }

@@ -85,13 +85,10 @@ describe('User Facade', () => {
 
   describe('Handle Invitation', () => {
     it('should dispatch Handle Invitation Requested action', () => {
-      facade.handleInvitation('123');
+      user.invitationId = '123';
+      facade.handleInvitation(user);
 
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(
-        dispatchSpy,
-        1,
-        userActions.handleInvitationRequested({ invitationId: '123' })
-      );
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, userActions.handleInvitationRequested({ user }));
     });
   });
 });

@@ -21,7 +21,7 @@ const authReducer = createReducer(
     user: action.user,
     loginFailed: null
   })),
-  on(authActions.logoutSuccess, state => ({
+  on(authActions.logoutSuccess, (state) => ({
     ...state,
     user: null,
     loginFailed: null
@@ -30,14 +30,14 @@ const authReducer = createReducer(
     ...state,
     user: action.user
   })),
-  on(authActions.loginFailed, state => ({ ...state, user: null, loginFailed: true })),
-  on(authActions.loginClearError, state => ({ ...state, user: null, loginFailed: null })),
+  on(authActions.loginFailed, (state) => ({ ...state, user: null, loginFailed: true })),
+  on(authActions.loginClearError, (state) => ({ ...state, user: null, loginFailed: null })),
   on(userActions.changeTeamSuccess, (state, action) => ({
     ...state,
     user: {
       ...state.user,
       selectedTeamId: action.teamId,
-      teams: state.user.teams.map(team => {
+      teams: state.user.teams.map((team) => {
         if (team.id === action.teamId) {
           return { ...team, updated: action.updated };
         }
@@ -60,7 +60,12 @@ const authReducer = createReducer(
   }),
   on(userActions.updateNameSuccess, (state, action) => {
     return { ...state, user: { ...state.user, name: action.newName } };
-  })
+  }),
+  on(userActions.handleInvitationSuccess, (state, action) => {
+    const userTeams = [...state.user.teams, action.userTeam];
+    return { ...state, user: { ...state.user, invitationId: null, teams: userTeams } };
+  }),
+  on(userActions.handleInvitationReject, (state) => ({ ...state, user: { ...state.user, invitationId: null } }))
 );
 
 export function reducer(state: AuthState | undefined, action: Action) {

@@ -5,7 +5,6 @@ import { NewTeamRequestBuilder } from 'src/app/core/team/model/new-team-request/
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
 import { TeamMemberBuilder } from 'src/app/core/team/model/team-member/team-member.builder';
 import { TeamMember } from 'src/app/core/team/model/team-member/team-member.model';
-import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.validator';
 import { User } from '../../../../../core/user/model/user.model';
 import { DialogResult } from '../../../../../shared/services/dialogs/dialog-result.model';
@@ -31,13 +30,12 @@ export class NewTeamDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { user: User },
     private dialogRef: MatDialogRef<NewTeamDialogComponent>,
-    private stepsService: NewTeamDialogStepsHelper,
-    private userUtilsService: UserUtilservice
+    private stepsService: NewTeamDialogStepsHelper
   ) {}
 
   public ngOnInit(): void {
     this.currentStep = this.steps.Name;
-    this.members[this.data.user.name] = { name: this.data.user.name };
+    this.members[this.data.user.name] = TeamMemberBuilder.fromUser(this.data.user).build();
   }
 
   public getDialogTitle(): string {
@@ -76,14 +74,13 @@ export class NewTeamDialogComponent implements OnInit {
 
     if (this.form.get('newFriend').valid) {
       const email = newFriendFormControl.value.trim();
-      const name = this.userUtilsService.extractUsernameFromEmail(email);
-      this.members[name] = TeamMemberBuilder.from(name).withEmailAddress(email).build();
+      this.members[email] = TeamMemberBuilder.from(email).withEmailAddress(email).build();
       this.resetMembersFormControls();
     }
   }
 
   public removeMember(member: TeamMember): void {
-    if (member.name.toLocaleLowerCase().trim() !== 'you') {
+    if (member.name.toLocaleLowerCase().trim() !== this.data.user.name.toLocaleLowerCase()) {
       delete this.members[member.name];
     }
   }
@@ -101,7 +98,7 @@ export class NewTeamDialogComponent implements OnInit {
   }
 
   public shouldSendInvitations(): boolean {
-    return Object.values(this.members).findIndex((member: TeamMember) => !!member.email) > 0;
+    return Object.values(this.members).filter((member: TeamMember) => !!member.email).length > 1;
   }
 
   public save(): void {

@@ -14,7 +14,7 @@ export class HandleUserInvitationGuard implements CanActivate {
       filter((user) => !!user),
       map((user: User) => {
         if (user.invitationId) {
-          this.userFacade.handleInvitation(user.invitationId);
+          this.userFacade.handleInvitation(user);
         }
       }),
       take(1),

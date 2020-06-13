@@ -1,8 +1,13 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { from, Observable } from 'rxjs';
+import { from, Observable, throwError } from 'rxjs';
 import { map, take } from 'rxjs/operators';
+import { InvitationStatus } from 'src/app/core/invitations/models/invitation-status.enum';
+import { Invitation } from 'src/app/core/invitations/models/invitation/invitation.model';
+import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
+import { TeamMember } from 'src/app/core/team/model/team-member/team-member.model';
 import { TimeService } from 'src/app/shared/services/time/time.service';
+import { Logger } from 'src/app/shared/utils/logger/logger';
 import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
 import { UserTeamBuilder } from '../model/builders/user-team.builder';
 import { UserBuilder } from '../model/builders/user.builder';
@@ -51,6 +56,40 @@ export class UserService {
     const promise = this.db.collection(this.collectionName).doc(uid).update({ name: newName });
 
     return from(promise.then(() => newName));
+  }
+
+  public handleInvitation(user: User, invitation: Invitation): Observable<void> {
+    Logger.logDev('user service, handle invitation, starting');
+    if (!user.invitationId) {
+      return throwError('Invitiation Id not set');
+    }
+
+    const teamDocRef = this.db.collection('teams').doc(invitation.teamId).ref;
+    const invitationDocRef = this.db.collection('invitations').doc(invitation.id).ref;
+    const userDocRef = this.db.collection(this.collectionName).doc(user.id).ref;
+
+    const promise = this.db.firestore.runTransaction((transaction: firebase.firestore.Transaction) => {
+      return transaction
+        .get(teamDocRef)
+        .then((teamDoc) => {
+          const members: { [name: string]: TeamMember } = TeamMembersBuilder.fromTeamMembers(teamDoc.data().members)
+            .upsertMemberFromUser(user)
+            .build();
+          transaction.update(teamDocRef, { members });
+
+          return transaction;
+        })
+        .then((tran) => {
+          return tran.update(invitationDocRef, { status: InvitationStatus.Accepted });
+        })
+        .then((tran) => {
+          const newUserTeam = UserTeamBuilder.from(invitation.teamId, invitation.teamName, new Date()).build();
+          const teams = [...user.teams, newUserTeam];
+          tran.update(userDocRef, { teams });
+        });
+    });
+
+    return from(promise.then());
   }
 
   private mapFromFirebase(firebaseUser: any, uid: string): User {

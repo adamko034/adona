@@ -3,12 +3,14 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, concatMap, filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
+import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mode.enum';
 import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
-import { NewInvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
-import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
-import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
+import { InvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
+import { TeamUtilsService } from 'src/app/core/team/services/team-utils.service';
 import { resources } from 'src/app/shared/resources/resources';
 import { ResourceService } from 'src/app/shared/resources/services/resource.service';
+import { Logger } from 'src/app/shared/utils/logger/logger';
 import { ErrorEffectService } from '../../services/store/error-effect.service';
 import { Team } from '../../team/model/team.model';
 import { TeamService } from '../../team/services/team.service';
@@ -27,7 +29,8 @@ export class TeamEffects {
     private errorEffectService: ErrorEffectService,
     private guiFacade: GuiFacade,
     private invitationsFacade: InvitationsFacade,
-    private resource: ResourceService
+    private resource: ResourceService,
+    private teamUtilsService: TeamUtilsService
   ) {}
 
   public newTeamRequested$ = createEffect(() => {
@@ -51,15 +54,26 @@ export class TeamEffects {
         ofType(teamActions.newTeamCreateSuccess),
         concatMap((action) => of(action).pipe(withLatestFrom(this.userFacade.selectUser()))),
         map(([action, user]) => {
-          const invitationsReqeust = NewInvitationRequestBuilder.from(user, action.team).build();
-          this.invitationsFacade.send(invitationsReqeust);
+          Logger.logDev('Team Effects, New Team Create Success: sending emails and handling gui');
+          const team = action.team;
+          const recipients = this.teamUtilsService.getMembersEmailsWithout(team, user.email);
+
+          if (recipients.length > 0) {
+            const invitationsReqeust = InvitationRequestBuilder.from(
+              user.email,
+              team.id,
+              team.name,
+              recipients
+            ).build();
+            this.invitationsFacade.send(invitationsReqeust);
+          }
 
           const toastrData = ToastrDataBuilder.from(
-            this.resource.format(resources.team.created, action.team.name),
+            this.resource.format(resources.team.created, team.name),
             ToastrMode.SUCCESS
           ).build();
-          this.guiFacade.showToastr(toastrData);
 
+          this.guiFacade.showToastr(toastrData);
           this.guiFacade.hideLoading();
 
           return action;
@@ -74,12 +88,18 @@ export class TeamEffects {
   public loadTeamRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(teamActions.loadTeamRequested),
+      tap(() => Logger.logDev('team effect, load team requested, starting')),
       concatMap((action) => of(action).pipe(withLatestFrom(this.teamFacade.selectTeams()))),
       filter(([action, teams]) => !teams[action.id]),
       map(([action, teams]) => action.id),
-      switchMap((id: string) => this.teamService.loadTeam(id)),
-      map((team: Team) => teamActions.loadTeamSuccess({ team })),
-      catchError((err) => of(teamActions.loadTeamFailure({ error: { errorObj: err } })))
+      switchMap((id: string) => {
+        Logger.logDev('team effect, load team requsted, calling service');
+        return this.teamService.loadTeam(id).pipe(
+          tap(() => Logger.logDev('team effect, load team requsted, got team')),
+          map((team: Team) => teamActions.loadTeamSuccess({ team })),
+          catchError((err) => of(teamActions.loadTeamFailure({ error: { errorObj: err } })))
+        );
+      })
     );
   });
 

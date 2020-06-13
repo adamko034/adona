@@ -15,9 +15,12 @@ const toastr = {
 
 const team = {
   created: 'Team <strong><i>{1}</i></strong> has been created!',
-  initations: {
+  invitation: {
     sent: 'Invitations were sent!',
-    failed: 'Error occured while sending invitations. Please, verify this on your team settings page.'
+    sendingFailed: 'Error occured while sending invitations. Please, verify this on your team settings page.',
+    acceptingFailed: 'Error occured while processing your invitation. Please, try again later.',
+    rejected: 'Invitation is corrupted (has already been accepted?).',
+    accepted: 'Invitation has been accepted. You can now collaborate to <strong><i>{1}</i></strong>'
   }
 };
 

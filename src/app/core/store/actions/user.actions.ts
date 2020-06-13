@@ -1,4 +1,7 @@
 import { createAction, props } from '@ngrx/store';
+import { ToastrData } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.model';
+import { Invitation } from 'src/app/core/invitations/models/invitation/invitation.model';
+import { UserTeam } from 'src/app/core/user/model/user-team.model';
 import { Error } from '../../error/model/error.model';
 import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
 import { User } from '../../user/model/user.model';
@@ -19,6 +22,8 @@ export const userActionTypes = {
   updateNameFailure: '[Database API] Update Name Failure',
 
   handleInvitationRequested: '[Page] Handle Invitation Requested',
+  handleInvitationAccept: '[App API] Handle Invitation Accept',
+  handleInvitationReject: '[App API] Handle Invitation Reject',
   handleInvitationSuccess: '[Database API] Handle Invitation Success',
   handleInvitationFailure: '[Database API] Handle Inbitation Failure'
 };
@@ -37,12 +42,17 @@ const updateNameRequested = createAction(userActionTypes.updateNameRequested, pr
 const updateNameSuccess = createAction(userActionTypes.updateNameSuccess, props<{ newName: string }>());
 const updateNameFailure = createAction(userActionTypes.updateNameFailure, props<{ error: Error }>());
 
-const handleInvitationRequested = createAction(
-  userActionTypes.handleInvitationRequested,
-  props<{ invitationId: string }>()
+const handleInvitationRequested = createAction(userActionTypes.handleInvitationRequested, props<{ user: User }>());
+const handleInvitationSuccess = createAction(userActionTypes.handleInvitationSuccess, props<{ userTeam: UserTeam }>());
+const handleInvitationFailure = createAction(
+  userActionTypes.handleInvitationFailure,
+  props<{ error: Error; toastr: ToastrData }>()
 );
-const handleInvitationSuccess = createAction(userActionTypes.handleInvitationSuccess);
-const handleInvitationFailure = createAction(userActionTypes.handleInvitationFailure, props<{ error: Error }>());
+const handleInvitationAccept = createAction(
+  userActionTypes.handleInvitationAccept,
+  props<{ user: User; invitation: Invitation }>()
+);
+const handleInvitationReject = createAction(userActionTypes.handleInvitationReject);
 
 export const userActions = {
   loadUserRequested,
@@ -56,6 +66,8 @@ export const userActions = {
   updateNameSuccess,
   updateNameFailure,
   handleInvitationRequested,
+  handleInvitationAccept,
+  handleInvitationReject,
   handleInvitationSuccess,
   handleInvitationFailure
 };

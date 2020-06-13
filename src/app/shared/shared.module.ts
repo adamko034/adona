@@ -23,7 +23,6 @@ import { TabsVerticalComponent } from './components/tabs-vertical/tabs-vertical.
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { AlertComponent } from './components/ui/alert/alert.component';
 import { LoaderComponent } from './components/ui/loader/loader.component';
-import { ToastrComponent } from './components/ui/toastr/toastr.component';
 import { MobileHideDirective } from './directives/device/mobile-hide.directive';
 import { ResponsiveMatIconDirective } from './directives/device/responsive-mat-icon.directive';
 import { DateFormatPipe } from './pipes/date/date-format.pipe';
@@ -69,8 +68,7 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     ChangeTeamDialogComponent,
     TabsVerticalComponent,
     LoaderComponent,
-    AlertComponent,
-    ToastrComponent
+    AlertComponent
   ],
   exports: [
     FromToDatesComponent,
@@ -81,8 +79,7 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     ChangeTeamDialogComponent,
     TabsVerticalComponent,
     LoaderComponent,
-    AlertComponent,
-    ToastrComponent
+    AlertComponent
   ],
   entryComponents: [ChangeTeamDialogComponent]
 })

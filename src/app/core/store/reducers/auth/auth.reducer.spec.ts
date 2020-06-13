@@ -92,9 +92,7 @@ describe('Auth Reducer', () => {
 
   describe('On Change Team Success', () => {
     it('should change user Selected Team Id and change selected team last updated', () => {
-      const yesterday = DateTestBuilder.now()
-        .addDays(-1)
-        .build();
+      const yesterday = DateTestBuilder.now().addDays(-1).build();
       const userTeam = UserTeamBuilder.from('321', 'test team 1', new Date()).build();
       const userTeamToChange = UserTeamBuilder.from('123', 'test team', yesterday).build();
       const now = new Date();
@@ -142,7 +140,7 @@ describe('Auth Reducer', () => {
       const userToChange = UserTestBuilder.withDefaultData()
         .withUserTeam(UserTeamBuilder.from('321', 'team', new Date()).build())
         .build();
-      2;
+
       const newTeam = UserTeamBuilder.from('123', 'test team', new Date()).build();
       const result = reducer(
         { user: userToChange, loginFailed: false },
@@ -160,7 +158,7 @@ describe('Auth Reducer', () => {
   });
 
   describe('On Update Name Success', () => {
-    it("should change user's name", () => {
+    it('should change user name', () => {
       const currentState: fromReducer.AuthState = {
         loginFailed: false,
         user: UserTestBuilder.withDefaultData().build()
@@ -169,6 +167,48 @@ describe('Auth Reducer', () => {
       const result = reducer(currentState, userActions.updateNameSuccess({ newName: 'exampleUser' }));
 
       expect(result).toEqual({ ...currentState, user: { ...currentState.user, name: 'exampleUser' } });
+    });
+  });
+
+  describe('On Handle Invitation Success', () => {
+    it('should add User Team and unset Invitation Id', () => {
+      const userTeam = UserTeamBuilder.from('100', 'team 100', new Date()).build();
+      const action = userActions.handleInvitationSuccess({ userTeam });
+      const currentState: fromReducer.AuthState = {
+        loginFailed: false,
+        user: UserTestBuilder.withDefaultData().withDefaultUserTeam().withInvitationId('123').build()
+      };
+
+      const result = reducer(currentState, action);
+
+      const expected: fromReducer.AuthState = {
+        loginFailed: false,
+        user: UserTestBuilder.withDefaultData()
+          .withDefaultUserTeam()
+          .withUserTeam(userTeam)
+          .withInvitationId(null)
+          .build()
+      };
+
+      expect(result).toEqual(expected);
+    });
+  });
+
+  describe('On Handle Invitation Reject', () => {
+    it('should unset user Invitation Id', () => {
+      const currentState: fromReducer.AuthState = {
+        loginFailed: false,
+        user: UserTestBuilder.withDefaultData().withInvitationId('123').build()
+      };
+      const action = userActions.handleInvitationReject();
+
+      const result = reducer(currentState, action);
+      const expectedState: fromReducer.AuthState = {
+        loginFailed: false,
+        user: UserTestBuilder.withDefaultData().withInvitationId(null).build()
+      };
+
+      expect(result).toEqual(expectedState);
     });
   });
 });

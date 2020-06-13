@@ -32,6 +32,8 @@ export class InvitationBuilder {
   }
 
   public withCreated(created: Date): InvitationBuilder {
+    console.log('with created' + created);
+
     this.invitation.created = created;
     return this;
   }

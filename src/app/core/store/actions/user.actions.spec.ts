@@ -1,3 +1,6 @@
+import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mode.enum';
+import { InvitationBuilder } from 'src/app/core/invitations/models/invitation/invitation.builder';
 import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
 import { Error } from '../../error/model/error.model';
 import { ErrorTestDataBuilder } from '../../error/utils/test/error-test-data.builder';
@@ -5,7 +8,7 @@ import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
 import { userActions, userActionTypes } from './user.actions';
 
 describe('User Actions', () => {
-  const user = UserTestBuilder.withDefaultData().build();
+  const user = UserTestBuilder.withDefaultData().withDefaultUserTeam().build();
 
   describe('Load User', () => {
     describe('Load User Requested', () => {
@@ -119,23 +122,47 @@ describe('User Actions', () => {
 
   describe('Handle Invitation', () => {
     it('should create Handle Invitation Requested action', () => {
-      expect(userActions.handleInvitationRequested({ invitationId: '123' })).toEqual({
+      expect(userActions.handleInvitationRequested({ user })).toEqual({
         type: userActionTypes.handleInvitationRequested,
-        invitationId: '123'
+        user
       });
     });
 
     it('should create Handle Invitation Success action', () => {
-      expect(userActions.handleInvitationSuccess()).toEqual({
-        type: userActionTypes.handleInvitationSuccess
+      expect(userActions.handleInvitationSuccess({ userTeam: user.teams[0] })).toEqual({
+        type: userActionTypes.handleInvitationSuccess,
+        userTeam: user.teams[0]
       });
     });
 
     it('should create Handle Invitation Failure action', () => {
       const error = ErrorTestDataBuilder.from().withDefaultData().build();
-      expect(userActions.handleInvitationFailure({ error })).toEqual({
+      const toastr = ToastrDataBuilder.from('test', ToastrMode.INFO).build();
+      expect(userActions.handleInvitationFailure({ error, toastr })).toEqual({
         type: userActionTypes.handleInvitationFailure,
-        error
+        error,
+        toastr
+      });
+    });
+
+    it('should create Handle Invitation Accept', () => {
+      const invitation = InvitationBuilder.from(
+        '123',
+        'user2@example.com',
+        'user@example.com',
+        '123',
+        'team 123'
+      ).build();
+      expect(userActions.handleInvitationAccept({ user, invitation })).toEqual({
+        type: userActionTypes.handleInvitationAccept,
+        user,
+        invitation
+      });
+    });
+
+    it('should create Handle Invitation Reject', () => {
+      expect(userActions.handleInvitationReject()).toEqual({
+        type: userActionTypes.handleInvitationReject
       });
     });
   });

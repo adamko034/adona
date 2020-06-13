@@ -21,7 +21,7 @@ describe('User Has Invitation Guard', () => {
       userFacade.selectUser.and.returnValue(cold('--a--b', { a: null, b: user }));
 
       expect(guard.canActivate(null, null)).toBeObservable(cold('-----(a|)', { a: true }));
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userFacade.handleInvitation, 1, '123');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userFacade.handleInvitation, 1, user);
     });
 
     it('should not call facade if user is present but without invitaion id set. Should complete the observable', () => {

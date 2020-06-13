@@ -24,4 +24,14 @@ export class TeamUtilsService {
       .filter((member) => !!member.email)
       .map((member) => member.email);
   }
+
+  public getMembersEmailsWithout(team: Team, withoutEmail: string): string[] {
+    if (!team.members) {
+      return [];
+    }
+
+    return Object.values(team.members)
+      .filter((member) => !!member.email && member.email !== withoutEmail)
+      .map((member) => member.email);
+  }
 }

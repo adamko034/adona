@@ -167,7 +167,7 @@ describe('User Service', () => {
   });
 
   describe('Update Name', () => {
-    it("should update user's name and return observable", () => {
+    it('should update user name and return observable', () => {
       const id = '1';
       const newName = 'example';
 
