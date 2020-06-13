@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ClearToastrGuard } from 'src/app/core/gui/guards/clear-toastr/clear-toastr.guard';
+import { HandleUserInvitationGuard } from 'src/app/core/user/guards/user-has-invitation/handle-user-invitation.guard';
+import { UserLoadedGuard } from 'src/app/core/user/guards/user-loaded/user-loaded.guard';
 import { AuthGuard } from './core/auth/guard/auth.guard';
-import { UserLoadedGuard } from './core/user/guard/user-loaded.guard';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { ContentLayoutComponent } from './layouts/content-layout/content-layout.component';
 
@@ -14,7 +16,7 @@ const routes: Routes = [
   {
     path: '',
     component: ContentLayoutComponent,
-    canActivate: [AuthGuard, UserLoadedGuard],
+    canActivate: [AuthGuard, UserLoadedGuard, HandleUserInvitationGuard, ClearToastrGuard],
     children: [
       {
         path: 'home',
@@ -37,6 +39,7 @@ const routes: Routes = [
   {
     path: 'auth',
     component: AuthLayoutComponent,
+    canActivate: [ClearToastrGuard],
     loadChildren: () => import('./modules/auth/auth.module').then((mod) => mod.AuthModule)
   }
 ];

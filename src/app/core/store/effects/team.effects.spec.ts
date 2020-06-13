@@ -5,9 +5,9 @@ import { Dictionary } from '@ngrx/entity';
 import { createAction } from '@ngrx/store';
 import { cold, hot } from 'jasmine-marbles';
 import { of } from 'rxjs';
+import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mode.enum';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
-import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
-import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
 import { resources } from 'src/app/shared/resources/resources';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
@@ -34,7 +34,8 @@ describe('Team Effects', () => {
     errorEffectService,
     guiFacade,
     invitationsFacade,
-    resourceService
+    resourceService,
+    teamUtilsService
   } = SpiesBuilder.init()
     .withUserFacade()
     .withTeamService()
@@ -43,6 +44,7 @@ describe('Team Effects', () => {
     .withInvitationsFacade()
     .withGuiFacade()
     .withResourceService()
+    .withTeamUtilsService()
     .build();
 
   beforeEach(() => {
@@ -59,7 +61,8 @@ describe('Team Effects', () => {
       errorEffectService,
       guiFacade,
       invitationsFacade,
-      resourceService
+      resourceService,
+      teamUtilsService
     );
 
     userFacade.selectUserId.calls.reset();
@@ -72,6 +75,7 @@ describe('Team Effects', () => {
     guiFacade.showLoading.calls.reset();
     guiFacade.showToastr.calls.reset();
     resourceService.format.calls.reset();
+    invitationsFacade.send.calls.reset();
   });
 
   describe('New Team Requested', () => {
@@ -132,6 +136,33 @@ describe('Team Effects', () => {
     it('should send invitation requests, hide loading and show toastr', () => {
       const team = TeamBuilder.from('1', new Date(), user.name, 'team 1').build();
       const toastr = ToastrDataBuilder.from('test', ToastrMode.SUCCESS).build();
+      const recipients = ['user@example.com', 'user2@example.com'];
+      const expectedInvRequest = {
+        recipients,
+        sender: user.email,
+        teamId: team.id,
+        teamName: team.name
+      };
+
+      teamUtilsService.getMembersEmailsWithout.and.returnValue(recipients);
+      resourceService.format.and.returnValue('test');
+      userFacade.selectUser.and.returnValue(of(user));
+
+      const action = teamActions.newTeamCreateSuccess({ team });
+      actions$ = cold('-aaa', { a: action });
+
+      expect(effects.newTeamCreateSuccess$).toBeObservable(cold('-aaa', { a: action }));
+      expect(guiFacade.hideLoading).toHaveBeenCalledTimes(3);
+      expect(userFacade.selectUser).toHaveBeenCalledTimes(3);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(resourceService.format, 3, resources.team.created, team.name);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(invitationsFacade.send, 3, expectedInvRequest);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(guiFacade.showToastr, 3, toastr);
+    });
+
+    it('should not send invitation requests if no recipients, hide loading and show toastr', () => {
+      const team = TeamBuilder.from('1', new Date(), user.name, 'team 1').build();
+      const toastr = ToastrDataBuilder.from('test', ToastrMode.SUCCESS).build();
+      teamUtilsService.getMembersEmailsWithout.and.returnValue([]);
 
       resourceService.format.and.returnValue('test');
 
@@ -142,8 +173,8 @@ describe('Team Effects', () => {
       expect(effects.newTeamCreateSuccess$).toBeObservable(cold('aa-a', { a: action }));
       expect(guiFacade.hideLoading).toHaveBeenCalledTimes(3);
       expect(userFacade.selectUser).toHaveBeenCalledTimes(3);
+      expect(invitationsFacade.send).not.toHaveBeenCalled();
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(resourceService.format, 3, resources.team.created, team.name);
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(invitationsFacade.send, 3, { sender: user, team });
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(guiFacade.showToastr, 3, toastr);
     });
   });
@@ -182,8 +213,8 @@ describe('Team Effects', () => {
       teamFacade.selectTeams.and.returnValue(of(teams));
       teamService.loadTeam.and.returnValue(cold('#', {}, err));
 
-      actions$ = hot('--a', { a: teamActions.loadTeamRequested({ id: teamToLoad.id }) });
-      const expected = cold('--(b|)', { b: teamActions.loadTeamFailure({ error: { errorObj: err } }) });
+      actions$ = hot('--a-a', { a: teamActions.loadTeamRequested({ id: teamToLoad.id }) });
+      const expected = cold('--b-b', { b: teamActions.loadTeamFailure({ error: { errorObj: err } }) });
       expect(effects.loadTeamRequested$).toBeObservable(expected);
     });
   });
@@ -262,7 +293,8 @@ describe('Team Effects', () => {
       errorEffectService,
       guiFacade,
       invitationsFacade,
-      resourceService
+      resourceService,
+      teamUtilsService
     );
 
     expect(errorEffectService.createFrom).toHaveBeenCalledTimes(2);

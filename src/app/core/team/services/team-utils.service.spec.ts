@@ -82,6 +82,27 @@ describe('Team Utils Service', () => {
       expect(service.getMembersEmails(createTeam(members))).toEqual(['user1@example.com', 'user5@example.com']);
     });
   });
+
+  describe('Get Members Emails Without', () => {
+    it('should return empty array', () => {
+      const team = TeamBuilder.from('1', new Date(), 'user', 'team').build();
+
+      expect(service.getMembersEmailsWithout(team, 'email3')).toEqual([]);
+    });
+
+    it('should return emails filtered', () => {
+      const members = TeamMembersBuilder.from()
+        .withMember('withoutEmail', 'phoUrl')
+        .withMember('withEmail1', 'photoUrl', 'email1')
+        .withMember('withEmail2', 'photoUrl', 'email2')
+        .withMember('withEmail3', 'photoUrl', 'email3')
+        .build();
+
+      const team = TeamBuilder.from('1', new Date(), 'user', 'team').withMembers(members).build();
+
+      expect(service.getMembersEmailsWithout(team, 'email3')).toEqual(['email1', 'email2']);
+    });
+  });
 });
 
 function createTeam(members: any): Team {

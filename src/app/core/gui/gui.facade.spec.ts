@@ -3,11 +3,11 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold } from 'jasmine-marbles';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
 import { SideNavbarOptionsBuilder } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.builder';
+import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mode.enum';
 import { guiActions } from 'src/app/core/gui/store/actions/gui.actions';
 import { GuiState } from 'src/app/core/gui/store/reducer/gui.reducer';
 import { guiQueries } from 'src/app/core/gui/store/selectors/gui.selectors';
-import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
-import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
 import { SpiesBuilder } from '../../utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from '../../utils/testUtils/jasmine-custom-matchers';
 
@@ -15,7 +15,10 @@ describe('Gui Facade', () => {
   let facade: GuiFacade;
   let store: MockStore<GuiState>;
 
-  const { deviceDetectorService } = SpiesBuilder.init().withDeviceDetectorService().build();
+  const {
+    deviceDetectorService,
+    toastrAdonaService
+  } = SpiesBuilder.init().withToastrAdonaService().withDeviceDetectorService().build();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -23,7 +26,7 @@ describe('Gui Facade', () => {
     });
 
     store = TestBed.inject(MockStore);
-    facade = new GuiFacade(deviceDetectorService, store);
+    facade = new GuiFacade(deviceDetectorService, store, toastrAdonaService);
   });
 
   describe('Select Side Navbar Options', () => {
@@ -105,23 +108,19 @@ describe('Gui Facade', () => {
     });
   });
 
-  describe('Select Toastr Data', () => {
-    it('should return obserable of Toastr Data', () => {
+  describe('Show Toastr', () => {
+    it('should call service', () => {
       const toastr = ToastrDataBuilder.from('test message', ToastrMode.INFO).build();
-      store.overrideSelector(guiQueries.selectTaostrData, toastr);
+      facade.showToastr(toastr);
 
-      expect(facade.selectToastrData()).toBeObservable(cold('x', { x: toastr }));
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(toastrAdonaService.show, 1, toastr);
     });
   });
 
-  describe('Show Toastr', () => {
-    it('should dispatch Show Toastr action', () => {
-      const spy = getDispatchSpy(store);
-      const data = ToastrDataBuilder.from('test message', ToastrMode.INFO).build();
-
-      facade.showToastr(data);
-
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(spy, 1, guiActions.showToastr({ data }));
+  describe('Hide Toastr', () => {
+    it('should Clear All', () => {
+      facade.clearToastr();
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(toastrAdonaService.clearAll, 1);
     });
   });
 });

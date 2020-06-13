@@ -1,4 +1,6 @@
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
+import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mode.enum';
 import { errorActions, errorActionsTypes } from 'src/app/core/store/actions/error.actions';
 
 describe('Error Actions', () => {
@@ -13,28 +15,24 @@ describe('Error Actions', () => {
 
   describe('Broadcast Error', () => {
     it('should create action with full payload', () => {
-      // given
       const errObj = { error: 'internal server error', code: 500 };
       const message = 'this is error message';
+      const toastr = ToastrDataBuilder.from('test message', ToastrMode.INFO).build();
 
-      // when
-      const action = errorActions.handleError({ error: { errorObj: errObj, message } });
+      const action = errorActions.handleError({ error: { errorObj: errObj, message }, toastr });
 
-      // then
       expect({ ...action }).toEqual({
         type: errorActionsTypes.handle,
-        error: { errorObj: errObj, message }
+        error: { errorObj: errObj, message },
+        toastr
       });
     });
 
     it('should create action with empty message', () => {
-      // given
       const errObj = { error: 'internal server error', code: 500 };
 
-      // when
       const action = errorActions.handleError({ error: { errorObj: errObj } });
 
-      // then
       expect({ ...action }).toEqual({
         type: errorActionsTypes.handle,
         error: { errorObj: errObj }
@@ -42,13 +40,10 @@ describe('Error Actions', () => {
     });
 
     it('should create action with empty error object', () => {
-      // given
       const message = 'this is error message';
 
-      // when
       const action = errorActions.handleError({ error: { message } });
 
-      // then
       expect({ ...action }).toEqual({
         type: errorActionsTypes.handle,
         error: { message }
@@ -56,10 +51,8 @@ describe('Error Actions', () => {
     });
 
     it('should create action with empty payload', () => {
-      // when
       const action = errorActions.handleError({ error: null });
 
-      // then
       expect({ ...action }).toEqual({
         type: errorActionsTypes.handle,
         error: null

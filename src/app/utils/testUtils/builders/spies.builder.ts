@@ -1,13 +1,13 @@
 import { AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade';
 import { FirebaseErrorsService } from 'src/app/core/api-requests/services/firebase-errors/firebase-errors.service';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
+import { ToastrAdonaService } from 'src/app/core/gui/services/toastr-adona-service/toastr-adona.service';
 import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
 import { InvitationsService } from 'src/app/core/invitations/services/invitations-service/invitations.service';
 import { RouterFacade } from 'src/app/core/router/router.facade';
@@ -70,7 +70,7 @@ export interface Spies {
   environmentService?: jasmine.SpyObj<EnvironmentService>;
   invitationsService?: jasmine.SpyObj<InvitationsService>;
   invitationsFacade?: jasmine.SpyObj<InvitationsFacade>;
-  toastrService?: jasmine.SpyObj<ToastrService>;
+  toastrAdonaService?: jasmine.SpyObj<ToastrAdonaService>;
   resourceService?: jasmine.SpyObj<ResourceService>;
 }
 
@@ -149,7 +149,8 @@ export class SpiesBuilder {
       'selectUser',
       'selectUserId',
       'changeTeam',
-      'updateName'
+      'updateName',
+      'handleInvitation'
     ]);
     return this;
   }
@@ -203,7 +204,8 @@ export class SpiesBuilder {
       'loadUser',
       'changeTeam',
       'createUser',
-      'updateName'
+      'updateName',
+      'handleInvitation'
     ]);
 
     return this;
@@ -298,7 +300,7 @@ export class SpiesBuilder {
       'hideLoading',
       'showLoading',
       'selectLoading',
-      'selectToastrData',
+      'clearToastr',
       'showToastr'
     ]);
 
@@ -327,7 +329,8 @@ export class SpiesBuilder {
     this.spies.teamUtilsService = jasmine.createSpyObj<TeamUtilsService>('teamUtilsService', [
       'getMembersCount',
       'isAtLeastOneMemberWithEmail',
-      'getMembersEmails'
+      'getMembersEmails',
+      'getMembersEmailsWithout'
     ]);
 
     return this;
@@ -386,7 +389,10 @@ export class SpiesBuilder {
   }
 
   public withInvitationsService(): SpiesBuilder {
-    this.spies.invitationsService = jasmine.createSpyObj<InvitationsService>('invitationsService', ['addRequests']);
+    this.spies.invitationsService = jasmine.createSpyObj<InvitationsService>('invitationsService', [
+      'addInvitation',
+      'get'
+    ]);
     return this;
   }
 
@@ -395,12 +401,10 @@ export class SpiesBuilder {
     return this;
   }
 
-  public withToastrService(): SpiesBuilder {
-    this.spies.toastrService = jasmine.createSpyObj<ToastrService>('toastrService', [
-      'info',
-      'error',
-      'warning',
-      'success'
+  public withToastrAdonaService(): SpiesBuilder {
+    this.spies.toastrAdonaService = jasmine.createSpyObj<ToastrAdonaService>('toastrAdonaService', [
+      'show',
+      'clearAll'
     ]);
     return this;
   }

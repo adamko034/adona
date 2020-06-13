@@ -5,10 +5,10 @@ import { concatMap, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade';
 import { FirebaseErrorsService } from 'src/app/core/api-requests/services/firebase-errors/firebase-errors.service';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
+import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.builder';
+import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mode.enum';
 import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
 import { errorActions } from 'src/app/core/store/actions/error.actions';
-import { ToastrDataBuilder } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.builder';
-import { ToastrMode } from 'src/app/shared/components/ui/toastr/models/toastr-mode/toastr-mode.enum';
 import { resources } from 'src/app/shared/resources/resources';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 

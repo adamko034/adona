@@ -1,9 +1,11 @@
+import { cold } from 'jasmine-marbles';
+import { InvitationBuilder } from 'src/app/core/invitations/models/invitation/invitation.builder';
+import { InvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
 import { InvitationsService } from 'src/app/core/invitations/services/invitations-service/invitations.service';
 import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
 import { TeamBuilder } from 'src/app/core/team/model/builders/team.builder';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
-import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 
 describe('Invitations Service', () => {
   let service: InvitationsService;
@@ -15,30 +17,72 @@ describe('Invitations Service', () => {
     .build();
   const team = TeamBuilder.from('team1', new Date(), user.name, 'team 1').withMembers(members).build();
 
-  const {
-    teamUtilsService,
-    angularFirestore
-  } = SpiesBuilder.init().withAngularFirestore().withTeamUtilsService().build();
+  const { timeService, angularFirestore } = SpiesBuilder.init().withAngularFirestore().withTimeService().build();
 
   beforeEach(() => {
-    service = new InvitationsService(angularFirestore, teamUtilsService);
+    service = new InvitationsService(angularFirestore, timeService);
   });
 
-  describe('Add Requests', () => {
+  describe('Add Invitation', () => {
     beforeEach(() => {
-      teamUtilsService.getMembersEmails.and.returnValue(recipients);
       angularFirestore.createId.and.returnValues('1', '2');
       angularFirestore.firestore.batch().commit.and.returnValue(Promise.resolve());
       angularFirestore.firestore.batch.calls.reset();
     });
 
     it('should add requests for all members', () => {
-      service.addRequests({ sender: user, team });
+      const request = InvitationRequestBuilder.from('user@example.com', '123', 'team 123', [
+        'test1@example.com',
+        'test2@example.com'
+      ]).build();
+      service.addInvitation(request);
 
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamUtilsService.getMembersEmails, 1, team);
       expect(angularFirestore.firestore.batch).toHaveBeenCalledTimes(1);
-      expect(angularFirestore.createId).toHaveBeenCalledTimes(2);
+      expect(angularFirestore.createId).toHaveBeenCalledTimes(4);
       expect(angularFirestore.firestore.batch().set).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('Get', () => {
+    const dtNow = new Date();
+    beforeEach(() => {
+      timeService.Creation.fromFirebaseTimestamp.calls.reset();
+      timeService.Creation.fromFirebaseTimestamp.and.returnValue(dtNow);
+    });
+
+    it('should get invitation from firebase', () => {
+      const invFirebase = {
+        recipientEmail: 'user@example.com',
+        senderEmail: 'sender@example.com',
+        teamId: '123',
+        teamName: 'team 123',
+        created: dtNow,
+        status: 'sent',
+        otherField: 'othervalue'
+      };
+      angularFirestore
+        .collection()
+        .doc()
+        .valueChanges.and.returnValue(cold('x-x', { x: invFirebase }));
+
+      const inv = service.get('inv1');
+
+      expect(angularFirestore.collection).toHaveBeenCalledWith('invitations');
+      expect(angularFirestore.collection().doc).toHaveBeenCalledWith('inv1');
+      expect(angularFirestore.collection().doc().valueChanges).toHaveBeenCalled();
+
+      const expectedInv = InvitationBuilder.from(
+        'inv1',
+        invFirebase.recipientEmail,
+        invFirebase.senderEmail,
+        invFirebase.teamId,
+        invFirebase.teamName
+      )
+        .withCreated(dtNow)
+        .withStatus(invFirebase.status as any)
+        .build();
+
+      expect(inv).toBeObservable(cold('(x|)', { x: expectedInv }));
     });
   });
 });

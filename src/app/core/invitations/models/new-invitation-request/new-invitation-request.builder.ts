@@ -1,22 +1,22 @@
-import { NewInvitationRequest } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.model';
-import { Team } from 'src/app/core/team/model/team.model';
-import { User } from 'src/app/core/user/model/user.model';
+import { InvitationRequest } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.model';
 
-export class NewInvitationRequestBuilder {
-  private request: NewInvitationRequest;
+export class InvitationRequestBuilder {
+  private request: InvitationRequest;
 
-  private constructor(sender: User, team: Team) {
+  private constructor(sender: string, teamId: string, teamName: string, recipients: string[]) {
     this.request = {
       sender,
-      team
+      teamId,
+      teamName,
+      recipients
     };
   }
 
-  public static from(sender: User, team: Team): NewInvitationRequestBuilder {
-    return new NewInvitationRequestBuilder(sender, team);
+  public static from(sender: string, teamId: string, teamName: string, recipients: string[]): InvitationRequestBuilder {
+    return new InvitationRequestBuilder(sender, teamId, teamName, recipients);
   }
 
-  public build(): NewInvitationRequest {
+  public build(): InvitationRequest {
     return this.request;
   }
 }

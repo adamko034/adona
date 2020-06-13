@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
+import { Logger } from 'src/app/shared/utils/logger/logger';
 import { User } from '../../user/model/user.model';
 import { UserService } from '../../user/services/user.service';
 import { authActions } from '../actions/auth.actions';
@@ -20,11 +21,15 @@ export class AuthEffects {
   public logIn$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(authActions.login),
-      switchMap((action) =>
-        this.authService.login(action.credentials).pipe(
+      tap(() => Logger.logDev('auth effect, log in, starting')),
+      switchMap((action) => {
+        Logger.logDev('auth effect, log in, calling service');
+        return this.authService.login(action.credentials).pipe(
           switchMap(({ user }) => (user.emailVerified ? this.userService.loadUser(user.uid) : of(null))),
           map((user: User) => {
+            Logger.logDev(`auth effect, log in, got user`);
             if (!user?.invitationId && !!action.invitationId) {
+              Logger.logDev('auth effect, log in, action with invitation id');
               user.invitationId = action.invitationId;
             }
 
@@ -32,8 +37,8 @@ export class AuthEffects {
           }),
           map((user: User) => (!!user ? authActions.loginSuccess({ user }) : authActions.emailNotVerified())),
           catchError(() => of(authActions.loginFailed()))
-        )
-      )
+        );
+      })
     );
   });
 

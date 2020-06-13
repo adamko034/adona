@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { Error } from 'src/app/core/error/model/error.model';
-import { ToastrData } from 'src/app/shared/components/ui/toastr/models/toastr-data/toastr-data.model';
+import { ToastrData } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.model';
 
 export const errorActionsTypes = {
   handle: '[Page] Handle Error',
