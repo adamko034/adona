@@ -9,15 +9,7 @@
         <div>
           <span>How should we call your team?</span>
           <mat-form-field fxFill>
-            <input
-              cdkTrapFocus
-              cdkTrapFocusAutoCapture
-              matInput
-              id="name"
-              formControlName="name"
-              name="name"
-              tabindex="0"
-            />
+            <input cdkTrapFocus cdkTrapFocusAutoCapture matInput id="name" formControlName="name" name="name" />
             <mat-error *ngIf="form.get('name').hasError('requiredValue')">Please provide your team name</mat-error>
           </mat-form-field>
         </div>
@@ -36,46 +28,55 @@
       <div *ngSwitchCase="steps.Users" fxLayout="column">
         <label id="addMemberModeLabel">How would you like to add a new member?</label>
         <div class="members-addition-modes">
-          <mat-radio-group #radioGroup="matRadioGroup" aria-labelledby="addMemeberModeLabel" fxLayout="column">
-            <mat-radio-button value="friend" [color]="'primary'">Invite friend</mat-radio-button>
-
-            <div *ngIf="radioGroup.value === 'friend'" fxLayout fxLayoutAlign="space-between center">
-              <mat-form-field fxFlex="90">
-                <input placeholder="Email address" matInput formControlName="newFriend" #newFriendInput />
-                <mat-error *ngIf="form.get('newFriend').hasError('requiredValue')"
-                  >Please provide email address</mat-error
-                >
-                <mat-error
-                  *ngIf="form.get('newFriend').hasError('email') && !form.get('newFriend').hasError('requiredValue')"
-                  >Please provide valid email address</mat-error
-                >
-              </mat-form-field>
-              <button mat-icon-button [disableRipple]="true" fxFlex="10" (click)="addFriend()">
-                <mat-icon>add</mat-icon>
-              </button>
-            </div>
-
-            <mat-radio-button class="radio-button-second" value="virtual" [color]="'primary'"
+          <mat-radio-group
+            #radioGroup="matRadioGroup"
+            aria-labelledby="addMemeberModeLabel"
+            fxLayoutGap.gt-xs="20px"
+            fxLayout.gt-xs="row"
+            fxLayout="column"
+          >
+            <mat-radio-button
+              tabindex="1"
+              [checked]="'true'"
+              value="friend"
+              [color]="'primary'"
+              (change)="changeNewMemberType()"
+              >Invite friend</mat-radio-button
+            >
+            <mat-radio-button tabindex="2" value="virtual" [color]="'primary'" (change)="changeNewMemberType()"
               >Add virtual member</mat-radio-button
             >
-            <div *ngIf="radioGroup.value === 'virtual'" fxLayout="column">
-              <div fxLayout fxLayoutAlign="space-between center">
-                <mat-form-field fxFlex="90">
-                  <input
-                    placeholder="Member name"
-                    matInput
-                    formControlName="newMember"
-                    name="newMember"
-                    #newMemberInput
-                  />
-                  <mat-error *ngIf="form.get('newMember').hasError('required')">Please provide member name</mat-error>
-                </mat-form-field>
-                <button mat-icon-button [disableRipple]="true" fxFlex="10" (click)="addMember()">
-                  <mat-icon>add</mat-icon>
-                </button>
-              </div>
-            </div>
           </mat-radio-group>
+
+          <div class="members-addition-input" fxLayout fxLayoutAlign="space-between center">
+            <mat-form-field fxFlex="90">
+              <input
+                cdkTrapFocus
+                cdkTrapFocusAutoCapture
+                tabindex="1"
+                [placeholder]="radioGroup.value === 'friend' ? 'Email Address' : 'Member Name'"
+                matInput
+                formControlName="newMember"
+                #newMemberInput
+              />
+              <mat-error *ngIf="form.get('newMember').hasError('requiredValue')">
+                {{ radioGroup.value === 'friend' ? 'Please provide email address' : 'Please provide member name' }}
+              </mat-error>
+              <mat-error
+                *ngIf="form.get('newMember').hasError('email') && !form.get('newMember').hasError('requiredValue')"
+                >Please provide valid email address</mat-error
+              >
+            </mat-form-field>
+            <button
+              tabindex="2"
+              mat-icon-button
+              [disableRipple]="true"
+              fxFlex="10"
+              (click)="addMember(radioGroup.value)"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
         </div>
 
         <div fxLayout="column">
