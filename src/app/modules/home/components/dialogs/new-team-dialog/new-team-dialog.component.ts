@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NewTeamRequestBuilder } from 'src/app/core/team/model/new-team-request/new-team-request.builder';
@@ -23,9 +23,11 @@ export class NewTeamDialogComponent implements OnInit {
   public steps = NewTeamDialogStep;
   public form: FormGroup = new FormGroup({
     name: new FormControl('', [CustomValidators.requiredValue]),
-    newFriend: new FormControl('', [Validators.email, CustomValidators.requiredValue]),
     newMember: new FormControl('', [CustomValidators.requiredValue])
   });
+
+  @ViewChild('newMemberInput')
+  public newMemberInput: ElementRef;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { user: User },
@@ -59,24 +61,23 @@ export class NewTeamDialogComponent implements OnInit {
     this.currentStep = this.stepsService.getPreviousStep(this.currentStep);
   }
 
-  public addMember(): void {
+  public addMember(type: string): void {
     const newMemberFormControl = this.form.get('newMember');
 
+    if (type === 'friend') {
+      newMemberFormControl.setErrors(Validators.email(newMemberFormControl));
+    }
+
     if (newMemberFormControl.valid) {
-      const name = this.form.get('newMember').value.trim();
-      this.members[name] = TeamMemberBuilder.from(name).build();
-      this.resetMembersFormControls();
+      const name = newMemberFormControl.value.trim();
+      this.members[name] = TeamMemberBuilder.from(name).withEmailAddress(name).build();
+      this.form.get('newMember').reset();
     }
   }
 
-  public addFriend(): void {
-    const newFriendFormControl = this.form.get('newFriend');
-
-    if (this.form.get('newFriend').valid) {
-      const email = newFriendFormControl.value.trim();
-      this.members[email] = TeamMemberBuilder.from(email).withEmailAddress(email).build();
-      this.resetMembersFormControls();
-    }
+  public changeNewMemberType() {
+    this.form.get('newMember').reset();
+    this.newMemberInput.nativeElement.focus();
   }
 
   public removeMember(member: TeamMember): void {
@@ -120,10 +121,5 @@ export class NewTeamDialogComponent implements OnInit {
       default:
         return true;
     }
-  }
-
-  private resetMembersFormControls(): void {
-    this.form.get('newFriend').reset();
-    this.form.get('newMember').reset();
   }
 }
