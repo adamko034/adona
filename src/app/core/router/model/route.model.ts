@@ -3,4 +3,5 @@ export interface Route {
   icon: string;
   name: string;
   url: string;
+  description?: string;
 }

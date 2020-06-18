@@ -24,8 +24,18 @@ const team = {
   }
 };
 
+const settings = {
+  teams: {
+    description: 'Manage your teams'
+  },
+  account: {
+    description: 'Manage your profile data'
+  }
+};
+
 export const resources = {
   general,
   team,
-  toastr
+  toastr,
+  settings
 };

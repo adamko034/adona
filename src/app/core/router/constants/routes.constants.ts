@@ -1,3 +1,4 @@
+import { resources } from 'src/app/shared/resources/resources';
 import { Route } from '../model/route.model';
 
 export const routes: Route[] = [
@@ -8,6 +9,13 @@ export const routes: Route[] = [
 ];
 
 export const settingsRoutes: Route[] = [
-  { id: 2, icon: 'security', name: 'Security', url: '/settings/security' },
-  { id: 1, icon: 'account_box', name: 'Account', url: '/settings/account' }
+  { id: 2, icon: 'group', name: 'My Teams', url: '/settings/teams', description: resources.settings.teams.description },
+  { id: 3, icon: 'security', name: 'Security', url: '/settings/security' },
+  {
+    id: 1,
+    icon: 'account_box',
+    name: 'Account',
+    url: '/settings/account',
+    description: resources.settings.account.description
+  }
 ];
