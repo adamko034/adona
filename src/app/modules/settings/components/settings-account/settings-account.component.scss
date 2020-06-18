@@ -1,19 +1,8 @@
 .settings-account-container {
-  .title-container {
-    .title {
-      font-size: 25px;
-    }
-
-    .subtitle {
-      font-size: small;
-      color: rgba(0, 0, 0, 0.65);
-      font-weight: 500;
-      line-height: 1;
-    }
-  }
-
   .content-container {
-    .setting-row {
+    margin-top: 20px;
+
+    .setting-row:not(:first-of-type) {
       margin-top: 40px;
     }
 

@@ -10,9 +10,10 @@ import { SettingsAccountComponent } from './components/settings-account/settings
 import { SettingsSecurityComponent } from './components/settings-security/settings-security.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { SettingsRoutingModule } from './settings-routing.module';
+import { SettingsTeamsComponent } from './components/settings-teams/settings-teams.component';
 
 @NgModule({
-  declarations: [SettingsComponent, SettingsAccountComponent, SettingsSecurityComponent],
+  declarations: [SettingsComponent, SettingsAccountComponent, SettingsSecurityComponent, SettingsTeamsComponent],
   imports: [
     CommonModule,
     SettingsRoutingModule,
