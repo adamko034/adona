@@ -1,12 +1,12 @@
 import { fakeAsync, flush } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
-import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
-import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
-import { TeamMembersBuilder } from '../model/builders/team-members.builder';
-import { TeamBuilder } from '../model/builders/team.builder';
-import { Team } from '../model/team.model';
-import { TeamService } from './team.service';
+import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
+import { Team } from 'src/app/core/team/model/team/team.model';
+import { TeamService } from 'src/app/core/team/services/team.service';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 
 describe('Team Service', () => {
   const { angularFirestore, timeService } = SpiesBuilder.init().withAngularFirestore().withTimeService().build();

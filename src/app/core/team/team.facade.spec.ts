@@ -2,15 +2,15 @@ import { TestBed } from '@angular/core/testing';
 import { Dictionary } from '@ngrx/entity';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { hot } from 'jasmine-marbles';
+import { teamActions } from 'src/app/core/store/actions/team.actions';
+import { TeamState } from 'src/app/core/store/reducers/team/team.reducer';
+import { teamQueries } from 'src/app/core/store/selectors/team.selectors';
 import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
-import { teamActions } from '../store/actions/team.actions';
-import { TeamState } from '../store/reducers/team/team.reducer';
-import { teamQueries } from '../store/selectors/team.selectors';
-import { TeamBuilder } from './model/builders/team.builder';
-import { Team } from './model/team.model';
-import { TeamFacade } from './team.facade';
-import { TeamsTestDataBuilder } from './utils/test/teams-test-data.builder';
+import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
+import { Team } from 'src/app/core/team/model/team/team.model';
+import { TeamFacade } from 'src/app/core/team/team.facade';
+import { TeamsTestDataBuilder } from 'src/app/core/team/utils/test/teams-test-data.builder';
 
 describe('Team Facade', () => {
   let store: MockStore<TeamState>;

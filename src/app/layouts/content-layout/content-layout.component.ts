@@ -3,7 +3,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { SideNavbarOptions } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.model';
-import { Team } from 'src/app/core/team/model/team.model';
+import { Team } from 'src/app/core/team/model/team/team.model';
 import { TeamFacade } from 'src/app/core/team/team.facade';
 import { User } from 'src/app/core/user/model/user.model';
 import { UserFacade } from 'src/app/core/user/user.facade';

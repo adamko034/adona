@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@
 import { Subscription } from 'rxjs';
 import { Route } from 'src/app/core/router/model/route.model';
 import { RouterFacade } from 'src/app/core/router/router.facade';
-import { Team } from 'src/app/core/team/model/team.model';
+import { Team } from 'src/app/core/team/model/team/team.model';
 import { TeamUtilsService } from 'src/app/core/team/services/team-utils.service';
 import { User } from 'src/app/core/user/model/user.model';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';

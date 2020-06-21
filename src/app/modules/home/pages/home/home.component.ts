@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Team } from 'src/app/core/team/model/team.model';
+import { Team } from 'src/app/core/team/model/team/team.model';
 import { TeamFacade } from 'src/app/core/team/team.facade';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';

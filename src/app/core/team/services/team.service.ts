@@ -4,9 +4,9 @@ import * as firebase from 'firebase/app/';
 import { from, Observable } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
+import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
+import { Team } from 'src/app/core/team/model/team/team.model';
 import { TimeService } from 'src/app/shared/services/time/time.service';
-import { TeamBuilder } from '../model/builders/team.builder';
-import { Team } from '../model/team.model';
 
 @Injectable({ providedIn: 'root' })
 export class TeamService {

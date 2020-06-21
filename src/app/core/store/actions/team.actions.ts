@@ -1,7 +1,7 @@
 import { createAction, props } from '@ngrx/store';
+import { Error } from 'src/app/core/error/model/error.model';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
-import { Error } from '../../error/model/error.model';
-import { Team } from '../../team/model/team.model';
+import { Team } from 'src/app/core/team/model/team/team.model';
 
 export const teamActionTypes = {
   newTeamRequested: '[Home Page] New Team Requested',

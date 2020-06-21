@@ -1,5 +1,5 @@
 import { TeamMember } from 'src/app/core/team/model/team-member/team-member.model';
-import { Team } from '../team.model';
+import { Team } from 'src/app/core/team/model/team/team.model';
 
 export class TeamBuilder {
   private team: Team;

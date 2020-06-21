@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Team } from '../model/team.model';
+import { Team } from 'src/app/core/team/model/team/team.model';
 
 @Injectable({ providedIn: 'root' })
 export class TeamUtilsService {

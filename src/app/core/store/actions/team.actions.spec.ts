@@ -1,9 +1,9 @@
+import { ErrorTestDataBuilder } from 'src/app/core/error/utils/test/error-test-data.builder';
+import { teamActions, teamActionTypes } from 'src/app/core/store/actions/team.actions';
+import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
-import { ErrorTestDataBuilder } from '../../error/utils/test/error-test-data.builder';
-import { TeamMembersBuilder } from '../../team/model/builders/team-members.builder';
-import { TeamBuilder } from '../../team/model/builders/team.builder';
-import { Team } from '../../team/model/team.model';
-import { teamActions, teamActionTypes } from './team.actions';
+import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
+import { Team } from 'src/app/core/team/model/team/team.model';
 
 describe('Team Actions', () => {
   const members = TeamMembersBuilder.from().withMember('user 1', 'photourl').withMember('user 2', 'photourl').build();

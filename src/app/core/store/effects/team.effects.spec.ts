@@ -7,18 +7,18 @@ import { cold, hot } from 'jasmine-marbles';
 import { of } from 'rxjs';
 import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.builder';
 import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mode.enum';
+import { teamActions } from 'src/app/core/store/actions/team.actions';
+import { userActions } from 'src/app/core/store/actions/user.actions';
+import { TeamEffects } from 'src/app/core/store/effects/team.effects';
+import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
+import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
+import { Team } from 'src/app/core/team/model/team/team.model';
+import { TeamsTestDataBuilder } from 'src/app/core/team/utils/test/teams-test-data.builder';
 import { resources } from 'src/app/shared/resources/resources';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
-import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
-import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
-import { TeamMembersBuilder } from '../../team/model/builders/team-members.builder';
-import { TeamBuilder } from '../../team/model/builders/team.builder';
-import { Team } from '../../team/model/team.model';
-import { TeamsTestDataBuilder } from '../../team/utils/test/teams-test-data.builder';
-import { teamActions } from '../actions/team.actions';
-import { userActions } from '../actions/user.actions';
-import { TeamEffects } from './team.effects';
 
 describe('Team Effects', () => {
   let actions$: Actions;
@@ -123,7 +123,9 @@ describe('Team Effects', () => {
     it('should dispatch New Team Create Failure action when adding team fails', () => {
       teamService.addTeam.and.returnValue(cold('#', {}, { code: 500 }));
 
-      const expected = cold('--(b|)', { b: teamActions.newTeamCreateFailure({ error: { errorObj: { code: 500 } } }) });
+      const expected = cold('--(b|)', {
+        b: teamActions.newTeamCreateFailure({ error: { errorObj: { code: 500 } } as any })
+      });
 
       expect(effects.newTeamRequested$).toBeObservable(expected);
       expect(teamService.addTeam).toHaveBeenCalledTimes(1);
@@ -214,7 +216,7 @@ describe('Team Effects', () => {
       teamService.loadTeam.and.returnValue(cold('#', {}, err));
 
       actions$ = hot('--a-a', { a: teamActions.loadTeamRequested({ id: teamToLoad.id }) });
-      const expected = cold('--b-b', { b: teamActions.loadTeamFailure({ error: { errorObj: err } }) });
+      const expected = cold('--b-b', { b: teamActions.loadTeamFailure({ error: { errorObj: err } } as any) });
       expect(effects.loadTeamRequested$).toBeObservable(expected);
     });
   });
@@ -274,7 +276,7 @@ describe('Team Effects', () => {
       teamService.loadTeam.and.returnValue(cold('#', {}, error));
 
       actions$ = hot('--a', { a: teamActions.loadSelectedTeamRequested() });
-      const expected = cold('--(b|)', { b: teamActions.loadTeamFailure({ error: { errorObj: error } }) });
+      const expected = cold('--(b|)', { b: teamActions.loadTeamFailure({ error: { errorObj: error } } as any) });
 
       expect(effects.loadSelectedTeamRequested$).toBeObservable(expected);
       expect(teamService.loadTeam).toHaveBeenCalledTimes(1);

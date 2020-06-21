@@ -3,7 +3,7 @@ import { InvitationBuilder } from 'src/app/core/invitations/models/invitation/in
 import { InvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
 import { InvitationsService } from 'src/app/core/invitations/services/invitations-service/invitations.service';
 import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
-import { TeamBuilder } from 'src/app/core/team/model/builders/team.builder';
+import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 

@@ -1,7 +1,7 @@
-import { Team } from 'src/app/core/team/model/team.model';
-import { TeamMembersBuilder } from '../model/builders/team-members.builder';
-import { TeamBuilder } from '../model/builders/team.builder';
-import { TeamUtilsService } from './team-utils.service';
+import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
+import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
+import { Team } from 'src/app/core/team/model/team/team.model';
+import { TeamUtilsService } from 'src/app/core/team/services/team-utils.service';
 
 describe('Team Utils Service', () => {
   let service: TeamUtilsService;
