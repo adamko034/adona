@@ -12,19 +12,19 @@ import { InvitationStatus } from 'src/app/core/invitations/models/invitation-sta
 import { InvitationBuilder } from 'src/app/core/invitations/models/invitation/invitation.builder';
 import { Invitation } from 'src/app/core/invitations/models/invitation/invitation.model';
 import { InvitationsService } from 'src/app/core/invitations/services/invitations-service/invitations.service';
+import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
+import { userActions } from 'src/app/core/store/actions/user.actions';
+import { UserEffects } from 'src/app/core/store/effects/user.effects';
+import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
 import { UserTeamBuilder } from 'src/app/core/user/model/builders/user-team.builder';
 import { UserTeam } from 'src/app/core/user/model/user-team.model';
 import { User } from 'src/app/core/user/model/user.model';
+import { UserService } from 'src/app/core/user/services/user.service';
 import { resources } from 'src/app/shared/resources/resources';
 import { ResourceService } from 'src/app/shared/resources/services/resource.service';
+import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
-import { SpiesBuilder } from '../../../utils/testUtils/builders/spies.builder';
-import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
-import { ErrorEffectService } from '../../services/store/error-effect.service';
-import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
-import { UserService } from '../../user/services/user.service';
-import { userActions } from '../actions/user.actions';
-import { UserEffects } from './user.effects';
 
 describe('User Effects', () => {
   let actions$: Actions;

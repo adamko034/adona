@@ -1,12 +1,12 @@
 import { fakeAsync } from '@angular/core/testing';
 import { cold } from 'jasmine-marbles';
+import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
+import { UserTeamBuilder } from 'src/app/core/user/model/builders/user-team.builder';
+import { UserService } from 'src/app/core/user/services/user.service';
 import { DateTestBuilder } from 'src/app/utils/testUtils/builders/date-test.builder';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
-import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
-import { UserTeamBuilder } from '../model/builders/user-team.builder';
-import { UserService } from './user.service';
 
 describe('User Service', () => {
   let service: UserService;

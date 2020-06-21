@@ -1,5 +1,5 @@
 import { Dictionary } from '@ngrx/entity';
-import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
+import { TeamMembersBuilder } from 'src/app/core/team/model/team-member/team-members.builder';
 import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { Team } from 'src/app/core/team/model/team/team.model';
 import { DateTestBuilder } from 'src/app/utils/testUtils/builders/date-test.builder';

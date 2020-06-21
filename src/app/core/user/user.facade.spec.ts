@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { cold } from 'jasmine-marbles';
+import { userActions, userActionTypes } from 'src/app/core/store/actions/user.actions';
+import { AuthState } from 'src/app/core/store/reducers/auth/auth.reducer';
+import { userQueries } from 'src/app/core/store/selectors/user.selectors';
+import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
+import { UserFacade } from 'src/app/core/user/user.facade';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
-import { userActions, userActionTypes } from '../store/actions/user.actions';
-import { AuthState } from '../store/reducers/auth/auth.reducer';
-import { userQueries } from '../store/selectors/user.selectors';
-import { ChangeTeamRequest } from '../team/model/change-team-request.model';
-import { UserFacade } from './user.facade';
 
 describe('User Facade', () => {
   let store: MockStore<AuthState>;

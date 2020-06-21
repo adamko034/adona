@@ -4,15 +4,15 @@ import { from, Observable, throwError } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { InvitationStatus } from 'src/app/core/invitations/models/invitation-status.enum';
 import { Invitation } from 'src/app/core/invitations/models/invitation/invitation.model';
-import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
+import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
 import { TeamMember } from 'src/app/core/team/model/team-member/team-member.model';
+import { TeamMembersBuilder } from 'src/app/core/team/model/team-member/team-members.builder';
+import { UserTeamBuilder } from 'src/app/core/user/model/builders/user-team.builder';
+import { UserBuilder } from 'src/app/core/user/model/builders/user.builder';
+import { UserTeam } from 'src/app/core/user/model/user-team.model';
+import { User } from 'src/app/core/user/model/user.model';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { Logger } from 'src/app/shared/utils/logger/logger';
-import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
-import { UserTeamBuilder } from '../model/builders/user-team.builder';
-import { UserBuilder } from '../model/builders/user.builder';
-import { UserTeam } from '../model/user-team.model';
-import { User } from '../model/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {

@@ -1,7 +1,7 @@
 import { ErrorTestDataBuilder } from 'src/app/core/error/utils/test/error-test-data.builder';
 import { teamActions, teamActionTypes } from 'src/app/core/store/actions/team.actions';
-import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
+import { TeamMembersBuilder } from 'src/app/core/team/model/team-member/team-members.builder';
 import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { Team } from 'src/app/core/team/model/team/team.model';
 

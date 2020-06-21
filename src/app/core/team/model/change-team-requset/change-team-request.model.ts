@@ -1,4 +1,4 @@
-import { User } from '../../user/model/user.model';
+import { User } from 'src/app/core/user/model/user.model';
 
 export interface ChangeTeamRequest {
   teamId: string;

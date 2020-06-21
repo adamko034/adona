@@ -1,7 +1,7 @@
 import { fakeAsync, flush } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { TeamMembersBuilder } from 'src/app/core/team/model/builders/team-members.builder';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
+import { TeamMembersBuilder } from 'src/app/core/team/model/team-member/team-members.builder';
 import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { Team } from 'src/app/core/team/model/team/team.model';
 import { TeamService } from 'src/app/core/team/services/team.service';

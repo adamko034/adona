@@ -9,15 +9,15 @@ import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mod
 import { InvitationStatus } from 'src/app/core/invitations/models/invitation-status.enum';
 import { Invitation } from 'src/app/core/invitations/models/invitation/invitation.model';
 import { InvitationsService } from 'src/app/core/invitations/services/invitations-service/invitations.service';
+import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
+import { userActions } from 'src/app/core/store/actions/user.actions';
+import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
 import { UserTeamBuilder } from 'src/app/core/user/model/builders/user-team.builder';
+import { User } from 'src/app/core/user/model/user.model';
+import { UserService } from 'src/app/core/user/services/user.service';
 import { resources } from 'src/app/shared/resources/resources';
 import { ResourceService } from 'src/app/shared/resources/services/resource.service';
 import { Logger } from 'src/app/shared/utils/logger/logger';
-import { ErrorEffectService } from '../../services/store/error-effect.service';
-import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
-import { User } from '../../user/model/user.model';
-import { UserService } from '../../user/services/user.service';
-import { userActions } from '../actions/user.actions';
 
 @Injectable()
 export class UserEffects {
