@@ -20,6 +20,7 @@ import { CalendarService } from 'src/app/modules/calendar/service/calendar.servi
 import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { ExpensesService } from 'src/app/modules/expenses/services/expenses.service';
 import { ExpensesFacade } from 'src/app/modules/expenses/store/expenses.facade';
+import { SettingsToolbarFactory } from 'src/app/modules/settings/models/settings-toolbar/settings-toolbar-factory.service';
 import { ResourceService } from 'src/app/shared/resources/services/resource.service';
 import { DialogService } from 'src/app/shared/services/dialogs/dialog.service';
 import { SharedDialogsService } from 'src/app/shared/services/dialogs/shared-dialogs.service';
@@ -72,6 +73,7 @@ export interface Spies {
   invitationsFacade?: jasmine.SpyObj<InvitationsFacade>;
   toastrAdonaService?: jasmine.SpyObj<ToastrAdonaService>;
   resourceService?: jasmine.SpyObj<ResourceService>;
+  settingsToolbarFactory?: jasmine.SpyObj<SettingsToolbarFactory>;
 }
 
 export class SpiesBuilder {
@@ -313,7 +315,8 @@ export class SpiesBuilder {
       'selectCurrentRute',
       'selectAdonaRoutes',
       'selectSettingsRoutes',
-      'selectRouteQueryParams'
+      'selectRouteQueryParams',
+      'selectRouteData'
     ]);
 
     return this;
@@ -411,6 +414,14 @@ export class SpiesBuilder {
 
   public withResourceService(): SpiesBuilder {
     this.spies.resourceService = jasmine.createSpyObj<ResourceService>('resourceService', ['format']);
+    return this;
+  }
+
+  public withSettingsToolbarFactory(): SpiesBuilder {
+    this.spies.settingsToolbarFactory = jasmine.createSpyObj<SettingsToolbarFactory>('settingsToolbarFactory', [
+      'create',
+      'createWithSubtitle'
+    ]);
     return this;
   }
 

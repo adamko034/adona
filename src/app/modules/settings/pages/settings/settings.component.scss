@@ -1,3 +1,17 @@
-.settings-container {
-  padding: 20px 0;
+.back-button {
+  font-size: 25px;
+  color: #3f51b5;
+}
+
+.title {
+  font-size: large;
+  padding: 10px 0;
+  position: relative;
+
+  .subtitle {
+    line-height: 1;
+    font-size: small;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.6);
+  }
 }

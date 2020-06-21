@@ -1,10 +1,11 @@
-import { Params, RouterStateSnapshot } from '@angular/router';
+import { Data, Params, RouterStateSnapshot } from '@angular/router';
 import { RouterStateSerializer } from '@ngrx/router-store';
 
 export interface RouterStateUrl {
   url: string;
   params: Params;
   queryParams: Params;
+  data: Data;
 }
 
 export class CustomSerializer implements RouterStateSerializer<RouterStateUrl> {
@@ -19,10 +20,10 @@ export class CustomSerializer implements RouterStateSerializer<RouterStateUrl> {
       url,
       root: { queryParams }
     } = routerState;
-    const { params } = route;
+    const { params, data } = route;
 
     // Only return an object including the URL, params and query params
     // instead of the entire snapshot
-    return { url, params, queryParams };
+    return { url, params, queryParams, data };
   }
 }

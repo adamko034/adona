@@ -25,11 +25,23 @@ const team = {
 };
 
 const settings = {
+  list: {
+    title: 'Settings'
+  },
   teams: {
-    description: 'Manage your teams'
+    title: 'Teams',
+    description: 'Manage your teams',
+    imageUrl: '/assets/images/settings_team.svg'
   },
   account: {
-    description: 'Manage your profile data'
+    title: 'My Account',
+    description: 'Manage your profile data',
+    imageUrl: '/assets/images/settings_account.svg'
+  },
+  security: {
+    title: 'Security',
+    description: 'Manage your security preferences',
+    imageUrl: '/assets/images/settings_security.svg'
   }
 };
 

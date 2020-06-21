@@ -1,0 +1,44 @@
+.tile {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 6px;
+  transition: border ease-in 0.8s, background-color ease-in 0.2s;
+  height: 110px;
+
+  // &-max-width {
+  //   max-width: 60%;
+  // }
+
+  &-active {
+    border: 1px solid #3f51b5;
+    color: #3f51b5;
+  }
+
+  &:not(.tile-active) {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  &:not(.tile-active):hover {
+    border: 1px solid rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .tile-image img {
+    max-height: 100px;
+    height: 100%;
+    width: 100%;
+  }
+
+  .tile-title-container {
+    margin-top: -7px;
+
+    .tile-title {
+      font-weight: 500;
+    }
+
+    .tile-subtitle {
+      font-size: smaller;
+      color: rgba(0, 0, 0, 0.7);
+    }
+  }
+}

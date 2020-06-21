@@ -1,7 +1,8 @@
 export interface Route {
   id: number;
-  icon: string;
   name: string;
   url: string;
+  image?: string;
+  icon?: string;
   description?: string;
 }

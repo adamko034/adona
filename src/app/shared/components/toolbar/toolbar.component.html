@@ -1,6 +1,8 @@
 <div
   class="toolbar"
   [ngClass.xs]="'toolbar-small-padding'"
+  [ngClass]="{ 'toolbar-bottom-border': showBottomBorder }"
+  [ngClass]="{ 'toolbar-max-height': isMaxHeight }"
   fxLayout
   fxLayoutGap.gt-xs="50px"
   fxLayoutAlign.gt-xs="start center"

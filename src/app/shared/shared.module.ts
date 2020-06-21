@@ -15,18 +15,18 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { ToastrModule } from 'ngx-toastr';
+import { TilesComponent } from 'src/app/shared/components/ui/tiles/tiles.component';
 import { EnvironmentService } from 'src/app/shared/services/environment/environment.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
 import { ChangeTeamDialogComponent } from './components/dialogs/change-team-dialog/change-team-dialog.component';
 import { FromToDatesComponent } from './components/from-to-dates/from-to-dates.component';
-import { TabsVerticalComponent } from './components/tabs-vertical/tabs-vertical.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { AlertComponent } from './components/ui/alert/alert.component';
 import { LoaderComponent } from './components/ui/loader/loader.component';
-import { TabsHorizontalComponent } from './components/ui/tabs-horizontal/tabs-horizontal.component';
 import { MobileHideDirective } from './directives/device/mobile-hide.directive';
 import { ResponsiveMatIconDirective } from './directives/device/responsive-mat-icon.directive';
 import { DateFormatPipe } from './pipes/date/date-format.pipe';
+import { TileComponent } from './components/ui/tiles/components/tile/tile.component';
 
 @NgModule({
   imports: [
@@ -67,10 +67,10 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     ResponsiveMatIconDirective,
     ToolbarComponent,
     ChangeTeamDialogComponent,
-    TabsVerticalComponent,
+    TilesComponent,
     LoaderComponent,
     AlertComponent,
-    TabsHorizontalComponent
+    TileComponent
   ],
   exports: [
     FromToDatesComponent,
@@ -79,10 +79,9 @@ import { DateFormatPipe } from './pipes/date/date-format.pipe';
     ResponsiveMatIconDirective,
     ToolbarComponent,
     ChangeTeamDialogComponent,
-    TabsVerticalComponent,
+    TilesComponent,
     LoaderComponent,
-    AlertComponent,
-    TabsHorizontalComponent
+    AlertComponent
   ],
   entryComponents: [ChangeTeamDialogComponent]
 })
