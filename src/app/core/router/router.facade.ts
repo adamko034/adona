@@ -24,6 +24,10 @@ export class RouterFacade {
     return this.store.pipe(select(routerQueries.selectRouteQueryParams));
   }
 
+  public selectRouteData<T>(): Observable<T> {
+    return this.store.pipe(select(routerQueries.selectData));
+  }
+
   public selectAdonaRoutes(): Route[] {
     return sortBy(routes, 'id');
   }

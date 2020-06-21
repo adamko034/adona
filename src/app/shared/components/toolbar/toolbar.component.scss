@@ -5,7 +5,15 @@
   right: 0;
   z-index: 1;
   min-height: 50px;
-  max-height: 50px;
+
   background-color: #fafafa;
   margin-bottom: 20px;
+
+  &-bottom-border {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  }
+
+  &-max-height {
+    max-height: 50px;
+  }
 }

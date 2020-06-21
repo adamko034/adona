@@ -46,4 +46,12 @@ describe('Router Facade', () => {
       expect(facade.selectRouteQueryParams()).toBeObservable(cold('a', { a: { testNumber: 1 } }));
     });
   });
+
+  describe('Select Route Data', () => {
+    it('should return data from store', () => {
+      const data: { type: string; order: number } = { type: 'test', order: 1 };
+      store.overrideSelector(routerQueries.selectData, data);
+      expect(facade.selectRouteData<{ type: string; order: number }>()).toBeObservable(cold('a', { a: data }));
+    });
+  });
 });

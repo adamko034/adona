@@ -1,4 +1,14 @@
-<app-tabs-horizontal [routes]="routes"></app-tabs-horizontal>
-<div class="settings-container">
-  <router-outlet></router-outlet>
-</div>
+<app-toolbar [isMaxHeight]="'true'">
+  <div fxLayout="row" fxLayoutAlign="start center" fxFlexFill>
+    <div fxFlex="15">
+      <button mat-icon-button [routerLink]="[data?.backButtonUrl]">
+        <mat-icon class="back-button">arrow_back</mat-icon>
+      </button>
+    </div>
+    <div class="title" fxLayout="column" fxLayoutAlign="center start">
+      <span>{{ data?.title }}</span>
+      <span *ngIf="data?.subtitle" class="subtitle">{{ data?.subtitle }}</span>
+    </div>
+  </div>
+</app-toolbar>
+<router-outlet></router-outlet>

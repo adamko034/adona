@@ -1,12 +1,6 @@
 <div class="settings-account-container">
   <div class="content-container">
     <div fxLayout="column">
-      <div class="setting-row">
-        <span
-          >Username & email address: <strong>{{ user?.email }}</strong>
-        </span>
-      </div>
-
       <div class="setting-row" fxLayout="row" fxLayoutGap="30px">
         <img class="profile-image" [src]="user?.photoUrl || '/assets/images/user.png'" />
         <div fxLayout="column" fxLayoutAlign="space-evenly">

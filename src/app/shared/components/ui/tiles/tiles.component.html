@@ -1,0 +1,5 @@
+<div *ngIf="tiles" class="tiles-container" fxLayoutAlign="center center" fxLayout="column" fxLayoutGap="20px">
+  <div [ngClass.gt-sm]="'tiles-max-width'" *ngFor="let tile of tiles">
+    <app-tile [tile]="tile" [isActive]="(currentRoute$ | async) === tile.navigationLink"></app-tile>
+  </div>
+</div>
