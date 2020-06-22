@@ -10,7 +10,7 @@ import { teamActions } from 'src/app/core/team/store/actions/team.actions';
 import { TeamState } from 'src/app/core/team/store/reducers/team.reducer';
 import { teamQueries } from 'src/app/core/team/store/selectors/team.selectors';
 import { TeamFacade } from 'src/app/core/team/team.facade';
-import { TeamsTestDataBuilder } from 'src/app/core/team/utils/test/teams-test-data.builder';
+import { TeamsTestDataBuilder } from 'src/app/core/team/utils/jasmine/teams-test-data.builder';
 
 describe('Team Facade', () => {
   let store: MockStore<TeamState>;

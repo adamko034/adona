@@ -14,7 +14,7 @@ import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { Team } from 'src/app/core/team/model/team/team.model';
 import { teamActions } from 'src/app/core/team/store/actions/team.actions';
 import { TeamEffects } from 'src/app/core/team/store/effects/team.effects';
-import { TeamsTestDataBuilder } from 'src/app/core/team/utils/test/teams-test-data.builder';
+import { TeamsTestDataBuilder } from 'src/app/core/team/utils/jasmine/teams-test-data.builder';
 import { resources } from 'src/app/shared/resources/resources';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
