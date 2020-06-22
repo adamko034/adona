@@ -1,6 +1,6 @@
-import { teamActions } from 'src/app/core/store/actions/team.actions';
-import { reducer, TeamState } from 'src/app/core/store/reducers/team/team.reducer';
 import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
+import { teamActions } from 'src/app/core/team/store/actions/team.actions';
+import { reducer, TeamState } from 'src/app/core/team/store/reducers/team.reducer';
 import { TeamStateTestDataBuilder } from 'src/app/core/team/utils/test/team-state-test-data.builder';
 import { TeamsTestDataBuilder } from 'src/app/core/team/utils/test/teams-test-data.builder';
 

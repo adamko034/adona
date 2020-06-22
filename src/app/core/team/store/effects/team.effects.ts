@@ -8,11 +8,11 @@ import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mod
 import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
 import { InvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
-import { teamActions } from 'src/app/core/store/actions/team.actions';
 import { userActions } from 'src/app/core/store/actions/user.actions';
 import { Team } from 'src/app/core/team/model/team/team.model';
 import { TeamUtilsService } from 'src/app/core/team/services/team-utils.service';
 import { TeamService } from 'src/app/core/team/services/team.service';
+import { teamActions } from 'src/app/core/team/store/actions/team.actions';
 import { TeamFacade } from 'src/app/core/team/team.facade';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { resources } from 'src/app/shared/resources/resources';

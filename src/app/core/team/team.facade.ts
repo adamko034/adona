@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Dictionary } from '@ngrx/entity';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { teamActions } from 'src/app/core/store/actions/team.actions';
-import { TeamState } from 'src/app/core/store/reducers/team/team.reducer';
-import { teamQueries } from 'src/app/core/store/selectors/team.selectors';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
 import { Team } from 'src/app/core/team/model/team/team.model';
+import { teamActions } from 'src/app/core/team/store/actions/team.actions';
+import { TeamState } from 'src/app/core/team/store/reducers/team.reducer';
+import { teamQueries } from 'src/app/core/team/store/selectors/team.selectors';
 
 @Injectable({ providedIn: 'root' })
 export class TeamFacade {

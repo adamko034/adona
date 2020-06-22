@@ -1,6 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { teamAdapterSelectors, TeamState } from '../reducers/team/team.reducer';
-import { userQueries } from './user.selectors';
+import { userQueries } from 'src/app/core/store/selectors/user.selectors';
+import { teamAdapterSelectors, TeamState } from 'src/app/core/team/store/reducers/team.reducer';
 
 const selectTeamState = createFeatureSelector<TeamState>('team');
 

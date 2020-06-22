@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { Action, createReducer, on } from '@ngrx/store';
 import { Team } from 'src/app/core/team/model/team/team.model';
-import { teamActions } from '../../actions/team.actions';
+import { teamActions } from 'src/app/core/team/store/actions/team.actions';
 
 export interface TeamState extends EntityState<Team> {}
 

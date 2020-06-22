@@ -2,13 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { Dictionary } from '@ngrx/entity';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { hot } from 'jasmine-marbles';
-import { teamActions } from 'src/app/core/store/actions/team.actions';
-import { TeamState } from 'src/app/core/store/reducers/team/team.reducer';
-import { teamQueries } from 'src/app/core/store/selectors/team.selectors';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
 import { TeamMembersBuilder } from 'src/app/core/team/model/team-member/team-members.builder';
 import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { Team } from 'src/app/core/team/model/team/team.model';
+import { teamActions } from 'src/app/core/team/store/actions/team.actions';
+import { TeamState } from 'src/app/core/team/store/reducers/team.reducer';
+import { teamQueries } from 'src/app/core/team/store/selectors/team.selectors';
 import { TeamFacade } from 'src/app/core/team/team.facade';
 import { TeamsTestDataBuilder } from 'src/app/core/team/utils/test/teams-test-data.builder';
 
