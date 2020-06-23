@@ -18,12 +18,9 @@ describe('User Service', () => {
   });
 
   describe('Load User', () => {
-    it('should return Observable of User, user without teams and without selected team id', fakeAsync(() => {
+    it('should return Observable of User, user without teams', fakeAsync(() => {
       const firebaseUser = UserTestBuilder.with('1', 'user 1').buildFirebaseUser();
-      const expectedUser = UserTestBuilder.with(firebaseUser.id, firebaseUser.name)
-        .withSelectedTeamId(null)
-        .withUserTeam(null)
-        .build();
+      const expectedUser = UserTestBuilder.with(firebaseUser.id, firebaseUser.name).withUserTeam(null).build();
 
       angularFirestore
         .collection()

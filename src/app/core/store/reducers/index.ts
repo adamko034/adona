@@ -2,16 +2,16 @@ import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap, MetaReducer } from '@ngrx/store';
 import * as fromGui from 'src/app/core/gui/store/reducer/gui.reducer';
 import * as fromError from 'src/app/core/store/reducers/error/error.reducer';
+import * as fromTeams from 'src/app/core/team/store/reducers/teams.reducer';
 import { environment } from '../../../../environments/environment';
 import * as fromApiRequests from '../reducers/api-requests/api-requests.reducer';
 import * as fromAuth from './auth/auth.reducer';
-import * as fromTeam from './team/team.reducer';
 
 export interface AppState {
   auth: fromAuth.AuthState;
   error: fromError.ErrorState;
   router: RouterReducerState;
-  team: fromTeam.TeamState;
+  teams: fromTeams.TeamsState;
   gui: fromGui.GuiState;
   apiRequests: fromApiRequests.ApiRequestsState;
 }
@@ -20,7 +20,7 @@ export const reducers: ActionReducerMap<AppState> = {
   auth: fromAuth.reducer,
   error: fromError.reducer,
   router: routerReducer,
-  team: fromTeam.reducer,
+  teams: fromTeams.reducer,
   gui: fromGui.reducer,
   apiRequests: fromApiRequests.reducer
 };

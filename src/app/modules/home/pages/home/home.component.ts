@@ -2,10 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Team } from 'src/app/core/team/model/team/team.model';
-import { TeamFacade } from 'src/app/core/team/team.facade';
+import { TeamFacade } from 'src/app/core/team/teams.facade';
+import { User } from 'src/app/core/user/model/user.model';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
-import { User } from '../../../../core/user/model/user.model';
 
 @Component({
   selector: 'app-home',

@@ -34,6 +34,10 @@ export class TeamsTestDataBuilder {
     return this;
   }
 
+  public buildOne(): Team {
+    return this.teams['123'];
+  }
+
   public build(): Dictionary<Team> {
     return this.teams;
   }

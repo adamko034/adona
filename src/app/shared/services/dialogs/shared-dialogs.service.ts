@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
-import { TeamFacade } from 'src/app/core/team/team.facade';
+import { TeamFacade } from 'src/app/core/team/teams.facade';
 import { User } from 'src/app/core/user/model/user.model';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { ChangeTeamDialogComponent } from 'src/app/shared/components/dialogs/change-team-dialog/change-team-dialog.component';

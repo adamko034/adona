@@ -3,7 +3,7 @@ import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-tea
 import { TeamMembersBuilder } from 'src/app/core/team/model/team-member/team-members.builder';
 import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { Team } from 'src/app/core/team/model/team/team.model';
-import { teamActions, teamActionTypes } from 'src/app/core/team/store/actions/team.actions';
+import { allTeamsActions, teamActionTypes } from 'src/app/core/team/store/actions/teams/teams.actions';
 
 describe('Team Actions', () => {
   const members = TeamMembersBuilder.from().withMember('user 1', 'photourl').withMember('user 2', 'photourl').build();
@@ -19,7 +19,7 @@ describe('Team Actions', () => {
           members
         };
 
-        const result = teamActions.newTeamRequested({ request });
+        const result = allTeamsActions.newTeamRequested({ request });
 
         expect({ ...result }).toEqual({ type: teamActionTypes.newTeamRequested, request });
       });
@@ -29,7 +29,7 @@ describe('Team Actions', () => {
       it('should create action', () => {
         const team = TeamBuilder.from('1', new Date(), 'test user', 'example name').withMembers(members).build();
 
-        const result = teamActions.newTeamCreateSuccess({ team });
+        const result = allTeamsActions.newTeamCreateSuccess({ team });
 
         expect({ ...result }).toEqual({ type: teamActionTypes.newTeamCreateSuccess, team });
       });
@@ -39,7 +39,7 @@ describe('Team Actions', () => {
       it('should create action', () => {
         const error = ErrorTestDataBuilder.from().withDefaultData().build();
 
-        const result = teamActions.newTeamCreateFailure({ error });
+        const result = allTeamsActions.newTeamCreateFailure({ error });
 
         expect({ ...result }).toEqual({
           type: teamActionTypes.newTeamCreateFailure,
@@ -50,17 +50,9 @@ describe('Team Actions', () => {
   });
 
   describe('Load Team', () => {
-    describe('Load Selected Team Requested', () => {
-      it('should create action', () => {
-        const result = teamActions.loadSelectedTeamRequested();
-
-        expect({ ...result }).toEqual({ type: teamActionTypes.loadSelectedTeamRequested });
-      });
-    });
-
     describe('Load Team Requested', () => {
       it('should create action', () => {
-        const result = teamActions.loadTeamRequested({ id: '123' });
+        const result = allTeamsActions.loadTeamRequested({ id: '123' });
 
         expect({ ...result }).toEqual({
           type: teamActionTypes.loadTeamRequested,
@@ -73,7 +65,7 @@ describe('Team Actions', () => {
       it('should create action', () => {
         const team: Team = TeamBuilder.from('1', new Date(), 'test user', 'example team').build();
 
-        const result = teamActions.loadTeamSuccess({ team });
+        const result = allTeamsActions.loadTeamSuccess({ team });
 
         expect({ ...result }).toEqual({ type: teamActionTypes.loadTeamSuccess, team });
       });
@@ -83,7 +75,7 @@ describe('Team Actions', () => {
       it('should create action', () => {
         const error = ErrorTestDataBuilder.from().withDefaultData().build();
 
-        const result = teamActions.loadTeamFailure({ error });
+        const result = allTeamsActions.loadTeamFailure({ error });
 
         expect({ ...result }).toEqual({ type: teamActionTypes.loadTeamFailure, error });
       });

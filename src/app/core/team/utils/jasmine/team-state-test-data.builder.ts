@@ -1,12 +1,13 @@
 import { Dictionary } from '@ngrx/entity';
 import { Team } from 'src/app/core/team/model/team/team.model';
-import { TeamState } from 'src/app/core/team/store/reducers/team.reducer';
+import { TeamsState } from 'src/app/core/team/store/reducers/teams.reducer';
 
 export class TeamStateTestDataBuilder {
-  private teamState: TeamState;
+  private teamState: TeamsState;
 
   private constructor() {
     this.teamState = {
+      selected: null,
       entities: {},
       ids: []
     };
@@ -14,6 +15,11 @@ export class TeamStateTestDataBuilder {
 
   public static from(): TeamStateTestDataBuilder {
     return new TeamStateTestDataBuilder();
+  }
+
+  public withSelectedTeam(team: Team): TeamStateTestDataBuilder {
+    this.teamState.selected = team;
+    return this;
   }
 
   public withTeam(team: Team): TeamStateTestDataBuilder {
@@ -25,14 +31,16 @@ export class TeamStateTestDataBuilder {
 
   public withTeams(teams: Dictionary<Team>): TeamStateTestDataBuilder {
     for (const teamId in teams) {
-      this.teamState.ids.push(teamId as string & number);
-      this.teamState.entities[teamId] = teams[teamId];
+      if (teams.hasOwnProperty(teamId)) {
+        this.teamState.ids.push(teamId as string & number);
+        this.teamState.entities[teamId] = teams[teamId];
+      }
     }
 
     return this;
   }
 
-  public build(): TeamState {
+  public build(): TeamsState {
     return this.teamState;
   }
 }

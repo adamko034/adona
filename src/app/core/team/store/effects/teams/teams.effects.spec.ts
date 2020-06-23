@@ -12,8 +12,8 @@ import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-tea
 import { TeamMembersBuilder } from 'src/app/core/team/model/team-member/team-members.builder';
 import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { Team } from 'src/app/core/team/model/team/team.model';
-import { teamActions } from 'src/app/core/team/store/actions/team.actions';
-import { TeamEffects } from 'src/app/core/team/store/effects/team.effects';
+import { teamsActions } from 'src/app/core/team/store/actions';
+import { TeamsEffects } from 'src/app/core/team/store/effects/teams/teams.effects';
 import { TeamsTestDataBuilder } from 'src/app/core/team/utils/jasmine/teams-test-data.builder';
 import { resources } from 'src/app/shared/resources/resources';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
@@ -22,7 +22,7 @@ import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-ma
 
 describe('Team Effects', () => {
   let actions$: Actions;
-  let effects: TeamEffects;
+  let effects: TeamsEffects;
   let newTeamRequest: NewTeamRequest;
 
   const user = UserTestBuilder.withDefaultData().build();
@@ -49,11 +49,11 @@ describe('Team Effects', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [TeamEffects, provideMockActions(() => actions$)]
+      providers: [TeamsEffects, provideMockActions(() => actions$)]
     });
 
     actions$ = TestBed.inject(Actions);
-    effects = new TeamEffects(
+    effects = new TeamsEffects(
       actions$,
       userFacade,
       teamService,
@@ -94,7 +94,7 @@ describe('Team Effects', () => {
       guiFacade.hideLoading.calls.reset();
       guiFacade.showLoading.calls.reset();
 
-      actions$ = hot('--a', { a: teamActions.newTeamRequested({ request: newTeamRequest }) });
+      actions$ = hot('--a', { a: teamsActions.teams.newTeamRequested({ request: newTeamRequest }) });
     });
 
     it('should add team and dispatch actions: New Team Created, Team Added, Changed Team Success', () => {
@@ -108,7 +108,7 @@ describe('Team Effects', () => {
       teamService.addTeam.and.returnValue(cold('x', { x: team }));
 
       const expected = cold('--(bcd)', {
-        b: teamActions.newTeamCreateSuccess({ team }),
+        b: teamsActions.teams.newTeamCreateSuccess({ team }),
         c: userActions.teamAdded({ id: team.id, name: team.name, updated: team.created }),
         d: userActions.changeTeamSuccess({ teamId: team.id, updated: team.created })
       });
@@ -124,7 +124,7 @@ describe('Team Effects', () => {
       teamService.addTeam.and.returnValue(cold('#', {}, { code: 500 }));
 
       const expected = cold('--(b|)', {
-        b: teamActions.newTeamCreateFailure({ error: { errorObj: { code: 500 } } as any })
+        b: teamsActions.teams.newTeamCreateFailure({ error: { errorObj: { code: 500 } } as any })
       });
 
       expect(effects.newTeamRequested$).toBeObservable(expected);
@@ -150,7 +150,7 @@ describe('Team Effects', () => {
       resourceService.format.and.returnValue('test');
       userFacade.selectUser.and.returnValue(of(user));
 
-      const action = teamActions.newTeamCreateSuccess({ team });
+      const action = teamsActions.teams.newTeamCreateSuccess({ team });
       actions$ = cold('-aaa', { a: action });
 
       expect(effects.newTeamCreateSuccess$).toBeObservable(cold('-aaa', { a: action }));
@@ -169,7 +169,7 @@ describe('Team Effects', () => {
       resourceService.format.and.returnValue('test');
 
       userFacade.selectUser.and.returnValue(of(user));
-      const action = teamActions.newTeamCreateSuccess({ team });
+      const action = teamsActions.teams.newTeamCreateSuccess({ team });
       actions$ = cold('aa-a', { a: action });
 
       expect(effects.newTeamCreateSuccess$).toBeObservable(cold('aa-a', { a: action }));
@@ -193,8 +193,8 @@ describe('Team Effects', () => {
       teamFacade.selectTeams.and.returnValue(of(teams));
       teamService.loadTeam.and.returnValue(cold('x', { x: teamToLoad }));
 
-      actions$ = hot('--a', { a: teamActions.loadTeamRequested({ id: teamToLoad.id }) });
-      const expected = cold('--b', { b: teamActions.loadTeamSuccess({ team: teamToLoad }) });
+      actions$ = hot('--a', { a: teamsActions.teams.loadTeamRequested({ id: teamToLoad.id }) });
+      const expected = cold('--b', { b: teamsActions.teams.loadTeamSuccess({ team: teamToLoad }) });
       expect(effects.loadTeamRequested$).toBeObservable(expected);
     });
 
@@ -203,7 +203,7 @@ describe('Team Effects', () => {
 
       teamFacade.selectTeams.and.returnValue(of(teams));
 
-      actions$ = hot('--a', { a: teamActions.loadTeamRequested({ id: teamToLoad.id }) });
+      actions$ = hot('--a', { a: teamsActions.teams.loadTeamRequested({ id: teamToLoad.id }) });
       const expected = cold('---');
       expect(effects.loadTeamRequested$).toBeObservable(expected);
     });
@@ -215,79 +215,16 @@ describe('Team Effects', () => {
       teamFacade.selectTeams.and.returnValue(of(teams));
       teamService.loadTeam.and.returnValue(cold('#', {}, err));
 
-      actions$ = hot('--a-a', { a: teamActions.loadTeamRequested({ id: teamToLoad.id }) });
-      const expected = cold('--b-b', { b: teamActions.loadTeamFailure({ error: { errorObj: err } } as any) });
+      actions$ = hot('--a-a', { a: teamsActions.teams.loadTeamRequested({ id: teamToLoad.id }) });
+      const expected = cold('--b-b', { b: teamsActions.teams.loadTeamFailure({ error: { errorObj: err } } as any) });
       expect(effects.loadTeamRequested$).toBeObservable(expected);
-    });
-  });
-
-  describe('Load Selected Team Requested', () => {
-    const teams: Dictionary<Team> = TeamsTestDataBuilder.withDefaultData().build();
-
-    it('should load team if user has selected team and it is not already stored and dipatch Load Team Success action', () => {
-      const teamToLoad = TeamBuilder.from('newTeamId', new Date(), 'test user', 'new team').build();
-      const user2 = UserTestBuilder.withDefaultData().withSelectedTeamId(teamToLoad.id).build();
-
-      userFacade.selectUser.and.returnValue(of(user2));
-      teamFacade.selectTeams.and.returnValue(of(teams));
-      teamService.loadTeam.and.returnValue(cold('x', { x: teamToLoad }));
-
-      actions$ = hot('--a', { a: teamActions.loadSelectedTeamRequested() });
-      const expected = cold('--b', { b: teamActions.loadTeamSuccess({ team: teamToLoad }) });
-
-      expect(effects.loadSelectedTeamRequested$).toBeObservable(expected);
-      expect(teamService.loadTeam).toHaveBeenCalledTimes(1);
-      expect(teamService.loadTeam).toHaveBeenCalledWith(teamToLoad.id);
-    });
-
-    it('should not load team if user does not have selected team', () => {
-      const user2 = UserTestBuilder.withDefaultData().withSelectedTeamId(null).build();
-
-      userFacade.selectUser.and.returnValue(of(user2));
-      teamFacade.selectTeams.and.returnValue(of(teams));
-
-      actions$ = hot('--a', { a: teamActions.loadSelectedTeamRequested() });
-      const expected = cold('---');
-
-      expect(effects.loadSelectedTeamRequested$).toBeObservable(expected);
-      expect(teamService.loadTeam).toHaveBeenCalledTimes(0);
-    });
-
-    it('should not load team if user has selected team and the team is already stored', () => {
-      const user2 = UserTestBuilder.withDefaultData().withSelectedTeamId(TeamsTestDataBuilder.firstTeamId).build();
-
-      userFacade.selectUser.and.returnValue(of(user2));
-      teamFacade.selectTeams.and.returnValue(of(teams));
-
-      actions$ = hot('--a', { a: teamActions.loadSelectedTeamRequested() });
-      const expected = cold('---');
-
-      expect(effects.loadSelectedTeamRequested$).toBeObservable(expected);
-      expect(teamService.loadTeam).toHaveBeenCalledTimes(0);
-    });
-
-    it('should dispatch Load Team Failure if effect fails', () => {
-      const teamToLoad = TeamBuilder.from('newTeamId', new Date(), 'test user', 'new team').build();
-      const user2 = UserTestBuilder.withDefaultData().withSelectedTeamId(teamToLoad.id).build();
-      const error = { code: 500 };
-
-      userFacade.selectUser.and.returnValue(of(user2));
-      teamFacade.selectTeams.and.returnValue(of(teams));
-      teamService.loadTeam.and.returnValue(cold('#', {}, error));
-
-      actions$ = hot('--a', { a: teamActions.loadSelectedTeamRequested() });
-      const expected = cold('--(b|)', { b: teamActions.loadTeamFailure({ error: { errorObj: error } } as any) });
-
-      expect(effects.loadSelectedTeamRequested$).toBeObservable(expected);
-      expect(teamService.loadTeam).toHaveBeenCalledTimes(1);
-      expect(teamService.loadTeam).toHaveBeenCalledWith(teamToLoad.id);
     });
   });
 
   it('should create error effects', () => {
     errorEffectService.createFrom.and.returnValue(of(null));
     const actions = new Actions(of(createAction('test action')));
-    effects = new TeamEffects(
+    effects = new TeamsEffects(
       actions,
       userFacade,
       teamService,
@@ -300,7 +237,7 @@ describe('Team Effects', () => {
     );
 
     expect(errorEffectService.createFrom).toHaveBeenCalledTimes(2);
-    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions, teamActions.loadTeamFailure);
-    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions, teamActions.newTeamCreateFailure);
+    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions, teamsActions.teams.loadTeamFailure);
+    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions, teamsActions.teams.newTeamCreateFailure);
   });
 });

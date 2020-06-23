@@ -8,7 +8,13 @@ export class UserTestBuilder {
   private user: User;
 
   private constructor(id: string, name: string) {
-    this.user = { id, name, email: 'test-user@example.com', photoUrl: UserBuilder.defaultPhotoUrl };
+    this.user = {
+      id,
+      name,
+      email: 'test-user@example.com',
+      photoUrl: UserBuilder.defaultPhotoUrl,
+      selectedTeamId: '123'
+    };
   }
 
   public static with(id: string, name: string): UserTestBuilder {

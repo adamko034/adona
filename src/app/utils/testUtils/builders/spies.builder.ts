@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade';
 import { FirebaseErrorsService } from 'src/app/core/api-requests/services/firebase-errors/firebase-errors.service';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
+import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { ErrorFacade } from 'src/app/core/error/error.facade';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
 import { ToastrAdonaService } from 'src/app/core/gui/services/toastr-adona-service/toastr-adona.service';
@@ -12,8 +13,12 @@ import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
 import { InvitationsService } from 'src/app/core/invitations/services/invitations-service/invitations.service';
 import { RouterFacade } from 'src/app/core/router/router.facade';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
+import { TeamUtilsService } from 'src/app/core/team/services/team-utils.service';
+import { TeamService } from 'src/app/core/team/services/team.service';
+import { TeamFacade } from 'src/app/core/team/teams.facade';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { UserService } from 'src/app/core/user/services/user.service';
+import { UserFacade } from 'src/app/core/user/user.facade';
 import { RegisterFacade } from 'src/app/modules/auth/facades/register-facade';
 import { EmailConfirmationService } from 'src/app/modules/auth/services/email-confirmation.service';
 import { CalendarService } from 'src/app/modules/calendar/service/calendar.service';
@@ -33,11 +38,6 @@ import { TimeComparisonService } from 'src/app/shared/services/time/parts/time-c
 import { TimeCreationService } from 'src/app/shared/services/time/parts/time-creation.service';
 import { TimeExtractionService } from 'src/app/shared/services/time/parts/time-extraction.service';
 import { TimeManipulationService } from 'src/app/shared/services/time/parts/time-manipulation.service';
-import { AuthService } from '../../../core/auth/services/auth.service';
-import { TeamUtilsService } from '../../../core/team/services/team-utils.service';
-import { TeamService } from '../../../core/team/services/team.service';
-import { TeamFacade } from '../../../core/team/team.facade';
-import { UserFacade } from '../../../core/user/user.facade';
 
 export interface Spies {
   navigationService?: jasmine.SpyObj<NavigationService>;
