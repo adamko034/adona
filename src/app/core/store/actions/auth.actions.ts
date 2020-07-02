@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { Credentials } from 'src/app/core/auth/model/credentials.model';
-import { User } from '../../user/model/user.model';
+import { User } from 'src/app/core/user/model/user/user.model';
 
 export const authActionTypes = {
   login: '[Login Page] Login',

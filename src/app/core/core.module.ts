@@ -7,7 +7,7 @@ import { StoreModule } from '@ngrx/store';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { InvitationEffects } from 'src/app/core/invitations/store/effects/invitation.effects';
 import { ErrorEffects } from 'src/app/core/store/effects/error.effects';
-import { SelectedTeamEffects } from 'src/app/core/team/store/effects/selected-team/selected-team.effects';
+import { TeamEffects } from 'src/app/core/team/store/effects/team/team.effects';
 import { TeamsEffects } from 'src/app/core/team/store/effects/teams/teams.effects';
 import { CustomSerializer } from 'src/app/utils/router-store/custom-serializer';
 import { SharedModule } from '../shared/shared.module';
@@ -32,14 +32,7 @@ import { metaReducers, reducers } from './store/reducers';
       }
     }),
     HttpClientModule,
-    EffectsModule.forRoot([
-      AuthEffects,
-      ErrorEffects,
-      TeamsEffects,
-      SelectedTeamEffects,
-      UserEffects,
-      InvitationEffects
-    ]),
+    EffectsModule.forRoot([AuthEffects, ErrorEffects, TeamsEffects, TeamEffects, UserEffects, InvitationEffects]),
     DeviceDetectorModule.forRoot(),
     StoreRouterConnectingModule.forRoot({
       stateKey: 'router',

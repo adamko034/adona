@@ -1,4 +1,4 @@
-import { User } from 'src/app/core/user/model/user.model';
+import { User } from 'src/app/core/user/model/user/user.model';
 import { Expense } from './expense.model';
 
 export interface ExpenseGroup {

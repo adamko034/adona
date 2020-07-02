@@ -1,4 +1,5 @@
 import { AngularFirestoreCollection } from '@angular/fire/firestore';
+import { AngularFireFunctions } from '@angular/fire/functions/functions';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { Subject } from 'rxjs';
@@ -13,9 +14,10 @@ import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
 import { InvitationsService } from 'src/app/core/invitations/services/invitations-service/invitations.service';
 import { RouterFacade } from 'src/app/core/router/router.facade';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
-import { TeamUtilsService } from 'src/app/core/team/services/team-utils.service';
+import { TeamFactory } from 'src/app/core/team/services/factory/team.factory';
 import { TeamService } from 'src/app/core/team/services/team.service';
 import { TeamFacade } from 'src/app/core/team/teams.facade';
+import { UserFactory } from 'src/app/core/user/factories/user/user.factory';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { UserService } from 'src/app/core/user/services/user.service';
 import { UserFacade } from 'src/app/core/user/user.facade';
@@ -62,7 +64,6 @@ export interface Spies {
   routerFacade?: jasmine.SpyObj<RouterFacade>;
   guiFacade?: jasmine.SpyObj<GuiFacade>;
   sharedDialogService?: jasmine.SpyObj<SharedDialogsService>;
-  teamUtilsService?: jasmine.SpyObj<TeamUtilsService>;
   registerFacade?: jasmine.SpyObj<RegisterFacade>;
   emailConfirmationService?: jasmine.SpyObj<EmailConfirmationService>;
   unsubscriberService?: jasmine.SpyObj<UnsubscriberService>;
@@ -74,6 +75,9 @@ export interface Spies {
   toastrAdonaService?: jasmine.SpyObj<ToastrAdonaService>;
   resourceService?: jasmine.SpyObj<ResourceService>;
   settingsToolbarFactory?: jasmine.SpyObj<SettingsToolbarFactory>;
+  teamFactory?: jasmine.SpyObj<TeamFactory>;
+  userFactory?: jasmine.SpyObj<UserFactory>;
+  angularFireFunctions?: jasmine.SpyObj<AngularFireFunctions>;
 }
 
 export class SpiesBuilder {
@@ -164,13 +168,7 @@ export class SpiesBuilder {
   }
 
   public withTeamFacade(): SpiesBuilder {
-    this.spies.teamFacade = jasmine.createSpyObj<TeamFacade>('teamFacade', [
-      'loadSelectedTeam',
-      'loadTeam',
-      'addTeam',
-      'selectTeams',
-      'selectSelectedTeam'
-    ]);
+    this.spies.teamFacade = jasmine.createSpyObj<TeamFacade>('teamFacade', ['loadTeam', 'addTeam', 'selectTeam']);
 
     return this;
   }
@@ -280,7 +278,6 @@ export class SpiesBuilder {
 
   public withUserUtilsService(): SpiesBuilder {
     this.spies.userUtilsService = jasmine.createSpyObj<UserUtilservice>('userUtilsService', [
-      'getSelectedTeam',
       'hasMultipleTeams',
       'extractUsernameFromEmail'
     ]);
@@ -324,17 +321,6 @@ export class SpiesBuilder {
 
   public withSharedDialogService(): SpiesBuilder {
     this.spies.sharedDialogService = jasmine.createSpyObj<SharedDialogsService>('sharedDialogService', ['changeTeam']);
-
-    return this;
-  }
-
-  public withTeamUtilsService(): SpiesBuilder {
-    this.spies.teamUtilsService = jasmine.createSpyObj<TeamUtilsService>('teamUtilsService', [
-      'getMembersCount',
-      'isAtLeastOneMemberWithEmail',
-      'getMembersEmails',
-      'getMembersEmailsWithout'
-    ]);
 
     return this;
   }
@@ -421,6 +407,26 @@ export class SpiesBuilder {
     this.spies.settingsToolbarFactory = jasmine.createSpyObj<SettingsToolbarFactory>('settingsToolbarFactory', [
       'create',
       'createWithSubtitle'
+    ]);
+    return this;
+  }
+
+  public withTeamFactory(): SpiesBuilder {
+    this.spies.teamFactory = jasmine.createSpyObj<TeamFactory>('teamFactory', ['personalTeamDto', 'fromFirebase']);
+    return this;
+  }
+
+  public withUserFactory(): SpiesBuilder {
+    this.spies.userFactory = jasmine.createSpyObj<UserFactory>('userFactory', [
+      'dtofromFirebaseAuth',
+      'fromFirebaseUser'
+    ]);
+    return this;
+  }
+
+  public withAngularFireFunctions(): SpiesBuilder {
+    this.spies.angularFireFunctions = jasmine.createSpyObj<AngularFireFunctions>('angularFireFunctions', [
+      'httpsCallable'
     ]);
     return this;
   }

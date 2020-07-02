@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
+import { NewTeamMemberBuilder } from 'src/app/core/team/model/new-team-request/new-team-member.builder';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
-import { TeamMembersBuilder } from 'src/app/core/team/model/team-member/team-members.builder';
 import { DialogResult } from 'src/app/shared/services/dialogs/dialog-result.model';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
@@ -38,9 +38,8 @@ describe('Home Toolbar Component', () => {
     component.user = user;
 
     userUtilsService.hasMultipleTeams.calls.reset();
-    dialogService.open.calls.reset();
     teamFacade.addTeam.calls.reset();
-    teamFacade.loadTeam.calls.reset();
+    dialogService.open.calls.reset();
   });
 
   describe('Constructor', () => {
@@ -74,8 +73,7 @@ describe('Home Toolbar Component', () => {
       const result: DialogResult<NewTeamRequest> = {
         payload: {
           created: new Date(),
-          createdBy: user.name,
-          members: TeamMembersBuilder.from().withMember(user.name, 'photourl').build(),
+          members: [NewTeamMemberBuilder.from(user.name).build()],
           name: 'new team test name'
         }
       };

@@ -1,50 +1,46 @@
 import { TestBed } from '@angular/core/testing';
 import { Actions } from '@ngrx/effects';
 import { provideMockActions } from '@ngrx/effects/testing';
-import { Dictionary } from '@ngrx/entity';
 import { createAction } from '@ngrx/store';
-import { cold, hot } from 'jasmine-marbles';
+import { cold } from 'jasmine-marbles';
 import { of } from 'rxjs';
 import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.builder';
 import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mode.enum';
 import { userActions } from 'src/app/core/store/actions/user.actions';
+import { NewTeamMemberBuilder } from 'src/app/core/team/model/new-team-request/new-team-member.builder';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
-import { TeamMembersBuilder } from 'src/app/core/team/model/team-member/team-members.builder';
-import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
-import { Team } from 'src/app/core/team/model/team/team.model';
 import { teamsActions } from 'src/app/core/team/store/actions';
 import { TeamsEffects } from 'src/app/core/team/store/effects/teams/teams.effects';
-import { TeamsTestDataBuilder } from 'src/app/core/team/utils/jasmine/teams-test-data.builder';
 import { resources } from 'src/app/shared/resources/resources';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 
-describe('Team Effects', () => {
+describe('Teams Effects', () => {
   let actions$: Actions;
   let effects: TeamsEffects;
-  let newTeamRequest: NewTeamRequest;
+  const request: NewTeamRequest = {
+    created: new Date(),
+    members: [NewTeamMemberBuilder.from('mem1').build(), NewTeamMemberBuilder.from('mem2').withEmail('emai').build()],
+    name: 'new team name'
+  };
 
   const user = UserTestBuilder.withDefaultData().build();
 
   const {
     userFacade,
     teamService,
-    teamFacade,
     errorEffectService,
     guiFacade,
     invitationsFacade,
-    resourceService,
-    teamUtilsService
+    resourceService
   } = SpiesBuilder.init()
     .withUserFacade()
     .withTeamService()
-    .withTeamFacade()
     .withErrorEffectService()
     .withInvitationsFacade()
     .withGuiFacade()
     .withResourceService()
-    .withTeamUtilsService()
     .build();
 
   beforeEach(() => {
@@ -57,19 +53,16 @@ describe('Team Effects', () => {
       actions$,
       userFacade,
       teamService,
-      teamFacade,
       errorEffectService,
       guiFacade,
       invitationsFacade,
-      resourceService,
-      teamUtilsService
+      resourceService
     );
 
     userFacade.selectUserId.calls.reset();
     userFacade.selectUser.calls.reset();
     teamService.addTeam.calls.reset();
     teamService.loadTeam.calls.reset();
-    teamFacade.selectTeams.calls.reset();
     errorEffectService.createFrom.calls.reset();
     guiFacade.hideLoading.calls.reset();
     guiFacade.showLoading.calls.reset();
@@ -80,144 +73,89 @@ describe('Team Effects', () => {
 
   describe('New Team Requested', () => {
     beforeEach(() => {
-      newTeamRequest = {
-        created: new Date(),
-        createdBy: 'test user',
-        members: TeamMembersBuilder.from()
-          .withMember('test user', 'photourl')
-          .withMember('test user 2', 'photourl')
-          .build(),
-        name: 'new team name'
-      };
-
-      userFacade.selectUserId.and.returnValue(of(user.id));
-      guiFacade.hideLoading.calls.reset();
+      userFacade.selectUser.and.returnValue(of(user));
       guiFacade.showLoading.calls.reset();
-
-      actions$ = hot('--a', { a: teamsActions.teams.newTeamRequested({ request: newTeamRequest }) });
+      actions$ = cold('--a-a', { a: teamsActions.teams.newTeamRequested({ request }) });
     });
 
-    it('should add team and dispatch actions: New Team Created, Team Added, Changed Team Success', () => {
-      const team = TeamBuilder.from(
-        '123',
-        newTeamRequest.created,
-        newTeamRequest.createdBy,
-        newTeamRequest.name
-      ).build();
+    it('should add team and dispatch actions: New Team Create Success', () => {
+      teamService.addTeam.and.returnValue(cold('x', { x: '123' }));
 
-      teamService.addTeam.and.returnValue(cold('x', { x: team }));
-
-      const expected = cold('--(bcd)', {
-        b: teamsActions.teams.newTeamCreateSuccess({ team }),
-        c: userActions.teamAdded({ id: team.id, name: team.name, updated: team.created }),
-        d: userActions.changeTeamSuccess({ teamId: team.id, updated: team.created })
+      const expected = cold('--b-b', {
+        b: teamsActions.teams.newTeamCreateSuccess({ id: '123', user, request })
       });
 
       expect(effects.newTeamRequested$).toBeObservable(expected);
-      expect(userFacade.selectUserId).toHaveBeenCalledTimes(1);
-      expect(teamService.addTeam).toHaveBeenCalledTimes(1);
-      expect(teamService.addTeam).toHaveBeenCalledWith(newTeamRequest, user.id);
-      expect(guiFacade.showLoading).toHaveBeenCalledTimes(1);
+      expect(userFacade.selectUser).toHaveBeenCalledTimes(2);
+      expect(teamService.addTeam).toHaveBeenCalledTimes(2);
+      expect(teamService.addTeam).toHaveBeenCalledWith(user, request);
+      expect(guiFacade.showLoading).toHaveBeenCalledTimes(2);
     });
 
     it('should dispatch New Team Create Failure action when adding team fails', () => {
       teamService.addTeam.and.returnValue(cold('#', {}, { code: 500 }));
 
-      const expected = cold('--(b|)', {
+      const expected = cold('--b-b', {
         b: teamsActions.teams.newTeamCreateFailure({ error: { errorObj: { code: 500 } } as any })
       });
 
       expect(effects.newTeamRequested$).toBeObservable(expected);
-      expect(teamService.addTeam).toHaveBeenCalledTimes(1);
-      expect(guiFacade.showLoading).toHaveBeenCalledTimes(1);
-      expect(guiFacade.hideLoading).not.toHaveBeenCalled();
+      expect(teamService.addTeam).toHaveBeenCalledTimes(2);
+      expect(guiFacade.showLoading).toHaveBeenCalledTimes(2);
     });
   });
 
   describe('New Team Create Success', () => {
-    it('should send invitation requests, hide loading and show toastr', () => {
-      const team = TeamBuilder.from('1', new Date(), user.name, 'team 1').build();
+    it('should send invitation requests, hide loading, show toastr and map to user Team Added action', () => {
       const toastr = ToastrDataBuilder.from('test', ToastrMode.SUCCESS).build();
-      const recipients = ['user@example.com', 'user2@example.com'];
+      const recipients = request.members.filter((m) => !!m.email).map((m) => m.email);
       const expectedInvRequest = {
         recipients,
         sender: user.email,
-        teamId: team.id,
-        teamName: team.name
+        teamId: '123',
+        teamName: request.name
       };
 
-      teamUtilsService.getMembersEmailsWithout.and.returnValue(recipients);
       resourceService.format.and.returnValue('test');
-      userFacade.selectUser.and.returnValue(of(user));
-
-      const action = teamsActions.teams.newTeamCreateSuccess({ team });
+      const action = teamsActions.teams.newTeamCreateSuccess({ id: '123', request, user });
       actions$ = cold('-aaa', { a: action });
 
-      expect(effects.newTeamCreateSuccess$).toBeObservable(cold('-aaa', { a: action }));
+      const expexted = cold('-aaa', { a: userActions.teamAdded({ team: { id: '123', name: request.name } }) });
+
+      expect(effects.newTeamCreateSuccess$).toBeObservable(expexted);
       expect(guiFacade.hideLoading).toHaveBeenCalledTimes(3);
-      expect(userFacade.selectUser).toHaveBeenCalledTimes(3);
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(resourceService.format, 3, resources.team.created, team.name);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(resourceService.format, 3, resources.team.created, request.name);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(invitationsFacade.send, 3, expectedInvRequest);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(guiFacade.showToastr, 3, toastr);
     });
 
-    it('should not send invitation requests if no recipients, hide loading and show toastr', () => {
-      const team = TeamBuilder.from('1', new Date(), user.name, 'team 1').build();
+    it('should not send invitation requests if no email recipients, hide loading and show toastr', () => {
       const toastr = ToastrDataBuilder.from('test', ToastrMode.SUCCESS).build();
-      teamUtilsService.getMembersEmailsWithout.and.returnValue([]);
-
       resourceService.format.and.returnValue('test');
+      const requestWithRecipient = { ...request };
+      requestWithRecipient.members = [
+        NewTeamMemberBuilder.from('test').build(),
+        NewTeamMemberBuilder.from('test2').withEmail(user.email).build()
+      ];
 
       userFacade.selectUser.and.returnValue(of(user));
-      const action = teamsActions.teams.newTeamCreateSuccess({ team });
-      actions$ = cold('aa-a', { a: action });
+      const action = teamsActions.teams.newTeamCreateSuccess({ id: '123', request: requestWithRecipient, user });
+      actions$ = cold('-aaa', { a: action });
 
-      expect(effects.newTeamCreateSuccess$).toBeObservable(cold('aa-a', { a: action }));
+      const expexted = cold('-aaa', {
+        a: userActions.teamAdded({ team: { id: '123', name: requestWithRecipient.name } })
+      });
+
+      expect(effects.newTeamCreateSuccess$).toBeObservable(expexted);
       expect(guiFacade.hideLoading).toHaveBeenCalledTimes(3);
-      expect(userFacade.selectUser).toHaveBeenCalledTimes(3);
       expect(invitationsFacade.send).not.toHaveBeenCalled();
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(resourceService.format, 3, resources.team.created, team.name);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+        resourceService.format,
+        3,
+        resources.team.created,
+        requestWithRecipient.name
+      );
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(guiFacade.showToastr, 3, toastr);
-    });
-  });
-
-  describe('Load Team Requested', () => {
-    let teams: Dictionary<Team>;
-    beforeEach(() => {
-      teams = TeamsTestDataBuilder.withDefaultData().build();
-    });
-
-    it('should load team if it is not already loaded and dispatch Load Team Success action', () => {
-      const teamToLoad = TeamBuilder.from('4321', new Date(), 'test user', 'team to load').build();
-
-      teamFacade.selectTeams.and.returnValue(of(teams));
-      teamService.loadTeam.and.returnValue(cold('x', { x: teamToLoad }));
-
-      actions$ = hot('--a', { a: teamsActions.teams.loadTeamRequested({ id: teamToLoad.id }) });
-      const expected = cold('--b', { b: teamsActions.teams.loadTeamSuccess({ team: teamToLoad }) });
-      expect(effects.loadTeamRequested$).toBeObservable(expected);
-    });
-
-    it('should not load a team if it is already stored', () => {
-      const teamToLoad = teams[TeamsTestDataBuilder.firstTeamId];
-
-      teamFacade.selectTeams.and.returnValue(of(teams));
-
-      actions$ = hot('--a', { a: teamsActions.teams.loadTeamRequested({ id: teamToLoad.id }) });
-      const expected = cold('---');
-      expect(effects.loadTeamRequested$).toBeObservable(expected);
-    });
-
-    it('should dispatch Load Team Failure action if loading fails', () => {
-      const teamToLoad = TeamBuilder.from('4321', new Date(), 'test user', 'team to load').build();
-      const err = { code: 500 };
-
-      teamFacade.selectTeams.and.returnValue(of(teams));
-      teamService.loadTeam.and.returnValue(cold('#', {}, err));
-
-      actions$ = hot('--a-a', { a: teamsActions.teams.loadTeamRequested({ id: teamToLoad.id }) });
-      const expected = cold('--b-b', { b: teamsActions.teams.loadTeamFailure({ error: { errorObj: err } } as any) });
-      expect(effects.loadTeamRequested$).toBeObservable(expected);
     });
   });
 
@@ -228,16 +166,13 @@ describe('Team Effects', () => {
       actions,
       userFacade,
       teamService,
-      teamFacade,
       errorEffectService,
       guiFacade,
       invitationsFacade,
-      resourceService,
-      teamUtilsService
+      resourceService
     );
 
-    expect(errorEffectService.createFrom).toHaveBeenCalledTimes(2);
-    expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions, teamsActions.teams.loadTeamFailure);
+    expect(errorEffectService.createFrom).toHaveBeenCalledTimes(1);
     expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions, teamsActions.teams.newTeamCreateFailure);
   });
 });

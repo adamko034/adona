@@ -1,16 +1,16 @@
 import { CalendarView } from 'angular-calendar';
 import { of } from 'rxjs';
 import { NewEventDialogData } from 'src/app/modules/calendar/components/dialogs/new-event-dialog/models/new-event-dialog-data.model';
+import { NewEventDialogComponent } from 'src/app/modules/calendar/components/dialogs/new-event-dialog/new-event-dialog.component';
 import { Event } from 'src/app/modules/calendar/model/event.model';
+import { CalendarComponent } from 'src/app/modules/calendar/pages/calendar/calendar.component';
+import { DialogResultTestDataBuilder } from 'src/app/modules/calendar/utils/tests/dialog-result-test-data.builder';
+import { EventsTestDataBuilder } from 'src/app/modules/calendar/utils/tests/event-test-data.builder';
+import { DialogAction } from 'src/app/shared/enum/dialog-action.enum';
+import { DialogResult } from 'src/app/shared/services/dialogs/dialog-result.model';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
-import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
-import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
-import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
-import { DialogResultTestDataBuilder } from '../../utils/tests/dialog-result-test-data.builder';
-import { EventsTestDataBuilder } from '../../utils/tests/event-test-data.builder';
-import { CalendarComponent } from './calendar.component';
 
 describe('CalendarComponent', () => {
   const mockDate = new Date();

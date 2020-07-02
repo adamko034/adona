@@ -1,61 +1,56 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import * as firebase from 'firebase/app/';
+import { AngularFireFunctions } from '@angular/fire/functions';
 import { from, Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
+import { storeConstants } from 'src/app/core/store/constants/store.constants';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
-import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { Team } from 'src/app/core/team/model/team/team.model';
-import { TimeService } from 'src/app/shared/services/time/time.service';
+import { TeamFactory } from 'src/app/core/team/services/factory/team.factory';
+import { User } from 'src/app/core/user/model/user/user.model';
+import { firebaseConstants } from 'src/app/shared/constants/firebase/firebase-functions.constant';
 
 @Injectable({ providedIn: 'root' })
 export class TeamService {
-  private readonly teamsCollectionName = 'teams';
-  private readonly usersCollectionName = 'users';
-  constructor(private db: AngularFirestore, private timeService: TimeService) {}
+  public constructor(
+    private db: AngularFirestore,
+    private functions: AngularFireFunctions,
+    private teamFactory: TeamFactory
+  ) {}
 
-  public addTeam(request: NewTeamRequest, uid: string): Observable<Team | any> {
-    const teamToAdd: Team = TeamBuilder.from(this.db.createId(), request.created, request.createdBy, request.name)
-      .withMembers(request.members)
-      .build();
+  public addTeam(user: User, request: NewTeamRequest): Observable<string> {
+    const teamId = this.db.createId();
+    const team = { created: request.created, name: request.name, createdByUid: user.id };
+    const teams = user.teams.map((t) => t.id);
+
+    const virtualUsers = request.members
+      .filter((m) => !m.email)
+      .map((v) => {
+        return {
+          id: this.db.createId(),
+          name: v.name
+        };
+      });
+    const teamMembers: { [id: string]: { assigned: boolean; isVirtual: boolean } } = {};
+    virtualUsers.forEach((v) => (teamMembers[v.id] = { assigned: true, isVirtual: true }));
+    teamMembers[user.id] = { assigned: true, isVirtual: false };
 
     const batch = this.db.firestore.batch();
-
-    batch.set(this.db.firestore.collection(this.teamsCollectionName).doc(teamToAdd.id), teamToAdd);
-    batch.update(this.db.firestore.collection(this.usersCollectionName).doc(uid), {
-      selectedTeamId: teamToAdd.id,
-      teams: firebase.firestore.FieldValue.arrayUnion({
-        id: teamToAdd.id,
-        name: teamToAdd.name,
-        updated: teamToAdd.created
-      })
+    virtualUsers.forEach((v) => {
+      batch.set(this.db.firestore.collection(storeConstants.collections.virtualUsers).doc(v.id), { name: v.name });
     });
 
-    return from(
-      batch.commit().then(
-        () => teamToAdd,
-        (error) => new Error(error)
-      )
-    );
+    batch.set(this.db.firestore.collection(storeConstants.collections.teams).doc(teamId), team);
+    batch.set(this.db.firestore.collection(storeConstants.collections.teamMembers).doc(teamId), teamMembers);
+    batch.update(this.db.firestore.collection(storeConstants.collections.users).doc(user.id), {
+      teams: [...teams, teamId]
+    });
+
+    return from(batch.commit().then(() => teamId));
   }
 
   public loadTeam(id: string): Observable<Team> {
-    return this.db
-      .collection(this.teamsCollectionName)
-      .doc(id)
-      .valueChanges()
-      .pipe(
-        take(1),
-        map((team: any) => {
-          return TeamBuilder.from(
-            team.id,
-            this.timeService.Creation.fromFirebaseTimestamp(team.created),
-            team.createdBy,
-            team.name
-          )
-            .withMembers(team.members)
-            .build();
-        })
-      );
+    const callable = this.functions.httpsCallable(firebaseConstants.functions.team.get);
+    return callable({ id }).pipe(map((team) => this.teamFactory.fromFirebase(team)));
   }
 }

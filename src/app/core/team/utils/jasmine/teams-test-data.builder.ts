@@ -1,5 +1,5 @@
 import { Dictionary } from '@ngrx/entity';
-import { TeamMembersBuilder } from 'src/app/core/team/model/team-member/team-members.builder';
+import { TeamMemberBuilder } from 'src/app/core/team/model/team-member/team-member.builder';
 import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { Team } from 'src/app/core/team/model/team/team.model';
 import { DateTestBuilder } from 'src/app/utils/testUtils/builders/date-test.builder';
@@ -9,14 +9,12 @@ export class TeamsTestDataBuilder {
 
   private constructor() {
     this.teams = {
-      123: TeamBuilder.from('123', DateTestBuilder.now().addSeconds(-10).build(), 'test user', 'new team')
-        .withMembers(TeamMembersBuilder.from().withMember('test user', 'photourl').build())
-        .build(),
-      124: TeamBuilder.from('124', DateTestBuilder.now().addSeconds(-30).build(), 'test user 2', 'team 2')
-        .withMembers(
-          TeamMembersBuilder.from().withMember('test user 2', 'photourl').withMember('test user', 'photourl').build()
-        )
-        .build()
+      123: TeamBuilder.from('123', DateTestBuilder.now().addSeconds(-10).build(), 'test user', 'new team', [
+        TeamMemberBuilder.from('test user', 'photourl').build()
+      ]).build(),
+      124: TeamBuilder.from('124', DateTestBuilder.now().addSeconds(-30).build(), 'test user 2', 'team 2', [
+        TeamMemberBuilder.from('test user', 'photourl').build()
+      ]).build()
     };
   }
 

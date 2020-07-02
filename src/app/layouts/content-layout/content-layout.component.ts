@@ -5,7 +5,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { SideNavbarOptions } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.model';
 import { Team } from 'src/app/core/team/model/team/team.model';
 import { TeamFacade } from 'src/app/core/team/teams.facade';
-import { User } from 'src/app/core/user/model/user.model';
+import { User } from 'src/app/core/user/model/user/user.model';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
 import { GuiFacade } from '../../core/gui/gui.facade';
@@ -45,7 +45,7 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.data$ = combineLatest([
       this.guiFacade.selectLoading(),
-      this.teamFacade.selectSelectedTeam(),
+      this.teamFacade.selectTeam(),
       this.routerFacade.selectCurrentRute(),
       this.userFacade.selectUser(),
       this.guiFacade.selectSideNavbarOptions()

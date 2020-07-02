@@ -16,9 +16,8 @@ import { ErrorEffectService } from 'src/app/core/services/store/error-effect.ser
 import { userActions } from 'src/app/core/store/actions/user.actions';
 import { UserEffects } from 'src/app/core/store/effects/user.effects';
 import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
-import { UserTeamBuilder } from 'src/app/core/user/model/builders/user-team.builder';
-import { UserTeam } from 'src/app/core/user/model/user-team.model';
-import { User } from 'src/app/core/user/model/user.model';
+import { TeamFacade } from 'src/app/core/team/teams.facade';
+import { User } from 'src/app/core/user/model/user/user.model';
 import { UserService } from 'src/app/core/user/services/user.service';
 import { resources } from 'src/app/shared/resources/resources';
 import { ResourceService } from 'src/app/shared/resources/services/resource.service';
@@ -39,13 +38,15 @@ describe('User Effects', () => {
     errorEffectService,
     guiFacade,
     invitationsService,
-    resourceService
+    resourceService,
+    teamFacade
   } = SpiesBuilder.init()
     .withUserService()
     .withInvitationsService()
     .withResourceService()
     .withErrorEffectService()
     .withGuiFacade()
+    .withTeamFacade()
     .build();
 
   beforeAll(() => {
@@ -66,7 +67,8 @@ describe('User Effects', () => {
         { provide: ErrorEffectService, useValue: errorEffectService },
         { provide: GuiFacade, useValue: guiFacade },
         { provide: InvitationsService, useValue: invitationsService },
-        { provide: ResourceService, useValue: resourceService }
+        { provide: ResourceService, useValue: resourceService },
+        { provide: TeamFacade, useValue: teamFacade }
       ]
     });
 
@@ -78,6 +80,7 @@ describe('User Effects', () => {
     guiFacade.showLoading.calls.reset();
     guiFacade.hideLoading.calls.reset();
     guiFacade.showToastr.calls.reset();
+    teamFacade.loadTeam.calls.reset();
 
     invitation = InvitationBuilder.from('123', 'user@example.com', 'userS@example.com', '1', 'team 1')
       .withStatus(InvitationStatus.Sent)
@@ -88,23 +91,22 @@ describe('User Effects', () => {
     it('should load user and dispatch Load User Success action', () => {
       userService.loadUser.and.returnValue(cold('x', { x: user }));
 
-      actions$ = hot('--a', { a: userActions.loadUserRequested({ id: user.id }) });
+      actions$ = hot('--a', { a: userActions.loadUserRequested() });
       const expected = cold('--b', { b: userActions.loadUserSuccess({ user }) });
 
       expect(effects.loadUserRequested$).toBeObservable(expected);
       expect(userService.loadUser).toHaveBeenCalledTimes(1);
-      expect(userService.loadUser).toHaveBeenCalledWith(user.id);
     });
 
     it('should dispatch Load User Failure action if loading user fails', () => {
       const error = { code: 500 };
       userService.loadUser.and.returnValue(cold('#', {}, error));
 
-      actions$ = hot('--a-a', { a: userActions.loadUserRequested({ id: user.id }) });
+      actions$ = hot('--a-a', { a: userActions.loadUserRequested() });
       const expected = cold('--b-b', { b: userActions.loadUserFailure({ error: { errorObj: error } }) });
 
       expect(effects.loadUserRequested$).toBeObservable(expected);
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.loadUser, 2, user.id);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.loadUser, 2);
     });
   });
 
@@ -112,28 +114,25 @@ describe('User Effects', () => {
     it('should change team and dipatch Change Team Success action', () => {
       const request: ChangeTeamRequest = {
         teamId: '123',
-        updated: new Date(),
-        user
+        userId: user.id
       };
       userService.changeTeam.and.returnValue(cold('x', { x: request }));
 
       actions$ = hot('--a', { a: userActions.changeTeamRequested({ request }) });
       const expected = cold('--b', {
-        b: userActions.changeTeamSuccess({ teamId: request.teamId, updated: request.updated })
+        b: userActions.changeTeamSuccess({ teamId: request.teamId })
       });
 
       expect(effects.changeTeamRequested$).toBeObservable(expected);
       expect(userService.changeTeam).toHaveBeenCalledTimes(1);
       expect(userService.changeTeam).toHaveBeenCalledWith(request);
       expect(guiFacade.showLoading).toHaveBeenCalledTimes(1);
-      expect(guiFacade.hideLoading).toHaveBeenCalledTimes(1);
     });
 
     it('should dispatch Change Team Failure action', () => {
       const request: ChangeTeamRequest = {
         teamId: '123',
-        updated: new Date(),
-        user
+        userId: user.id
       };
       const error = { code: 500 };
       userService.changeTeam.and.returnValue(cold('#', {}, error));
@@ -145,6 +144,16 @@ describe('User Effects', () => {
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.changeTeam, 2, request);
       expect(guiFacade.showLoading).toHaveBeenCalledTimes(2);
       expect(guiFacade.hideLoading).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Change Team Success', () => {
+    it('should load team', () => {
+      actions$ = cold('a-a', { a: userActions.changeTeamSuccess({ teamId: '123' }) });
+      expect(effects.changeTeamSuccess$).toBeObservable(
+        cold('a-a', { a: userActions.changeTeamSuccess({ teamId: '123' }) })
+      );
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamFacade.loadTeam, 2, '123');
     });
   });
 
@@ -233,26 +242,18 @@ describe('User Effects', () => {
     });
 
     it('should handle invitation and map to Handle Invitation Success', () => {
-      const userTeam: UserTeam = {
-        id: invitation.teamId,
-        name: invitation.teamName,
-        updated: mockDate
-      };
       actions$ = cold('aa-a', { a: userActions.handleInvitationAccept({ user, invitation }) });
       userService.handleInvitation.and.returnValue(of(null));
 
       expect(effects.handleInvitationAccept$).toBeObservable(
-        cold('aa-a', { a: userActions.handleInvitationSuccess({ userTeam }) })
+        cold('aa-a', {
+          a: userActions.handleInvitationSuccess({ teamId: invitation.teamId, teamName: invitation.teamName })
+        })
       );
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.handleInvitation, 3, user, invitation);
     });
 
     it('should handle invitation and map to Handle Invitation Failure', () => {
-      const userTeam: UserTeam = {
-        id: invitation.teamId,
-        name: invitation.teamName,
-        updated: mockDate
-      };
       actions$ = cold('aa-a', { a: userActions.handleInvitationAccept({ user, invitation }) });
       userService.handleInvitation.and.returnValue(cold('#-#', null, { testError: 500 }));
       const error = ErrorBuilder.from().withErrorObject({ testError: 500 }).build();
@@ -266,21 +267,20 @@ describe('User Effects', () => {
   });
 
   describe('Handle Invitation Success', () => {
-    it('should show toastr', () => {
+    it('should show toastr and map to Team Added action', () => {
       resourceService.format.and.returnValue('test message');
       guiFacade.showToastr.calls.reset();
-      const userTeam = UserTeamBuilder.from('1', 'team 1', new Date()).build();
       const toastr = ToastrDataBuilder.from('test message', ToastrMode.SUCCESS).build();
-      actions$ = cold('aa-a', { a: userActions.handleInvitationSuccess({ userTeam }) });
+      actions$ = cold('aa-a', { a: userActions.handleInvitationSuccess({ teamId: '2', teamName: 'team 2' }) });
 
       expect(effects.handleInvitationSuccess$).toBeObservable(
-        cold('aa-a', { a: userActions.handleInvitationSuccess({ userTeam }) })
+        cold('aa-a', { a: userActions.teamAdded({ team: { id: '2', name: 'team 2' } }) })
       );
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(
         resourceService.format,
         3,
         resources.team.invitation.accepted,
-        userTeam.name
+        'team 2'
       );
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(guiFacade.showToastr, 3, toastr);
     });
@@ -308,7 +308,15 @@ describe('User Effects', () => {
 
     const actions = new Actions(of(createAction('test action')));
 
-    effects = new UserEffects(actions, userService, errorEffectService, guiFacade, invitationsService, resourceService);
+    effects = new UserEffects(
+      actions,
+      userService,
+      errorEffectService,
+      guiFacade,
+      invitationsService,
+      resourceService,
+      teamFacade
+    );
 
     expect(errorEffectService.createFrom).toHaveBeenCalledTimes(4);
     expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions, userActions.loadUserFailure);

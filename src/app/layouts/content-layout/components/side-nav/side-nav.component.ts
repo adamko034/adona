@@ -3,8 +3,7 @@ import { Subscription } from 'rxjs';
 import { Route } from 'src/app/core/router/model/route.model';
 import { RouterFacade } from 'src/app/core/router/router.facade';
 import { Team } from 'src/app/core/team/model/team/team.model';
-import { TeamUtilsService } from 'src/app/core/team/services/team-utils.service';
-import { User } from 'src/app/core/user/model/user.model';
+import { User } from 'src/app/core/user/model/user/user.model';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { SharedDialogsService } from 'src/app/shared/services/dialogs/shared-dialogs.service';
 import { GuiFacade } from '../../../../core/gui/gui.facade';
@@ -27,7 +26,6 @@ export class SideNavComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(
     private routerFacade: RouterFacade,
-    private teamUtilsService: TeamUtilsService,
     private userUtilsService: UserUtilservice,
     private sharedDialogsService: SharedDialogsService,
     private guiFacade: GuiFacade
@@ -73,25 +71,23 @@ export class SideNavComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private setTeamMembersText() {
-    const membersCount = this.teamUtilsService.getMembersCount(this.team);
+    const membersCount = this.team.members.length;
     const maxTextChars = 28;
     let text = '';
 
-    if (this.team && this.team.members) {
-      let namesUsedCount = 0;
-      for (const key in this.team.members) {
-        const name = this.team.members[key].name;
-        text += name + ', ';
-        namesUsedCount += 1;
+    let namesUsedCount = 0;
+    for (const member of this.team.members) {
+      const name = member.name;
+      text += name + ', ';
+      namesUsedCount += 1;
 
-        if (text.length >= maxTextChars) break;
-      }
+      if (text.length >= maxTextChars) break;
+    }
 
-      text = text.slice(0, -2);
+    text = text.slice(0, -2);
 
-      if (namesUsedCount < membersCount) {
-        text += ` and ${membersCount - namesUsedCount} more...`;
-      }
+    if (namesUsedCount < membersCount) {
+      text += ` and ${membersCount - namesUsedCount} more...`;
     }
 
     this.teamMembersText = text;

@@ -2,21 +2,10 @@ import { cold } from 'jasmine-marbles';
 import { InvitationBuilder } from 'src/app/core/invitations/models/invitation/invitation.builder';
 import { InvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
 import { InvitationsService } from 'src/app/core/invitations/services/invitations-service/invitations.service';
-import { TeamMembersBuilder } from 'src/app/core/team/model/team-member/team-members.builder';
-import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
-import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 
 describe('Invitations Service', () => {
   let service: InvitationsService;
-  const recipients = ['user1@example.com', 'user2@example.com'];
-  const user = UserTestBuilder.withDefaultData().build();
-  const members = TeamMembersBuilder.from()
-    .withMember('user1', null, recipients[0])
-    .withMember('user2', null, recipients[1])
-    .build();
-  const team = TeamBuilder.from('team1', new Date(), user.name, 'team 1').withMembers(members).build();
-
   const { timeService, angularFirestore } = SpiesBuilder.init().withAngularFirestore().withTimeService().build();
 
   beforeEach(() => {

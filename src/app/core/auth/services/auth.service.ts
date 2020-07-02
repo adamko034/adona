@@ -16,16 +16,16 @@ export class AuthService {
   }
 
   public login(credentials: Credentials): Observable<firebase.auth.UserCredential> {
-    return from(this.fireAuth.auth.signInWithEmailAndPassword(credentials.email, credentials.password));
+    return from(this.fireAuth.signInWithEmailAndPassword(credentials.email, credentials.password));
   }
 
   public logout(): Observable<void> {
-    return from(this.fireAuth.auth.signOut());
+    return from(this.fireAuth.signOut());
   }
 
   public register(credentials: Credentials): Observable<firebase.User> {
     return from(
-      this.fireAuth.auth
+      this.fireAuth
         .createUserWithEmailAndPassword(credentials.email, credentials.password)
         .then((userCredential: firebase.auth.UserCredential) => {
           const displayName = this.userUtilsService.extractUsernameFromEmail(userCredential.user.email);
@@ -35,14 +35,14 @@ export class AuthService {
   }
 
   public sendPasswordResetEmail(email: string): Observable<void> {
-    return from(this.fireAuth.auth.sendPasswordResetEmail(email));
+    return from(this.fireAuth.sendPasswordResetEmail(email));
   }
 
   public confirmPasswordReset(code: string, newPassword: string): Observable<void> {
-    return from(this.fireAuth.auth.confirmPasswordReset(code, newPassword));
+    return from(this.fireAuth.confirmPasswordReset(code, newPassword));
   }
 
   public confirmEmail(code: string): Observable<void> {
-    return from(this.fireAuth.auth.applyActionCode(code));
+    return from(this.fireAuth.applyActionCode(code));
   }
 }

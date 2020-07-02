@@ -5,7 +5,7 @@ import { userActions } from 'src/app/core/store/actions/user.actions';
 import { AuthState } from 'src/app/core/store/reducers/auth/auth.reducer';
 import { userQueries } from 'src/app/core/store/selectors/user.selectors';
 import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
-import { User } from 'src/app/core/user/model/user.model';
+import { User } from 'src/app/core/user/model/user/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserFacade {
@@ -19,8 +19,8 @@ export class UserFacade {
     return this.store.select(userQueries.selectUserId);
   }
 
-  public loadUser(id: string) {
-    return this.store.dispatch(userActions.loadUserRequested({ id }));
+  public loadUser() {
+    return this.store.dispatch(userActions.loadUserRequested());
   }
 
   public changeTeam(request: ChangeTeamRequest) {

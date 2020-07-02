@@ -4,16 +4,20 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { cold } from 'jasmine-marbles';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
 import { teamsActions } from 'src/app/core/team/store/actions';
-import { SelectedTeamEffects } from 'src/app/core/team/store/effects/selected-team/selected-team.effects';
+import { TeamEffects } from 'src/app/core/team/store/effects/team/team.effects';
 import { TeamsTestDataBuilder } from 'src/app/core/team/utils/jasmine/teams-test-data.builder';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 
-describe('Selected Team Effects', () => {
-  let effects: SelectedTeamEffects;
+describe('Team Effects', () => {
+  let effects: TeamEffects;
   let actions$: Actions;
 
-  const { teamService, errorEffectService } = SpiesBuilder.init().withTeamService().withErrorEffectService().build();
+  const {
+    teamService,
+    errorEffectService,
+    guiFacade
+  } = SpiesBuilder.init().withGuiFacade().withTeamService().withErrorEffectService().build();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -21,10 +25,10 @@ describe('Selected Team Effects', () => {
     });
 
     actions$ = TestBed.inject(Actions);
-    effects = new SelectedTeamEffects(actions$, teamService, errorEffectService);
+    effects = new TeamEffects(actions$, teamService, errorEffectService, guiFacade);
   });
 
-  describe('Load Selected Team Requested', () => {
+  describe('Load Team Requested', () => {
     beforeEach(() => {
       teamService.loadTeam.calls.reset();
     });
@@ -32,33 +36,43 @@ describe('Selected Team Effects', () => {
     it('should call service and map to Load Selected Team Success action', () => {
       const team = TeamsTestDataBuilder.withDefaultData().buildOne();
       teamService.loadTeam.and.returnValue(cold('a', { a: team }));
-      actions$ = cold('--a-a', { a: teamsActions.selectedTeam.loadSelectedTeamRequested({ id: team.id }) });
-      const expected = cold('--a-a', { a: teamsActions.selectedTeam.loadSelectedTeamSuccess({ team }) });
+      actions$ = cold('--a-a', { a: teamsActions.team.loadTeamRequested({ id: team.id }) });
+      const expected = cold('--a-a', { a: teamsActions.team.loadTeamSuccess({ team }) });
 
-      expect(effects.loadSelectedTeamRequested$).toBeObservable(expected);
+      expect(effects.loadTeamRequested$).toBeObservable(expected);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamService.loadTeam, 2, team.id);
     });
 
     it('should map to Load Selected Team Failure action when service fails', () => {
       teamService.loadTeam.and.returnValue(cold('#', null, { testCode: '500' }));
       const error = ErrorBuilder.from().withErrorObject({ testCode: '500' }).build();
-      actions$ = cold('--a-a', { a: teamsActions.selectedTeam.loadSelectedTeamRequested({ id: '123' }) });
+      actions$ = cold('--a-a', { a: teamsActions.team.loadTeamRequested({ id: '123' }) });
 
-      const expected = cold('--a-a', { a: teamsActions.selectedTeam.loadSelectedTeamFailure({ error }) });
+      const expected = cold('--a-a', { a: teamsActions.team.loadTeamFailure({ error }) });
 
-      expect(effects.loadSelectedTeamRequested$).toBeObservable(expected);
+      expect(effects.loadTeamRequested$).toBeObservable(expected);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamService.loadTeam, 2, '123');
+    });
+  });
+
+  describe('Load Team Success', () => {
+    it('should hide loading', () => {
+      actions$ = cold('aa-a', { a: teamsActions.team.loadTeamSuccess({ team: {} as any }) });
+      expect(effects.loadTeamSuccess$).toBeObservable(
+        cold('aa-a', { a: teamsActions.team.loadTeamSuccess({ team: {} as any }) })
+      );
+      expect(guiFacade.hideLoading).toHaveBeenCalledTimes(3);
     });
   });
 
   it('should create failures effects', () => {
     errorEffectService.createFrom.calls.reset();
-    effects = new SelectedTeamEffects(actions$, teamService, errorEffectService);
+    effects = new TeamEffects(actions$, teamService, errorEffectService, guiFacade);
     JasmineCustomMatchers.toHaveBeenCalledTimesWith(
       errorEffectService.createFrom,
       1,
       actions$,
-      teamsActions.selectedTeam.loadSelectedTeamFailure
+      teamsActions.team.loadTeamFailure
     );
   });
 });

@@ -1,17 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, map, mapTo, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade';
 import { apiRequestIds } from 'src/app/core/api-requests/constants/api-request-ids.contants';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { apiRequestActions } from 'src/app/core/store/actions/api-requests.actions';
-import { NewTeamRequestBuilder } from 'src/app/core/team/model/new-team-request/new-team-request.builder';
-import { TeamMembersBuilder } from 'src/app/core/team/model/team-member/team-members.builder';
-import { TeamService } from 'src/app/core/team/services/team.service';
-import { UserBuilder } from 'src/app/core/user/model/builders/user.builder';
 import { UserService } from 'src/app/core/user/services/user.service';
 import { EmailConfirmationService } from 'src/app/modules/auth/services/email-confirmation.service';
 import { registerActions } from 'src/app/modules/auth/store/actions/register.actions';
@@ -26,8 +22,7 @@ export class RegisterEffects {
     private emailConfirmationService: EmailConfirmationService,
     private apiRequestsFacade: ApiRequestsFacade,
     private navigationService: NavigationService,
-    private errorEffectsService: ErrorEffectService,
-    private teamService: TeamService
+    private errorEffectsService: ErrorEffectService
   ) {}
 
   public registerRequested$ = createEffect(() => {
@@ -36,25 +31,12 @@ export class RegisterEffects {
       tap(() => this.apiRequestsFacade.startRequest(apiRequestIds.register)),
       switchMap((action) => {
         return this.authService.register(action.credentials).pipe(
-          switchMap((firebaseUser: firebase.User) => {
-            const photoUrl = firebaseUser.photoURL || UserBuilder.defaultPhotoUrl;
-            const user = UserBuilder.from(firebaseUser.uid, firebaseUser.email, firebaseUser.displayName)
-              .withPhotoUrl(photoUrl)
-              .withInvitationId(action.invitationId)
-              .build();
-
-            return this.userService.createUser(user).pipe(mapTo({ firebaseUser, photoUrl }));
-          }),
-          switchMap(({ firebaseUser, photoUrl }) => {
-            const teamMembers = TeamMembersBuilder.from().withMember(firebaseUser.displayName, photoUrl).build();
-            const team = NewTeamRequestBuilder.from('Personal', firebaseUser.displayName, teamMembers).build();
-
-            return this.teamService.addTeam(team, firebaseUser.uid).pipe(mapTo(firebaseUser));
-          }),
-          mergeMap((firebaseUser: firebase.User) => {
-            return this.emailConfirmationService.send(firebaseUser);
-          }),
-          map(() => registerActions.registerSuccess()),
+          switchMap((firebaseUser: firebase.User) =>
+            this.userService.createUser(firebaseUser, action.invitationId).pipe(
+              mergeMap(() => this.emailConfirmationService.send(firebaseUser)),
+              map(() => registerActions.registerSuccess())
+            )
+          ),
           catchError((err) => {
             const error = ErrorBuilder.from()
               .withErrorObject(err)

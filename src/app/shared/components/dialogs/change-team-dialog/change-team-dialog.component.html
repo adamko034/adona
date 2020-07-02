@@ -1,14 +1,13 @@
 <button class="adona-dialog-close" mat-icon-button (click)="close()">
   <mat-icon>close</mat-icon>
 </button>
-<h2 mat-dialog-title>Change Team</h2>
+<h3 mat-dialog-title>Change Team</h3>
 <div mat-dialog-content fxLayout="column">
-  <span class="text-bold">Recently used teams:</span>
   <div class="teams-list">
     <div
       class="teams-list-item"
       fxLayoutAlign="space-between center"
-      *ngFor="let team of recentTeams"
+      *ngFor="let team of teams"
       (click)="onTeamSelected(team.id)"
     >
       <span>{{ team.name }}</span>
@@ -19,13 +18,4 @@
       </span>
     </div>
   </div>
-
-  <span class="text-bold">Select from list:</span>
-  <mat-form-field>
-    <mat-select (selectionChange)="onTeamSelected($event.value)" [(value)]="currentTeamId">
-      <mat-option *ngFor="let team of sortedTeams" [value]="team.id" [disabled]="isTeamCurrentlySelected(team.id)">
-        {{ team.name }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
 </div>

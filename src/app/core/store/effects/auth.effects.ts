@@ -3,11 +3,11 @@ import { Actions, createEffect, Effect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { catchError, map, mapTo, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
+import { authActions } from 'src/app/core/store/actions/auth.actions';
+import { User } from 'src/app/core/user/model/user/user.model';
+import { UserService } from 'src/app/core/user/services/user.service';
 import { NavigationService } from 'src/app/shared/services/navigation/navigation.service';
 import { Logger } from 'src/app/shared/utils/logger/logger';
-import { User } from '../../user/model/user.model';
-import { UserService } from '../../user/services/user.service';
-import { authActions } from '../actions/auth.actions';
 
 @Injectable()
 export class AuthEffects {
@@ -21,15 +21,13 @@ export class AuthEffects {
   public logIn$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(authActions.login),
-      tap(() => Logger.logDev('auth effect, log in, starting')),
       switchMap((action) => {
-        Logger.logDev('auth effect, log in, calling service');
+        Logger.logDev('auth effect, log in');
         return this.authService.login(action.credentials).pipe(
-          switchMap(({ user }) => (user.emailVerified ? this.userService.loadUser(user.uid) : of(null))),
+          switchMap(({ user }) => (user.emailVerified ? this.userService.loadUser() : of(null))),
           map((user: User) => {
-            Logger.logDev(`auth effect, log in, got user`);
+            Logger.logDev('auth effect, log in, got user');
             if (!user?.invitationId && !!action.invitationId) {
-              Logger.logDev('auth effect, log in, action with invitation id');
               user.invitationId = action.invitationId;
             }
 
@@ -46,6 +44,7 @@ export class AuthEffects {
     () => {
       return this.actions$.pipe(
         ofType(authActions.loginSuccess),
+        tap(() => Logger.logDev('auth effects, log in success')),
         tap(() => this.navigationService.toHome())
       );
     },

@@ -1,4 +1,5 @@
 import { Subject } from 'rxjs';
+import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { Route } from '../../../../core/router/model/route.model';
 import { SpiesBuilder } from '../../../../utils/testUtils/builders/spies.builder';
 import { SideNavComponent } from './side-nav.component';
@@ -6,22 +7,22 @@ import { SideNavComponent } from './side-nav.component';
 describe('Side Nav Compoment', () => {
   let component: SideNavComponent;
 
-  const { routerFacade, teamUtilsService, userUtilsService, sharedDialogService, guiFacade } = SpiesBuilder.init()
-    .withRouterFacade()
-    .withUserUtilsService()
-    .withSharedDialogService()
-    .withGuiFacade()
-    .withTeamUtilsService()
-    .build();
+  const {
+    routerFacade,
+    userUtilsService,
+    sharedDialogService,
+    guiFacade
+  } = SpiesBuilder.init().withRouterFacade().withUserUtilsService().withSharedDialogService().withGuiFacade().build();
 
   beforeEach(() => {
-    component = new SideNavComponent(routerFacade, teamUtilsService, userUtilsService, sharedDialogService, guiFacade);
+    component = new SideNavComponent(routerFacade, userUtilsService, sharedDialogService, guiFacade);
 
     userUtilsService.hasMultipleTeams.calls.reset();
   });
 
   describe('Ng On Init', () => {
     it('should set routes and team members text', () => {
+      component.team = TeamBuilder.from('1', new Date(), 'user', 'team 1', []).build();
       const routes: Route[] = [
         { id: 1, icon: 'test', name: 'test', url: 'test url' },
         { id: 2, icon: 'test 2', name: 'test 2', url: 'test 2 url' }
@@ -46,7 +47,7 @@ describe('Side Nav Compoment', () => {
   });
 
   describe('Toogle Expand', () => {
-    [true, false].forEach(currentValue => {
+    [true, false].forEach((currentValue) => {
       it(`should change from ${currentValue.toString()} to ${!currentValue.toString()}`, () => {
         component.isExpanded = currentValue;
         component.toggleExpand();
@@ -63,7 +64,7 @@ describe('Side Nav Compoment', () => {
   });
 
   describe('Should Show Change Team Action', () => {
-    [true, false].forEach(hasMultipleTeams => {
+    [true, false].forEach((hasMultipleTeams) => {
       it(`should return ${hasMultipleTeams.toString()} if user ${
         hasMultipleTeams ? 'has' : 'does not have'
       } multiple teams`, () => {
@@ -75,7 +76,7 @@ describe('Side Nav Compoment', () => {
   });
 
   describe('Should Show Quick Actions', () => {
-    [true, false].forEach(hasMultipleTeams => {
+    [true, false].forEach((hasMultipleTeams) => {
       it(`should return ${hasMultipleTeams.toString()} if user ${
         hasMultipleTeams ? 'has' : 'does not have'
       } multiple teams`, () => {

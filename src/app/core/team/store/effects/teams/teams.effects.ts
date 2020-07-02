@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, concatMap, filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { catchError, concatMap, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
 import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.builder';
 import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mode.enum';
@@ -9,15 +9,12 @@ import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
 import { InvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { userActions } from 'src/app/core/store/actions/user.actions';
-import { Team } from 'src/app/core/team/model/team/team.model';
-import { TeamUtilsService } from 'src/app/core/team/services/team-utils.service';
 import { TeamService } from 'src/app/core/team/services/team.service';
 import { teamsActions } from 'src/app/core/team/store/actions';
-import { TeamFacade } from 'src/app/core/team/teams.facade';
+import { UserTeamBuilder } from 'src/app/core/user/model/user-team/user-team.builder';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { resources } from 'src/app/shared/resources/resources';
 import { ResourceService } from 'src/app/shared/resources/services/resource.service';
-import { Logger } from 'src/app/shared/utils/logger/logger';
 
 @Injectable()
 export class TeamsEffects {
@@ -25,86 +22,60 @@ export class TeamsEffects {
     private actions$: Actions,
     private userFacade: UserFacade,
     private teamService: TeamService,
-    private teamFacade: TeamFacade,
     private errorEffectService: ErrorEffectService,
     private guiFacade: GuiFacade,
     private invitationsFacade: InvitationsFacade,
-    private resource: ResourceService,
-    private teamUtilsService: TeamUtilsService
+    private resource: ResourceService
   ) {}
 
   public newTeamRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(teamsActions.teams.newTeamRequested),
       tap(() => this.guiFacade.showLoading()),
-      concatMap((action) => of(action).pipe(withLatestFrom(this.userFacade.selectUserId()))),
-      switchMap(([action, uid]) => this.teamService.addTeam(action.request, uid)),
-      switchMap((team: Team) => [
-        teamsActions.teams.newTeamCreateSuccess({ team }),
-        userActions.teamAdded({ id: team.id, name: team.name, updated: team.created }),
-        userActions.changeTeamSuccess({ teamId: team.id, updated: team.created })
-      ]),
-      catchError((err) => of(teamsActions.teams.newTeamCreateFailure({ error: { errorObj: err } })))
+      concatMap((action) => of(action).pipe(withLatestFrom(this.userFacade.selectUser()))),
+      switchMap(([action, user]) =>
+        this.teamService.addTeam(user, action.request).pipe(
+          map((id) => teamsActions.teams.newTeamCreateSuccess({ id, user, request: action.request })),
+          catchError((err) => of(teamsActions.teams.newTeamCreateFailure({ error: { errorObj: err } })))
+        )
+      )
     );
   });
 
-  public newTeamCreateSuccess$ = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(teamsActions.teams.newTeamCreateSuccess),
-        concatMap((action) => of(action).pipe(withLatestFrom(this.userFacade.selectUser()))),
-        map(([action, user]) => {
-          Logger.logDev('Team Effects, New Team Create Success: sending emails and handling gui');
-          const team = action.team;
-          const recipients = this.teamUtilsService.getMembersEmailsWithout(team, user.email);
+  public newTeamCreateSuccess$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(teamsActions.teams.newTeamCreateSuccess),
+      map((action) => {
+        const recipients = action.request.members
+          .filter((m) => !!m.email && m.email !== action.user.email)
+          .map((m) => m.email);
 
-          if (recipients.length > 0) {
-            const invitationsReqeust = InvitationRequestBuilder.from(
-              user.email,
-              team.id,
-              team.name,
-              recipients
-            ).build();
-            this.invitationsFacade.send(invitationsReqeust);
-          }
-
-          const toastrData = ToastrDataBuilder.from(
-            this.resource.format(resources.team.created, team.name),
-            ToastrMode.SUCCESS
+        if (recipients.length > 0) {
+          const invitationsReqeust = InvitationRequestBuilder.from(
+            action.user.email,
+            action.id,
+            action.request.name,
+            recipients
           ).build();
+          this.invitationsFacade.send(invitationsReqeust);
+        }
 
-          this.guiFacade.showToastr(toastrData);
-          this.guiFacade.hideLoading();
+        const toastrData = ToastrDataBuilder.from(
+          this.resource.format(resources.team.created, action.request.name),
+          ToastrMode.SUCCESS
+        ).build();
 
-          return action;
-        })
-      );
-    },
-    { dispatch: false }
-  );
+        this.guiFacade.showToastr(toastrData);
+        this.guiFacade.hideLoading();
+
+        const userTeam = UserTeamBuilder.from(action.id, action.request.name).build();
+        return userActions.teamAdded({ team: userTeam });
+      })
+    );
+  });
 
   public newTeamCreateFailure$ = this.errorEffectService.createFrom(
     this.actions$,
     teamsActions.teams.newTeamCreateFailure
   );
-
-  public loadTeamRequested$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(teamsActions.teams.loadTeamRequested),
-      tap(() => Logger.logDev('team effect, load team requested, starting')),
-      concatMap((action) => of(action).pipe(withLatestFrom(this.teamFacade.selectTeams()))),
-      filter(([action, teams]) => !teams[action.id]),
-      map(([action, teams]) => action.id),
-      switchMap((id: string) => {
-        Logger.logDev('team effect, load team requsted, calling service');
-        return this.teamService.loadTeam(id).pipe(
-          tap(() => Logger.logDev('team effect, load team requsted, got team')),
-          map((team: Team) => teamsActions.teams.loadTeamSuccess({ team })),
-          catchError((err) => of(teamsActions.teams.loadTeamFailure({ error: { errorObj: err } })))
-        );
-      })
-    );
-  });
-
-  public loadTeamFailure$ = this.errorEffectService.createFrom(this.actions$, teamsActions.teams.loadTeamFailure);
 }

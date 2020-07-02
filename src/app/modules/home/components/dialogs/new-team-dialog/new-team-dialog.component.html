@@ -83,16 +83,16 @@
           <div class="members-list-title">
             <span>Team members:</span>
           </div>
-          <div *ngFor="let member of members | keyvalue; let i = index">
+          <div *ngFor="let member of members; let i = index">
             <div class="members-list-member">
               <div fxFlex="90">
-                <span>{{ i + 1 }}. {{ formatMemberName(member.value) }}</span>
+                <span>{{ i + 1 }}. {{ formatMemberName(member) }}</span>
               </div>
               <span
                 fxFlex="10"
                 class="members-list-member-remove"
-                *ngIf="!isCurrentUser(member.value)"
-                (click)="removeMember(member.value)"
+                *ngIf="!isCurrentUser(member)"
+                (click)="removeMember(member)"
               >
                 <mat-icon>
                   clear
@@ -114,9 +114,9 @@
           <div class="members-list-title">
             <span>Team members:</span>
           </div>
-          <div *ngFor="let member of members | keyvalue; let i = index">
+          <div *ngFor="let member of members; let i = index">
             <div fxFill class="members-list-member">
-              <span>{{ i + 1 }}. {{ formatMemberName(member.value) }}</span>
+              <span>{{ i + 1 }}. {{ formatMemberName(member) }}</span>
             </div>
           </div>
         </div>

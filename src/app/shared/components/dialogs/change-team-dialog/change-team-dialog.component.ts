@@ -1,8 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { sortBy } from 'lodash';
-import { UserTeam } from 'src/app/core/user/model/user-team.model';
-import { User } from 'src/app/core/user/model/user.model';
+import { UserTeam } from 'src/app/core/user/model/user-team/user-team.model';
+import { User } from 'src/app/core/user/model/user/user.model';
 
 @Component({
   selector: 'app-change-team-dialog',
@@ -11,8 +10,7 @@ import { User } from 'src/app/core/user/model/user.model';
 })
 export class ChangeTeamDialogComponent implements OnInit {
   public currentTeamId: string;
-  public recentTeams: UserTeam[];
-  public sortedTeams: UserTeam[];
+  public teams: UserTeam[];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { user: User },
@@ -21,8 +19,7 @@ export class ChangeTeamDialogComponent implements OnInit {
 
   public ngOnInit() {
     this.currentTeamId = this.data.user.selectedTeamId;
-    this.sortedTeams = sortBy([...this.data.user.teams], 'name');
-    this.recentTeams = this.getRecentTeams();
+    this.teams = this.data.user.teams.filter((t) => t.id !== this.currentTeamId);
   }
 
   public onTeamSelected(teamId: string) {
@@ -35,12 +32,5 @@ export class ChangeTeamDialogComponent implements OnInit {
 
   public close() {
     this.dialogRef.close(null);
-  }
-
-  private getRecentTeams(): UserTeam[] {
-    return [...this.data.user.teams]
-      .filter((team: UserTeam) => team.id !== this.data.user.selectedTeamId)
-      .sort((t1, t2) => +t2.updated - +t1.updated)
-      .slice(0, 3);
   }
 }

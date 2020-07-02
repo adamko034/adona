@@ -1,6 +1,5 @@
 import { Action, createReducer, on } from '@ngrx/store';
-import { User } from 'src/app/core/user/model/user.model';
-import { UserTeamBuilder } from '../../../user/model/builders/user-team.builder';
+import { User } from 'src/app/core/user/model/user/user.model';
 import { authActions } from '../../actions/auth.actions';
 import { userActions } from '../../actions/user.actions';
 
@@ -36,36 +35,20 @@ const authReducer = createReducer(
     ...state,
     user: {
       ...state.user,
-      selectedTeamId: action.teamId,
-      teams: state.user.teams.map((team) => {
-        if (team.id === action.teamId) {
-          return { ...team, updated: action.updated };
-        }
-
-        return team;
-      })
+      selectedTeamId: action.teamId
     }
   })),
-  on(userActions.teamAdded, (state, action) => {
-    const teams = state.user.teams ? [...state.user.teams] : [];
-    teams.push(UserTeamBuilder.from(action.id, action.name, action.updated).build());
-
-    return {
-      ...state,
-      user: {
-        ...state.user,
-        teams: [...teams]
-      }
-    };
-  }),
   on(userActions.updateNameSuccess, (state, action) => {
     return { ...state, user: { ...state.user, name: action.newName } };
   }),
-  on(userActions.handleInvitationSuccess, (state, action) => {
-    const userTeams = [...state.user.teams, action.userTeam];
-    return { ...state, user: { ...state.user, invitationId: null, teams: userTeams } };
+  on(userActions.handleInvitationSuccess, (state) => {
+    return { ...state, user: { ...state.user, invitationId: null } };
   }),
-  on(userActions.handleInvitationReject, (state) => ({ ...state, user: { ...state.user, invitationId: null } }))
+  on(userActions.handleInvitationReject, (state) => ({ ...state, user: { ...state.user, invitationId: null } })),
+  on(userActions.teamAdded, (state, action) => ({
+    ...state,
+    user: { ...state.user, teams: [...state.user.teams, action.team] }
+  }))
 );
 
 export function reducer(state: AuthState | undefined, action: Action) {

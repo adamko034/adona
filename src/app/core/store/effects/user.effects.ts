@@ -12,8 +12,9 @@ import { InvitationsService } from 'src/app/core/invitations/services/invitation
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { userActions } from 'src/app/core/store/actions/user.actions';
 import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
-import { UserTeamBuilder } from 'src/app/core/user/model/builders/user-team.builder';
-import { User } from 'src/app/core/user/model/user.model';
+import { TeamFacade } from 'src/app/core/team/teams.facade';
+import { UserTeamBuilder } from 'src/app/core/user/model/user-team/user-team.builder';
+import { User } from 'src/app/core/user/model/user/user.model';
 import { UserService } from 'src/app/core/user/services/user.service';
 import { resources } from 'src/app/shared/resources/resources';
 import { ResourceService } from 'src/app/shared/resources/services/resource.service';
@@ -27,14 +28,15 @@ export class UserEffects {
     private errorEffectService: ErrorEffectService,
     private guiFacade: GuiFacade,
     private invitationService: InvitationsService,
-    private resourceService: ResourceService
+    private resourceService: ResourceService,
+    private teamsFacade: TeamFacade
   ) {}
 
   public loadUserRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(userActions.loadUserRequested),
-      switchMap((action) =>
-        this.userService.loadUser(action.id).pipe(
+      switchMap(() =>
+        this.userService.loadUser().pipe(
           map((user: User) => userActions.loadUserSuccess({ user })),
           catchError((err) => of(userActions.loadUserFailure({ error: { errorObj: err } })))
         )
@@ -49,13 +51,22 @@ export class UserEffects {
       map((action) => action.request),
       switchMap((request: ChangeTeamRequest) =>
         this.userService.changeTeam(request).pipe(
-          map(() => userActions.changeTeamSuccess({ teamId: request.teamId, updated: request.updated })),
-          tap(() => this.guiFacade.hideLoading()),
+          map(() => userActions.changeTeamSuccess({ teamId: request.teamId })),
           catchError((err) => of(userActions.changeTeamFailure({ error: { errorObj: err } })))
         )
       )
     );
   });
+
+  public changeTeamSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(userActions.changeTeamSuccess),
+        tap((action) => this.teamsFacade.loadTeam(action.teamId))
+      );
+    },
+    { dispatch: false }
+  );
 
   public loadUserFailure$ = this.errorEffectService.createFrom(this.actions$, userActions.loadUserFailure);
 
@@ -85,9 +96,8 @@ export class UserEffects {
     return this.actions$.pipe(
       ofType(userActions.handleInvitationRequested),
       filter((action) => !!action.user.invitationId),
-      tap(() => Logger.logDev('User Effect: Handle Invitation Requested, starting')),
+      tap(() => Logger.logDev('user effect, handle invitation requested')),
       switchMap((action) => {
-        Logger.logDev('user effect, handle invitation requested, calling service to get invitation');
         return this.invitationService.get(action.user.invitationId).pipe(
           map((invitation: Invitation) => {
             Logger.logDev('user effect, handle invitation requested, got invitation ' + invitation.status);
@@ -98,7 +108,6 @@ export class UserEffects {
             return userActions.handleInvitationReject();
           }),
           catchError((err) => {
-            Logger.logDev('user effect, handle invitation requested, catch error');
             const error = ErrorBuilder.from().withErrorObject(err).build();
             const toastr = ToastrDataBuilder.from(resources.team.invitation.acceptingFailed, ToastrMode.ERROR).build();
             return of(userActions.handleInvitationFailure({ error, toastr }));
@@ -111,17 +120,12 @@ export class UserEffects {
   public handleInvitationAccept$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(userActions.handleInvitationAccept),
-      tap(() => Logger.logDev('user effect, handle invitation accept, starting')),
       switchMap(({ user, invitation }) => {
-        Logger.logDev('user effect, handle invitation accept, calling service');
+        Logger.logDev('user effect, handle invitation accept');
         return this.userService.handleInvitation(user, invitation).pipe(
-          tap(() => Logger.logDev('user effect, handle invitation accept, service ok')),
-          map(() => {
-            const userTeam = UserTeamBuilder.from(invitation.teamId, invitation.teamName, new Date()).build();
-            return userActions.handleInvitationSuccess({ userTeam });
-          }),
+          tap(() => Logger.logDev('user effect, handle invitation accept, handled in db')),
+          map(() => userActions.handleInvitationSuccess({ teamId: invitation.teamId, teamName: invitation.teamName })),
           catchError((err) => {
-            Logger.logDev('user effect, handle invitation accept, catch error');
             const error = ErrorBuilder.from().withErrorObject(err).build();
             const toastr = ToastrDataBuilder.from(resources.team.invitation.acceptingFailed, ToastrMode.ERROR).build();
             return of(userActions.handleInvitationFailure({ error, toastr }));
@@ -131,24 +135,23 @@ export class UserEffects {
     );
   });
 
-  public handleInvitationSuccess$ = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(userActions.handleInvitationSuccess),
-        map((action) => {
-          Logger.logDev('user effect, handle invitation success, starting and showing toastr');
-          const toastr = ToastrDataBuilder.from(
-            this.resourceService.format(resources.team.invitation.accepted, action.userTeam.name),
-            ToastrMode.SUCCESS
-          ).build();
+  public handleInvitationSuccess$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(userActions.handleInvitationSuccess),
+      map((action) => {
+        Logger.logDev('user effect, handle invitation success, starting and showing toastr');
+        const toastr = ToastrDataBuilder.from(
+          this.resourceService.format(resources.team.invitation.accepted, action.teamName),
+          ToastrMode.SUCCESS
+        ).build();
 
-          this.guiFacade.showToastr(toastr);
-          return action;
-        })
-      );
-    },
-    { dispatch: false }
-  );
+        this.guiFacade.showToastr(toastr);
+
+        const team = UserTeamBuilder.from(action.teamId, action.teamName).build();
+        return userActions.teamAdded({ team });
+      })
+    );
+  });
 
   public handleInvitationReject$ = createEffect(
     () => {

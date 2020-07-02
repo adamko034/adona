@@ -1,15 +1,15 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { NewTeamMemberBuilder } from 'src/app/core/team/model/new-team-request/new-team-member.builder';
+import { NewTeamMember } from 'src/app/core/team/model/new-team-request/new-team-member.model';
 import { NewTeamRequestBuilder } from 'src/app/core/team/model/new-team-request/new-team-request.builder';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
-import { TeamMemberBuilder } from 'src/app/core/team/model/team-member/team-member.builder';
-import { TeamMember } from 'src/app/core/team/model/team-member/team-member.model';
+import { User } from 'src/app/core/user/model/user/user.model';
+import { NewTeamDialogStep } from 'src/app/modules/home/components/dialogs/new-team-dialog/models/new-team-dialog-step.enum';
+import { NewTeamDialogStepsHelper } from 'src/app/modules/home/components/dialogs/new-team-dialog/service/new-team-dialog-steps-helper.service';
+import { DialogResult } from 'src/app/shared/services/dialogs/dialog-result.model';
 import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.validator';
-import { User } from '../../../../../core/user/model/user.model';
-import { DialogResult } from '../../../../../shared/services/dialogs/dialog-result.model';
-import { NewTeamDialogStep } from './models/new-team-dialog-step.enum';
-import { NewTeamDialogStepsHelper } from './service/new-team-dialog-steps-helper.service';
 
 @Component({
   selector: 'app-new-team-dialog',
@@ -18,7 +18,7 @@ import { NewTeamDialogStepsHelper } from './service/new-team-dialog-steps-helper
 })
 export class NewTeamDialogComponent implements OnInit {
   public currentStep: NewTeamDialogStep;
-  public members: { [name: string]: TeamMember } = {};
+  public members: NewTeamMember[] = [];
 
   public steps = NewTeamDialogStep;
   public form: FormGroup = new FormGroup({
@@ -37,7 +37,7 @@ export class NewTeamDialogComponent implements OnInit {
 
   public ngOnInit(): void {
     this.currentStep = this.steps.Name;
-    this.members[this.data.user.name] = TeamMemberBuilder.fromUser(this.data.user).build();
+    this.members.push(NewTeamMemberBuilder.from(this.data.user.name).withEmail(this.data.user.email).build());
   }
 
   public getDialogTitle(): string {
@@ -70,7 +70,8 @@ export class NewTeamDialogComponent implements OnInit {
 
     if (newMemberFormControl.valid) {
       const name = newMemberFormControl.value.trim();
-      this.members[name] = TeamMemberBuilder.from(name).withEmailAddress(name).build();
+      const email = type === 'friend' ? name : null;
+      this.members.push(NewTeamMemberBuilder.from(name).withEmail(email).build());
       this.form.get('newMember').reset();
     }
   }
@@ -80,31 +81,30 @@ export class NewTeamDialogComponent implements OnInit {
     this.newMemberInput.nativeElement.focus();
   }
 
-  public removeMember(member: TeamMember): void {
-    if (member.name.toLocaleLowerCase().trim() !== this.data.user.name.toLocaleLowerCase()) {
-      delete this.members[member.name];
-    }
+  public removeMember(member: NewTeamMember): void {
+    this.members = this.members.filter(
+      (m) => m.name.toLocaleLowerCase().trim() !== member.name.toLocaleLowerCase().trim()
+    );
   }
 
-  public isCurrentUser(member: TeamMember): boolean {
+  public isCurrentUser(member: NewTeamMember): boolean {
     return member.name.toLocaleLowerCase().trim() === this.data.user.name.toLocaleLowerCase();
   }
 
-  public formatMemberName(member: TeamMember): string {
+  public formatMemberName(member: NewTeamMember): string {
     if (this.isCurrentUser(member)) {
       return `${member.name} (you)`;
     }
-
     return member.email ? member.email : member.name;
   }
 
   public shouldSendInvitations(): boolean {
-    return Object.values(this.members).filter((member: TeamMember) => !!member.email).length > 1;
+    return this.members.filter((member: NewTeamMember) => !!member.email && !this.isCurrentUser(member)).length > 0;
   }
 
   public save(): void {
     const result: DialogResult<NewTeamRequest> = {
-      payload: NewTeamRequestBuilder.from(this.form.get('name').value.trim(), this.data.user.name, this.members).build()
+      payload: NewTeamRequestBuilder.from(this.form.get('name').value.trim(), this.members).build()
     };
 
     this.dialogRef.close(result);

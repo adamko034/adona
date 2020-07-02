@@ -49,10 +49,10 @@ describe('User Facade', () => {
 
   describe('Load User', () => {
     it('should dispatch Load User Requested action', () => {
-      facade.loadUser(user.id);
+      facade.loadUser();
 
       expect(dispatchSpy).toHaveBeenCalledTimes(1);
-      expect(dispatchSpy).toHaveBeenCalledWith(userActions.loadUserRequested({ id: user.id }));
+      expect(dispatchSpy).toHaveBeenCalledWith(userActions.loadUserRequested());
     });
   });
 
@@ -60,8 +60,7 @@ describe('User Facade', () => {
     it('should dispatch Change Team Requested action', () => {
       const request: ChangeTeamRequest = {
         teamId: '123',
-        updated: new Date(),
-        user
+        userId: user.id
       };
 
       facade.changeTeam(request);

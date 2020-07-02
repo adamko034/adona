@@ -1,11 +1,11 @@
-import { UserTeam } from './user-team.model';
+import { UserTeam } from 'src/app/core/user/model/user-team/user-team.model';
 
 export interface User {
   id: string;
   email: string;
   name: string;
+  teams: UserTeam[];
   selectedTeamId?: string;
-  teams?: UserTeam[];
   photoUrl?: string;
   invitationId?: string;
 }

@@ -10,16 +10,14 @@ describe('AuthService', () => {
   };
 
   let authService: AuthService;
-  const fireAuthSpy: any = {
-    auth: jasmine.createSpyObj('auth', {
-      applyActionCode: Promise.resolve(),
-      signInWithEmailAndPassword: Promise.resolve({}),
-      signOut: Promise.resolve(),
-      createUserWithEmailAndPassword: Promise.resolve(firebaseUserCredential),
-      sendPasswordResetEmail: Promise.resolve(),
-      confirmPasswordReset: Promise.resolve()
-    })
-  };
+  const fireAuthSpy = jasmine.createSpyObj('auth', {
+    applyActionCode: Promise.resolve(),
+    signInWithEmailAndPassword: Promise.resolve({}),
+    signOut: Promise.resolve(),
+    createUserWithEmailAndPassword: Promise.resolve(firebaseUserCredential),
+    sendPasswordResetEmail: Promise.resolve(),
+    confirmPasswordReset: Promise.resolve()
+  });
   const { userUtilsService } = SpiesBuilder.init().withUserUtilsService().build();
 
   beforeEach(() => {
@@ -32,14 +30,14 @@ describe('AuthService', () => {
 
       authService.login(credentials);
 
-      expect(fireAuthSpy.auth.signInWithEmailAndPassword).toHaveBeenCalledWith(credentials.email, credentials.password);
+      expect(fireAuthSpy.signInWithEmailAndPassword).toHaveBeenCalledWith(credentials.email, credentials.password);
     });
   });
 
   describe('Logout', () => {
     it('should call fireauth service logout method', () => {
       authService.logout();
-      expect(fireAuthSpy.auth.signOut).toHaveBeenCalledTimes(1);
+      expect(fireAuthSpy.signOut).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -56,7 +54,7 @@ describe('AuthService', () => {
       authService.register(credentials).subscribe((resData) => {
         expect(resData).toEqual(firebaseUserCredential.user);
         JasmineCustomMatchers.toHaveBeenCalledTimesWith(
-          fireAuthSpy.auth.createUserWithEmailAndPassword,
+          fireAuthSpy.createUserWithEmailAndPassword,
           1,
           credentials.email,
           credentials.password
@@ -75,7 +73,7 @@ describe('AuthService', () => {
     it('should send firebase auth email', () => {
       authService.sendPasswordResetEmail('example@ex.com').subscribe();
 
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(fireAuthSpy.auth.sendPasswordResetEmail, 1, 'example@ex.com');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(fireAuthSpy.sendPasswordResetEmail, 1, 'example@ex.com');
     });
   });
 
@@ -83,7 +81,7 @@ describe('AuthService', () => {
     it('should call confirm password reset using firebase auth', () => {
       authService.confirmPasswordReset('123', 'newPassword');
 
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(fireAuthSpy.auth.confirmPasswordReset, 1, '123', 'newPassword');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(fireAuthSpy.confirmPasswordReset, 1, '123', 'newPassword');
     });
   });
 
@@ -91,7 +89,7 @@ describe('AuthService', () => {
     it('should call Apply Action Code from firebase auth', () => {
       authService.confirmEmail('123');
 
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(fireAuthSpy.auth.applyActionCode, 1, '123');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(fireAuthSpy.applyActionCode, 1, '123');
     });
   });
 });

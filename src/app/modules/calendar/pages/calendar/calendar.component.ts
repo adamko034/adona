@@ -3,20 +3,20 @@ import { CalendarEvent } from 'angular-calendar';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RouterFacade } from 'src/app/core/router/router.facade';
+import { User } from 'src/app/core/user/model/user/user.model';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { NewEventDialogData } from 'src/app/modules/calendar/components/dialogs/new-event-dialog/models/new-event-dialog-data.model';
+import { NewEventDialogComponent } from 'src/app/modules/calendar/components/dialogs/new-event-dialog/new-event-dialog.component';
 import { AdonaCalendarViewBuilder } from 'src/app/modules/calendar/model/adona-calendar-view/adona-calendar-view.builder';
 import { AdonaCalendarView } from 'src/app/modules/calendar/model/adona-calendar-view/adona-calendar-view.model';
 import { Event } from 'src/app/modules/calendar/model/event.model';
+import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
+import { DialogAction } from 'src/app/shared/enum/dialog-action.enum';
+import { DialogProperties } from 'src/app/shared/services/dialogs/dialog-properties.model';
+import { DialogResult } from 'src/app/shared/services/dialogs/dialog-result.model';
+import { DialogService } from 'src/app/shared/services/dialogs/dialog.service';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
 import { TimeService } from 'src/app/shared/services/time/time.service';
-import { User } from '../../../../core/user/model/user.model';
-import { DialogAction } from '../../../../shared/enum/dialog-action.enum';
-import { DialogProperties } from '../../../../shared/services/dialogs/dialog-properties.model';
-import { DialogResult } from '../../../../shared/services/dialogs/dialog-result.model';
-import { DialogService } from '../../../../shared/services/dialogs/dialog.service';
-import { NewEventDialogComponent } from '../../components/dialogs/new-event-dialog/new-event-dialog.component';
-import { CalendarFacade } from '../../store/calendar.facade';
 
 @Component({
   selector: 'app-calendar',

@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
 import { TeamFacade } from 'src/app/core/team/teams.facade';
-import { User } from 'src/app/core/user/model/user.model';
+import { User } from 'src/app/core/user/model/user/user.model';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { DialogResult } from 'src/app/shared/services/dialogs/dialog-result.model';
 import { DialogService } from 'src/app/shared/services/dialogs/dialog.service';
