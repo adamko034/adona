@@ -26,7 +26,7 @@ export class AuthGuard implements CanActivate {
         }
 
         if (!user) {
-          return this.facade.loadUser(firebaseUser.uid);
+          return this.facade.loadUser();
         }
       }),
       map(() => true),

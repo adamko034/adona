@@ -2,10 +2,10 @@ import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap, MetaReducer } from '@ngrx/store';
 import * as fromGui from 'src/app/core/gui/store/reducer/gui.reducer';
 import * as fromError from 'src/app/core/store/reducers/error/error.reducer';
+import * as fromTeam from 'src/app/core/team/store/reducers/team.reducer';
 import { environment } from '../../../../environments/environment';
 import * as fromApiRequests from '../reducers/api-requests/api-requests.reducer';
 import * as fromAuth from './auth/auth.reducer';
-import * as fromTeam from './team/team.reducer';
 
 export interface AppState {
   auth: fromAuth.AuthState;

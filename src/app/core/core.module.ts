@@ -7,6 +7,8 @@ import { StoreModule } from '@ngrx/store';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { InvitationEffects } from 'src/app/core/invitations/store/effects/invitation.effects';
 import { ErrorEffects } from 'src/app/core/store/effects/error.effects';
+import { TeamEffects } from 'src/app/core/team/store/effects/team/team.effects';
+import { TeamsEffects } from 'src/app/core/team/store/effects/teams/teams.effects';
 import { CustomSerializer } from 'src/app/utils/router-store/custom-serializer';
 import { SharedModule } from '../shared/shared.module';
 import { AuthFacade } from './auth/auth.facade';
@@ -15,7 +17,6 @@ import { AuthService } from './auth/services/auth.service';
 import { ErrorFacade } from './error/error.facade';
 import { CustomIconsService } from './services/angular-material/custom-icons/custom-icons.service';
 import { AuthEffects } from './store/effects/auth.effects';
-import { TeamEffects } from './store/effects/team.effects';
 import { UserEffects } from './store/effects/user.effects';
 import { metaReducers, reducers } from './store/reducers';
 @NgModule({
@@ -31,7 +32,7 @@ import { metaReducers, reducers } from './store/reducers';
       }
     }),
     HttpClientModule,
-    EffectsModule.forRoot([AuthEffects, ErrorEffects, TeamEffects, UserEffects, InvitationEffects]),
+    EffectsModule.forRoot([AuthEffects, ErrorEffects, TeamsEffects, TeamEffects, UserEffects, InvitationEffects]),
     DeviceDetectorModule.forRoot(),
     StoreRouterConnectingModule.forRoot({
       stateKey: 'router',

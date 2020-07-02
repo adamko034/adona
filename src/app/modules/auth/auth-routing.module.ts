@@ -36,7 +36,7 @@ const routes: Routes = [
     component: ChangePasswordComponent
   },
   {
-    path: 'authActions',
+    path: 'actions',
     component: AuthActionsComponent
   }
 ];

@@ -33,7 +33,6 @@ export class InvitationsService {
         map((invitation: any) => {
           Logger.logDev('invitation service, got invitation: ' + id);
           const { recipientEmail, senderEmail, teamId, teamName, created, status } = invitation;
-          console.log(id, recipientEmail, senderEmail, senderEmail, teamId, teamName, created);
 
           return InvitationBuilder.from(id, recipientEmail, senderEmail, teamId, teamName)
             .withCreated(this.timeService.Creation.fromFirebaseTimestamp(created))

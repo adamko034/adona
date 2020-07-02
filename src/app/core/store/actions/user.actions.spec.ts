@@ -1,21 +1,22 @@
+import { Error } from 'src/app/core/error/model/error.model';
+import { ErrorTestDataBuilder } from 'src/app/core/error/utils/test/error-test-data.builder';
 import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.builder';
 import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mode.enum';
 import { InvitationBuilder } from 'src/app/core/invitations/models/invitation/invitation.builder';
-import { UserTestBuilder } from '../../../utils/testUtils/builders/user-test-builder';
-import { Error } from '../../error/model/error.model';
-import { ErrorTestDataBuilder } from '../../error/utils/test/error-test-data.builder';
-import { ChangeTeamRequest } from '../../team/model/change-team-request.model';
-import { userActions, userActionTypes } from './user.actions';
+import { userActions, userActionTypes } from 'src/app/core/store/actions/user.actions';
+import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
+import { UserTeamBuilder } from 'src/app/core/user/model/user-team/user-team.builder';
+import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 
 describe('User Actions', () => {
-  const user = UserTestBuilder.withDefaultData().withDefaultUserTeam().build();
+  const user = UserTestBuilder.withDefaultData().withDefaultUserTeams(2).build();
 
   describe('Load User', () => {
     describe('Load User Requested', () => {
       it('should create action', () => {
-        const result = userActions.loadUserRequested({ id: '123' });
+        const result = userActions.loadUserRequested();
 
-        expect({ ...result }).toEqual({ type: userActionTypes.loadUserRequested, id: '123' });
+        expect({ ...result }).toEqual({ type: userActionTypes.loadUserRequested });
       });
     });
 
@@ -42,8 +43,7 @@ describe('User Actions', () => {
       it('should create action', () => {
         const request: ChangeTeamRequest = {
           teamId: '123',
-          updated: new Date(),
-          user
+          userId: user.id
         };
 
         const result = userActions.changeTeamRequested({ request });
@@ -54,17 +54,11 @@ describe('User Actions', () => {
 
     describe('Change Team Success', () => {
       it('should create action', () => {
-        const props = {
-          teamId: '123',
-          updated: new Date()
-        };
-
-        const result = userActions.changeTeamSuccess({ teamId: props.teamId, updated: props.updated });
+        const result = userActions.changeTeamSuccess({ teamId: '123' });
 
         expect({ ...result }).toEqual({
           type: userActionTypes.changeTeamSuccess,
-          teamId: props.teamId,
-          updated: props.updated
+          teamId: '123'
         });
       });
     });
@@ -82,15 +76,13 @@ describe('User Actions', () => {
 
   describe('Team Added', () => {
     it('should create action', () => {
-      const request = { id: '123', update: new Date(), name: 'new team' };
+      const userTeam = UserTeamBuilder.from('1', 'team 1').build();
 
-      const result = userActions.teamAdded({ id: request.id, name: request.name, updated: request.update });
+      const result = userActions.teamAdded({ team: userTeam });
 
       expect({ ...result }).toEqual({
         type: userActionTypes.teamAdded,
-        id: request.id,
-        name: request.name,
-        updated: request.update
+        team: userTeam
       });
     });
   });
@@ -129,9 +121,10 @@ describe('User Actions', () => {
     });
 
     it('should create Handle Invitation Success action', () => {
-      expect(userActions.handleInvitationSuccess({ userTeam: user.teams[0] })).toEqual({
+      expect(userActions.handleInvitationSuccess({ teamId: '123', teamName: 'team 123' })).toEqual({
         type: userActionTypes.handleInvitationSuccess,
-        userTeam: user.teams[0]
+        teamId: '123',
+        teamName: 'team 123'
       });
     });
 

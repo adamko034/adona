@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { AuthFacade } from 'src/app/core/auth/auth.facade';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
-import { User } from 'src/app/core/user/model/user.model';
+import { User } from 'src/app/core/user/model/user/user.model';
 
 @Component({
   selector: 'app-header',

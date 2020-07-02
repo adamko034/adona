@@ -1,6 +1,6 @@
 import { CalendarEvent } from 'calendar-utils';
 import * as moment from 'moment';
-import { User } from 'src/app/core/user/model/user.model';
+import { User } from 'src/app/core/user/model/user/user.model';
 import { Event } from 'src/app/modules/calendar/model/event.model';
 
 export class EventsTestDataBuilder {

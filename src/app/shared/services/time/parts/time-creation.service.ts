@@ -6,6 +6,10 @@ export class TimeCreationService {
   }
 
   public fromFirebaseTimestamp(timestamp: firestore.Timestamp): Date {
-    return new Date(timestamp.seconds * 1000);
+    if (timestamp.seconds) {
+      return new Date(timestamp.seconds * 1000);
+    }
+
+    return new Date((timestamp as any)._seconds * 1000);
   }
 }

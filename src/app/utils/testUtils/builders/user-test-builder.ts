@@ -1,14 +1,20 @@
-import { UserTeamBuilder } from 'src/app/core/user/model/builders/user-team.builder';
-import { UserBuilder } from 'src/app/core/user/model/builders/user.builder';
-import { User } from 'src/app/core/user/model/user.model';
-import { UserTeam } from '../../../core/user/model/user-team.model';
-import { DateTestBuilder } from './date-test.builder';
+import { UserTeamBuilder } from 'src/app/core/user/model/user-team/user-team.builder';
+import { UserTeam } from 'src/app/core/user/model/user-team/user-team.model';
+import { UserBuilder } from 'src/app/core/user/model/user/user.builder';
+import { User } from 'src/app/core/user/model/user/user.model';
 
 export class UserTestBuilder {
   private user: User;
 
   private constructor(id: string, name: string) {
-    this.user = { id, name, email: 'test-user@example.com', photoUrl: UserBuilder.defaultPhotoUrl };
+    this.user = {
+      id,
+      name,
+      email: 'test-user@example.com',
+      photoUrl: UserBuilder.defaultPhotoUrl,
+      selectedTeamId: '123',
+      teams: [UserTeamBuilder.from('123', 'test team').build()]
+    };
   }
 
   public static with(id: string, name: string): UserTestBuilder {
@@ -19,29 +25,11 @@ export class UserTestBuilder {
     return new UserTestBuilder('1', 'test-user');
   }
 
-  public withDefaultUserTeam(): UserTestBuilder {
-    if (!this.user.teams) {
-      this.user.teams = [];
-    }
-
-    this.user.teams.push(UserTeamBuilder.from('123', 'test team', new Date()).build());
-
-    return this;
-  }
-
   public withDefaultUserTeams(count: number): UserTestBuilder {
-    if (!this.user.teams) {
-      this.user.teams = [];
-    }
+    this.user.teams = [];
 
     for (let i = 1; i <= count; i++) {
-      const userTeam = UserTeamBuilder.from(
-        `123${i}`,
-        `test team loop ${i}`,
-        DateTestBuilder.now()
-          .addDays(i * -1)
-          .build()
-      ).build();
+      const userTeam = UserTeamBuilder.from(`123${i}`, `test team loop ${i}`).build();
       this.user.teams.push(userTeam);
     }
 
@@ -49,14 +37,7 @@ export class UserTestBuilder {
   }
 
   public withUserTeam(userTeam: UserTeam): UserTestBuilder {
-    if (!this.user.teams) {
-      this.user.teams = [];
-    }
-
-    if (!!userTeam) {
-      this.user.teams.push(userTeam);
-    }
-
+    this.user.teams.push(userTeam);
     return this;
   }
 
@@ -71,9 +52,7 @@ export class UserTestBuilder {
   }
 
   public withUserTeams(userTeams: UserTeam[]): UserTestBuilder {
-    if (!this.user.teams) {
-      this.user.teams = [];
-    }
+    this.user.teams = [];
 
     if (!!userTeams) {
       userTeams.forEach((team) => this.user.teams.push(team));

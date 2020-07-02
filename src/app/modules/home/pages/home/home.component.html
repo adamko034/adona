@@ -4,8 +4,8 @@
 <div *ngIf="team">
   <span>members:</span>
   <ul>
-    <li *ngFor="let member of team.members | keyvalue">
-      {{ member.key }}
+    <li *ngFor="let member of team.members">
+      {{ member.name }}
     </li>
   </ul>
 </div>

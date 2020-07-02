@@ -1,9 +1,8 @@
-import { User } from 'src/app/core/user/model/user.model';
+import { authActions } from 'src/app/core/store/actions/auth.actions';
+import { userActions } from 'src/app/core/store/actions/user.actions';
+import { UserTeamBuilder } from 'src/app/core/user/model/user-team/user-team.builder';
+import { User } from 'src/app/core/user/model/user/user.model';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
-import { DateTestBuilder } from '../../../../utils/testUtils/builders/date-test.builder';
-import { UserTeamBuilder } from '../../../user/model/builders/user-team.builder';
-import { authActions } from '../../actions/auth.actions';
-import { userActions } from '../../actions/user.actions';
 import * as fromReducer from './auth.reducer';
 
 describe('Auth Reducer', () => {
@@ -90,47 +89,16 @@ describe('Auth Reducer', () => {
     });
   });
 
-  describe('On Change Team Success', () => {
-    it('should change user Selected Team Id and change selected team last updated', () => {
-      const yesterday = DateTestBuilder.now().addDays(-1).build();
-      const userTeam = UserTeamBuilder.from('321', 'test team 1', new Date()).build();
-      const userTeamToChange = UserTeamBuilder.from('123', 'test team', yesterday).build();
-      const now = new Date();
-      const userToChange = UserTestBuilder.withDefaultData()
-        .withSelectedTeamId('321')
-        .withUserTeam(userTeam)
-        .withUserTeam(userTeamToChange)
-        .build();
-      const userTeamExpected = UserTeamBuilder.from(userTeamToChange.id, userTeamToChange.name, now).build();
-
-      const result = reducer(
-        { user: userToChange, loginFailed: false },
-        userActions.changeTeamSuccess({ teamId: userTeamToChange.id, updated: now })
-      );
-
-      expect({ ...result }).toEqual({
-        loginFailed: false,
-        user: {
-          ...userToChange,
-          selectedTeamId: '123',
-          teams: [userTeam, userTeamExpected]
-        }
-      });
-    });
-  });
-
   describe('On Team Added', () => {
     it('should add team to user when user does not have team assigned', () => {
-      const newTeam = UserTeamBuilder.from('123', 'test team', new Date()).build();
-      const result = reducer(
-        { user, loginFailed: false },
-        userActions.teamAdded({ id: newTeam.id, name: newTeam.name, updated: newTeam.updated })
-      );
+      const newTeam = UserTeamBuilder.from('123', 'test team').build();
+      const userWithoutTeams = { ...user, teams: [] };
+      const result = reducer({ user: userWithoutTeams, loginFailed: false }, userActions.teamAdded({ team: newTeam }));
 
       expect({ ...result }).toEqual({
         loginFailed: false,
         user: {
-          ...user,
+          ...userWithoutTeams,
           teams: [newTeam]
         }
       });
@@ -138,14 +106,11 @@ describe('Auth Reducer', () => {
 
     it('should add team to user when user has teams', () => {
       const userToChange = UserTestBuilder.withDefaultData()
-        .withUserTeam(UserTeamBuilder.from('321', 'team', new Date()).build())
+        .withUserTeam(UserTeamBuilder.from('321', 'team').build())
         .build();
 
-      const newTeam = UserTeamBuilder.from('123', 'test team', new Date()).build();
-      const result = reducer(
-        { user: userToChange, loginFailed: false },
-        userActions.teamAdded({ id: newTeam.id, name: newTeam.name, updated: newTeam.updated })
-      );
+      const newTeam = UserTeamBuilder.from('123', 'test team').build();
+      const result = reducer({ user: userToChange, loginFailed: false }, userActions.teamAdded({ team: newTeam }));
 
       expect({ ...result }).toEqual({
         loginFailed: false,
@@ -172,22 +137,17 @@ describe('Auth Reducer', () => {
 
   describe('On Handle Invitation Success', () => {
     it('should add User Team and unset Invitation Id', () => {
-      const userTeam = UserTeamBuilder.from('100', 'team 100', new Date()).build();
-      const action = userActions.handleInvitationSuccess({ userTeam });
+      const action = userActions.handleInvitationSuccess({ teamId: '1', teamName: 'team 1' });
       const currentState: fromReducer.AuthState = {
         loginFailed: false,
-        user: UserTestBuilder.withDefaultData().withDefaultUserTeam().withInvitationId('123').build()
+        user: UserTestBuilder.withDefaultData().withInvitationId('123').build()
       };
 
       const result = reducer(currentState, action);
 
       const expected: fromReducer.AuthState = {
         loginFailed: false,
-        user: UserTestBuilder.withDefaultData()
-          .withDefaultUserTeam()
-          .withUserTeam(userTeam)
-          .withInvitationId(null)
-          .build()
+        user: UserTestBuilder.withDefaultData().withInvitationId(null).build()
       };
 
       expect(result).toEqual(expected);

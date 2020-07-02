@@ -14,6 +14,7 @@ const toastr = {
 };
 
 const team = {
+  personalTeamName: 'Personal',
   created: 'Team <strong><i>{1}</i></strong> has been created!',
   invitation: {
     sent: 'Invitations were sent!',
