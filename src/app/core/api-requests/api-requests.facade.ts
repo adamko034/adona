@@ -13,6 +13,10 @@ export class ApiRequestsFacade {
     this.store.dispatch(apiRequestActions.requestStart({ id }));
   }
 
+  public successRequest(id: string): void {
+    this.store.dispatch(apiRequestActions.requestSuccess({ id }));
+  }
+
   public selectApiRequest(id: string): Observable<ApiRequestStatus> {
     return this.store.pipe(select(apiRequestQueries.selectApiRequest, { id }));
   }

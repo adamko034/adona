@@ -3,5 +3,6 @@ export const apiRequestIds = {
   confirmEmailVerification: 'confirmEmailVerification',
   sendEmailVerificationLink: 'sendEmailVerificationLink',
   sendPasswordResetLink: 'sendPasswordResetLink',
-  confirmPasswordResetLink: 'confirmPasswordResetLink'
+  confirmPasswordResetLink: 'confirmPasswordResetLink',
+  settingsLoadTeams: 'settingsLoadTeams'
 };

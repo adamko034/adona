@@ -1,0 +1,18 @@
+<app-loader [visible]="data.requestStatus?.started" [mode]="'spinner'"></app-loader>
+
+<div class="settings-teams-container" *ngIf="data.requestStatus?.succeded" fxLayout="column" fxLayoutGap="20px">
+  <div
+    class="team"
+    *ngFor="let team of data.teams"
+    fxLayout="row"
+    fxLayoutAlign="start center"
+    [routerLink]="['./', team.id]"
+  >
+    <div fxFlex.gt-xs="30" fxFlex.xs="50" class="title">{{ team.name }}</div>
+    <div fxFlexAlign="stretch" class="splitter"></div>
+    <div class="subtitle" fxLayout="column">
+      <div>by: {{ team.createdBy }}</div>
+      <div fxFlexAlign="stretch">on: {{ team.created | dateFormat: data.dateFormat }}</div>
+    </div>
+  </div>
+</div>

@@ -14,7 +14,7 @@ export class TeamFactory {
     return TeamDtoBuilder.from(resources.team.personalTeamName, new Date(), userId).build();
   }
 
-  public fromFirebase(firebaseTeam: any): Team {
+  public singleFromFirebase(firebaseTeam: any): Team {
     return TeamBuilder.from(
       firebaseTeam.id,
       this.timeService.Creation.fromFirebaseTimestamp(firebaseTeam.created),
@@ -22,5 +22,9 @@ export class TeamFactory {
       firebaseTeam.name,
       firebaseTeam.members
     ).build();
+  }
+
+  public listFromFirebase(teams: any): Team[] {
+    return teams.map((t: any) => this.singleFromFirebase(t));
   }
 }
