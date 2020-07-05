@@ -28,6 +28,8 @@ import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { ExpensesService } from 'src/app/modules/expenses/services/expenses.service';
 import { ExpensesFacade } from 'src/app/modules/expenses/store/expenses.facade';
 import { SettingsToolbarFactory } from 'src/app/modules/settings/models/settings-toolbar/settings-toolbar-factory.service';
+import { TeamsFirebaseService } from 'src/app/modules/settings/services/teams-firebase/teams-firebase.service';
+import { SettingsFacade } from 'src/app/modules/settings/store/settings.facade';
 import { ResourceService } from 'src/app/shared/resources/services/resource.service';
 import { DialogService } from 'src/app/shared/services/dialogs/dialog.service';
 import { SharedDialogsService } from 'src/app/shared/services/dialogs/shared-dialogs.service';
@@ -78,6 +80,8 @@ export interface Spies {
   teamFactory?: jasmine.SpyObj<TeamFactory>;
   userFactory?: jasmine.SpyObj<UserFactory>;
   angularFireFunctions?: jasmine.SpyObj<AngularFireFunctions>;
+  settingsFacade?: jasmine.SpyObj<SettingsFacade>;
+  teamsFirebaseService?: jasmine.SpyObj<TeamsFirebaseService>;
 }
 
 export class SpiesBuilder {
@@ -358,7 +362,8 @@ export class SpiesBuilder {
   public withApiRequestsFacade(): SpiesBuilder {
     this.spies.apiRequestsFacade = jasmine.createSpyObj<ApiRequestsFacade>('apiRequestsFacade', [
       'startRequest',
-      'selectApiRequest'
+      'selectApiRequest',
+      'successRequest'
     ]);
 
     return this;
@@ -412,7 +417,11 @@ export class SpiesBuilder {
   }
 
   public withTeamFactory(): SpiesBuilder {
-    this.spies.teamFactory = jasmine.createSpyObj<TeamFactory>('teamFactory', ['personalTeamDto', 'fromFirebase']);
+    this.spies.teamFactory = jasmine.createSpyObj<TeamFactory>('teamFactory', [
+      'personalTeamDto',
+      'singleFromFirebase',
+      'listFromFirebase'
+    ]);
     return this;
   }
 
@@ -428,6 +437,16 @@ export class SpiesBuilder {
     this.spies.angularFireFunctions = jasmine.createSpyObj<AngularFireFunctions>('angularFireFunctions', [
       'httpsCallable'
     ]);
+    return this;
+  }
+
+  public withSettingsFacade(): SpiesBuilder {
+    this.spies.settingsFacade = jasmine.createSpyObj<SettingsFacade>('settingsFacade', ['loadTeams', 'selectTeams']);
+    return this;
+  }
+
+  public withTeamsFirebaseService(): SpiesBuilder {
+    this.spies.teamsFirebaseService = jasmine.createSpyObj<TeamsFirebaseService>('teamsFirebaseService', ['getAll']);
     return this;
   }
 

@@ -104,7 +104,7 @@ describe('Team Service', () => {
     it('should call angular fire function', (done) => {
       const callable = (data: any) => of({ i: 'test' });
       angularFireFunctions.httpsCallable.and.returnValue(callable);
-      teamFactory.fromFirebase.and.returnValue(expectedTeam);
+      teamFactory.singleFromFirebase.and.returnValue(expectedTeam);
 
       service.loadTeam('1').subscribe((team) => {
         expect(team).toEqual(expectedTeam);
@@ -113,7 +113,7 @@ describe('Team Service', () => {
           1,
           firebaseConstants.functions.team.get
         );
-        JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamFactory.fromFirebase, 1, { i: 'test' });
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamFactory.singleFromFirebase, 1, { i: 'test' });
         done();
       });
     });

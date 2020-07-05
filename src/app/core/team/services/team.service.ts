@@ -51,6 +51,6 @@ export class TeamService {
 
   public loadTeam(id: string): Observable<Team> {
     const callable = this.functions.httpsCallable(firebaseConstants.functions.team.get);
-    return callable({ id }).pipe(map((team) => this.teamFactory.fromFirebase(team)));
+    return callable({ id }).pipe(map((team) => this.teamFactory.singleFromFirebase(team)));
   }
 }

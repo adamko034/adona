@@ -21,6 +21,8 @@ describe('Team Factory', () => {
 
   beforeEach(() => {
     factory = new TeamFactory(timeService);
+
+    timeService.Creation.fromFirebaseTimestamp.calls.reset();
   });
 
   describe('Personal Team DTO', () => {
@@ -42,7 +44,7 @@ describe('Team Factory', () => {
         members
       };
 
-      expect(factory.fromFirebase(firebaseTeam)).toEqual({
+      expect(factory.singleFromFirebase(firebaseTeam)).toEqual({
         id: firebaseTeam.id,
         created: mockDate,
         createdBy: firebaseTeam.createdBy,
@@ -51,6 +53,44 @@ describe('Team Factory', () => {
       });
 
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(timeService.Creation.fromFirebaseTimestamp, 1, { seconds: '1' });
+    });
+  });
+
+  describe('List From Firebase', () => {
+    it('should create list of teams', () => {
+      timeService.Creation.fromFirebaseTimestamp.and.returnValue(mockDate);
+      const members = [{ name: 'testuser', photoUrl: 'testUrl' }];
+      const firebaseTeams = [
+        {
+          id: '1',
+          createdBy: 'testUser',
+          name: 'test team',
+          created: { seconds: '1' },
+          members
+        },
+        { id: '2', createdBy: 'testUser', name: 'test team 2', created: { seconds: '1' }, members }
+      ];
+
+      expect(factory.listFromFirebase(firebaseTeams)).toEqual([
+        {
+          id: firebaseTeams[0].id,
+          created: mockDate,
+          createdBy: firebaseTeams[0].createdBy,
+          name: firebaseTeams[0].name,
+          members
+        },
+        {
+          id: firebaseTeams[1].id,
+          created: mockDate,
+          createdBy: firebaseTeams[1].createdBy,
+          name: firebaseTeams[1].name,
+          members
+        }
+      ]);
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(timeService.Creation.fromFirebaseTimestamp, 2, {
+        seconds: '1'
+      });
     });
   });
 });

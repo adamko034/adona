@@ -1,11 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SettingsAccountComponent } from 'src/app/modules/settings/components/settings-account/settings-account.component';
-import { SettingsTeamsComponent } from 'src/app/modules/settings/components/settings-teams/settings-teams.component';
+import { SettingsTeamComponent } from 'src/app/modules/settings/components/teams/settings-team/settings-team.component';
+import { SettingsTeamsComponent } from 'src/app/modules/settings/components/teams/settings-teams/settings-teams.component';
 import { SettingsPages } from 'src/app/modules/settings/enums/settings-types.enum';
 import { SettingsListComponent } from 'src/app/modules/settings/pages/settings-list/settings-list.component';
 import { SettingsComponent } from 'src/app/modules/settings/pages/settings/settings.component';
 import { SettingToollbarDataResolver } from 'src/app/modules/settings/resolvers/settings-toolbar-data/settings-toolbar-data.resolver';
+import { LoadSettingsTeamsResolver } from 'src/app/modules/settings/resolvers/teams/load-settings-teams.resolver';
 
 const routes: Routes = [
   {
@@ -29,8 +31,13 @@ const routes: Routes = [
       {
         path: 'teams',
         component: SettingsTeamsComponent,
+        canActivate: [LoadSettingsTeamsResolver],
         resolve: { toolbar: SettingToollbarDataResolver },
         data: { type: SettingsPages.Teams }
+      },
+      {
+        path: 'teams/:id',
+        component: SettingsTeamComponent
       }
     ]
   }

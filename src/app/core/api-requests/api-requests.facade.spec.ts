@@ -36,4 +36,12 @@ describe('Api Requests Facade', () => {
       expect(facade.selectApiRequest('1')).toBeObservable(cold('a', { a: ApiRequestStatusBuilder.start('1') }));
     });
   });
+
+  describe('Success Request', () => {
+    it('should dispatch Request Success action', () => {
+      const dispatchSpy = spyOn(mockStore, 'dispatch');
+      facade.successRequest('req');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, apiRequestActions.requestSuccess({ id: 'req' }));
+    });
+  });
 });

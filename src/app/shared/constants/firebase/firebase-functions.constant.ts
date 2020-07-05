@@ -1,5 +1,6 @@
 const team = {
-  get: 'teams-get'
+  get: 'teams-get',
+  getAll: 'teams-getAll'
 };
 
 const user = {

@@ -5,5 +5,5 @@ export interface Team {
   created: Date;
   createdBy: string;
   name: string;
-  members: TeamMember[];
+  members?: TeamMember[];
 }
