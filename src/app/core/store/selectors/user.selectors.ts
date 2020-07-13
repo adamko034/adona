@@ -3,9 +3,11 @@ import { AuthState } from 'src/app/core/store/reducers/auth/auth.reducer';
 
 const selectAuth = createFeatureSelector<AuthState>('auth');
 const selectUser = createSelector(selectAuth, (authState: AuthState) => authState.user);
-const selectUserId = createSelector(selectUser, user => user.id);
+const selectUserId = createSelector(selectUser, (user) => user.id);
+const selectSelectedTeamId = createSelector(selectUser, (user) => user.selectedTeamId);
 
 export const userQueries = {
-  selectUser,
-  selectUserId
+  user: selectUser,
+  userId: selectUserId,
+  selectedTeamId: selectSelectedTeamId
 };

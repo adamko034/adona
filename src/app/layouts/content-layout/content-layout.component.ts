@@ -4,7 +4,7 @@ import { combineLatest, Observable, Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { SideNavbarOptions } from 'src/app/core/gui/model/side-navbar-options/side-navbar-options.model';
 import { Team } from 'src/app/core/team/model/team/team.model';
-import { TeamFacade } from 'src/app/core/team/teams.facade';
+import { TeamsFacade } from 'src/app/core/team/teams.facade';
 import { User } from 'src/app/core/user/model/user/user.model';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
@@ -33,7 +33,7 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
   public data$: Observable<ContentLayoutComponentData>;
 
   constructor(
-    private teamFacade: TeamFacade,
+    private teamFacade: TeamsFacade,
     private routerFacade: RouterFacade,
     private userFacade: UserFacade,
     private guiFacade: GuiFacade,
@@ -45,7 +45,7 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.data$ = combineLatest([
       this.guiFacade.selectLoading(),
-      this.teamFacade.selectTeam(),
+      this.teamFacade.selectSelectedTeam(),
       this.routerFacade.selectCurrentRute(),
       this.userFacade.selectUser(),
       this.guiFacade.selectSideNavbarOptions()

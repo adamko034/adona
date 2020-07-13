@@ -1,0 +1,23 @@
+@import 'form';
+
+.team-name-content {
+  margin-top: 10px;
+
+  .team-name-info {
+    &-title {
+      height: 78px;
+      font-size: 23px;
+      padding-top: 16px;
+    }
+
+    &-subtitle {
+      font-size: small;
+      font-weight: 450;
+      color: rgba($color: #000000, $alpha: 0.6);
+    }
+
+    .team-name-input {
+      font-size: 23px;
+    }
+  }
+}

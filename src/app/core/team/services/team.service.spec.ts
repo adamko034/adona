@@ -1,7 +1,7 @@
 import { fakeAsync, flush } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { NewTeamMemberBuilder } from 'src/app/core/team/model/new-team-request/new-team-member.builder';
-import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
+import { NewTeamMemberBuilder } from 'src/app/core/team/model/requests/new-team/new-team-member.builder';
+import { NewTeamRequest } from 'src/app/core/team/model/requests/new-team/new-team-request.model';
 import { TeamMemberBuilder } from 'src/app/core/team/model/team-member/team-member.builder';
 import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { Team } from 'src/app/core/team/model/team/team.model';
@@ -23,6 +23,9 @@ describe('Team Service', () => {
 
   beforeEach(() => {
     service = new TeamService(angularFirestore, angularFireFunctions, teamFactory);
+
+    angularFireFunctions.httpsCallable.calls.reset();
+    teamFactory.listFromFirebase.calls.reset();
   });
 
   describe('Add Team', () => {
@@ -91,7 +94,7 @@ describe('Team Service', () => {
     }));
   });
 
-  describe('Load Team', () => {
+  describe('Get Team', () => {
     let expectedTeam: Team;
     beforeEach(fakeAsync(() => {
       const members = [
@@ -106,7 +109,7 @@ describe('Team Service', () => {
       angularFireFunctions.httpsCallable.and.returnValue(callable);
       teamFactory.singleFromFirebase.and.returnValue(expectedTeam);
 
-      service.loadTeam('1').subscribe((team) => {
+      service.getTeam('1').subscribe((team) => {
         expect(team).toEqual(expectedTeam);
         JasmineCustomMatchers.toHaveBeenCalledTimesWith(
           angularFireFunctions.httpsCallable,
@@ -114,6 +117,43 @@ describe('Team Service', () => {
           firebaseConstants.functions.team.get
         );
         JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamFactory.singleFromFirebase, 1, { i: 'test' });
+        done();
+      });
+    });
+  });
+
+  describe('Get All', () => {
+    it('should call function and return array of teams', (done) => {
+      const teams = [
+        TeamBuilder.from('1', new Date(), 'test user', 'test team', [{ name: 'test user', photoUrl: 'url' }]).build()
+      ];
+      const callable = () => of(teams);
+      angularFireFunctions.httpsCallable.and.returnValue(callable);
+      teamFactory.listFromFirebase.and.returnValue(teams);
+
+      service.getAll().subscribe((actual) => {
+        expect(actual).toEqual(teams);
+        expect(teamFactory.listFromFirebase).toHaveBeenCalledTimes(1);
+        done();
+      });
+    });
+  });
+
+  describe('Update Name', () => {
+    it('should update firebase', (done) => {
+      angularFirestore.collection().doc().update.and.returnValue(of(undefined));
+
+      angularFirestore.collection().doc().update.calls.reset();
+      angularFirestore.collection().doc.calls.reset();
+      angularFirestore.collection.calls.reset();
+
+      service.updateName('1', 'new name').subscribe(() => {
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection, 1, 'teams');
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc, 1, '1');
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc().update, 1, {
+          name: 'new name'
+        });
+
         done();
       });
     });

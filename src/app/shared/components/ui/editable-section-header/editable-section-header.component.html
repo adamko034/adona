@@ -1,0 +1,6 @@
+<div class="editable-section-header" fxLayoutAlign="space-between">
+  <div class="editable-section-header-title">{{ title }}</div>
+  <div class="editable-section-header-action" (click)="onToggleMode()" *ngIf="showEditMode">
+    <mat-icon class="editable-section-header-action-icon">{{ icon }}</mat-icon>
+  </div>
+</div>

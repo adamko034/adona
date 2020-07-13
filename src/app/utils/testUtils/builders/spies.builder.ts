@@ -16,7 +16,7 @@ import { RouterFacade } from 'src/app/core/router/router.facade';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { TeamFactory } from 'src/app/core/team/services/factory/team.factory';
 import { TeamService } from 'src/app/core/team/services/team.service';
-import { TeamFacade } from 'src/app/core/team/teams.facade';
+import { TeamsFacade } from 'src/app/core/team/teams.facade';
 import { UserFactory } from 'src/app/core/user/factories/user/user.factory';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { UserService } from 'src/app/core/user/services/user.service';
@@ -28,8 +28,6 @@ import { CalendarFacade } from 'src/app/modules/calendar/store/calendar.facade';
 import { ExpensesService } from 'src/app/modules/expenses/services/expenses.service';
 import { ExpensesFacade } from 'src/app/modules/expenses/store/expenses.facade';
 import { SettingsToolbarFactory } from 'src/app/modules/settings/models/settings-toolbar/settings-toolbar-factory.service';
-import { TeamsFirebaseService } from 'src/app/modules/settings/services/teams-firebase/teams-firebase.service';
-import { SettingsFacade } from 'src/app/modules/settings/store/settings.facade';
 import { ResourceService } from 'src/app/shared/resources/services/resource.service';
 import { DialogService } from 'src/app/shared/services/dialogs/dialog.service';
 import { SharedDialogsService } from 'src/app/shared/services/dialogs/shared-dialogs.service';
@@ -53,7 +51,7 @@ export interface Spies {
   authService?: jasmine.SpyObj<AuthService>;
   userFacade?: jasmine.SpyObj<UserFacade>;
   userService?: jasmine.SpyObj<UserService>;
-  teamFacade?: jasmine.SpyObj<TeamFacade>;
+  teamFacade?: jasmine.SpyObj<TeamsFacade>;
   teamService?: jasmine.SpyObj<TeamService>;
   errorEffectService?: jasmine.SpyObj<ErrorEffectService>;
   angularFirestore?: jasmine.SpyObj<any>;
@@ -80,8 +78,6 @@ export interface Spies {
   teamFactory?: jasmine.SpyObj<TeamFactory>;
   userFactory?: jasmine.SpyObj<UserFactory>;
   angularFireFunctions?: jasmine.SpyObj<AngularFireFunctions>;
-  settingsFacade?: jasmine.SpyObj<SettingsFacade>;
-  teamsFirebaseService?: jasmine.SpyObj<TeamsFirebaseService>;
 }
 
 export class SpiesBuilder {
@@ -172,13 +168,26 @@ export class SpiesBuilder {
   }
 
   public withTeamFacade(): SpiesBuilder {
-    this.spies.teamFacade = jasmine.createSpyObj<TeamFacade>('teamFacade', ['loadTeam', 'addTeam', 'selectTeam']);
+    this.spies.teamFacade = jasmine.createSpyObj<TeamsFacade>('teamFacade', [
+      'loadTeams',
+      'selectTeams',
+      'changeTeamName',
+      'loadTeam',
+      'addTeam',
+      'selectTeam',
+      'selectSelectedTeam'
+    ]);
 
     return this;
   }
 
   public withTeamService(): SpiesBuilder {
-    this.spies.teamService = jasmine.createSpyObj<TeamService>('teamService', ['addTeam', 'loadTeam']);
+    this.spies.teamService = jasmine.createSpyObj<TeamService>('teamService', [
+      'addTeam',
+      'getTeam',
+      'getAll',
+      'updateName'
+    ]);
 
     return this;
   }
@@ -317,7 +326,8 @@ export class SpiesBuilder {
       'selectAdonaRoutes',
       'selectSettingsRoutes',
       'selectRouteQueryParams',
-      'selectRouteData'
+      'selectRouteData',
+      'selectRouteParams'
     ]);
 
     return this;
@@ -437,16 +447,6 @@ export class SpiesBuilder {
     this.spies.angularFireFunctions = jasmine.createSpyObj<AngularFireFunctions>('angularFireFunctions', [
       'httpsCallable'
     ]);
-    return this;
-  }
-
-  public withSettingsFacade(): SpiesBuilder {
-    this.spies.settingsFacade = jasmine.createSpyObj<SettingsFacade>('settingsFacade', ['loadTeams', 'selectTeams']);
-    return this;
-  }
-
-  public withTeamsFirebaseService(): SpiesBuilder {
-    this.spies.teamsFirebaseService = jasmine.createSpyObj<TeamsFirebaseService>('teamsFirebaseService', ['getAll']);
     return this;
   }
 

@@ -1,0 +1,12 @@
+.team-member {
+  height: 70px;
+
+  &:first-of-type {
+    margin-top: 10px;
+  }
+
+  &-image {
+    height: 45px;
+    border-radius: 50%;
+  }
+}

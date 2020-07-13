@@ -2,7 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { Error } from 'src/app/core/error/model/error.model';
 import { ToastrData } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.model';
 import { Invitation } from 'src/app/core/invitations/models/invitation/invitation.model';
-import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
+import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { UserTeam } from 'src/app/core/user/model/user-team/user-team.model';
 import { User } from 'src/app/core/user/model/user/user.model';
 

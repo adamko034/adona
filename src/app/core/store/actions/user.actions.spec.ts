@@ -4,7 +4,7 @@ import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toa
 import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mode.enum';
 import { InvitationBuilder } from 'src/app/core/invitations/models/invitation/invitation.builder';
 import { userActions, userActionTypes } from 'src/app/core/store/actions/user.actions';
-import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
+import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { UserTeamBuilder } from 'src/app/core/user/model/user-team/user-team.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 

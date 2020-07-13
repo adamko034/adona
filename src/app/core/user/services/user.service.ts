@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { InvitationStatus } from 'src/app/core/invitations/models/invitation-status.enum';
 import { Invitation } from 'src/app/core/invitations/models/invitation/invitation.model';
 import { storeConstants } from 'src/app/core/store/constants/store.constants';
-import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
+import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { TeamFactory } from 'src/app/core/team/services/factory/team.factory';
 import { UserFactory } from 'src/app/core/user/factories/user/user.factory';
 import { User } from 'src/app/core/user/model/user/user.model';

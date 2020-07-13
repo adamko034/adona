@@ -4,7 +4,7 @@ import { cold } from 'jasmine-marbles';
 import { userActions, userActionTypes } from 'src/app/core/store/actions/user.actions';
 import { AuthState } from 'src/app/core/store/reducers/auth/auth.reducer';
 import { userQueries } from 'src/app/core/store/selectors/user.selectors';
-import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
+import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
@@ -29,7 +29,7 @@ describe('User Facade', () => {
 
   describe('Select User', () => {
     it('should return user', () => {
-      store.overrideSelector(userQueries.selectUser, user);
+      store.overrideSelector(userQueries.user, user);
 
       const result = facade.selectUser();
 
@@ -39,7 +39,7 @@ describe('User Facade', () => {
 
   describe('Select User Id', () => {
     it('should return user id', () => {
-      store.overrideSelector(userQueries.selectUserId, user.id);
+      store.overrideSelector(userQueries.userId, user.id);
 
       const result = facade.selectUserId();
 

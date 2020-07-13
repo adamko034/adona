@@ -4,5 +4,7 @@ export const apiRequestIds = {
   sendEmailVerificationLink: 'sendEmailVerificationLink',
   sendPasswordResetLink: 'sendPasswordResetLink',
   confirmPasswordResetLink: 'confirmPasswordResetLink',
-  settingsLoadTeams: 'settingsLoadTeams'
+  loadTeams: 'loadTeams',
+  loadTeam: 'loadTeam',
+  updateTeamName: 'updateTeamName'
 };

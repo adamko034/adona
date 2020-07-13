@@ -1,0 +1,27 @@
+<mat-card>
+  <app-editable-section-header [title]="'Members'" (toggleMode)="onToggleMode($event)"></app-editable-section-header>
+  <mat-divider></mat-divider>
+  <div class="team-members-content" fxLayout="column" fxLayoutAlign="start stretch">
+    <div *ngFor="let member of members" class="team-member" fxLayoutAlign="space-between center">
+      <div fxLayoutAlign="start center" fxLayoutGap="15px" fxLayoutGap.gt-xs="30px">
+        <div>
+          <img class="team-member-image" [src]="member.photoUrl" />
+        </div>
+        <div>
+          {{ member.name }}
+        </div>
+      </div>
+
+      <div *ngIf="editMode && member.id !== (userId$ | async)">
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item>
+            <span>Remove</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+</mat-card>

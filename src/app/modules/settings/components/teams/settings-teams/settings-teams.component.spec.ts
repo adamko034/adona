@@ -9,19 +9,19 @@ describe('Settings Teams Component', () => {
   let component: SettingsTeamsComponent;
 
   const {
-    settingsFacade,
+    teamFacade,
     unsubscriberService,
     apiRequestsFacade
-  } = SpiesBuilder.init().withSettingsFacade().withUnsubscriberService().withApiRequestsFacade().build();
+  } = SpiesBuilder.init().withTeamFacade().withUnsubscriberService().withApiRequestsFacade().build();
 
   beforeEach(() => {
-    component = new SettingsTeamsComponent(settingsFacade, unsubscriberService, apiRequestsFacade);
+    component = new SettingsTeamsComponent(teamFacade, unsubscriberService, apiRequestsFacade);
   });
 
   describe('Constructor', () => {
     it('should create unsubscriber', () => {
       unsubscriberService.create.calls.reset();
-      component = new SettingsTeamsComponent(settingsFacade, unsubscriberService, apiRequestsFacade);
+      component = new SettingsTeamsComponent(teamFacade, unsubscriberService, apiRequestsFacade);
       expect(unsubscriberService.create).toHaveBeenCalledTimes(1);
     });
   });
@@ -36,13 +36,13 @@ describe('Settings Teams Component', () => {
 
   describe('On Init', () => {
     it('should get all needed data', () => {
-      settingsFacade.selectTeams.calls.reset();
+      teamFacade.selectTeams.calls.reset();
       apiRequestsFacade.selectApiRequest.calls.reset();
 
       const team = TeamBuilder.from('1', new Date(), 'user 1', 'team 1', []).build();
       const request = ApiRequestStatusBuilder.start('id1');
 
-      settingsFacade.selectTeams.and.returnValue(of([team]));
+      teamFacade.selectTeams.and.returnValue(of([team]));
       apiRequestsFacade.selectApiRequest.and.returnValue(of(request));
 
       component.ngOnInit();

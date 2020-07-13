@@ -19,12 +19,13 @@ describe('Selected Team Loaded Guard', () => {
       const user = UserTestBuilder.withDefaultData().build();
       const team = TeamBuilder.from('123', new Date(), user.name, 'team 123', []).build();
 
-      userFacade.selectUser.and.returnValue(cold('--a', { a: user }));
-      teamFacade.selectTeam.and.returnValue(cold('-----b', { b: team }));
+      teamFacade.loadTeam.and.returnValue(null);
+      userFacade.selectUser.and.returnValue(cold('n-a', { n: null, a: user }));
+      teamFacade.selectSelectedTeam.and.returnValue(cold('----nb', { n: undefined, b: team }));
 
-      expect(guard.canActivate()).toBeObservable(cold('-----(c|)', { c: true }));
+      expect(guard.canActivate()).toBeObservable(cold('-------(c|)', { c: true }));
       expect(userFacade.selectUser).toHaveBeenCalledTimes(1);
-      expect(teamFacade.selectTeam).toHaveBeenCalledTimes(1);
+      expect(teamFacade.selectSelectedTeam).toHaveBeenCalledTimes(1);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamFacade.loadTeam, 1, user.selectedTeamId);
     });
   });

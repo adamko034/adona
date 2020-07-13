@@ -43,6 +43,9 @@ const settings = {
     title: 'Security',
     description: 'Manage your security preferences',
     imageUrl: '/assets/images/settings_security.svg'
+  },
+  teamDetails: {
+    title: 'Team Details'
   }
 };
 

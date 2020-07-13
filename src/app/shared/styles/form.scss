@@ -20,7 +20,7 @@
 }
 
 .form-button {
-  border-color: #3f51b5;
+  transition: ease-in 1s;
 
   &:disabled {
     border-color: rgba(0, 0, 0, 0.55);

@@ -1,7 +1,7 @@
 import { cold } from 'jasmine-marbles';
 import { of } from 'rxjs';
 import { InvitationBuilder } from 'src/app/core/invitations/models/invitation/invitation.builder';
-import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
+import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { TeamDtoBuilder } from 'src/app/core/team/model/team/team-dto.builder';
 import { UserService } from 'src/app/core/user/services/user.service';
 import { firebaseConstants } from 'src/app/shared/constants/firebase/firebase-functions.constant';

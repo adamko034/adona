@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
-import { NewTeamMemberBuilder } from 'src/app/core/team/model/new-team-request/new-team-member.builder';
-import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
+import { NewTeamMemberBuilder } from 'src/app/core/team/model/requests/new-team/new-team-member.builder';
+import { NewTeamRequest } from 'src/app/core/team/model/requests/new-team/new-team-request.model';
 import { DialogResult } from 'src/app/shared/services/dialogs/dialog-result.model';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
