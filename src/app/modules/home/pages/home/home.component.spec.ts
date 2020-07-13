@@ -14,7 +14,7 @@ describe('Home Component', () => {
   beforeEach(() => {
     component = new HomeComponent(userFacade, teamFacade, unsubscriberService);
 
-    teamFacade.selectTeam.and.returnValue(of(null));
+    teamFacade.selectSelectedTeam.and.returnValue(of(null));
     userFacade.selectUser.and.returnValue(of(null));
   });
 
@@ -29,7 +29,7 @@ describe('Home Component', () => {
       component.ngOnInit();
 
       expect(userFacade.selectUser).toHaveBeenCalledTimes(1);
-      expect(teamFacade.selectTeam).toHaveBeenCalledTimes(1);
+      expect(teamFacade.selectSelectedTeam).toHaveBeenCalledTimes(1);
     });
   });
 

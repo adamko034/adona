@@ -1,10 +1,10 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { NewTeamMemberBuilder } from 'src/app/core/team/model/new-team-request/new-team-member.builder';
-import { NewTeamMember } from 'src/app/core/team/model/new-team-request/new-team-member.model';
-import { NewTeamRequestBuilder } from 'src/app/core/team/model/new-team-request/new-team-request.builder';
-import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
+import { NewTeamMemberBuilder } from 'src/app/core/team/model/requests/new-team/new-team-member.builder';
+import { NewTeamMember } from 'src/app/core/team/model/requests/new-team/new-team-member.model';
+import { NewTeamRequestBuilder } from 'src/app/core/team/model/requests/new-team/new-team-request.builder';
+import { NewTeamRequest } from 'src/app/core/team/model/requests/new-team/new-team-request.model';
 import { User } from 'src/app/core/user/model/user/user.model';
 import { NewTeamDialogStep } from 'src/app/modules/home/components/dialogs/new-team-dialog/models/new-team-dialog-step.enum';
 import { NewTeamDialogStepsHelper } from 'src/app/modules/home/components/dialogs/new-team-dialog/service/new-team-dialog-steps-helper.service';

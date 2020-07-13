@@ -4,7 +4,7 @@ import { AngularFireFunctions } from '@angular/fire/functions';
 import { from, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { storeConstants } from 'src/app/core/store/constants/store.constants';
-import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
+import { NewTeamRequest } from 'src/app/core/team/model/requests/new-team/new-team-request.model';
 import { Team } from 'src/app/core/team/model/team/team.model';
 import { TeamFactory } from 'src/app/core/team/services/factory/team.factory';
 import { User } from 'src/app/core/user/model/user/user.model';
@@ -49,8 +49,17 @@ export class TeamService {
     return from(batch.commit().then(() => teamId));
   }
 
-  public loadTeam(id: string): Observable<Team> {
+  public getTeam(id: string): Observable<Team> {
     const callable = this.functions.httpsCallable(firebaseConstants.functions.team.get);
     return callable({ id }).pipe(map((team) => this.teamFactory.singleFromFirebase(team)));
+  }
+
+  public updateName(id: string, name: string): Observable<void> {
+    return from(this.db.collection(storeConstants.collections.teams).doc(id).update({ name }));
+  }
+
+  public getAll(): Observable<Team[]> {
+    const callable = this.functions.httpsCallable(firebaseConstants.functions.team.getAll);
+    return callable({}).pipe(map((teams) => this.teamFactory.listFromFirebase(teams)));
   }
 }

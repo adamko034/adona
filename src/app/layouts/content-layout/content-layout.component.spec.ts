@@ -26,7 +26,7 @@ describe('Content Layout Component', () => {
   beforeEach(() => {
     component = new ContentLayoutComponent(teamFacade, routerFacade, userFacade, guiFacade, unsubscriberService);
 
-    teamFacade.selectTeam.calls.reset();
+    teamFacade.selectSelectedTeam.calls.reset();
     routerFacade.selectCurrentRute.calls.reset();
     userFacade.selectUser.calls.reset();
     guiFacade.initSideNavbar.calls.reset();
@@ -48,7 +48,7 @@ describe('Content Layout Component', () => {
       const user = UserTestBuilder.withDefaultData().build();
       const showLoading = false;
 
-      teamFacade.selectTeam.and.returnValue(of(team));
+      teamFacade.selectSelectedTeam.and.returnValue(of(team));
       routerFacade.selectCurrentRute.and.returnValue(of(route));
       guiFacade.selectSideNavbarOptions.and.returnValue(of(sideNavbarOptions));
       userFacade.selectUser.and.returnValue(of(user));
@@ -56,7 +56,7 @@ describe('Content Layout Component', () => {
 
       component.ngOnInit();
 
-      expect(teamFacade.selectTeam).toHaveBeenCalledTimes(1);
+      expect(teamFacade.selectSelectedTeam).toHaveBeenCalledTimes(1);
       expect(routerFacade.selectCurrentRute).toHaveBeenCalledTimes(1);
       expect(guiFacade.initSideNavbar).toHaveBeenCalledTimes(1);
       expect(guiFacade.selectSideNavbarOptions).toHaveBeenCalledTimes(1);

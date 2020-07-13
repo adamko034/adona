@@ -11,8 +11,8 @@ import { Invitation } from 'src/app/core/invitations/models/invitation/invitatio
 import { InvitationsService } from 'src/app/core/invitations/services/invitations-service/invitations.service';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { userActions } from 'src/app/core/store/actions/user.actions';
-import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
-import { TeamFacade } from 'src/app/core/team/teams.facade';
+import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
+import { TeamsFacade } from 'src/app/core/team/teams.facade';
 import { UserTeamBuilder } from 'src/app/core/user/model/user-team/user-team.builder';
 import { User } from 'src/app/core/user/model/user/user.model';
 import { UserService } from 'src/app/core/user/services/user.service';
@@ -29,7 +29,7 @@ export class UserEffects {
     private guiFacade: GuiFacade,
     private invitationService: InvitationsService,
     private resourceService: ResourceService,
-    private teamsFacade: TeamFacade
+    private teamsFacade: TeamsFacade
   ) {}
 
   public loadUserRequested$ = createEffect(() => {

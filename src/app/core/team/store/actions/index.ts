@@ -1,5 +1,5 @@
-import { teamActions } from 'src/app/core/team/store/actions/team/team.actions';
-import { allTeamsActions } from 'src/app/core/team/store/actions/teams/teams.actions';
+import { teamActions } from 'src/app/core/team/store/actions/team.actions';
+import { allTeamsActions } from 'src/app/core/team/store/actions/teams.actions';
 
 export const teamsActions = {
   team: teamActions,

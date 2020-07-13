@@ -1,8 +1,8 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { NewTeamRequest } from 'src/app/core/team/model/new-team-request/new-team-request.model';
-import { TeamFacade } from 'src/app/core/team/teams.facade';
+import { NewTeamRequest } from 'src/app/core/team/model/requests/new-team/new-team-request.model';
+import { TeamsFacade } from 'src/app/core/team/teams.facade';
 import { User } from 'src/app/core/user/model/user/user.model';
 import { UserUtilservice } from 'src/app/core/user/services/user-utils.service';
 import { DialogResult } from 'src/app/shared/services/dialogs/dialog-result.model';
@@ -23,7 +23,7 @@ export class HomeToolbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialogService: DialogService,
-    private teamFacade: TeamFacade,
+    private teamFacade: TeamsFacade,
     private userUtils: UserUtilservice,
     private sharedDialogService: SharedDialogsService,
     private unsubscriberService: UnsubscriberService

@@ -22,11 +22,12 @@ import { ChangeTeamDialogComponent } from './components/dialogs/change-team-dial
 import { FromToDatesComponent } from './components/from-to-dates/from-to-dates.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { AlertComponent } from './components/ui/alert/alert.component';
+import { EditableSectionHeaderComponent } from './components/ui/editable-section-header/editable-section-header.component';
 import { LoaderComponent } from './components/ui/loader/loader.component';
+import { TileComponent } from './components/ui/tiles/components/tile/tile.component';
 import { MobileHideDirective } from './directives/device/mobile-hide.directive';
 import { ResponsiveMatIconDirective } from './directives/device/responsive-mat-icon.directive';
 import { DateFormatPipe } from './pipes/date/date-format.pipe';
-import { TileComponent } from './components/ui/tiles/components/tile/tile.component';
 
 @NgModule({
   imports: [
@@ -70,7 +71,8 @@ import { TileComponent } from './components/ui/tiles/components/tile/tile.compon
     TilesComponent,
     LoaderComponent,
     AlertComponent,
-    TileComponent
+    TileComponent,
+    EditableSectionHeaderComponent
   ],
   exports: [
     FromToDatesComponent,
@@ -81,7 +83,8 @@ import { TileComponent } from './components/ui/tiles/components/tile/tile.compon
     ChangeTeamDialogComponent,
     TilesComponent,
     LoaderComponent,
-    AlertComponent
+    AlertComponent,
+    EditableSectionHeaderComponent
   ],
   entryComponents: [ChangeTeamDialogComponent]
 })

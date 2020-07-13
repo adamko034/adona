@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Team } from 'src/app/core/team/model/team/team.model';
-import { TeamFacade } from 'src/app/core/team/teams.facade';
+import { TeamsFacade } from 'src/app/core/team/teams.facade';
 import { User } from 'src/app/core/user/model/user/user.model';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private userFacade: UserFacade,
-    private teamFacade: TeamFacade,
+    private teamFacade: TeamsFacade,
     private unsubscriberService: UnsubscriberService
   ) {
     this.destroyed$ = this.unsubscriberService.create();
@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.teamFacade
-      .selectTeam()
+      .selectSelectedTeam()
       .pipe(takeUntil(this.destroyed$))
       .subscribe((team: Team) => {
         this.team = team;

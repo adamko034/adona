@@ -5,7 +5,7 @@ import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade
 import { apiRequestIds } from 'src/app/core/api-requests/constants/api-request-ids.contants';
 import { ApiRequestStatus } from 'src/app/core/api-requests/models/api-request-status/api-request-status.model';
 import { Team } from 'src/app/core/team/model/team/team.model';
-import { SettingsFacade } from 'src/app/modules/settings/store/settings.facade';
+import { TeamsFacade } from 'src/app/core/team/teams.facade';
 import { UnsubscriberService } from 'src/app/shared/services/infrastructure/unsubscriber/unsubscriber.service';
 import { DateFormat } from 'src/app/shared/services/time/model/date-format.enum';
 
@@ -26,7 +26,7 @@ export class SettingsTeamsComponent implements OnInit, OnDestroy {
   public data: Data;
 
   constructor(
-    private settingsFacade: SettingsFacade,
+    private teamsFacade: TeamsFacade,
     private unsubscriber: UnsubscriberService,
     private apiRequestsFacade: ApiRequestsFacade
   ) {
@@ -34,10 +34,7 @@ export class SettingsTeamsComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
-    combineLatest([
-      this.settingsFacade.selectTeams(),
-      this.apiRequestsFacade.selectApiRequest(apiRequestIds.settingsLoadTeams)
-    ])
+    combineLatest([this.teamsFacade.selectTeams(), this.apiRequestsFacade.selectApiRequest(apiRequestIds.loadTeams)])
       .pipe(takeUntil(this.destroyed$))
       .subscribe(([teams, apiRequest]) => {
         this.data = { dateFormat: DateFormat.DayMonthYear, teams, requestStatus: apiRequest };

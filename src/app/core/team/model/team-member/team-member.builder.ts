@@ -16,6 +16,11 @@ export class TeamMemberBuilder {
     return new TeamMemberBuilder(user.name, user.photoUrl);
   }
 
+  public withId(id: string): TeamMemberBuilder {
+    this.member.id = id;
+    return this;
+  }
+
   public build(): TeamMember {
     return this.member;
   }

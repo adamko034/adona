@@ -15,8 +15,8 @@ import { InvitationsService } from 'src/app/core/invitations/services/invitation
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { userActions } from 'src/app/core/store/actions/user.actions';
 import { UserEffects } from 'src/app/core/store/effects/user.effects';
-import { ChangeTeamRequest } from 'src/app/core/team/model/change-team-requset/change-team-request.model';
-import { TeamFacade } from 'src/app/core/team/teams.facade';
+import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
+import { TeamsFacade } from 'src/app/core/team/teams.facade';
 import { User } from 'src/app/core/user/model/user/user.model';
 import { UserService } from 'src/app/core/user/services/user.service';
 import { resources } from 'src/app/shared/resources/resources';
@@ -68,7 +68,7 @@ describe('User Effects', () => {
         { provide: GuiFacade, useValue: guiFacade },
         { provide: InvitationsService, useValue: invitationsService },
         { provide: ResourceService, useValue: resourceService },
-        { provide: TeamFacade, useValue: teamFacade }
+        { provide: TeamsFacade, useValue: teamFacade }
       ]
     });
 

@@ -3,6 +3,7 @@ import * as functions from 'firebase-functions';
 import { DocumentSnapshot } from 'firebase-functions/lib/providers/firestore';
 
 interface Member {
+  id?: string;
   name: string;
   photoUrl: string;
 }
@@ -17,6 +18,8 @@ interface Team {
 
 export const get = functions.https.onCall(async (data, context) => {
   const teamId = data.id;
+  const includeMembers = true;
+
   if (!teamId) {
     throw new functions.https.HttpsError('invalid-argument', 'Missing team id');
   }
@@ -27,7 +30,7 @@ export const get = functions.https.onCall(async (data, context) => {
 
   try {
     const db = admin.firestore();
-    return await getTeam(teamId, db, true);
+    return await getTeam(teamId, db, includeMembers);
   } catch (error) {
     console.error(error);
     throw new functions.https.HttpsError('internal', 'Unknown error occured.', error);
@@ -86,7 +89,8 @@ async function getTeam(teamId: string, db: FirebaseFirestore.Firestore, includeM
         const member = m.data() as any;
         console.log('got user ' + m.id + ' ' + member.name);
 
-        return { name: member.name, photoUrl: member.photoUrl };
+        const res: Member = { id: m.id, name: member.name, photoUrl: member.photoUrl };
+        return res;
       });
   }
 

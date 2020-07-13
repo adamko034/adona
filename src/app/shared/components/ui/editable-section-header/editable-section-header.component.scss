@@ -1,0 +1,17 @@
+.editable-section-header {
+  min-height: 35px;
+  padding-right: 10px;
+  &-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  &-action {
+    cursor: pointer;
+
+    &-icon {
+      font-size: 27px;
+    }
+  }
+}
