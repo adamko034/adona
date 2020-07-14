@@ -3,6 +3,7 @@ import { Error } from 'src/app/core/error/model/error.model';
 import { ToastrData } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.model';
 import { Invitation } from 'src/app/core/invitations/models/invitation/invitation.model';
 import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
+import { TeamNameUpdateRequest } from 'src/app/core/team/model/requests/update-name/team-name-update-request.model';
 import { UserTeam } from 'src/app/core/user/model/user-team/user-team.model';
 import { User } from 'src/app/core/user/model/user/user.model';
 
@@ -25,10 +26,13 @@ export const userActionTypes = {
   handleInvitationSuccess: '[Database API] Handle Invitation Success',
   handleInvitationFailure: '[Database API] Handle Inbitation Failure',
 
-  teamAdded: '[New Team Dialog] Team Added'
+  teamAdded: '[New Team Dialog] Team Added',
+  teamNameChanged: '[Team Details Page] Team Name Changed'
 };
 
 const teamAdded = createAction(userActionTypes.teamAdded, props<{ team: UserTeam }>());
+const teamNameChanged = createAction(userActionTypes.teamNameChanged, props<{ request: TeamNameUpdateRequest }>());
+
 const loadUserRequested = createAction(userActionTypes.loadUserRequested);
 const loadUserSuccess = createAction(userActionTypes.loadUserSuccess, props<{ user: User }>());
 const loadUserFailure = createAction(userActionTypes.loadUserFailure, props<{ error: Error }>());
@@ -74,5 +78,6 @@ export const userActions = {
   handleInvitationSuccess,
   handleInvitationFailure,
 
-  teamAdded
+  teamAdded,
+  teamNameChanged
 };

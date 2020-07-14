@@ -1,4 +1,5 @@
 import { Action, createReducer, on } from '@ngrx/store';
+import { UserTeamBuilder } from 'src/app/core/user/model/user-team/user-team.builder';
 import { User } from 'src/app/core/user/model/user/user.model';
 import { authActions } from '../../actions/auth.actions';
 import { userActions } from '../../actions/user.actions';
@@ -48,7 +49,17 @@ const authReducer = createReducer(
   on(userActions.teamAdded, (state, action) => ({
     ...state,
     user: { ...state.user, teams: [...state.user.teams, action.team] }
-  }))
+  })),
+  on(userActions.teamNameChanged, (state: AuthState, action) => {
+    const currentTeams = [...state.user.teams];
+    const updatedTeam = UserTeamBuilder.from(action.request.id, action.request.name).build();
+    currentTeams[currentTeams.findIndex((t) => t.id === updatedTeam.id)] = updatedTeam;
+
+    return {
+      ...state,
+      user: { ...state.user, teams: [...currentTeams] }
+    };
+  })
 );
 
 export function reducer(state: AuthState | undefined, action: Action) {

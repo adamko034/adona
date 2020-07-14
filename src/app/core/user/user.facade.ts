@@ -5,6 +5,7 @@ import { userActions } from 'src/app/core/store/actions/user.actions';
 import { AuthState } from 'src/app/core/store/reducers/auth/auth.reducer';
 import { userQueries } from 'src/app/core/store/selectors/user.selectors';
 import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
+import { TeamNameUpdateRequest } from 'src/app/core/team/model/requests/update-name/team-name-update-request.model';
 import { User } from 'src/app/core/user/model/user/user.model';
 
 @Injectable({ providedIn: 'root' })
@@ -29,6 +30,10 @@ export class UserFacade {
 
   public updateName(id: string, newName: string): void {
     this.store.dispatch(userActions.updateNameRequested({ id, newName }));
+  }
+
+  public updateTeamName(request: TeamNameUpdateRequest): void {
+    this.store.dispatch(userActions.teamNameChanged({ request }));
   }
 
   public handleInvitation(user: User): void {
