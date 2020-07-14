@@ -8,10 +8,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class EditableSectionHeaderComponent {
   @Input() title: string;
   @Input() showEditMode = true;
+  @Input() mode: 'display' | 'edit' = 'display';
 
   @Output() toggleMode = new EventEmitter<'display' | 'edit'>();
 
-  public mode: 'display' | 'edit' = 'display';
   public get icon() {
     return this.mode === 'display' ? 'settings' : 'cancel';
   }

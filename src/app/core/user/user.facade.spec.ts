@@ -82,6 +82,15 @@ describe('User Facade', () => {
     });
   });
 
+  describe('Update Team Name', () => {
+    it('should dispatch Team Name Changed action', () => {
+      const request = { id: '1', name: 'team 1' };
+      facade.updateTeamName(request);
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, userActions.teamNameChanged({ request }));
+    });
+  });
+
   describe('Handle Invitation', () => {
     it('should dispatch Handle Invitation Requested action', () => {
       user.invitationId = '123';

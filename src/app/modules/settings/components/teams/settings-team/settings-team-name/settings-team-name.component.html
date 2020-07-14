@@ -1,5 +1,9 @@
 <mat-card>
-  <app-editable-section-header [title]="'Team Info'" (toggleMode)="onToggleMode($event)"></app-editable-section-header>
+  <app-editable-section-header
+    [mode]="editMode ? 'edit' : 'display'"
+    [title]="'Team Info'"
+    (toggleMode)="onToggleMode($event)"
+  ></app-editable-section-header>
   <mat-divider></mat-divider>
 
   <div class="team-name-content">
@@ -10,15 +14,23 @@
           <form class="form">
             <mat-form-field class="form-field">
               <input class="team-name-input" matInput [formControl]="teamNameFormControl" />
+              <mat-error *ngIf="!teamNameFormControl.valid">Team name is <strong>required</strong></mat-error>
             </mat-form-field>
           </form>
         </div>
         <div>
-          <button class="form-button" mat-stroked-button>Change</button>
+          <button
+            [disabled]="!teamNameFormControl.valid"
+            class="form-button"
+            mat-stroked-button
+            (click)="onTeamNameChange()"
+          >
+            Change
+          </button>
         </div>
       </div>
       <div class="team-name-info-subtitle">
-        created by: {{ team.createdBy }}, on: {{ team.created | dateFormat: dateFormat }}
+        <span>created by: {{ team.createdBy }}, on: {{ team.created | dateFormat: dateFormat }}</span>
       </div>
     </div>
   </div>

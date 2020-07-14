@@ -1,5 +1,6 @@
 import { authActions } from 'src/app/core/store/actions/auth.actions';
 import { userActions } from 'src/app/core/store/actions/user.actions';
+import { TeamNameUpdateRequestBuilder } from 'src/app/core/team/model/requests/update-name/team-name-update-request.build';
 import { UserTeamBuilder } from 'src/app/core/user/model/user-team/user-team.builder';
 import { User } from 'src/app/core/user/model/user/user.model';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
@@ -169,6 +170,27 @@ describe('Auth Reducer', () => {
       };
 
       expect(result).toEqual(expectedState);
+    });
+  });
+
+  describe('On Team Name Changed', () => {
+    it('should update team name', () => {
+      const userWithTeams = UserTestBuilder.withDefaultData().withDefaultUserTeams(5).build();
+      const team = userWithTeams.teams[2];
+      const request = TeamNameUpdateRequestBuilder.from(team.id, 'new great team').build();
+
+      const result = reducer({ user: userWithTeams, loginFailed: false }, userActions.teamNameChanged({ request }));
+
+      const expectedTeams = [...userWithTeams.teams];
+      expectedTeams[2].name = 'new great team';
+
+      expect({ ...result }).toEqual({
+        loginFailed: false,
+        user: {
+          ...userWithTeams,
+          teams: expectedTeams
+        }
+      });
     });
   });
 });

@@ -71,25 +71,27 @@ export class SideNavComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private setTeamMembersText() {
-    const membersCount = this.team.members.length;
-    const maxTextChars = 28;
-    let text = '';
+    if (this.team) {
+      const membersCount = this.team.members.length;
+      const maxTextChars = 28;
+      let text = '';
 
-    let namesUsedCount = 0;
-    for (const member of this.team.members) {
-      const name = member.name;
-      text += name + ', ';
-      namesUsedCount += 1;
+      let namesUsedCount = 0;
+      for (const member of this.team.members) {
+        const name = member.name;
+        text += name + ', ';
+        namesUsedCount += 1;
 
-      if (text.length >= maxTextChars) break;
+        if (text.length >= maxTextChars) break;
+      }
+
+      text = text.slice(0, -2);
+
+      if (namesUsedCount < membersCount) {
+        text += ` and ${membersCount - namesUsedCount} more...`;
+      }
+
+      this.teamMembersText = text;
     }
-
-    text = text.slice(0, -2);
-
-    if (namesUsedCount < membersCount) {
-      text += ` and ${membersCount - namesUsedCount} more...`;
-    }
-
-    this.teamMembersText = text;
   }
 }

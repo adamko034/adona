@@ -12,9 +12,11 @@ import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
 import { InvitationRequestBuilder } from 'src/app/core/invitations/models/new-invitation-request/new-invitation-request.builder';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { userActions } from 'src/app/core/store/actions/user.actions';
+import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { Team } from 'src/app/core/team/model/team/team.model';
 import { TeamService } from 'src/app/core/team/services/team.service';
 import { teamsActions } from 'src/app/core/team/store/actions';
+import { TeamsFacade } from 'src/app/core/team/teams.facade';
 import { UserTeamBuilder } from 'src/app/core/user/model/user-team/user-team.builder';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { resources } from 'src/app/shared/resources/resources';
@@ -30,7 +32,8 @@ export class TeamEffects {
     private apiRequestsFacade: ApiRequestsFacade,
     private userFacade: UserFacade,
     private invitationsFacade: InvitationsFacade,
-    private resourceService: ResourceService
+    private resourceService: ResourceService,
+    private teamsFacade: TeamsFacade
   ) {}
 
   public newTeamRequested$ = createEffect(() => {
@@ -86,7 +89,10 @@ export class TeamEffects {
       switchMap((action) =>
         this.teamsService.getTeam(action.id).pipe(
           map((team: Team) => teamsActions.team.loadTeamSuccess({ team })),
-          tap(() => this.apiRequestsFacade.successRequest(apiRequestIds.loadTeam)),
+          tap(() => {
+            this.guiFacade.hideLoading();
+            this.apiRequestsFacade.successRequest(apiRequestIds.loadTeam);
+          }),
           catchError((err) => {
             const error = ErrorBuilder.from()
               .withErrorObject(err)
@@ -102,11 +108,15 @@ export class TeamEffects {
   public updateTeamNameRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(teamsActions.team.updateNameRequested),
-      tap(() => this.apiRequestsFacade.startRequest(apiRequestIds.updateTeamName)),
+      tap(() => this.guiFacade.showLoading()),
       switchMap(({ request }) =>
         this.teamsService.updateName(request.id, request.name).pipe(
-          map(() => teamsActions.team.updateNameSuccess({ teamId: request.id, newName: request.name })),
-          tap(() => this.apiRequestsFacade.successRequest(apiRequestIds.updateTeamName)),
+          concatMap(() => of(request).pipe(withLatestFrom(this.teamsFacade.selectTeam(request.id)))),
+          map(([, currentTeam]) => {
+            const updatedTeam = TeamBuilder.fromTeam(currentTeam).withName(request.name).build();
+            this.userFacade.updateTeamName(request);
+            return teamsActions.team.updateNameSuccess({ team: updatedTeam });
+          }),
           catchError((err) => {
             const error = ErrorBuilder.from()
               .withErrorObject(err)
@@ -118,6 +128,16 @@ export class TeamEffects {
       )
     );
   });
+
+  public updateTeamNameSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(teamsActions.team.updateNameSuccess),
+        tap(() => this.guiFacade.hideLoading())
+      );
+    },
+    { dispatch: false }
+  );
 
   public loadTeamFailure$ = this.errorEffectsService.createFrom(this.actions$, teamsActions.team.loadTeamFailure);
 

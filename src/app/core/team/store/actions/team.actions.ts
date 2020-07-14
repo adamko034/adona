@@ -6,7 +6,7 @@ import { Team } from 'src/app/core/team/model/team/team.model';
 import { User } from 'src/app/core/user/model/user/user.model';
 
 const types = {
-  loadTeamRequested: '[Settings Team Details Page] Load Team Requested',
+  loadTeamRequested: '[Page] Load Team Requested',
   loadTeamSuccess: '[Database API] Load Selected Team Success',
   loadTeamFailure: '[Database API] Load Seelcted Team Failure',
 
@@ -15,8 +15,8 @@ const types = {
   newTeamCreateFailure: '[Database API] New Team Create Failure',
 
   updateNameRequested: '[Team Details Settings Page] Update Team Name Requested',
-  updateNameSuccess: '[Database API] Update Team Name Requested',
-  updateNameFailure: '[Database API] Update Team Name Requested'
+  updateNameSuccess: '[Database API] Update Team Name Success',
+  updateNameFailure: '[Database API] Update Team Name Failure'
 };
 const loadTeamRequested = createAction(types.loadTeamRequested, props<{ id: string }>());
 const loadTeamSuccess = createAction(types.loadTeamSuccess, props<{ team: Team }>());
@@ -30,7 +30,7 @@ const newTeamCreateSuccess = createAction(
 const newTeamCreateFailure = createAction(types.newTeamCreateFailure, props<{ error: Error }>());
 
 const updateNameRequested = createAction(types.updateNameRequested, props<{ request: TeamNameUpdateRequest }>());
-const updateNameSuccess = createAction(types.updateNameSuccess, props<{ teamId: string; newName: string }>());
+const updateNameSuccess = createAction(types.updateNameSuccess, props<{ team: Team }>());
 const updateNameFailure = createAction(types.updateNameFailure, props<{ error: Error }>());
 
 export const teamActions = {

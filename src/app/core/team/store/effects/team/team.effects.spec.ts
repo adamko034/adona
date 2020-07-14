@@ -10,6 +10,7 @@ import { ToastrMode } from 'src/app/core/gui/model/toastr/toastr-mode/toastr-mod
 import { userActions } from 'src/app/core/store/actions/user.actions';
 import { NewTeamMemberBuilder } from 'src/app/core/team/model/requests/new-team/new-team-member.builder';
 import { TeamNameUpdateRequestBuilder } from 'src/app/core/team/model/requests/update-name/team-name-update-request.build';
+import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { teamsActions } from 'src/app/core/team/store/actions';
 import { TeamEffects } from 'src/app/core/team/store/effects/team/team.effects';
 import { TeamsTestDataBuilder } from 'src/app/core/team/utils/jasmine/teams-test-data.builder';
@@ -36,7 +37,8 @@ describe('Team Effects', () => {
     apiRequestsFacade,
     userFacade,
     invitationsFacade,
-    resourceService
+    resourceService,
+    teamFacade
   } = SpiesBuilder.init()
     .withGuiFacade()
     .withTeamService()
@@ -45,6 +47,7 @@ describe('Team Effects', () => {
     .withUserFacade()
     .withInvitationsFacade()
     .withResourceService()
+    .withTeamFacade()
     .build();
 
   beforeEach(() => {
@@ -61,7 +64,8 @@ describe('Team Effects', () => {
       apiRequestsFacade,
       userFacade,
       invitationsFacade,
-      resourceService
+      resourceService,
+      teamFacade
     );
 
     apiRequestsFacade.startRequest.calls.reset();
@@ -92,6 +96,7 @@ describe('Team Effects', () => {
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamService.getTeam, 2, team.id);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.startRequest, 2, apiRequestIds.loadTeam);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.successRequest, 2, apiRequestIds.loadTeam);
+      expect(guiFacade.hideLoading).toHaveBeenCalledTimes(2);
     });
 
     it('should map to Load Selected Team Failure action when service fails', () => {
@@ -204,25 +209,32 @@ describe('Team Effects', () => {
   });
 
   describe('Update Team Name Requested', () => {
+    beforeEach(() => {
+      teamFacade.selectTeam.calls.reset();
+      userFacade.updateTeamName.calls.reset();
+    });
+
     it('should call service and map to Update Team Name Success action', () => {
       const request = TeamNameUpdateRequestBuilder.from('1', 'team 1').build();
+      const team = TeamBuilder.from(request.id, new Date(), 'user 1', request.name, []).build();
       actions$ = cold('--a--a', { a: teamsActions.team.updateNameRequested({ request }) });
+      teamFacade.selectTeam.and.returnValue(of(team));
       teamService.updateName.and.returnValue(cold('b', { b: undefined }));
+      userFacade.updateTeamName.and.returnValue(null);
 
       expect(effects.updateTeamNameRequested$).toBeObservable(
-        cold('--a--a', { a: teamsActions.team.updateNameSuccess({ teamId: request.id, newName: request.name }) })
+        cold('--a--a', { a: teamsActions.team.updateNameSuccess({ team }) })
       );
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.startRequest, 2, apiRequestIds.updateTeamName);
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(
-        apiRequestsFacade.successRequest,
-        2,
-        apiRequestIds.updateTeamName
-      );
+      expect(guiFacade.showLoading).toHaveBeenCalledTimes(2);
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamFacade.selectTeam, 2, request.id);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userFacade.updateTeamName, 2, request);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamService.updateName, 2, request.id, request.name);
     });
 
     it('should map to Update Team Name Failure action when service fails', () => {
       const request = TeamNameUpdateRequestBuilder.from('1', 'team 1').build();
+      const team = TeamBuilder.from(request.id, new Date(), 'user 1', request.name, []).build();
       actions$ = cold('--a--a', { a: teamsActions.team.updateNameRequested({ request }) });
 
       teamService.updateName.and.returnValue(cold('#', null, { test: '500' }));
@@ -234,8 +246,21 @@ describe('Team Effects', () => {
       expect(effects.updateTeamNameRequested$).toBeObservable(
         cold('--a--a', { a: teamsActions.team.updateNameFailure({ error }) })
       );
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(apiRequestsFacade.startRequest, 2, apiRequestIds.updateTeamName);
+
+      expect(guiFacade.showLoading).toHaveBeenCalledTimes(2);
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(teamService.updateName, 2, request.id, request.name);
+    });
+  });
+
+  describe('Update Team Name Success', () => {
+    it('should hide loading', () => {
+      const team = TeamBuilder.from('1', new Date(), 'user', 'team 1', []).build();
+      actions$ = cold('--a-a', { a: teamsActions.team.updateNameSuccess({ team }) });
+
+      expect(effects.updateTeamNameSuccess$).toBeObservable(
+        cold('--a-a', { a: teamsActions.team.updateNameSuccess({ team }) })
+      );
+      expect(guiFacade.hideLoading).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -249,7 +274,8 @@ describe('Team Effects', () => {
       apiRequestsFacade,
       userFacade,
       invitationsFacade,
-      resourceService
+      resourceService,
+      teamFacade
     );
     expect(errorEffectService.createFrom).toHaveBeenCalledTimes(3);
     expect(errorEffectService.createFrom).toHaveBeenCalledWith(actions$, teamsActions.team.loadTeamFailure);
