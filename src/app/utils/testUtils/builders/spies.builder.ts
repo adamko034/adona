@@ -157,7 +157,8 @@ export class SpiesBuilder {
       'changeTeam',
       'updateName',
       'handleInvitation',
-      'updateTeamName'
+      'updateTeamName',
+      'selectUserTeams'
     ]);
     return this;
   }

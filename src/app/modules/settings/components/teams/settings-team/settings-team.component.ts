@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
+import { ApiRequestsFacade } from 'src/app/core/api-requests/api-requests.facade';
+import { apiRequestIds } from 'src/app/core/api-requests/constants/api-request-ids.contants';
+import { ApiRequestStatus } from 'src/app/core/api-requests/models/api-request-status/api-request-status.model';
 import { RouterFacade } from 'src/app/core/router/router.facade';
 import { Team } from 'src/app/core/team/model/team/team.model';
 import { TeamsFacade } from 'src/app/core/team/teams.facade';
@@ -11,6 +14,7 @@ import { CustomValidators } from 'src/app/shared/utils/forms/custom-validators.v
 interface Data {
   team: Team;
   dateFormat: DateFormat.DayMonthYear;
+  requestStatus: ApiRequestStatus;
 }
 
 @Component({
@@ -24,13 +28,24 @@ export class SettingsTeamComponent implements OnInit {
 
   public isMembersEditMode = false;
 
-  constructor(private teamsFacade: TeamsFacade, private routerFacade: RouterFacade) {}
+  constructor(
+    private teamsFacade: TeamsFacade,
+    private routerFacade: RouterFacade,
+    private apiRequestFacade: ApiRequestsFacade
+  ) {}
 
   public ngOnInit(): void {
-    this.data$ = this.routerFacade.selectRouteParams().pipe(
+    this.data$ = combineLatest([this.getTeam(), this.apiRequestFacade.selectApiRequest(apiRequestIds.loadTeam)]).pipe(
+      map(([team, request]) => {
+        return { team, dateFormat: DateFormat.DayMonthYear, requestStatus: request };
+      })
+    );
+  }
+
+  private getTeam(): Observable<Team> {
+    return this.routerFacade.selectRouteParams().pipe(
       switchMap((params) => this.teamsFacade.selectTeam(params.id)),
-      tap((team: Team) => this.teamNameFormControl.setValue(team?.name)),
-      map((team: Team) => ({ team, dateFormat: DateFormat.DayMonthYear }))
+      tap((team) => this.teamNameFormControl.setValue(team?.name))
     );
   }
 }
