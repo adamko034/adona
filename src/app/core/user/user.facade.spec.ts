@@ -99,4 +99,16 @@ describe('User Facade', () => {
       JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, userActions.handleInvitationRequested({ user }));
     });
   });
+
+  describe('Select User Teams', () => {
+    it('should return selector data', () => {
+      const teams = [
+        { id: '1', name: '1' },
+        { id: '2', name: '2' }
+      ];
+      store.overrideSelector(userQueries.userTeams, teams);
+
+      expect(facade.selectUserTeams()).toBeObservable(cold('b', { b: teams }));
+    });
+  });
 });

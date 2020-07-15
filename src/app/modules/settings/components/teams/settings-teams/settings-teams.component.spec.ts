@@ -1,4 +1,5 @@
 import { of } from 'rxjs';
+import { apiRequestIds } from 'src/app/core/api-requests/constants/api-request-ids.contants';
 import { ApiRequestStatusBuilder } from 'src/app/core/api-requests/models/api-request-status/api-request-status.builder';
 import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { SettingsTeamsComponent } from 'src/app/modules/settings/components/teams/settings-teams/settings-teams.component';
@@ -11,17 +12,18 @@ describe('Settings Teams Component', () => {
   const {
     teamFacade,
     unsubscriberService,
-    apiRequestsFacade
-  } = SpiesBuilder.init().withTeamFacade().withUnsubscriberService().withApiRequestsFacade().build();
+    apiRequestsFacade,
+    userFacade
+  } = SpiesBuilder.init().withUserFacade().withTeamFacade().withUnsubscriberService().withApiRequestsFacade().build();
 
   beforeEach(() => {
-    component = new SettingsTeamsComponent(teamFacade, unsubscriberService, apiRequestsFacade);
+    component = new SettingsTeamsComponent(userFacade, teamFacade, unsubscriberService, apiRequestsFacade);
   });
 
   describe('Constructor', () => {
     it('should create unsubscriber', () => {
       unsubscriberService.create.calls.reset();
-      component = new SettingsTeamsComponent(teamFacade, unsubscriberService, apiRequestsFacade);
+      component = new SettingsTeamsComponent(userFacade, teamFacade, unsubscriberService, apiRequestsFacade);
       expect(unsubscriberService.create).toHaveBeenCalledTimes(1);
     });
   });
@@ -39,19 +41,36 @@ describe('Settings Teams Component', () => {
       teamFacade.selectTeams.calls.reset();
       apiRequestsFacade.selectApiRequest.calls.reset();
 
-      const team = TeamBuilder.from('1', new Date(), 'user 1', 'team 1', []).build();
-      const request = ApiRequestStatusBuilder.start('id1');
+      const userTeams = [{ id: '1', name: 'team 1' }];
 
-      teamFacade.selectTeams.and.returnValue(of([team]));
+      const teams = [
+        TeamBuilder.from('1', new Date(), 'user 1', 'team 1', []).build(),
+        TeamBuilder.from('2', new Date(), 'user 1', 'team 2', []).build()
+      ];
+      const request = ApiRequestStatusBuilder.start('id1');
+      const expectedTeams = teams.map((team) => ({
+        id: team.id,
+        name: team.name,
+        created: team.created,
+        createdBy: team.createdBy
+      }));
+
+      userFacade.selectUserTeams.and.returnValue(of(userTeams));
+      teamFacade.selectTeams.and.returnValue(of(teams));
       apiRequestsFacade.selectApiRequest.and.returnValue(of(request));
 
       component.ngOnInit();
 
       expect(component.data).toEqual({
-        teams: [team],
+        teams: expectedTeams,
         requestStatus: request,
         dateFormat: DateFormat.DayMonthYear
       });
+
+      expect(userFacade.selectUserTeams).toHaveBeenCalledTimes(1);
+      expect(teamFacade.selectTeams).toHaveBeenCalledTimes(1);
+      expect(apiRequestsFacade.selectApiRequest).toHaveBeenCalledTimes(1);
+      expect(apiRequestsFacade.selectApiRequest).toHaveBeenCalledWith(apiRequestIds.loadTeams);
     });
   });
 });

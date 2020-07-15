@@ -6,6 +6,7 @@ import { AuthState } from 'src/app/core/store/reducers/auth/auth.reducer';
 import { userQueries } from 'src/app/core/store/selectors/user.selectors';
 import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { TeamNameUpdateRequest } from 'src/app/core/team/model/requests/update-name/team-name-update-request.model';
+import { UserTeam } from 'src/app/core/user/model/user-team/user-team.model';
 import { User } from 'src/app/core/user/model/user/user.model';
 
 @Injectable({ providedIn: 'root' })
@@ -38,5 +39,9 @@ export class UserFacade {
 
   public handleInvitation(user: User): void {
     this.store.dispatch(userActions.handleInvitationRequested({ user }));
+  }
+
+  public selectUserTeams(): Observable<UserTeam[]> {
+    return this.store.select(userQueries.userTeams);
   }
 }

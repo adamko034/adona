@@ -1,18 +1,35 @@
-<app-loader [visible]="data.requestStatus?.started" [mode]="'spinner'"></app-loader>
-
-<div class="settings-teams-container" *ngIf="data.requestStatus?.succeded" fxLayout="column" fxLayoutGap="20px">
+<div class="settings-teams-container" *ngIf="data" fxLayout="column">
+  <app-loader [visible]="data.requestStatus.started" [mode]="'query'"></app-loader>
   <div
     class="team"
+    [ngClass.xs]="'team-mobile'"
     *ngFor="let team of data.teams"
     fxLayout="row"
     fxLayoutAlign="start center"
-    [routerLink]="['./', team.id]"
   >
-    <div fxFlex.gt-xs="30" fxFlex.xs="50" class="title">{{ team.name }}</div>
-    <div fxFlexAlign="stretch" class="splitter"></div>
-    <div class="subtitle" fxLayout="column">
-      <div>by: {{ team.createdBy }}</div>
-      <div fxFlexAlign="stretch">on: {{ team.created | dateFormat: data.dateFormat }}</div>
+    <div fxFlex="90" [routerLink]="['./', team.id]" fxLayoutAlign="start center">
+      <div fxFlex.xs="50" fxFlex.gt-xs="40" fxFlex.gt-md="20" class="title">{{ team.name }}</div>
+      <div>
+        <div fxFlexAlign="stretch" class="splitter"></div>
+        <div fxFlex class="subtitle" fxLayout="column">
+          <div *ngIf="team.createdBy">by: {{ team.createdBy }}</div>
+          <div *ngIf="team.created" fxFlexAlign="stretch">on: {{ team.created | dateFormat: data.dateFormat }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <button mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item [routerLink]="['./', team.id]">
+          <span>Details</span>
+        </button>
+        <button mat-menu-item>
+          <span>Remove</span>
+        </button>
+      </mat-menu>
     </div>
   </div>
 </div>

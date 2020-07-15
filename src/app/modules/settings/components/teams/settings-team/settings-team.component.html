@@ -1,9 +1,7 @@
-<div class="settings-team-container" *ngIf="data$ | async; else loading; let data">
-  <div *ngIf="data.team; else loading; let team" fxLayout="column" fxLayoutGap="30px">
+<div class="settings-team-container" *ngIf="data$ | async; let data">
+  <app-loader [visible]="data.requestStatus.started" [mode]="'query'"></app-loader>
+  <div *ngIf="data.team; let team" fxLayout="column" fxLayoutGap="30px">
     <app-settings-team-name [team]="team"></app-settings-team-name>
     <app-settings-team-members [members]="team.members"></app-settings-team-members>
   </div>
 </div>
-<ng-template #loading>
-  <app-loader [visible]="'true'" [mode]="'spinner'"></app-loader>
-</ng-template>

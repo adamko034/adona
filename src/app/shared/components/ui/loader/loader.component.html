@@ -5,3 +5,7 @@
 <div *ngIf="visible && mode === 'overlay'" class="loader-overlay" fxLayout="row" fxLayoutAlign="center center">
   <mat-progress-spinner [diameter]="diameter" mode="indeterminate"></mat-progress-spinner>
 </div>
+
+<div *ngIf="mode === 'query'" [ngClass]="{ 'query-hidden': !visible }">
+  <mat-progress-bar mode="query"></mat-progress-bar>
+</div>
