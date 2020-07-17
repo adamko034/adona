@@ -8,13 +8,26 @@ import { User } from 'src/app/core/user/model/user/user.model';
 export class UserFactory {
   public dtofromFirebaseAuth(firebaseAuth: firebase.User, invitationId: string, selectedTeamId: string): UserDto {
     const photoUrl = firebaseAuth.photoURL || UserBuilder.defaultPhotoUrl;
-    return UserDtoBuilder.from(firebaseAuth.displayName, firebaseAuth.email, photoUrl, selectedTeamId, [selectedTeamId])
+    return UserDtoBuilder.from(
+      firebaseAuth.displayName,
+      firebaseAuth.email,
+      photoUrl,
+      selectedTeamId,
+      [selectedTeamId],
+      selectedTeamId
+    )
       .withInvitationId(invitationId)
       .build();
   }
 
   public fromFirebaseUser(firebaseUser: any): User {
-    return UserBuilder.from(firebaseUser.id, firebaseUser.email, firebaseUser.name, firebaseUser.teams)
+    return UserBuilder.from(
+      firebaseUser.id,
+      firebaseUser.email,
+      firebaseUser.name,
+      firebaseUser.teams,
+      firebaseUser.personalTeamId
+    )
       .withSelectedTeamId(firebaseUser.selectedTeamId)
       .withPhotoUrl(firebaseUser.photoURL)
       .withInvitationId(firebaseUser.invitationId)

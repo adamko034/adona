@@ -5,6 +5,7 @@ export interface User {
   email: string;
   name: string;
   teams: UserTeam[];
+  personalTeamId: string;
   selectedTeamId?: string;
   photoUrl?: string;
   invitationId?: string;

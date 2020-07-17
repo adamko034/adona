@@ -29,7 +29,7 @@ describe('Register Effecs', () => {
   let effects: RegisterEffects;
 
   const firebaseUser = UserTestBuilder.withDefaultData().buildFirebaseUser();
-  const user = UserBuilder.from(firebaseUser.uid, firebaseUser.email, firebaseUser.displayName, [])
+  const user = UserBuilder.from(firebaseUser.uid, firebaseUser.email, firebaseUser.displayName, [], '1')
     .withPhotoUrl(UserBuilder.defaultPhotoUrl)
     .build();
 
