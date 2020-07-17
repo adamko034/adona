@@ -3,8 +3,15 @@ import { UserDto } from 'src/app/core/user/model/user/user-dto.model';
 export class UserDtoBuilder {
   private user: UserDto;
 
-  private constructor(name: string, email: string, photoUrl: string, selectedTeamId: string, teams: string[]) {
-    this.user = { name, email, selectedTeamId, teams, photoUrl };
+  private constructor(
+    name: string,
+    email: string,
+    photoUrl: string,
+    selectedTeamId: string,
+    teams: string[],
+    personalTeamId: string
+  ) {
+    this.user = { name, email, selectedTeamId, teams, photoUrl, personalTeamId };
   }
 
   public static from(
@@ -12,9 +19,10 @@ export class UserDtoBuilder {
     email: string,
     photoUrl: string,
     selectedTeamId: string,
-    teams: string[]
+    teams: string[],
+    personalTeamId: string
   ): UserDtoBuilder {
-    return new UserDtoBuilder(name, email, photoUrl, selectedTeamId, teams);
+    return new UserDtoBuilder(name, email, photoUrl, selectedTeamId, teams, personalTeamId);
   }
 
   public withInvitationId(id: string): UserDtoBuilder {

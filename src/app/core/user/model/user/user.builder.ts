@@ -2,16 +2,16 @@ import { UserTeam } from 'src/app/core/user/model/user-team/user-team.model';
 import { User } from 'src/app/core/user/model/user/user.model';
 
 export class UserBuilder {
-  private constructor(id: string, email: string, name: string, teams: UserTeam[]) {
-    this.user = { id, email, name, teams };
+  private constructor(id: string, email: string, name: string, teams: UserTeam[], personalTeamId: string) {
+    this.user = { id, email, name, teams, personalTeamId };
   }
 
   public static defaultPhotoUrl = '/assets/images/user.png';
 
   private user: User;
 
-  public static from(id: string, email: string, name: string, teams: UserTeam[]): UserBuilder {
-    return new UserBuilder(id, email, name, teams);
+  public static from(id: string, email: string, name: string, teams: UserTeam[], personalTeamId: string): UserBuilder {
+    return new UserBuilder(id, email, name, teams, personalTeamId);
   }
 
   public withPhotoUrl(photoUrl: string): UserBuilder {

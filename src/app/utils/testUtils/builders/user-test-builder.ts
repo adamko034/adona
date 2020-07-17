@@ -13,6 +13,7 @@ export class UserTestBuilder {
       email: 'test-user@example.com',
       photoUrl: UserBuilder.defaultPhotoUrl,
       selectedTeamId: '123',
+      personalTeamId: '123',
       teams: [UserTeamBuilder.from('123', 'test team').build()]
     };
   }

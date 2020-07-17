@@ -26,6 +26,7 @@ describe('User Factory', () => {
         name: firebaseAuth.displayName,
         photoUrl: firebaseAuth.photoURL,
         selectedTeamId,
+        personalTeamId: selectedTeamId,
         teams: [selectedTeamId]
       };
 
@@ -46,6 +47,7 @@ describe('User Factory', () => {
         email: firebaseAuth.email,
         name: firebaseAuth.displayName,
         photoUrl: UserBuilder.defaultPhotoUrl,
+        personalTeamId: selectedTeamId,
         selectedTeamId,
         teams: [selectedTeamId]
       };
@@ -63,6 +65,7 @@ describe('User Factory', () => {
         name: 'test user',
         teams: [{ id: '1', name: 'team 1' }],
         selectedTeamId: '1',
+        personalTeamId: '1',
         invitationId: '1234',
         photoURL: 'photo url'
       };
@@ -74,7 +77,8 @@ describe('User Factory', () => {
         teams: firebaseUser.teams,
         invitationId: firebaseUser.invitationId,
         photoUrl: firebaseUser.photoURL,
-        selectedTeamId: firebaseUser.selectedTeamId
+        selectedTeamId: firebaseUser.selectedTeamId,
+        personalTeamId: firebaseUser.personalTeamId
       };
 
       expect(factory.fromFirebaseUser(firebaseUser)).toEqual(expected);

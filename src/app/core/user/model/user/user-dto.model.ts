@@ -3,6 +3,7 @@ export interface UserDto {
   name: string;
   photoUrl: string;
   selectedTeamId: string;
+  personalTeamId: string;
   teams: string[];
   invitationId?: string;
 }
