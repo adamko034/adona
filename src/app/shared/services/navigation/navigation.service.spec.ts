@@ -108,4 +108,9 @@ describe('NavigationService', () => {
     navigationService.toEmailVerified('123');
     expect(routerMock.navigate).toHaveBeenCalledWith(['/auth/emailVerified'], { queryParams: { oobCode: '123' } });
   });
+
+  it('should navigate to Settings Teams List', () => {
+    navigationService.toSettingsTeamsList();
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/settings/teams']);
+  });
 });

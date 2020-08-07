@@ -46,7 +46,7 @@ export class ContentLayoutComponent implements OnInit, OnDestroy {
     this.data$ = combineLatest([
       this.guiFacade.selectLoading(),
       this.teamFacade.selectSelectedTeam(),
-      this.routerFacade.selectCurrentRute(),
+      this.routerFacade.selectCurrentRoute(),
       this.userFacade.selectUser(),
       this.guiFacade.selectSideNavbarOptions()
     ]).pipe(

@@ -71,7 +71,7 @@ export class SideNavComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private setTeamMembersText() {
-    if (this.team) {
+    if (this.team && this.team?.members) {
       const membersCount = this.team.members.length;
       const maxTextChars = 28;
       let text = '';

@@ -15,10 +15,10 @@ import { InvitationsService } from 'src/app/core/invitations/services/invitation
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { userActions } from 'src/app/core/store/actions/user.actions';
 import { UserEffects } from 'src/app/core/store/effects/user.effects';
-import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { TeamsFacade } from 'src/app/core/team/teams.facade';
 import { User } from 'src/app/core/user/model/user/user.model';
 import { UserService } from 'src/app/core/user/services/user.service';
+import { UserFacade } from 'src/app/core/user/user.facade';
 import { resources } from 'src/app/shared/resources/resources';
 import { ResourceService } from 'src/app/shared/resources/services/resource.service';
 import { SpiesBuilder } from 'src/app/utils/testUtils/builders/spies.builder';
@@ -39,7 +39,8 @@ describe('User Effects', () => {
     guiFacade,
     invitationsService,
     resourceService,
-    teamFacade
+    teamFacade,
+    userFacade
   } = SpiesBuilder.init()
     .withUserService()
     .withInvitationsService()
@@ -47,6 +48,7 @@ describe('User Effects', () => {
     .withErrorEffectService()
     .withGuiFacade()
     .withTeamFacade()
+    .withUserFacade()
     .build();
 
   beforeAll(() => {
@@ -68,7 +70,8 @@ describe('User Effects', () => {
         { provide: GuiFacade, useValue: guiFacade },
         { provide: InvitationsService, useValue: invitationsService },
         { provide: ResourceService, useValue: resourceService },
-        { provide: TeamsFacade, useValue: teamFacade }
+        { provide: TeamsFacade, useValue: teamFacade },
+        { provide: UserFacade, useValue: userFacade }
       ]
     });
 
@@ -112,36 +115,30 @@ describe('User Effects', () => {
 
   describe('Change Team Request', () => {
     it('should change team and dipatch Change Team Success action', () => {
-      const request: ChangeTeamRequest = {
-        teamId: '123',
-        userId: user.id
-      };
-      userService.changeTeam.and.returnValue(cold('x', { x: request }));
+      userService.changeTeam.and.returnValue(cold('x', { x: undefined }));
+      userFacade.selectUserId.and.returnValue(of(user.id));
 
-      actions$ = hot('--a', { a: userActions.changeTeamRequested({ request }) });
+      actions$ = hot('--a', { a: userActions.changeTeamRequested({ teamId: '123' }) });
       const expected = cold('--b', {
-        b: userActions.changeTeamSuccess({ teamId: request.teamId })
+        b: userActions.changeTeamSuccess({ teamId: '123' })
       });
 
       expect(effects.changeTeamRequested$).toBeObservable(expected);
       expect(userService.changeTeam).toHaveBeenCalledTimes(1);
-      expect(userService.changeTeam).toHaveBeenCalledWith(request);
+      expect(userService.changeTeam).toHaveBeenCalledWith(user.id, '123');
       expect(guiFacade.showLoading).toHaveBeenCalledTimes(1);
     });
 
     it('should dispatch Change Team Failure action', () => {
-      const request: ChangeTeamRequest = {
-        teamId: '123',
-        userId: user.id
-      };
       const error = { code: 500 };
       userService.changeTeam.and.returnValue(cold('#', {}, error));
+      userFacade.selectUserId.and.returnValue(of(user.id));
 
-      actions$ = hot('--a--a', { a: userActions.changeTeamRequested({ request }) });
+      actions$ = hot('--a--a', { a: userActions.changeTeamRequested({ teamId: '123' }) });
       const expected = cold('--b--b', { b: userActions.changeTeamFailure({ error: { errorObj: error } }) });
 
       expect(effects.changeTeamRequested$).toBeObservable(expected);
-      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.changeTeam, 2, request);
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(userService.changeTeam, 2, user.id, '123');
       expect(guiFacade.showLoading).toHaveBeenCalledTimes(2);
       expect(guiFacade.hideLoading).not.toHaveBeenCalled();
     });
@@ -310,6 +307,7 @@ describe('User Effects', () => {
 
     effects = new UserEffects(
       actions,
+      userFacade,
       userService,
       errorEffectService,
       guiFacade,

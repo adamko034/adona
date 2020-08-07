@@ -4,7 +4,6 @@ import { cold } from 'jasmine-marbles';
 import { userActions, userActionTypes } from 'src/app/core/store/actions/user.actions';
 import { AuthState } from 'src/app/core/store/reducers/auth/auth.reducer';
 import { userQueries } from 'src/app/core/store/selectors/user.selectors';
-import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { UserFacade } from 'src/app/core/user/user.facade';
 import { UserTestBuilder } from 'src/app/utils/testUtils/builders/user-test-builder';
 import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
@@ -58,15 +57,10 @@ describe('User Facade', () => {
 
   describe('Change Team', () => {
     it('should dispatch Change Team Requested action', () => {
-      const request: ChangeTeamRequest = {
-        teamId: '123',
-        userId: user.id
-      };
-
-      facade.changeTeam(request);
+      facade.changeTeam('123');
 
       expect(dispatchSpy).toHaveBeenCalledTimes(1);
-      expect(dispatchSpy).toHaveBeenCalledWith(userActions.changeTeamRequested({ request }));
+      expect(dispatchSpy).toHaveBeenCalledWith(userActions.changeTeamRequested({ teamId: '123' }));
     });
   });
 
@@ -109,6 +103,13 @@ describe('User Facade', () => {
       store.overrideSelector(userQueries.userTeams, teams);
 
       expect(facade.selectUserTeams()).toBeObservable(cold('b', { b: teams }));
+    });
+  });
+
+  describe('Delete Team', () => {
+    it('should dispatch Team Deleted action', () => {
+      facade.deleteTeam('1');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, userActions.teamDeleted({ id: '1' }));
     });
   });
 });

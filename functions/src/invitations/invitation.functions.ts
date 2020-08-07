@@ -7,7 +7,7 @@ const oauth = {
   clientId: '219251712640-t18nlffi5gt8hc02vff4bb0glcvo8nc1.apps.googleusercontent.com',
   clientSecret: 'o5EPtT-uH57NiKO4B-TpEAvr',
   refreshToken:
-    '1//041dJK64h9h1iCgYIARAAGAQSNwF-L9IrbvlrnFyoCY6806SnL-cHHiqUjQ7JBpBZ7BRDwDE4CpBWYm-0HqvT8Vq-IFGyxlM8_WU',
+    '1//0fPwaem8n5TcwCgYIARAAGA8SNwF-L9IrSb6YlAlXNslcIbB2EhKx8F-2QgOVA6iYzU8jhwqI6dJsyCp2CJK6HX2JijPfPxnq2x0',
   redirectUri: 'https://developers.google.com/oauthplayground'
 };
 

@@ -20,7 +20,7 @@ export class AuthLayoutComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.routerFacade
-      .selectCurrentRute()
+      .selectCurrentRoute()
       .pipe(takeUntil(this.destroyed$))
       .subscribe((route: string) => {
         this.title = this.getTitle(route);

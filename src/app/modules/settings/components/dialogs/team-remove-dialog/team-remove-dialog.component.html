@@ -1,0 +1,47 @@
+<button class="adona-dialog-close" mat-icon-button (click)="cancel()">
+  <mat-icon>close</mat-icon>
+</button>
+<h2 mat-dialog-title>Remove team?</h2>
+<mat-dialog-content>
+  <div class="content">
+    <app-alert
+      [mode]="'error'"
+      [message]="'This will remove the team and all associated data. All members will be unassigned.'"
+    ></app-alert>
+    <div class="confirmation" fxLayout="column" fxLayoutGap="10px">
+      <div>
+        Confirm that you want to remove this team by providing its name: <strong>{{ teamName }}</strong
+        >.
+      </div>
+      <div class="team-name-input">
+        <form class="form">
+          <mat-form-field class="form-field">
+            <input
+              (input)="onTeamNameChange($event.target.value)"
+              (blur)="onTeamNameBlur()"
+              [placeholder]="teamName"
+              matInput
+              [formControl]="teamNameFormControl"
+            />
+            <mat-error *ngIf="teamNameFormControl.hasError('requiredValue')"
+              >Team name is <strong>required</strong></mat-error
+            >
+            <mat-error *ngIf="teamNameFormControl.hasError('notEqual')">Team name does not match</mat-error>
+          </mat-form-field>
+        </form>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button
+    mat-stroked-button
+    class="form-button"
+    [ngClass]="{ 'form-button-red': teamNameConfirmed }"
+    [disabled]="!teamNameConfirmed"
+    (click)="confirm()"
+  >
+    Delete
+  </button>
+</mat-dialog-actions>

@@ -72,4 +72,32 @@ describe('Team Reducer', () => {
       expect(reducer(currentState, teamsActions.team.updateNameSuccess({ team }))).toEqual(expectedState);
     });
   });
+
+  describe('On Delete Team Success', () => {
+    it('should remove team', () => {
+      const teams = [
+        TeamBuilder.from('1', new Date(), 'user 1', 'team 1', []).build(),
+        TeamBuilder.from('2', new Date(), 'user 1', 'team 2', []).build(),
+        TeamBuilder.from('3', new Date(), 'user 1', 'team 3', []).build()
+      ];
+      const currentState: TeamsState = {
+        ids: ['1', '2', '3'],
+        entities: {
+          1: teams[0],
+          2: teams[1],
+          3: teams[2]
+        }
+      };
+      const expectedState: TeamsState = {
+        ids: ['1', '3'],
+        entities: {
+          1: teams[0],
+          3: teams[2]
+        }
+      };
+
+      const newState = reducer(currentState, teamsActions.team.deleteTeamSuccess({ id: '2' }));
+      expect(newState).toEqual(expectedState);
+    });
+  });
 });

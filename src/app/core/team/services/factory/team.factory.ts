@@ -25,6 +25,6 @@ export class TeamFactory {
   }
 
   public listFromFirebase(teams: any): Team[] {
-    return teams.map((t: any) => this.singleFromFirebase(t));
+    return teams.filter((t: any) => t?.id).map((t: any) => this.singleFromFirebase(t));
   }
 }

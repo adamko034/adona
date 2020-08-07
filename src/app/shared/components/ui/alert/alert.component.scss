@@ -11,6 +11,13 @@
     border: 1px solid #e77600;
   }
 
+  &-error {
+    font-weight: 450;
+    background-color: #d8000c;
+    color: #fff;
+    border: 1px solid #b94a48;
+  }
+
   .message {
     margin-left: 10px;
   }

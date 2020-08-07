@@ -6,9 +6,10 @@ import { Team } from 'src/app/core/team/model/team/team.model';
 import { User } from 'src/app/core/user/model/user/user.model';
 
 const types = {
+  loadSelectedTeamRequested: '[Team Loaded Guard] Load Selected Team Requested',
   loadTeamRequested: '[Page] Load Team Requested',
-  loadTeamSuccess: '[Database API] Load Selected Team Success',
-  loadTeamFailure: '[Database API] Load Seelcted Team Failure',
+  loadTeamSuccess: '[Database API] Load Team Success',
+  loadTeamFailure: '[Database API] Load Team Failure',
 
   newTeamRequested: '[Home Page] New Team Requested',
   newTeamCreateSuccess: '[Database API] New Team Create Success',
@@ -16,8 +17,14 @@ const types = {
 
   updateNameRequested: '[Team Details Settings Page] Update Team Name Requested',
   updateNameSuccess: '[Database API] Update Team Name Success',
-  updateNameFailure: '[Database API] Update Team Name Failure'
+  updateNameFailure: '[Database API] Update Team Name Failure',
+
+  deleteTeamRequested: '[Team Settings Page] Delete Team Requested',
+  deleteTeamSuccess: '[Database API] Delete Team Success',
+  deleteTeamFailure: '[Database API] Delete Team Failure'
 };
+
+const loadSelectedTeamRequested = createAction(types.loadSelectedTeamRequested);
 const loadTeamRequested = createAction(types.loadTeamRequested, props<{ id: string }>());
 const loadTeamSuccess = createAction(types.loadTeamSuccess, props<{ team: Team }>());
 const loadTeamFailure = createAction(types.loadTeamFailure, props<{ error: Error }>());
@@ -33,7 +40,12 @@ const updateNameRequested = createAction(types.updateNameRequested, props<{ requ
 const updateNameSuccess = createAction(types.updateNameSuccess, props<{ team: Team }>());
 const updateNameFailure = createAction(types.updateNameFailure, props<{ error: Error }>());
 
+const deleteTeamRequested = createAction(types.deleteTeamRequested, props<{ id: string }>());
+const deleteTeamSuccess = createAction(types.deleteTeamSuccess, props<{ id: string }>());
+const deleteTeamFailure = createAction(types.deleteTeamFailure, props<{ error: Error }>());
+
 export const teamActions = {
+  loadSelectedTeamRequested,
   loadTeamRequested,
   loadTeamSuccess,
   loadTeamFailure,
@@ -44,5 +56,9 @@ export const teamActions = {
 
   updateNameRequested,
   updateNameSuccess,
-  updateNameFailure
+  updateNameFailure,
+
+  deleteTeamRequested,
+  deleteTeamSuccess,
+  deleteTeamFailure
 };

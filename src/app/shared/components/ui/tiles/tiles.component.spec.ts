@@ -9,20 +9,20 @@ describe('Tiles Component', () => {
   beforeEach(() => {
     component = new TilesComponent(routerFacade);
 
-    routerFacade.selectCurrentRute.calls.reset();
+    routerFacade.selectCurrentRoute.calls.reset();
   });
 
   describe('On Init', () => {
     it('should not subscribe to current route if Is Navigation equals false', () => {
       component.isNavigation = false;
       component.ngOnInit();
-      expect(routerFacade.selectCurrentRute).not.toHaveBeenCalled();
+      expect(routerFacade.selectCurrentRoute).not.toHaveBeenCalled();
     });
 
     it('should subscribe to current route if Is Navigation equals true', () => {
       component.isNavigation = true;
       component.ngOnInit();
-      expect(routerFacade.selectCurrentRute).toHaveBeenCalledTimes(1);
+      expect(routerFacade.selectCurrentRoute).toHaveBeenCalledTimes(1);
     });
   });
 });

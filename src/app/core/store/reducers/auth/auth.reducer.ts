@@ -59,6 +59,12 @@ const authReducer = createReducer(
       ...state,
       user: { ...state.user, teams: [...currentTeams] }
     };
+  }),
+  on(userActions.teamDeleted, (state: AuthState, action) => {
+    return {
+      ...state,
+      user: { ...state.user, teams: [...state.user.teams.filter((t) => t.id !== action.id)] }
+    };
   })
 );
 

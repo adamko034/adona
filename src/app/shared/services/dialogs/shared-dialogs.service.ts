@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { TeamsFacade } from 'src/app/core/team/teams.facade';
 import { User } from 'src/app/core/user/model/user/user.model';
 import { UserFacade } from 'src/app/core/user/user.facade';
@@ -17,12 +16,7 @@ export class SharedDialogsService {
     return this.dialogService.open(ChangeTeamDialogComponent, { data: { user } }).pipe(
       tap((result: DialogResult<string>) => {
         if (result && result.payload) {
-          const request: ChangeTeamRequest = {
-            teamId: result.payload,
-            userId: user.id
-          };
-
-          this.userFacade.changeTeam(request);
+          this.userFacade.changeTeam(result.payload);
         }
       })
     );

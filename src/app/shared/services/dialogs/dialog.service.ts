@@ -35,7 +35,7 @@ export class DialogService {
   }
 
   private getDialogWidth(): string {
-    return this.deviceService.isMobile() ? '90vw' : '400px';
+    return this.deviceService.isMobile() ? '90vw' : '45vw';
   }
 
   private getMaxWidth(): string {

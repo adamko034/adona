@@ -158,4 +158,22 @@ describe('Team Service', () => {
       });
     });
   });
+
+  describe('Delete Team', () => {
+    it('should remove from firebase', (done) => {
+      angularFirestore.collection().doc().delete.and.returnValue(of(undefined));
+
+      angularFirestore.collection().doc().update.calls.reset();
+      angularFirestore.collection().doc.calls.reset();
+      angularFirestore.collection.calls.reset();
+
+      service.delete('1').subscribe(() => {
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection, 1, 'teams');
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc, 1, '1');
+        JasmineCustomMatchers.toHaveBeenCalledTimesWith(angularFirestore.collection().doc().delete, 1);
+
+        done();
+      });
+    });
+  });
 });

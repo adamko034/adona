@@ -1,11 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-alert',
   templateUrl: './alert.component.html',
   styleUrls: ['./alert.component.scss']
 })
-export class AlertComponent implements OnInit {
+export class AlertComponent {
   @Input() message: string;
   @Input() mode: 'warning' | 'error' | 'info';
 
@@ -13,6 +13,8 @@ export class AlertComponent implements OnInit {
     switch (this.mode) {
       case 'warning':
         return 'announcement';
+      case 'error':
+        return 'error';
     }
   }
 
@@ -21,6 +23,4 @@ export class AlertComponent implements OnInit {
   }
 
   constructor() {}
-
-  ngOnInit(): void {}
 }
