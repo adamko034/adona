@@ -51,7 +51,7 @@ export class TeamService {
 
   public getTeam(id: string): Observable<Team> {
     const callable = this.functions.httpsCallable(firebaseConstants.functions.team.get);
-    return callable({ id }).pipe(map((team) => this.teamFactory.singleFromFirebase(team)));
+    return callable({ id }).pipe(map((team) => (!!team ? this.teamFactory.singleFromFirebase(team) : null)));
   }
 
   public updateName(id: string, name: string): Observable<void> {
@@ -61,5 +61,9 @@ export class TeamService {
   public getAll(): Observable<Team[]> {
     const callable = this.functions.httpsCallable(firebaseConstants.functions.team.getAll);
     return callable({}).pipe(map((teams) => this.teamFactory.listFromFirebase(teams)));
+  }
+
+  public delete(id: string): Observable<void> {
+    return from(this.db.collection(storeConstants.collections.teams).doc(id).delete());
   }
 }

@@ -16,6 +16,8 @@ const toastr = {
 const team = {
   personalTeamName: 'Personal',
   created: 'Team <strong><i>{1}</i></strong> has been created!',
+  deleted: 'Team has been deleted.',
+  personalTeamRemovalError: 'You cannot remove your personal team!',
   invitation: {
     sent: 'Invitations were sent!',
     sendingFailed: 'Error occured while sending invitations. Please, verify this on your team settings page.',

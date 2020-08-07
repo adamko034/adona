@@ -69,7 +69,7 @@ describe('CalendarComponent', () => {
     calendarFacade.changeView.calls.reset();
     calendarFacade.selectEvents.calls.reset();
     dialogService.open.calls.reset();
-    routerFacade.selectCurrentRute.calls.reset();
+    routerFacade.selectCurrentRoute.calls.reset();
 
     calendarFacade.selectView.and.returnValue(of({ isList: false, calendarView: CalendarView.Month }));
     calendarFacade.selectViewDate.and.returnValue(of(new Date()));
@@ -92,11 +92,11 @@ describe('CalendarComponent', () => {
       calendarFacade.selectViewDate.and.returnValue(of(viewDate));
       timeService.Extraction.getPreviousMonthOf.and.returnValue(previousMonth);
       timeService.Extraction.getNextMonthOf.and.returnValue(nextMonth);
-      routerFacade.selectCurrentRute.and.returnValue(of('/calendar/month'));
+      routerFacade.selectCurrentRoute.and.returnValue(of('/calendar/month'));
 
       component.ngOnInit();
 
-      expect(routerFacade.selectCurrentRute).toHaveBeenCalledTimes(1);
+      expect(routerFacade.selectCurrentRoute).toHaveBeenCalledTimes(1);
       expect(calendarFacade.selectView).toHaveBeenCalledTimes(1);
       expect(calendarFacade.selectViewDate).toHaveBeenCalledTimes(1);
       expect(calendarFacade.loadMonthEvents).toHaveBeenCalledTimes(3);

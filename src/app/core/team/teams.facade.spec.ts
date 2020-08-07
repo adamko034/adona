@@ -8,6 +8,7 @@ import { TeamBuilder } from 'src/app/core/team/model/team/team.builder';
 import { teamsActions } from 'src/app/core/team/store/actions';
 import { teamQueries } from 'src/app/core/team/store/selectors/teams.selectors';
 import { TeamsFacade } from 'src/app/core/team/teams.facade';
+import { JasmineCustomMatchers } from 'src/app/utils/testUtils/jasmine-custom-matchers';
 
 describe('Team Facade', () => {
   let store: MockStore;
@@ -97,6 +98,25 @@ describe('Team Facade', () => {
 
       expect(dispatchSpy).toHaveBeenCalledTimes(1);
       expect(dispatchSpy).toHaveBeenCalledWith(teamsActions.team.updateNameRequested({ request }));
+    });
+  });
+
+  describe('Load Selected Team', () => {
+    it('should dispatch Load Selected Team action', () => {
+      facade.loadSelectedTeam();
+
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(dispatchSpy, 1, teamsActions.team.loadSelectedTeamRequested());
+    });
+  });
+
+  describe('Delete Team', () => {
+    it('should dispatch Delete Team Requested action', () => {
+      facade.deleteTeam('1');
+      JasmineCustomMatchers.toHaveBeenCalledTimesWith(
+        dispatchSpy,
+        1,
+        teamsActions.team.deleteTeamRequested({ id: '1' })
+      );
     });
   });
 });

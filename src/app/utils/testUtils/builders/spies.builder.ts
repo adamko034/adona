@@ -13,6 +13,7 @@ import { ToastrAdonaService } from 'src/app/core/gui/services/toastr-adona-servi
 import { InvitationsFacade } from 'src/app/core/invitations/invitations.facade';
 import { InvitationsService } from 'src/app/core/invitations/services/invitations-service/invitations.service';
 import { RouterFacade } from 'src/app/core/router/router.facade';
+import { RouterLocatorService } from 'src/app/core/router/services/router-locator/router-locator.service';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { TeamFactory } from 'src/app/core/team/services/factory/team.factory';
 import { TeamService } from 'src/app/core/team/services/team.service';
@@ -78,6 +79,7 @@ export interface Spies {
   teamFactory?: jasmine.SpyObj<TeamFactory>;
   userFactory?: jasmine.SpyObj<UserFactory>;
   angularFireFunctions?: jasmine.SpyObj<AngularFireFunctions>;
+  routerLocatorService?: jasmine.SpyObj<RouterLocatorService>;
 }
 
 export class SpiesBuilder {
@@ -103,7 +105,8 @@ export class SpiesBuilder {
       'toCalendarDayView',
       'toCalendarWeekView',
       'toCalendarMonthView',
-      'toCalendarListView'
+      'toCalendarListView',
+      'toSettingsTeamsList'
     ]);
 
     return this;
@@ -158,7 +161,8 @@ export class SpiesBuilder {
       'updateName',
       'handleInvitation',
       'updateTeamName',
-      'selectUserTeams'
+      'selectUserTeams',
+      'deleteTeam'
     ]);
     return this;
   }
@@ -177,7 +181,9 @@ export class SpiesBuilder {
       'loadTeam',
       'addTeam',
       'selectTeam',
-      'selectSelectedTeam'
+      'selectSelectedTeam',
+      'deleteTeam',
+      'loadSelectedTeam'
     ]);
 
     return this;
@@ -188,7 +194,8 @@ export class SpiesBuilder {
       'addTeam',
       'getTeam',
       'getAll',
-      'updateName'
+      'updateName',
+      'delete'
     ]);
 
     return this;
@@ -236,7 +243,9 @@ export class SpiesBuilder {
     this.spies.angularFirestore = {
       createId: jasmine.createSpy(),
       collection: jasmine.createSpy('collection').and.returnValue({
-        doc: jasmine.createSpy('doc').and.returnValue(jasmine.createSpyObj('doc', ['valueChanges', 'update', 'set']))
+        doc: jasmine
+          .createSpy('doc')
+          .and.returnValue(jasmine.createSpyObj('doc', ['valueChanges', 'update', 'set', 'delete']))
       }),
       firestore: {
         batch: jasmine.createSpy('batch').and.returnValue(
@@ -324,12 +333,14 @@ export class SpiesBuilder {
   public withRouterFacade(): SpiesBuilder {
     this.spies.routerFacade = jasmine.createSpyObj('routerFacade', [
       'getRouteParams',
-      'selectCurrentRute',
+      'selectCurrentRoute',
       'selectAdonaRoutes',
       'selectSettingsRoutes',
       'selectRouteQueryParams',
       'selectRouteData',
-      'selectRouteParams'
+      'selectRouteParams',
+      'selectCurrentRouteWithParams',
+      'navigateAfterTeamDeleted'
     ]);
 
     return this;
@@ -448,6 +459,13 @@ export class SpiesBuilder {
   public withAngularFireFunctions(): SpiesBuilder {
     this.spies.angularFireFunctions = jasmine.createSpyObj<AngularFireFunctions>('angularFireFunctions', [
       'httpsCallable'
+    ]);
+    return this;
+  }
+
+  public withRouterLocatorService(): SpiesBuilder {
+    this.spies.routerLocatorService = jasmine.createSpyObj<RouterLocatorService>('routerLocatorService', [
+      'isTeamDetailsPage'
     ]);
     return this;
   }

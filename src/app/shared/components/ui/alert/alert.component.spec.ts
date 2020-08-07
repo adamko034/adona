@@ -1,25 +1,29 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { AlertComponent } from 'src/app/shared/components/ui/alert/alert.component';
 
-import { AlertComponent } from './alert.component';
-
-describe('AlertComponent', () => {
+describe('Alert Component', () => {
   let component: AlertComponent;
-  let fixture: ComponentFixture<AlertComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ AlertComponent ]
-    })
-    .compileComponents();
-  }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AlertComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    component = new AlertComponent();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  describe('Get Icon', () => {
+    it('should get icon', () => {
+      component.mode = 'error';
+      expect(component.icon).toEqual('error');
+
+      component.mode = 'warning';
+      expect(component.icon).toEqual('announcement');
+    });
+  });
+
+  describe('Get Css Class', () => {
+    it('should get css class', () => {
+      component.mode = 'error';
+      expect(component.cssClass).toEqual('alert-error');
+
+      component.mode = 'warning';
+      expect(component.cssClass).toEqual('alert-warning');
+    });
   });
 });

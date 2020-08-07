@@ -13,7 +13,7 @@ describe('Auth Layout Component', () => {
   beforeEach(() => {
     component = new AuthLayoutComponent(routerFacade, unsubscriberService);
 
-    routerFacade.selectCurrentRute.calls.reset();
+    routerFacade.selectCurrentRoute.calls.reset();
   });
 
   describe('Constructor', () => {
@@ -32,11 +32,11 @@ describe('Auth Layout Component', () => {
       { route: '/login/changePassword', expected: 'Change Password' }
     ].forEach((input) => {
       it(`should set title to ${input.expected} for route: ${input.route}`, () => {
-        routerFacade.selectCurrentRute.and.returnValue(of(input.route));
+        routerFacade.selectCurrentRoute.and.returnValue(of(input.route));
 
         component.ngOnInit();
 
-        expect(routerFacade.selectCurrentRute).toHaveBeenCalledTimes(1);
+        expect(routerFacade.selectCurrentRoute).toHaveBeenCalledTimes(1);
         expect(component.title).toEqual(input.expected);
       });
     });

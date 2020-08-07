@@ -2,7 +2,6 @@ import { createAction, props } from '@ngrx/store';
 import { Error } from 'src/app/core/error/model/error.model';
 import { ToastrData } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.model';
 import { Invitation } from 'src/app/core/invitations/models/invitation/invitation.model';
-import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { TeamNameUpdateRequest } from 'src/app/core/team/model/requests/update-name/team-name-update-request.model';
 import { UserTeam } from 'src/app/core/user/model/user-team/user-team.model';
 import { User } from 'src/app/core/user/model/user/user.model';
@@ -27,17 +26,19 @@ export const userActionTypes = {
   handleInvitationFailure: '[Database API] Handle Inbitation Failure',
 
   teamAdded: '[New Team Dialog] Team Added',
-  teamNameChanged: '[Team Details Page] Team Name Changed'
+  teamNameChanged: '[Team Details Page] Team Name Changed',
+  teamDeleted: '[Team Settings Page] Team Deleted'
 };
 
 const teamAdded = createAction(userActionTypes.teamAdded, props<{ team: UserTeam }>());
 const teamNameChanged = createAction(userActionTypes.teamNameChanged, props<{ request: TeamNameUpdateRequest }>());
+const teamDeleted = createAction(userActionTypes.teamDeleted, props<{ id: string }>());
 
 const loadUserRequested = createAction(userActionTypes.loadUserRequested);
 const loadUserSuccess = createAction(userActionTypes.loadUserSuccess, props<{ user: User }>());
 const loadUserFailure = createAction(userActionTypes.loadUserFailure, props<{ error: Error }>());
 
-const changeTeamRequested = createAction(userActionTypes.changeTeamRequested, props<{ request: ChangeTeamRequest }>());
+const changeTeamRequested = createAction(userActionTypes.changeTeamRequested, props<{ teamId: string }>());
 const changeTeamFailure = createAction(userActionTypes.changeTeamFailure, props<{ error: Error }>());
 const changeTeamSuccess = createAction(userActionTypes.changeTeamSuccess, props<{ teamId: string }>());
 
@@ -79,5 +80,6 @@ export const userActions = {
   handleInvitationFailure,
 
   teamAdded,
-  teamNameChanged
+  teamNameChanged,
+  teamDeleted
 };

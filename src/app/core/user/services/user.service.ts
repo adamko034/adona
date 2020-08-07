@@ -6,7 +6,6 @@ import { map } from 'rxjs/operators';
 import { InvitationStatus } from 'src/app/core/invitations/models/invitation-status.enum';
 import { Invitation } from 'src/app/core/invitations/models/invitation/invitation.model';
 import { storeConstants } from 'src/app/core/store/constants/store.constants';
-import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { TeamFactory } from 'src/app/core/team/services/factory/team.factory';
 import { UserFactory } from 'src/app/core/user/factories/user/user.factory';
 import { User } from 'src/app/core/user/model/user/user.model';
@@ -43,11 +42,8 @@ export class UserService {
     return callable({}).pipe(map((user) => this.userFactory.fromFirebaseUser(user)));
   }
 
-  public changeTeam(request: ChangeTeamRequest): Observable<void> {
-    const promise = this.db
-      .collection(storeConstants.collections.users)
-      .doc(request.userId)
-      .update({ selectedTeamId: request.teamId });
+  public changeTeam(uid: string, teamId: string): Observable<void> {
+    const promise = this.db.collection(storeConstants.collections.users).doc(uid).update({ selectedTeamId: teamId });
 
     return from(promise.then());
   }

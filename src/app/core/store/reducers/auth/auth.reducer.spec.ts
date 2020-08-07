@@ -193,4 +193,22 @@ describe('Auth Reducer', () => {
       });
     });
   });
+
+  describe('On Team Deleted', () => {
+    it('should remove team from user teams array', () => {
+      const userToChange = UserTestBuilder.withDefaultData().withDefaultUserTeams(5).build();
+      const currentState: fromReducer.AuthState = {
+        loginFailed: false,
+        user: userToChange
+      };
+      const teamIdToRemove = userToChange.teams[3].id;
+
+      const expectedState: fromReducer.AuthState = {
+        loginFailed: false,
+        user: { ...userToChange, teams: [...userToChange.teams].filter((x) => x.id !== teamIdToRemove) }
+      };
+
+      expect(fromReducer.reducer(currentState, userActions.teamDeleted({ id: teamIdToRemove }))).toEqual(expectedState);
+    });
+  });
 });

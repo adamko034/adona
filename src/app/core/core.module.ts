@@ -6,6 +6,7 @@ import { NavigationActionTiming, StoreRouterConnectingModule } from '@ngrx/route
 import { StoreModule } from '@ngrx/store';
 import { DeviceDetectorModule } from 'ngx-device-detector';
 import { InvitationEffects } from 'src/app/core/invitations/store/effects/invitation.effects';
+import { RouterEffects } from 'src/app/core/router/store/effects/router.effects';
 import { ErrorEffects } from 'src/app/core/store/effects/error.effects';
 import { TeamEffects } from 'src/app/core/team/store/effects/team/team.effects';
 import { TeamsEffects } from 'src/app/core/team/store/effects/teams/teams.effects';
@@ -32,7 +33,15 @@ import { metaReducers, reducers } from './store/reducers';
       }
     }),
     HttpClientModule,
-    EffectsModule.forRoot([AuthEffects, ErrorEffects, TeamsEffects, TeamEffects, UserEffects, InvitationEffects]),
+    EffectsModule.forRoot([
+      AuthEffects,
+      ErrorEffects,
+      TeamsEffects,
+      TeamEffects,
+      UserEffects,
+      InvitationEffects,
+      RouterEffects
+    ]),
     DeviceDetectorModule.forRoot(),
     StoreRouterConnectingModule.forRoot({
       stateKey: 'router',

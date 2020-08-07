@@ -18,7 +18,7 @@ export class TilesComponent implements OnInit {
 
   public ngOnInit(): void {
     if (this.isNavigation) {
-      this.currentRoute$ = this.routerFacade.selectCurrentRute();
+      this.currentRoute$ = this.routerFacade.selectCurrentRoute();
     }
   }
 }

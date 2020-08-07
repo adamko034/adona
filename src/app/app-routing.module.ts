@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ClearToastrGuard } from 'src/app/core/gui/guards/clear-toastr/clear-toastr.guard';
-import { TeamLoadedGuard } from 'src/app/core/team/guards/team-loaded/team-loaded.guard';
 import { HandleUserInvitationGuard } from 'src/app/core/user/guards/user-has-invitation/handle-user-invitation.guard';
 import { UserLoadedGuard } from 'src/app/core/user/guards/user-loaded/user-loaded.guard';
 import { AuthGuard } from './core/auth/guard/auth.guard';
@@ -17,7 +16,7 @@ const routes: Routes = [
   {
     path: '',
     component: ContentLayoutComponent,
-    canActivate: [AuthGuard, UserLoadedGuard, TeamLoadedGuard, HandleUserInvitationGuard, ClearToastrGuard],
+    canActivate: [AuthGuard, UserLoadedGuard, HandleUserInvitationGuard, ClearToastrGuard],
     children: [
       {
         path: 'home',

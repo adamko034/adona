@@ -21,13 +21,12 @@ export const get = functions.https.onCall(async (data, context) => {
     });
 
     const teamsSnapshot = await Promise.all(promises);
-    const teams = teamsSnapshot.map((teamSnapshot) => {
-      const team = teamSnapshot.data();
-      if (team) {
-        return { id: teamSnapshot.id, name: team.name };
-      }
-      return {};
-    });
+    const teams = teamsSnapshot
+      .filter((teamSnapshot) => teamSnapshot.exists)
+      .map((teamSnapshot) => {
+        const { name } = teamSnapshot.data() as any;
+        return { id: teamSnapshot.id, name };
+      });
 
     return { ...user, id: context.auth.uid, teams };
   } catch (error) {

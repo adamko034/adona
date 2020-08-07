@@ -51,53 +51,109 @@ export const getAll = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('unauthenticated', 'Unauthenticated');
   }
 
-  const teamsId: string[] = user.teams;
-  const promises: Promise<Team>[] = [];
-  teamsId.forEach((teamId) => promises.push(getTeam(teamId, db, false)));
+  try {
+    const teamsId: string[] = user.teams;
+    const promises: Promise<Team | null>[] = [];
+    teamsId.forEach((teamId) => promises.push(getTeam(teamId, db, false)));
 
-  return await Promise.all(promises);
+    return await Promise.all(promises);
+  } catch (error) {
+    console.error(error);
+    throw new functions.https.HttpsError('internal', 'Unknown error occured.', error);
+  }
 });
 
-async function getTeam(teamId: string, db: FirebaseFirestore.Firestore, includeMembers: boolean): Promise<Team> {
+export const remove = functions.firestore.document('teams/{id}').onDelete(async (snapshot, context) => {
+  const teamId = context.params.id;
+  console.log('removed team id: ' + teamId);
+
+  try {
+    if (teamId) {
+      const db = admin.firestore();
+
+      const membersDoc = db.collection('teamMembers').doc(teamId);
+      const members = (await membersDoc.get()).data() as any;
+
+      const membersUpdatesPromises: any = [];
+
+      const usersId = Object.keys(members).filter((key: any) => !members[key].isVirtual);
+      const virtualUsersId = Object.keys(members).filter((key: any) => members[key].isVirtual);
+
+      usersId.forEach(async (userId) => {
+        console.log('processing user id ' + userId);
+        const userDoc = db.collection('users').doc(userId);
+
+        const user = (await userDoc.get()).data() as any;
+
+        const newTeams = [...user.teams.filter((userTeamId: string) => userTeamId !== teamId)];
+        const selectedTeamId = user.selectedTeamId === teamId ? user.personalTeamId : user.selectedTeamId;
+
+        const promise = userDoc.update({ teams: newTeams, selectedTeamId });
+        membersUpdatesPromises.push(promise);
+      });
+
+      virtualUsersId.forEach((userId) => {
+        console.log('processing virtual user id ' + userId);
+        const promise = db.collection('virtualUsers').doc(userId).delete();
+
+        membersUpdatesPromises.push(promise);
+      });
+
+      console.log('processing updates and removals');
+      await Promise.all(membersUpdatesPromises);
+      await membersDoc.delete();
+    }
+  } catch (error) {
+    console.error(error);
+    throw new functions.https.HttpsError('internal', 'Unknown error occured.', error);
+  }
+});
+
+async function getTeam(teamId: string, db: FirebaseFirestore.Firestore, includeMembers: boolean): Promise<Team | null> {
   const teamDoc = await db.collection('teams').doc(teamId).get();
-  const team = teamDoc.data() as any;
-  let members: Member[] = [];
 
-  const createdByDoc = await db.collection('users').doc(team.createdByUid).get();
-  const createdBy = createdByDoc.data()?.name;
+  if (teamDoc.exists) {
+    const team = teamDoc.data() as any;
+    let members: Member[] = [];
 
-  if (includeMembers) {
-    const teamMembersDoc = await db.collection('teamMembers').doc(teamId).get();
-    const teamMembers = teamMembersDoc.data();
-    const promises: Promise<DocumentSnapshot>[] = [];
+    const createdByDoc = await db.collection('users').doc(team.createdByUid).get();
+    const createdBy = createdByDoc.data()?.name;
 
-    for (const userId in teamMembers) {
-      console.log('team member ' + userId);
-      console.log('will get user: ' + JSON.stringify(teamMembers[userId]));
-      console.log('has own property ' + teamMembers.hasOwnProperty(userId));
-      if (teamMembers.hasOwnProperty(userId) && teamMembers[userId].assigned) {
-        teamMembers[userId].isVirtual
-          ? promises.push(db.collection('virtualUsers').doc(userId).get())
-          : promises.push(db.collection('users').doc(userId).get());
+    if (includeMembers) {
+      const teamMembersDoc = await db.collection('teamMembers').doc(teamId).get();
+      const teamMembers = teamMembersDoc.data();
+      const promises: Promise<DocumentSnapshot>[] = [];
+
+      for (const userId in teamMembers) {
+        console.log('team member ' + userId);
+        console.log('will get user: ' + JSON.stringify(teamMembers[userId]));
+        console.log('has own property ' + teamMembers.hasOwnProperty(userId));
+        if (teamMembers.hasOwnProperty(userId) && teamMembers[userId].assigned) {
+          teamMembers[userId].isVirtual
+            ? promises.push(db.collection('virtualUsers').doc(userId).get())
+            : promises.push(db.collection('users').doc(userId).get());
+        }
       }
+
+      const membersSnapshots = await Promise.all(promises);
+      members = membersSnapshots
+        .filter((m) => m.exists)
+        .map((m) => {
+          const member = m.data() as any;
+          console.log('got user ' + m.id + ' ' + member.name);
+
+          const res: Member = { id: m.id, name: member.name, photoUrl: member.photoUrl };
+          return res;
+        });
     }
 
-    const membersSnapshots = await Promise.all(promises);
-    members = membersSnapshots
-      .filter((m) => m.exists)
-      .map((m) => {
-        const member = m.data() as any;
-        console.log('got user ' + m.id + ' ' + member.name);
+    const result: Team = { id: teamId, name: team.name, created: team.created, createdBy };
+    if (includeMembers) {
+      result.members = members;
+    }
 
-        const res: Member = { id: m.id, name: member.name, photoUrl: member.photoUrl };
-        return res;
-      });
+    return Promise.resolve(result);
   }
 
-  const result: Team = { id: teamId, name: team.name, created: team.created, createdBy };
-  if (includeMembers) {
-    result.members = members;
-  }
-
-  return Promise.resolve(result);
+  return Promise.resolve(null);
 }

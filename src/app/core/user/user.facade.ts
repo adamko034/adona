@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { userActions } from 'src/app/core/store/actions/user.actions';
 import { AuthState } from 'src/app/core/store/reducers/auth/auth.reducer';
 import { userQueries } from 'src/app/core/store/selectors/user.selectors';
-import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { TeamNameUpdateRequest } from 'src/app/core/team/model/requests/update-name/team-name-update-request.model';
 import { UserTeam } from 'src/app/core/user/model/user-team/user-team.model';
 import { User } from 'src/app/core/user/model/user/user.model';
@@ -25,8 +24,8 @@ export class UserFacade {
     return this.store.dispatch(userActions.loadUserRequested());
   }
 
-  public changeTeam(request: ChangeTeamRequest) {
-    this.store.dispatch(userActions.changeTeamRequested({ request }));
+  public changeTeam(teamId: string) {
+    this.store.dispatch(userActions.changeTeamRequested({ teamId }));
   }
 
   public updateName(id: string, newName: string): void {
@@ -43,5 +42,9 @@ export class UserFacade {
 
   public selectUserTeams(): Observable<UserTeam[]> {
     return this.store.select(userQueries.userTeams);
+  }
+
+  public deleteTeam(id: string): void {
+    this.store.dispatch(userActions.teamDeleted({ id }));
   }
 }

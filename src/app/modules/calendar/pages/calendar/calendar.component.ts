@@ -44,7 +44,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.routerFacade
-      .selectCurrentRute()
+      .selectCurrentRoute()
       .pipe(takeUntil(this.destroyed$))
       .subscribe((route: string) => {
         const view = AdonaCalendarViewBuilder.fromRoute(route).build();

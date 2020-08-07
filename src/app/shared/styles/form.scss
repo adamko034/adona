@@ -22,8 +22,10 @@
 .form-button {
   transition: ease-in 0.6s;
 
-  &:disabled {
-    border-color: rgba(0, 0, 0, 0.55);
+  &-red {
+    background-color: #d8000c;
+    border: 1px solid #b94a48;
+    color: #fff;
   }
 
   &:focus {

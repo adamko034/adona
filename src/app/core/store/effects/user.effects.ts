@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, concatMap, filter, map, switchMap, tap, withLatestFrom } from 'rxjs/operators';
 import { ErrorBuilder } from 'src/app/core/error/model/error.builder';
 import { GuiFacade } from 'src/app/core/gui/gui.facade';
 import { ToastrDataBuilder } from 'src/app/core/gui/model/toastr/toastr-data/toastr-data.builder';
@@ -11,11 +11,11 @@ import { Invitation } from 'src/app/core/invitations/models/invitation/invitatio
 import { InvitationsService } from 'src/app/core/invitations/services/invitations-service/invitations.service';
 import { ErrorEffectService } from 'src/app/core/services/store/error-effect.service';
 import { userActions } from 'src/app/core/store/actions/user.actions';
-import { ChangeTeamRequest } from 'src/app/core/team/model/requests/change-team/change-team-request.model';
 import { TeamsFacade } from 'src/app/core/team/teams.facade';
 import { UserTeamBuilder } from 'src/app/core/user/model/user-team/user-team.builder';
 import { User } from 'src/app/core/user/model/user/user.model';
 import { UserService } from 'src/app/core/user/services/user.service';
+import { UserFacade } from 'src/app/core/user/user.facade';
 import { resources } from 'src/app/shared/resources/resources';
 import { ResourceService } from 'src/app/shared/resources/services/resource.service';
 import { Logger } from 'src/app/shared/utils/logger/logger';
@@ -24,6 +24,7 @@ import { Logger } from 'src/app/shared/utils/logger/logger';
 export class UserEffects {
   constructor(
     private actions$: Actions,
+    private userFacade: UserFacade,
     private userService: UserService,
     private errorEffectService: ErrorEffectService,
     private guiFacade: GuiFacade,
@@ -48,10 +49,10 @@ export class UserEffects {
     return this.actions$.pipe(
       ofType(userActions.changeTeamRequested),
       tap(() => this.guiFacade.showLoading()),
-      map((action) => action.request),
-      switchMap((request: ChangeTeamRequest) =>
-        this.userService.changeTeam(request).pipe(
-          map(() => userActions.changeTeamSuccess({ teamId: request.teamId })),
+      concatMap(({ teamId }) => of(teamId).pipe(withLatestFrom(this.userFacade.selectUserId()))),
+      switchMap(([teamId, uid]) =>
+        this.userService.changeTeam(uid, teamId).pipe(
+          map(() => userActions.changeTeamSuccess({ teamId })),
           catchError((err) => of(userActions.changeTeamFailure({ error: { errorObj: err } })))
         )
       )

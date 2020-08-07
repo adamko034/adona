@@ -5,7 +5,9 @@ import { select, Store } from '@ngrx/store';
 import { sortBy } from 'lodash';
 import { Observable } from 'rxjs';
 import { routes, settingsRoutes } from 'src/app/core/router/constants/routes.constants';
-import { routerQueries } from '../store/selectors/router.selectors';
+import { RouteWithParams } from 'src/app/core/router/model/route-with-params.model';
+import { routerActions } from 'src/app/core/router/store/actions/router.actions';
+import { routerQueries } from 'src/app/core/router/store/selectors/router.selectors';
 import { Route } from './model/route.model';
 
 @Injectable({ providedIn: 'root' })
@@ -16,8 +18,12 @@ export class RouterFacade {
     return this.store.pipe(select(routerQueries.selectRouteParams));
   }
 
-  public selectCurrentRute(): Observable<string> {
+  public selectCurrentRoute(): Observable<string> {
     return this.store.pipe(select(routerQueries.selectCurrentRoute));
+  }
+
+  public selectCurrentRouteWithParams(): Observable<RouteWithParams> {
+    return this.store.pipe(select(routerQueries.currentRouteWithParams));
   }
 
   public selectRouteQueryParams(): Observable<Params> {
@@ -34,5 +40,9 @@ export class RouterFacade {
 
   public selectSettingsRoutes(): Route[] {
     return sortBy(settingsRoutes, 'id');
+  }
+
+  public navigateAfterTeamDeleted(teamId: string): void {
+    this.store.dispatch(routerActions.teamDeleted({ id: teamId }));
   }
 }

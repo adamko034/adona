@@ -15,6 +15,10 @@ export class TeamsFacade {
     this.store.dispatch(teamsActions.team.loadTeamRequested({ id }));
   }
 
+  public loadSelectedTeam() {
+    this.store.dispatch(teamsActions.team.loadSelectedTeamRequested());
+  }
+
   public addTeam(request: NewTeamRequest) {
     this.store.dispatch(teamsActions.team.newTeamRequested({ request }));
   }
@@ -37,5 +41,9 @@ export class TeamsFacade {
 
   public changeTeamName(request: TeamNameUpdateRequest): void {
     this.store.dispatch(teamsActions.team.updateNameRequested({ request }));
+  }
+
+  public deleteTeam(id: string): void {
+    this.store.dispatch(teamsActions.team.deleteTeamRequested({ id }));
   }
 }

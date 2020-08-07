@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -16,6 +17,7 @@ import { SettingsListComponent } from 'src/app/modules/settings/pages/settings-l
 import { SettingsComponent } from 'src/app/modules/settings/pages/settings/settings.component';
 import { SettingsRoutingModule } from 'src/app/modules/settings/settings-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { TeamRemoveDialogComponent } from './components/dialogs/team-remove-dialog/team-remove-dialog.component';
 import { SettingsTeamMembersComponent } from './components/teams/settings-team/settings-team-members/settings-team-members.component';
 import { SettingsTeamNameComponent } from './components/teams/settings-team/settings-team-name/settings-team-name.component';
 
@@ -28,8 +30,10 @@ import { SettingsTeamNameComponent } from './components/teams/settings-team/sett
     SettingsComponent,
     SettingsTeamComponent,
     SettingsTeamMembersComponent,
-    SettingsTeamNameComponent
+    SettingsTeamNameComponent,
+    TeamRemoveDialogComponent
   ],
+  entryComponents: [TeamRemoveDialogComponent],
   imports: [
     CommonModule,
     SettingsRoutingModule,
@@ -41,6 +45,7 @@ import { SettingsTeamNameComponent } from './components/teams/settings-team/sett
     MatCardModule,
     MatMenuModule,
     MatDividerModule,
+    MatDialogModule,
     FormsModule,
     ReactiveFormsModule
   ]

@@ -54,4 +54,8 @@ export class NavigationService {
   public toEmailVerified(oobCode: string) {
     this.router.navigate(['/auth/emailVerified'], { queryParams: { oobCode } });
   }
+
+  public toSettingsTeamsList(): void {
+    this.router.navigate(['/settings/teams']);
+  }
 }
